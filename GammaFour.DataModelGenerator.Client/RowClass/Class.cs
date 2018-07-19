@@ -7,8 +7,8 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using GammaFour.DataModelGenerator.Client.DataModelClass;
     using GammaFour.DataModelGenerator.Common;
+    using GammaFour.DataModelGenerator.Common.RowClass;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
