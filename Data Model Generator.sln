@@ -30,17 +30,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerato
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.Client", "GammaFour.DataModelGenerator.Client\GammaFour.DataModelGenerator.Client.csproj", "{F73E29A5-7E5F-4EC9-8452-53F4E9B75923}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GammaFour.DataModelGenerator.Database", "GammaFour.DataModelGenerator.Database\GammaFour.DataModelGenerator.Database.csproj", "{021762ED-EFDA-4190-B545-20B6C5D0BF82}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.Database", "GammaFour.DataModelGenerator.Database\GammaFour.DataModelGenerator.Database.csproj", "{021762ED-EFDA-4190-B545-20B6C5D0BF82}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database Compiler", "Database Compiler\Database Compiler.csproj", "{812940C2-131F-4078-9A21-6C9FFD8AC4C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GammaFour.DataModelGenerator.DataService", "GammaFour.DataModelGenerator.DataService\GammaFour.DataModelGenerator.DataService.csproj", "{CED1908A-6CBF-4065-9616-F959DB2736CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.DataService", "GammaFour.DataModelGenerator.DataService\GammaFour.DataModelGenerator.DataService.csproj", "{CED1908A-6CBF-4065-9616-F959DB2736CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GammaFour.DataModelGenerator.ImportService", "GammaFour.DataModelGenerator.ImportService\GammaFour.DataModelGenerator.ImportService.csproj", "{DE1462F3-B85F-4EDC-8E43-5790959B7FB9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.ImportService", "GammaFour.DataModelGenerator.ImportService\GammaFour.DataModelGenerator.ImportService.csproj", "{DE1462F3-B85F-4EDC-8E43-5790959B7FB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GammaFour.DataModelGenerator.PersistentStore", "GammaFour.DataModelGenerator.PersistentStore\GammaFour.DataModelGenerator.PersistentStore.csproj", "{1CCCDC82-E9F4-4B05-828A-FDD8B8087339}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.PersistentStore", "GammaFour.DataModelGenerator.PersistentStore\GammaFour.DataModelGenerator.PersistentStore.csproj", "{1CCCDC82-E9F4-4B05-828A-FDD8B8087339}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GammaFour.DataModelGenerator.Server", "GammaFour.DataModelGenerator.Server\GammaFour.DataModelGenerator.Server.csproj", "{12EB72BA-3516-4BBF-8512-CE9BB16E2EF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.Server", "GammaFour.DataModelGenerator.Server\GammaFour.DataModelGenerator.Server.csproj", "{12EB72BA-3516-4BBF-8512-CE9BB16E2EF7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

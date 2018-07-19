@@ -19,6 +19,10 @@
     <DocumentationFile>bin\Development\netstandard2.0\DarkBond.Common.xml</DocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Production|AnyCPU'">
+    <DocumentationFile>bin\Production\netstandard2.0\GammaFour.Common.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="stylecop.json" />
   </ItemGroup>

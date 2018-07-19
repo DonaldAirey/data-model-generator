@@ -25,7 +25,7 @@ namespace GammaFour.VisualStudio
         /// </summary>
         /// <param name="riid">The IID of the interface pointer that should be returned in ppvSite.</param>
         /// <param name="ppvSite">The address of the caller's void* variable in which the object stores the interface pointer of the site last seen in <see cref="IObjectWithSite.SetSite"/>.</param>
-        void IObjectWithSite.GetSite(ref Guid riid, out IntPtr ppvSite)
+        public void GetSite(ref Guid riid, out IntPtr ppvSite)
         {
             if (this.site == null)
             {
@@ -49,7 +49,7 @@ namespace GammaFour.VisualStudio
         /// Provides the site's IUnknown pointer to the object.
         /// </summary>
         /// <param name="pUnkSite">An interface pointer to the site managing this object. If null, the object should call Release to release the existing site</param>
-        void IObjectWithSite.SetSite(object pUnkSite)
+        public void SetSite(object pUnkSite)
         {
             // Initialize the site.
             this.site = pUnkSite;

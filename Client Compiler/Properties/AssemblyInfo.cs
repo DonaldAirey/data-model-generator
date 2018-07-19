@@ -22,4 +22,8 @@ using System.Runtime.InteropServices;
 // Describes the default language used for the resources.
 [assembly: NeutralResourcesLanguageAttribute("en-US")]
 
+// Version information for this assembly.
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]
+
 // These specific messages are suppressed when the Code Analysis is run.

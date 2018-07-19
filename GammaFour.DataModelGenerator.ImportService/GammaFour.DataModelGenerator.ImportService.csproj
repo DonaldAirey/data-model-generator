@@ -10,6 +10,11 @@
     <NoWarn>1701;1702;SA1005</NoWarn>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Production|AnyCPU'">
+    <DocumentationFile>bin\Production\netstandard2.0\GammaFour.DataModelGenerator.ImportService.xml</DocumentationFile>
+    <NoWarn>1701;1702;SA1005</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="stylecop.json" />
   </ItemGroup>

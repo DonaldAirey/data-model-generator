@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="Resource_Generator.85efc129-a43b-42de-82d7-67ba769b7768" Version="2.0" Language="en-US" Publisher="Gamma Four" />
-        <DisplayName>Resource Generator</DisplayName>
-        <Description xml:space="preserve">This product contains a updated version of the old Microsoft PublicResXFileCodeGenerator code generator for Portable Class Libraries.</Description>
+        <Identity Id="DataModelGenerator.c5a71ebf-72ae-4a36-89d3-2a5a62eb2312" Version="1.0" Language="en-US" Publisher="Gamma Four" />
+        <DisplayName>Data Model Generator</DisplayName>
+        <Description xml:space="preserve">This product creates an high-performance, in-memory data model from a database schema.This product creates an in</Description>
         <License>Resources\license.rtf</License>
-        <GettingStartedGuide>Resources\getting started.htm</GettingStartedGuide>
-        <Icon>Resources\Resource Generator.ico</Icon>
-        <PreviewImage>Resources\Resource Generator.png</PreviewImage>
+        <Icon>Resources\Data Model Generator.ico</Icon>
+        <PreviewImage>Resources\Data Model Generator.png</PreviewImage>
         <Tags>CustomTool</Tags>
     </Metadata>
     <Installation>

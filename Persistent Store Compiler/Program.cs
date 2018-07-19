@@ -14,7 +14,7 @@ namespace PersistentStoreCompiler
     /// <summary>
     /// The command line version of the Custom Tool for generating code from a schema.
     /// </summary>
-    public class Program
+    public static class Program
     {
         /// <summary>
         /// Dictionary of command line parameter switches and the states they invoke in the parser.
@@ -100,7 +100,10 @@ namespace PersistentStoreCompiler
                 uint bufferSize;
                 Generator generator = new Generator();
                 IVsSingleFileGenerator ivsSingleFileGenerator = generator as IVsSingleFileGenerator;
-                ivsSingleFileGenerator.Generate(inputFilePath, fileContents, targetNamespace, buffer, out bufferSize, null);
+                if (ivsSingleFileGenerator.Generate(inputFilePath, fileContents, targetNamespace, buffer, out bufferSize, null) != 0)
+                {
+                    throw new Exception("Unable to generate file.");
+                }
 
                 // Once the buffer of source code is generated, it is copied back out of the unmanaged buffers and written to the output file.
                 byte[] outputBuffer = new byte[bufferSize];

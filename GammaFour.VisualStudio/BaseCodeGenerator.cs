@@ -30,7 +30,7 @@ namespace GammaFour.VisualStudio
         /// </summary>
         /// <param name="pbstrDefaultExtension">Returns the file extension that is to be given to the output file name. The returned extension must include a leading period.</param>
         /// <returns>S_OK if successful, E_FAIL if not</returns>
-        int IVsSingleFileGenerator.DefaultExtension(out string pbstrDefaultExtension)
+        public int DefaultExtension(out string pbstrDefaultExtension)
         {
             pbstrDefaultExtension = this.GetDefaultExtension();
             return VSConstants.S_OK;
@@ -47,7 +47,7 @@ namespace GammaFour.VisualStudio
         /// <param name="pcbOutput">[out] Returns the count of bytes in the rgbOutputFileContent array</param>
         /// <param name="pGenerateProgress">A reference to the IVsGeneratorProgress interface through which the generator can report its progress to the project system</param>
         /// <returns>If the method succeeds, it returns S_OK. If it fails, it returns E_FAIL</returns>
-        int IVsSingleFileGenerator.Generate(
+        public int Generate(
             string wszInputFilePath,
             string bstrInputFileContents,
             string wszDefaultNamespace,

@@ -5,6 +5,7 @@
 namespace ServiceCompiler
 {
     using System;
+    using System.Globalization;
     using System.IO;
     using System.Runtime.InteropServices;
     using System.Text;
@@ -40,20 +41,22 @@ namespace ServiceCompiler
             CompilationUnit compilationUnit = new CompilationUnit(dataModelSchema);
 
             // A workspace is needed in order to turn the compilation unit into code.
-            AdhocWorkspace adhocWorkspace = new AdhocWorkspace();
-            OptionSet options = adhocWorkspace.Options;
-            options = options.WithChangedOption(CSharpFormattingOptions.WrappingKeepStatementsOnSingleLine, false);
-            adhocWorkspace.Options = options;
-
-            // Format the compilation unit.
-            SyntaxNode syntaxNode = Formatter.Format(compilationUnit.Syntax, adhocWorkspace);
-
-            // This performs the work of outputting the formatted code to a file.
             byte[] buffer = null;
-            using (StringWriter stringWriter = new StringWriter(new StringBuilder()))
+            using (AdhocWorkspace adhocWorkspace = new AdhocWorkspace())
             {
-                syntaxNode.WriteTo(stringWriter);
-                buffer = Encoding.UTF8.GetBytes(stringWriter.ToString());
+                OptionSet options = adhocWorkspace.Options;
+                options = options.WithChangedOption(CSharpFormattingOptions.WrappingKeepStatementsOnSingleLine, false);
+                adhocWorkspace.Options = options;
+
+                // Format the compilation unit.
+                SyntaxNode syntaxNode = Formatter.Format(compilationUnit.Syntax, adhocWorkspace);
+
+                // This performs the work of outputting the formatted code to a file.
+                using (StringWriter stringWriter = new StringWriter(new StringBuilder(), CultureInfo.InvariantCulture))
+                {
+                    syntaxNode.WriteTo(stringWriter);
+                    buffer = Encoding.UTF8.GetBytes(stringWriter.ToString());
+                }
             }
 
             return buffer;
