@@ -100,7 +100,7 @@ namespace GammaFour.DataModelGenerator
                 IntPtr[] buffer = new IntPtr[1];
                 uint bufferSize;
                 Generator generator = new Generator();
-                generator.Generate(inputFilePath, fileContents, targetNamespace, buffer, out bufferSize, new ProgressIndicator());
+                generator.Generate(inputFilePath, fileContents, targetNamespace, buffer, out bufferSize, null);
 
                 // Once the buffer of source code is generated, it is copied back out of the unmanaged buffers and written to the output file.
                 byte[] outputBuffer = new byte[bufferSize];

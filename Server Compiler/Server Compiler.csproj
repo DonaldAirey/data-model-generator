@@ -114,11 +114,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GammaFour.DataModelGenerator.Common\GammaFour.DataModelGenerator.Common.csproj">
-      <Project>{8aa3cbc1-9975-4208-a2b8-e55f8a2595ee}</Project>
+      <Project>{0539c55d-e64e-4e09-8703-ba39dfeb23dd}</Project>
       <Name>GammaFour.DataModelGenerator.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\GammaFour.DataModelGenerator.Server\GammaFour.DataModelGenerator.Server.csproj">
-      <Project>{2775fa80-6cd8-42e6-a467-989d0ffdda94}</Project>
+      <Project>{12eb72ba-3516-4bbf-8512-ce9bb16e2ef7}</Project>
       <Name>GammaFour.DataModelGenerator.Server</Name>
     </ProjectReference>
     <ProjectReference Include="..\GammaFour.VisualStudio\GammaFour.VisualStudio.csproj">

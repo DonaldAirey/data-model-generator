@@ -17,6 +17,34 @@
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Development|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Development\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>bin\Debug\Visual Studio Package.xml</DocumentationFile>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Production|AnyCPU'">
+    <OutputPath>bin\Production\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Staging|AnyCPU'">
+    <OutputPath>bin\Staging\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -38,24 +66,6 @@
     <StartAction>Program</StartAction>
     <StartProgram Condition="'$(DevEnvDir)' != ''">$(DevEnvDir)devenv.exe</StartProgram>
     <StartArguments>/rootsuffix Exp</StartArguments>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\Visual Studio Package.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="DatabaseGenerator.cs" />
@@ -142,6 +152,9 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>11.0.2</Version>
     </PackageReference>
+    <PackageReference Include="StyleCop.Analyzers">
+      <Version>1.0.2</Version>
+    </PackageReference>
     <PackageReference Include="System.Composition">
       <Version>1.2.0</Version>
     </PackageReference>
@@ -176,31 +189,31 @@
       <Name>GammaFour.ClientModel</Name>
     </ProjectReference>
     <ProjectReference Include="..\GammaFour.DataModelGenerator.Client\GammaFour.DataModelGenerator.Client.csproj">
-      <Project>{001076c6-18a5-4556-b7f7-8db94237495f}</Project>
+      <Project>{f73e29a5-7e5f-4ec9-8452-53f4e9b75923}</Project>
       <Name>GammaFour.DataModelGenerator.Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\GammaFour.DataModelGenerator.Common\GammaFour.DataModelGenerator.Common.csproj">
-      <Project>{8aa3cbc1-9975-4208-a2b8-e55f8a2595ee}</Project>
+      <Project>{0539c55d-e64e-4e09-8703-ba39dfeb23dd}</Project>
       <Name>GammaFour.DataModelGenerator.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\GammaFour.DataModelGenerator.Database\GammaFour.DataModelGenerator.Database.csproj">
-      <Project>{5ab4ef37-de2f-4cc2-b1b0-f2d47a7c1629}</Project>
+      <Project>{021762ed-efda-4190-b545-20b6c5d0bf82}</Project>
       <Name>GammaFour.DataModelGenerator.Database</Name>
     </ProjectReference>
     <ProjectReference Include="..\GammaFour.DataModelGenerator.DataService\GammaFour.DataModelGenerator.DataService.csproj">
-      <Project>{e44e410b-f848-477c-8d28-4ab2ff63431e}</Project>
+      <Project>{ced1908a-6cbf-4065-9616-f959db2736cf}</Project>
       <Name>GammaFour.DataModelGenerator.DataService</Name>
     </ProjectReference>
     <ProjectReference Include="..\GammaFour.DataModelGenerator.ImportService\GammaFour.DataModelGenerator.ImportService.csproj">
-      <Project>{a7df6eca-c8ef-4028-b307-d6a56f7e3783}</Project>
+      <Project>{de1462f3-b85f-4edc-8e43-5790959b7fb9}</Project>
       <Name>GammaFour.DataModelGenerator.ImportService</Name>
     </ProjectReference>
     <ProjectReference Include="..\GammaFour.DataModelGenerator.PersistentStore\GammaFour.DataModelGenerator.PersistentStore.csproj">
-      <Project>{e01fa3ba-68bd-46ca-8ce5-c639849f73ad}</Project>
+      <Project>{1cccdc82-e9f4-4b05-828a-fdd8b8087339}</Project>
       <Name>GammaFour.DataModelGenerator.PersistentStore</Name>
     </ProjectReference>
     <ProjectReference Include="..\GammaFour.DataModelGenerator.Server\GammaFour.DataModelGenerator.Server.csproj">
-      <Project>{2775fa80-6cd8-42e6-a467-989d0ffdda94}</Project>
+      <Project>{12eb72ba-3516-4bbf-8512-ce9bb16e2ef7}</Project>
       <Name>GammaFour.DataModelGenerator.Server</Name>
     </ProjectReference>
     <ProjectReference Include="..\GammaFour.VisualStudio\GammaFour.VisualStudio.csproj">

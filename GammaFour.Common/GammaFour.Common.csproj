@@ -5,7 +5,7 @@
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
-    <Configurations>Release;Development</Configurations>
+    <Configurations>Development;Staging;Production</Configurations>
   </PropertyGroup>
 
   <PropertyGroup>

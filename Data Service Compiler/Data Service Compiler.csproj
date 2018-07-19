@@ -78,11 +78,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GammaFour.DataModelGenerator.Common\GammaFour.DataModelGenerator.Common.csproj">
-      <Project>{8aa3cbc1-9975-4208-a2b8-e55f8a2595ee}</Project>
+      <Project>{0539c55d-e64e-4e09-8703-ba39dfeb23dd}</Project>
       <Name>GammaFour.DataModelGenerator.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\GammaFour.DataModelGenerator.DataService\GammaFour.DataModelGenerator.DataService.csproj">
-      <Project>{e44e410b-f848-477c-8d28-4ab2ff63431e}</Project>
+      <Project>{ced1908a-6cbf-4065-9616-f959db2736cf}</Project>
       <Name>GammaFour.DataModelGenerator.DataService</Name>
     </ProjectReference>
     <ProjectReference Include="..\GammaFour.VisualStudio\GammaFour.VisualStudio.csproj">
@@ -106,6 +106,9 @@
     <PackageReference Include="System.Composition">
       <Version>1.2.0</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

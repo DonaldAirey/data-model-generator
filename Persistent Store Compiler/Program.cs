@@ -102,7 +102,7 @@ namespace GammaFour.DataModelGenerator
                 uint bufferSize;
                 Generator generator = new Generator();
                 IVsSingleFileGenerator ivsSingleFileGenerator = generator as IVsSingleFileGenerator;
-                ivsSingleFileGenerator.Generate(inputFilePath, fileContents, targetNamespace, buffer, out bufferSize, new ProgressIndicator());
+                ivsSingleFileGenerator.Generate(inputFilePath, fileContents, targetNamespace, buffer, out bufferSize, null);
 
                 // Once the buffer of source code is generated, it is copied back out of the unmanaged buffers and written to the output file.
                 byte[] outputBuffer = new byte[bufferSize];

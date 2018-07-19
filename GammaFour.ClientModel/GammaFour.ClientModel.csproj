@@ -17,12 +17,25 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|AnyCPU'">
     <DefineConstants>DEBUG;TRACE;DEVELOPMENT;NETSTANDARD2_0;DEVELOPMENT;NETSTANDARD2_0;DEVELOPMENT;NETSTANDARD2_0</DefineConstants>
+    <DocumentationFile>bin\Development\netstandard2.0\GammaFour.ClientModel.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Production|AnyCPU'">
     <DocumentationFile>bin\Production\netstandard2.0\DarkBond.ClientModel.xml</DocumentationFile>
     <DefineConstants>DEBUG;TRACE;PRODUCTION;NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" />
+  </ItemGroup>
 
   <ItemGroup>
     <Reference Include="System.ServiceModel">

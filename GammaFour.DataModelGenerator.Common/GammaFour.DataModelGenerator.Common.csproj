@@ -1,186 +1,32 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8AA3CBC1-9975-4208-A2B8-E55F8A2595EE}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DarkBond.DataModelGenerator.Common</RootNamespace>
-    <AssemblyName>DarkBond.DataModelGenerator.Common</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Development;Staging;Production</Configurations>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|AnyCPU'">
+    <DocumentationFile>bin\Development\netstandard2.0\GammaFour.DataModelGenerator.Common.xml</DocumentationFile>
+    <NoWarn>1701;1702;SA1005</NoWarn>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors />
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Development|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Development\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>bin\Debug\DarkBond.DataModelGenerator.Common.xml</DocumentationFile>
-    <NoWarn>SA1005</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Production|AnyCPU'">
-    <OutputPath>bin\Production\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Staging|AnyCPU'">
-    <OutputPath>bin\Staging\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <DelaySign>true</DelaySign>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <None Remove="stylecop.json" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="CascadeRules.cs" />
-    <Compile Include="CommonConversion.cs" />
-    <Compile Include="ForeignKeyIndexClass\DictionaryField.cs" />
-    <Compile Include="CompoundKeyStruct\ColumnProperty.cs" />
-    <Compile Include="CompoundKeyStruct\CompareToMethod.cs" />
-    <Compile Include="CompoundKeyStruct\Constructor.cs" />
-    <Compile Include="CompoundKeyStruct\EqualityOperator.cs" />
-    <Compile Include="CompoundKeyStruct\EqualsMethod.cs" />
-    <Compile Include="CompoundKeyStruct\GreaterThanOperator.cs" />
-    <Compile Include="CompoundKeyStruct\HashMethod.cs" />
-    <Compile Include="CompoundKeyStruct\InequalityOperator.cs" />
-    <Compile Include="CompoundKeyStruct\LessThanOperator.cs" />
-    <Compile Include="CompoundKeyStruct\Struct.cs" />
-    <Compile Include="TableClass\OnRowChangingMethod.cs" />
-    <Compile Include="ThrowArgumentNullException.cs" />
-    <Compile Include="ThrowConstraintException.cs" />
-    <Compile Include="ThrowInvalidOperationException.cs" />
-    <Compile Include="ThrowOptimisticConcurrencyFault.cs" />
-    <Compile Include="ThrowDuplicateKeyException.cs" />
-    <Compile Include="ColumnSchema.cs" />
-    <Compile Include="ConstraintSchema.cs" />
-    <Compile Include="DataModelSchema.cs" />
-    <Compile Include="ForeignKeyConstraintSchema.cs" />
-    <Compile Include="KnownTypes.cs" />
-    <Compile Include="ProgressIndicator.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RelationSchema.cs" />
-    <Compile Include="RowChangeEventArgsClass\Class.cs" />
-    <Compile Include="RowChangeEventArgsClass\Constructor.cs" />
-    <Compile Include="RowChangeEventArgsClass\DataActionProperty.cs" />
-    <Compile Include="RowChangeEventArgsClass\RowProperty.cs" />
-    <Compile Include="RowDataClass\Class.cs" />
-    <Compile Include="RowDataClass\CloneMethod.cs" />
-    <Compile Include="RowDataClass\ColumnProperty.cs" />
-    <Compile Include="RowClass\TableProperty.cs" />
-    <Compile Include="RowVersionColumnSchema.cs" />
-    <Compile Include="SyntaxElement.cs" />
-    <Compile Include="TableClass\OnRowChangedMethod.cs" />
-    <Compile Include="TableClass\RowChangedEvent.cs" />
-    <Compile Include="TableClass\RowChangingEvent.cs" />
-    <Compile Include="TableClass\RowsProperty.cs" />
-    <Compile Include="TableSchema.cs" />
-    <Compile Include="Conversions.cs" />
-    <Compile Include="CheckNullArgument.cs" />
-    <Compile Include="ThrowRecordNotFoundException.cs" />
-    <Compile Include="ThrowRecordNotFoundFault.cs" />
-    <Compile Include="ThrowConstraintFault.cs" />
-    <Compile Include="UniqueConstraintSchema.cs" />
-    <Compile Include="UniqueKeyIndexClass\DictionaryField.cs" />
-    <Compile Include="XmlSchema.cs" />
-  </ItemGroup>
+
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\GammaFour.ClientModel\GammaFour.ClientModel.csproj">
-      <Project>{e4bc1263-cc34-4e2b-bee5-4306d1392648}</Project>
-      <Name>GammaFour.ClientModel</Name>
-    </ProjectReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.8.2" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" />
   </ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp">
-      <Version>2.8.2</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Composition">
-      <Version>1.0.31</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Net.Compilers">
-      <Version>2.8.2</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop">
-      <Version>7.10.6072</Version>
-    </PackageReference>
-    <PackageReference Include="StyleCop.Analyzers">
-      <Version>1.0.2</Version>
-    </PackageReference>
-    <PackageReference Include="System.Collections">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Diagnostics.Debug">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Globalization">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Linq">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Reflection.Metadata">
-      <Version>1.6.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Resources.ResourceManager">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime.Extensions">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Threading">
-      <Version>4.3.0</Version>
-    </PackageReference>
+    <ProjectReference Include="..\GammaFour.ClientModel\GammaFour.ClientModel.csproj" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

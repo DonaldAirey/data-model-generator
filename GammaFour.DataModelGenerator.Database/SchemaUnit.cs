@@ -1,4 +1,4 @@
-// <copyright file="DatabaseGenerator.cs" company="Gamma Four, Inc.">
+// <copyright file="SchemaUnit.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -33,6 +33,65 @@ namespace GammaFour.DataModelGenerator.Database
         {
             // Initialize the object.
             this.dataModelSchema = dataModelSchema;
+        }
+
+        /// <summary>
+        /// Generate the code from the inputs.
+        /// </summary>
+        /// <returns>A buffer containing the generated DDL for the schema.</returns>
+        public byte[] Generate()
+        {
+            // The generated data is written to a memory stream using a writer.
+            MemoryStream memoryStream = new MemoryStream();
+            using (StreamWriter streamWriter = new StreamWriter(memoryStream))
+            {
+                // The tables must be written out to the DDL file so that parent tables are written out before child tables.  As tables are emitted
+                // into the DDL file, they are removed from the list.  This continues until the list of tables is empty.
+                var orderedTables = from t in this.dataModelSchema.Tables
+                                    orderby t.Name
+                                    where t.IsPersistent
+                                    select t;
+
+                // Write the tables out such that the parent tables are written before the children to prevent forward reference errors when creating
+                // the foreign indices.  As tables are emitted to the DDL, they are removed from the list until the list is empty.
+                List<TableSchema> tables = orderedTables.ToList<TableSchema>();
+                while (tables.Count > 0)
+                {
+                    foreach (TableSchema tableSchema in tables)
+                    {
+                        // This will search the tables to see if the current table has any parent dependencies that haven't been written yet.
+                        bool isParentDefined = true;
+                        foreach (RelationSchema relationSchema in tableSchema.ParentRelations)
+                        {
+                            if (tables.Contains(relationSchema.ParentTable))
+                            {
+                                isParentDefined = false;
+                                break;
+                            }
+                        }
+
+                        // If there are parent dependencies that have not yet been generated, then skip this table for now.
+                        if (!isParentDefined)
+                        {
+                            continue;
+                        }
+
+                        // The table schema is removed from the list after it is written to the stream.
+                        Tables.Generate(streamWriter, tableSchema);
+                        tables.Remove(tableSchema);
+                        break;
+                    }
+                }
+
+                // Generate the CRUD procedures (create, delete, update) for each of the tables.
+                foreach (TableSchema tableSchema in orderedTables)
+                {
+                    Procedures.Generate(streamWriter, tableSchema);
+                }
+            }
+
+            // This buffer contains the complete DDL.
+            return memoryStream.ToArray();
         }
 
         /// <summary>
@@ -118,66 +177,6 @@ namespace GammaFour.DataModelGenerator.Database
 
             // All other datatypes are assumed to be enumerations which are stored as integers.
             return "int";
-        }
-
-        /// <summary>
-        /// Generate the code from the inputs.
-        /// </summary>
-        /// <param name="dataModelSchema">The data model schema.</param>
-        /// <returns>A buffer containing the generated DDL for the schema.</returns>
-        public byte[] Generate()
-        {
-            // The generated data is written to a memory stream using a writer.
-            MemoryStream memoryStream = new MemoryStream();
-            using (StreamWriter streamWriter = new StreamWriter(memoryStream))
-            {
-                // The tables must be written out to the DDL file so that parent tables are written out before child tables.  As tables are emitted
-                // into the DDL file, they are removed from the list.  This continues until the list of tables is empty.
-                var orderedTables = from t in this.dataModelSchema.Tables
-                                    orderby t.Name
-                                    where t.IsPersistent
-                                    select t;
-
-                // Write the tables out such that the parent tables are written before the children to prevent forward reference errors when creating
-                // the foreign indices.  As tables are emitted to the DDL, they are removed from the list until the list is empty.
-                List<TableSchema> tables = orderedTables.ToList<TableSchema>();
-                while (tables.Count > 0)
-                {
-                    foreach (TableSchema tableSchema in tables)
-                    {
-                        // This will search the tables to see if the current table has any parent dependencies that haven't been written yet.
-                        bool isParentDefined = true;
-                        foreach (RelationSchema relationSchema in tableSchema.ParentRelations)
-                        {
-                            if (tables.Contains(relationSchema.ParentTable))
-                            {
-                                isParentDefined = false;
-                                break;
-                            }
-                        }
-
-                        // If there are parent dependencies that have not yet been generated, then skip this table for now.
-                        if (!isParentDefined)
-                        {
-                            continue;
-                        }
-
-                        // The table schema is removed from the list after it is written to the stream.
-                        Tables.Generate(streamWriter, tableSchema);
-                        tables.Remove(tableSchema);
-                        break;
-                    }
-                }
-
-                // Generate the CRUD procedures (create, delete, update) for each of the tables.
-                foreach (TableSchema tableSchema in orderedTables)
-                {
-                    Procedures.Generate(streamWriter, tableSchema);
-                }
-            }
-
-            // This buffer contains the complete DDL.
-            return memoryStream.ToArray();
         }
     }
 }
