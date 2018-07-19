@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{060F4FF1-EBF8-418A-A8B6-51AC9604CE3A}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Client_Compiler</RootNamespace>
+    <RootNamespace>ClientCompiler</RootNamespace>
     <AssemblyName>Client Compiler</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

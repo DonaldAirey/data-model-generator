@@ -7,7 +7,7 @@
     <ProjectGuid>{95A42F18-B84A-44D6-9919-676051D8FF2E}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DarkBond.DataModelGenerator</RootNamespace>
+    <RootNamespace>ServerCompiler</RootNamespace>
     <AssemblyName>Server Compiler</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

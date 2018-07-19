@@ -2,16 +2,14 @@
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator
+namespace PersistentStoreCompiler
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Runtime.InteropServices;
     using System.Text;
-    using GammaFour.DataModelGenerator.Common;
     using Microsoft.VisualStudio.Shell.Interop;
-    using PersistentStore;
 
     /// <summary>
     /// The command line version of the Custom Tool for generating code from a schema.

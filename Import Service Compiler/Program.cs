@@ -2,7 +2,7 @@
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator
+namespace ImportServiceCompiler
 {
     using System;
     using System.Collections.Generic;
@@ -10,7 +10,6 @@ namespace GammaFour.DataModelGenerator
     using System.IO;
     using System.Runtime.InteropServices;
     using System.Text;
-    using GammaFour.DataModelGenerator.Common;
     using Microsoft.VisualStudio.Shell.Interop;
 
     /// <summary>

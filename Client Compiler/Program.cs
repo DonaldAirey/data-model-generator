@@ -2,15 +2,13 @@
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator
+namespace ClientCompiler
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Runtime.InteropServices;
     using System.Text;
-    using GammaFour.DataModelGenerator.Client;
-    using GammaFour.DataModelGenerator.Common;
 
     /// <summary>
     /// The command line version of the Custom Tool for generating code from a schema.
