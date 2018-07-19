@@ -72,7 +72,6 @@ namespace GammaFour.DataModelGenerator.DataService
                 // namespaces from the types found therein.
                 List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>();
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Composition")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Security.Permissions")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.ServiceModel")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.ClientModel")));
