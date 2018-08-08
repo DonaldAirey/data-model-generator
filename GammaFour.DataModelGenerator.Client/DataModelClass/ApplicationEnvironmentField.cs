@@ -1,8 +1,8 @@
-// <copyright file="DataModelProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="ApplicationEnvironmentField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
+namespace GammaFour.DataModelGenerator.Client.DataModelClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,66 +12,31 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field that holds the column.
+    /// Creates a collection of readers (transactions) waiting for a read lock.
     /// </summary>
-    public class DataModelProperty : SyntaxElement
+    public class ApplicationEnvironmentField : SyntaxElement
     {
         /// <summary>
-        /// The data model schema.
+        /// Initializes a new instance of the <see cref="ApplicationEnvironmentField"/> class.
         /// </summary>
-        private DataModelSchema dataModelSchema;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DataModelProperty"/> class.
-        /// </summary>
-        /// <param name="dataModelSchema">The column schema.</param>
-        public DataModelProperty(DataModelSchema dataModelSchema)
+        public ApplicationEnvironmentField()
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
-            this.Name = "DataModel";
+            this.Name = "applicationEnvironment";
 
             //        /// <summary>
-            //        /// Gets the DataModel.
+            //        /// The environment for the application.
             //        /// </summary>
-            //        public DataModel DataModel { get; private set; }
-            this.Syntax = SyntaxFactory.PropertyDeclaration(
-                    SyntaxFactory.IdentifierName(this.dataModelSchema.Name),
-                    SyntaxFactory.Identifier(this.Name))
-                .WithAccessorList(this.AccessorList)
+            //        private IApplicationEnvironment applicationEnvironment;
+            this.Syntax = SyntaxFactory.FieldDeclaration(
+                    SyntaxFactory.VariableDeclaration(
+                        SyntaxFactory.IdentifierName("IApplicationEnvironment"))
+                    .WithVariables(
+                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                            SyntaxFactory.VariableDeclarator(
+                                SyntaxFactory.Identifier(this.Name)))))
                 .WithModifiers(this.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the list of accessors.
-        /// </summary>
-        private AccessorListSyntax AccessorList
-        {
-            get
-            {
-                return SyntaxFactory.AccessorList(
-                    SyntaxFactory.List(
-                        new AccessorDeclarationSyntax[]
-                        {
-                            this.GetAccessor,
-                            this.SetAccessor
-                        }));
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Get' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax GetAccessor
-        {
-            get
-            {
-                // get;
-                return SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                    .WithSemicolonToken(
-                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
-            }
         }
 
         /// <summary>
@@ -85,7 +50,7 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Gets the DataModel.
+                //        /// The environment for the application.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -109,7 +74,7 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Gets the data model.",
+                                                " The environment for the application.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -141,29 +106,12 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
         {
             get
             {
-                // internal
+                // private
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
                     });
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Set' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax SetAccessor
-        {
-            get
-            {
-                //            private set;
-                return SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                    .WithSemicolonToken(
-                        SyntaxFactory.Token(SyntaxKind.SemicolonToken))
-                    .WithModifiers(
-                        SyntaxFactory.TokenList(
-                            SyntaxFactory.Token(SyntaxKind.PrivateKeyword)));
             }
         }
     }

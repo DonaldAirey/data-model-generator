@@ -199,15 +199,13 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         {
             // This will create the internal instance properties.
             List<SyntaxElement> fields = new List<SyntaxElement>();
+            fields.Add(new ApplicationEnvironmentField());
             fields.Add(new BindingField());
-            fields.Add(new CommunicationExceptionHandlerField());
             fields.Add(new DataServiceClientField());
             fields.Add(new DataSetIdField());
             fields.Add(new EndpointAddressField());
             fields.Add(new IsReadingField());
-            fields.Add(new SecurityTokenField());
             fields.Add(new SequenceField());
-            fields.Add(new SynchronizationContextField());
             fields.Add(new TransactionHandlersField(this.dataModelSchema));
             fields.Add(new TransactionLogField());
             fields.Add(new TransactionLogIndexField());
@@ -318,7 +316,6 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new MergeTransactionsMethod(this.dataModelSchema));
             methods.Add(new OnChannelFaultedMethod(this.dataModelSchema));
             methods.Add(new ReadTransactionsAsyncMethod(this.dataModelSchema));
             methods.Add(new ClearMethod(this.dataModelSchema));

@@ -37,7 +37,7 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceClient
             //        /// <param name="binding">The WCF binding.</param>
             //        /// <param name="endpointAddress">The endpoint address.</param>
             //        /// <param name="securityToken">The security token.</param>
-            //        public DataServiceClient(Binding binding, EndpointAddress endpointAddress, SecurityToken securityToken) : base(binding, endpointAddress)
+            //        public DataServiceClient(Binding binding, EndpointAddress endpointAddress, string securityToken) : base(binding, endpointAddress)
             //        {
             //        }
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
@@ -314,7 +314,8 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceClient
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("securityToken"))
                     .WithType(
-                        SyntaxFactory.IdentifierName("SecurityToken")));
+                        SyntaxFactory.PredefinedType(
+                            SyntaxFactory.Token(SyntaxKind.StringKeyword))));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

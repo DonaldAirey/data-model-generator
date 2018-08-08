@@ -58,17 +58,17 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            try
+                //            while (this.IsReading)
                 //            {
-                //                <TryBlock1>
-                //            }
-                //            catch
-                //            {
+                //                <WhileIsReading>
                 //            }
                 statements.Add(
-                    SyntaxFactory.TryStatement(this.CatchClauses)
-                    .WithBlock(
-                        SyntaxFactory.Block(this.TryBlock)));
+                    SyntaxFactory.WhileStatement(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.ThisExpression(),
+                            SyntaxFactory.IdentifierName("IsReading")),
+                        SyntaxFactory.Block(this.WhileIsReading)));
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -87,15 +87,12 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
 
                 //            catch (TimeoutException)
                 //            {
-                //                new Task(() => { this.synchronizationContext.Post(ReadTransactionsAsync, null); }).Start();
                 //            }
                 clauses.Add(
                     SyntaxFactory.CatchClause()
                     .WithDeclaration(
                         SyntaxFactory.CatchDeclaration(
-                            SyntaxFactory.IdentifierName("TimeoutException")))
-                    .WithBlock(
-                        SyntaxFactory.Block(this.ReadTransactionsImmediately)));
+                            SyntaxFactory.IdentifierName("TimeoutException"))));
 
                 //            catch (CommunicationException communicationException)
                 //            {
@@ -209,34 +206,83 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                if (this.communicationExceptionHandler.HandleException(communicationException, "ReadOperation"))
-                //                {
-                //                    <ReadTransactionsLater>
-                //                }
+                //                    this.isReading = await this.applicationEnvironment.HandleExceptionAsync(communicationException, "ReadOperation");
                 statements.Add(
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.InvocationExpression(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("isReading")),
+                            SyntaxFactory.AwaitExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName("applicationEnvironment")),
+                                        SyntaxFactory.IdentifierName("HandleExceptionAsync")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                            new SyntaxNodeOrToken[]
+                                            {
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.IdentifierName("communicationException")),
+                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        SyntaxKind.StringLiteralExpression,
+                                                        SyntaxFactory.Literal("ReadOperation")))
+                                            })))))));
+
+                // This is the complete block.
+                return statements;
+            }
+        }
+
+        /// <summary>
+        /// Gets a block of code to handle an individual transaction.
+        /// </summary>
+        private List<StatementSyntax> HandleTransaction
+        {
+            get
+            {
+                // This is used to collect the statements.
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //                                this.transactionHandlers[(int)transactionItem[0]](transactionItem);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.ElementAccessExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("communicationExceptionHandler")),
-                                SyntaxFactory.IdentifierName("HandleException")))
+                                    SyntaxFactory.IdentifierName("transactionHandlers")))
+                            .WithArgumentList(
+                                SyntaxFactory.BracketedArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.CastExpression(
+                                                SyntaxFactory.PredefinedType(
+                                                    SyntaxFactory.Token(SyntaxKind.IntKeyword)),
+                                                SyntaxFactory.ElementAccessExpression(
+                                                    SyntaxFactory.IdentifierName("transactionItem"))
+                                                .WithArgumentList(
+                                                    SyntaxFactory.BracketedArgumentList(
+                                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.LiteralExpression(
+                                                                    SyntaxKind.NumericLiteralExpression,
+                                                                    SyntaxFactory.Literal(0))))))))))))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]
-                                    {
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName("communicationException")),
-                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.StringLiteralExpression,
-                                                SyntaxFactory.Literal("ReadOperation")))
-                                    }))),
-                        SyntaxFactory.Block(this.ReadTransactionsLater)));
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("transactionItem")))))));
 
                 // This is the complete block.
                 return statements;
@@ -632,22 +678,221 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                 SyntaxFactory.IdentifierName("dataSetId"))),
                         SyntaxFactory.Block(this.ClearDataModel)));
 
-                //                this.MergeTransactions(null);
+                //                    while (this.transactionLogIndex >= 0)
+                //                    {
+                //                        <WhileProcessingTransactions>
+                //                    }
                 statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
+                    SyntaxFactory.WhileStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.GreaterThanOrEqualExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("MergeTransactions")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.NullLiteralExpression)))))));
+                                SyntaxFactory.IdentifierName("transactionLogIndex")),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NumericLiteralExpression,
+                                SyntaxFactory.Literal(0))),
+                        SyntaxFactory.Block(this.WhileProcessingTransactions)));
 
                 // This is the complete block.
+                return statements;
+            }
+        }
+
+        /// <summary>
+        /// Gets a block of code to create a loop for reading.
+        /// </summary>
+        private List<StatementSyntax> WhileIsReading
+        {
+            get
+            {
+                // This list collects the statements.
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //            try
+                //            {
+                //                <TryBlock1>
+                //            }
+                //            catch
+                //            {
+                //                <CatchClauses>
+                //            }
+                statements.Add(
+                    SyntaxFactory.TryStatement(this.CatchClauses)
+                    .WithBlock(
+                        SyntaxFactory.Block(this.TryBlock)));
+
+                //                await Task.Delay(DataModel.refreshInterval);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AwaitExpression(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("Task"),
+                                    SyntaxFactory.IdentifierName("Delay")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("DataModel"),
+                                                SyntaxFactory.IdentifierName("refreshInterval")))))))));
+
+                // This is the complete statement block.
+                return statements;
+            }
+        }
+
+        /// <summary>
+        /// Gets a block of code process the transactions.
+        /// </summary>
+        private List<StatementSyntax> WhileProcessingBatch
+        {
+            get
+            {
+                // This list collects the statements.
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //                            object[] transactionItem = this.transactionLog[this.transactionLogIndex--];
+                statements.Add(
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.ArrayType(
+                                SyntaxFactory.PredefinedType(
+                                    SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
+                            .WithRankSpecifiers(
+                                SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
+                                    SyntaxFactory.ArrayRankSpecifier(
+                                        SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
+                                            SyntaxFactory.OmittedArraySizeExpression())))))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("transactionItem"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.ElementAccessExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName("transactionLog")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.BracketedArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.PostfixUnaryExpression(
+                                                            SyntaxKind.PostDecrementExpression,
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.ThisExpression(),
+                                                                SyntaxFactory.IdentifierName("transactionLogIndex")))))))))))));
+
+                //                            try
+                //                            {
+                //                                <HandleTransaction>
+                //                            }
+                //                            catch
+                //                            {
+                //                            }
+                statements.Add(
+                    SyntaxFactory.TryStatement(
+                        SyntaxFactory.SingletonList<CatchClauseSyntax>(
+                            SyntaxFactory.CatchClause()))
+                            .WithBlock(
+                        SyntaxFactory.Block(this.HandleTransaction)));
+
+                // This is the complete statement block.
+                return statements;
+            }
+        }
+
+        /// <summary>
+        /// Gets a block of code process the transactions.
+        /// </summary>
+        private List<StatementSyntax> WhileProcessingTransactions
+        {
+            get
+            {
+                // This list collects the statements.
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //                        int batchCounter = Math.Min(DataModel.batchSize, this.transactionLogIndex + 1);
+                statements.Add(
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.PredefinedType(
+                                SyntaxFactory.Token(SyntaxKind.IntKeyword)))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("batchCounter"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("Math"),
+                                                SyntaxFactory.IdentifierName("Min")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                    new SyntaxNodeOrToken[]
+                                                    {
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.IdentifierName("DataModel"),
+                                                                SyntaxFactory.IdentifierName("batchSize"))),
+                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.BinaryExpression(
+                                                                SyntaxKind.AddExpression,
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxFactory.ThisExpression(),
+                                                                    SyntaxFactory.IdentifierName("transactionLogIndex")),
+                                                                SyntaxFactory.LiteralExpression(
+                                                                    SyntaxKind.NumericLiteralExpression,
+                                                                    SyntaxFactory.Literal(1))))
+                                                    })))))))));
+
+                //                        while (batchCounter-- > 0)
+                //                        {
+                //                        }
+                statements.Add(
+                    SyntaxFactory.WhileStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.GreaterThanExpression,
+                            SyntaxFactory.PostfixUnaryExpression(
+                                SyntaxKind.PostDecrementExpression,
+                                SyntaxFactory.IdentifierName("batchCounter")),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NumericLiteralExpression,
+                                SyntaxFactory.Literal(0))),
+                        SyntaxFactory.Block(this.WhileProcessingBatch)));
+
+                //                        await Task.Delay(DataModel.courtesyInterval);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AwaitExpression(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("Task"),
+                                    SyntaxFactory.IdentifierName("Delay")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("DataModel"),
+                                                SyntaxFactory.IdentifierName("courtesyInterval")))))))));
+
+                // This is the complete statement block.
                 return statements;
             }
         }

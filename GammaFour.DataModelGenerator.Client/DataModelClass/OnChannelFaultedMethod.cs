@@ -59,7 +59,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            this.dataServiceClient = new DataServiceClient(this.binding, this.endpointAddress, this.securityToken);
+                //            this.dataServiceClient = new DataServiceClient(this.binding, this.endpointAddress, this.applicationEnvironment.SecurityToken);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
@@ -90,8 +90,11 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName("securityToken")))
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName("applicationEnvironment")),
+                                                    SyntaxFactory.IdentifierName("SecurityToken")))
                                         }))))));
 
                 //            this.dataServiceClient.InnerChannel.Faulted += this.OnChannelFaulted;
