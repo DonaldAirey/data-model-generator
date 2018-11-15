@@ -25,11 +25,7 @@ namespace ClientCompiler
         /// <summary>
         /// Gets the Site.
         /// </summary>
-        public object Site
-        {
-            get;
-            private set;
-        }
+        public object Site { get; private set; }
 
         /// <summary>
         /// Gets the default extension for the selected code generator.
@@ -70,10 +66,10 @@ namespace ClientCompiler
             }
 
             // This schema describes the data model that is to be generated.
-            DataModelSchema dataModelSchema = new DataModelSchema(bstrInputFileContents, wszDefaultNamespace);
+            XmlSchemaDocument xmlSchemaDocument = new XmlSchemaDocument(bstrInputFileContents, wszDefaultNamespace);
 
             // This creates the compilation unit from the schema.
-            CompilationUnit compilationUnit = new CompilationUnit(dataModelSchema);
+            CompilationUnit compilationUnit = new CompilationUnit(xmlSchemaDocument);
 
             // A workspace is needed in order to turn the compilation unit into code.
             AdhocWorkspace adhocWorkspace = new AdhocWorkspace();

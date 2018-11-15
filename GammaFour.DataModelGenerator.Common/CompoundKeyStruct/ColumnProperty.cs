@@ -19,26 +19,26 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private ColumnSchema columnSchema;
+        private ColumnElement columnElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ColumnProperty"/> class.
         /// </summary>
-        /// <param name="columnSchema">The column schema.</param>
-        public ColumnProperty(ColumnSchema columnSchema)
+        /// <param name="columnElement">The column schema.</param>
+        public ColumnProperty(ColumnElement columnElement)
         {
             // Initialize the object.
-            this.columnSchema = columnSchema;
+            this.columnElement = columnElement;
 
             // This is the name of the property.
-            this.Name = columnSchema.Name;
+            this.Name = columnElement.Name;
 
             //        /// <summary>
             //        /// Gets the DataModel.
             //        /// </summary>
             //        public DataModel DataModel { get; private set; }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                Conversions.FromType(this.columnSchema.Type),
+                Conversions.FromType(this.columnElement.Type),
                 SyntaxFactory.Identifier(this.Name))
                 .WithAccessorList(this.AccessorList)
                 .WithModifiers(this.Modifiers)
@@ -114,7 +114,7 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
                                                 string.Format(
                                                     CultureInfo.InvariantCulture,
                                                     " Gets the {0}.",
-                                                    this.columnSchema.Name),
+                                                    this.columnElement.Name),
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

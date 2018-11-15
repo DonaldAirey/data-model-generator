@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MergeTransactionsMethod"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The data model schema.</param>
-        public MergeTransactionsMethod(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The data model schema.</param>
+        public MergeTransactionsMethod(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "MergeTransactions";
 
             //        /// <summary>
@@ -127,7 +127,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                 SyntaxFactory.IdentifierName("batchCounter")),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.dataModelSchema.Name),
+                                SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name),
                                 SyntaxFactory.IdentifierName("batchSize"))),
                         SyntaxFactory.Block(this.MergeBatchBlock)));
 
@@ -158,7 +158,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                                             SyntaxFactory.Argument(
                                                                                 SyntaxFactory.MemberAccessExpression(
                                                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                                                    SyntaxFactory.IdentifierName("DataModel"),
+                                                                                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name),
                                                                                     SyntaxFactory.IdentifierName("courtesyInterval")))))))),
                                                         SyntaxFactory.ExpressionStatement(
                                                             SyntaxFactory.InvocationExpression(
@@ -463,7 +463,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                                             SyntaxFactory.Argument(
                                                                                 SyntaxFactory.MemberAccessExpression(
                                                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                                                    SyntaxFactory.IdentifierName("DataModel"),
+                                                                                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name),
                                                                                     SyntaxFactory.IdentifierName("refreshInterval")))))))),
                                                         SyntaxFactory.ExpressionStatement(
                                                             SyntaxFactory.InvocationExpression(

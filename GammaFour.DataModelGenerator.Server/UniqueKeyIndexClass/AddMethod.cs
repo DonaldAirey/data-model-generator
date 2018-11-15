@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private UniqueConstraintSchema uniqueConstraintSchema;
+        private UniqueKeyElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AddMethod"/> class.
         /// </summary>
-        /// <param name="uniqueConstraintSchema">The unique constraint schema.</param>
-        public AddMethod(UniqueConstraintSchema uniqueConstraintSchema)
+        /// <param name="uniqueKeyElement">The unique constraint schema.</param>
+        public AddMethod(UniqueKeyElement uniqueKeyElement)
         {
             // Initialize the object.
-            this.uniqueConstraintSchema = uniqueConstraintSchema;
+            this.uniqueKeyElement = uniqueKeyElement;
             this.Name = "Add";
 
             //        /// <summary>
@@ -83,7 +83,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                             SyntaxFactory.AttributeArgument(
                                                 SyntaxFactory.LiteralExpression(
                                                     SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal(this.uniqueConstraintSchema.Name)))
+                                                    SyntaxFactory.Literal(this.uniqueKeyElement.Name)))
                                             .WithNameEquals(SyntaxFactory.NameEquals(SyntaxFactory.IdentifierName("MessageId"))),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.AttributeArgument(
@@ -121,10 +121,10 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName("IsWriterLockHeld"))),
                         SyntaxFactory.Block(
-                            ThrowLockException.GetSyntax(this.uniqueConstraintSchema.Name + " index is not locked."))));
+                            ThrowLockException.GetSyntax(this.uniqueKeyElement.Name + " index is not locked."))));
 
                 // Keys with a single element are optimized so they don't need to use a compound key to access the dictionary.
-                if (this.uniqueConstraintSchema.Columns.Count == 1)
+                if (this.uniqueKeyElement.Columns.Count == 1)
                 {
                     //            if (this.dictionary.ContainsKey(configurationKey))
                     //            {
@@ -144,9 +144,9 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Columns[0].CamelCaseName))))),
+                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Columns[0].Column.Name.ToCamelCase()))))),
                             SyntaxFactory.Block(
-                                ThrowDuplicateKeyException.GetSyntax(this.uniqueConstraintSchema, this.uniqueConstraintSchema.Columns))));
+                                ThrowDuplicateKeyException.GetSyntax(this.uniqueKeyElement, this.uniqueKeyElement.Columns))));
 
                     //            this.dictionary.Add(keyExternalId0, configurationRow);
                     statements.Add(
@@ -165,34 +165,35 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                         new SyntaxNodeOrToken[]
                                         {
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Columns[0].CamelCaseName)),
+                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Columns[0].Column.Name.ToCamelCase())),
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Table.CamelCaseName + "Row"))
+                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase() + "Row"))
                                         })))));
                 }
                 else
                 {
                     // Constructing a compound key requires the key elements.
                     List<ArgumentSyntax> arguments = new List<ArgumentSyntax>();
-                    foreach (ColumnSchema columnSchema in this.uniqueConstraintSchema.Columns)
+                    foreach (ColumnReferenceElement columnReferenceElement in this.uniqueKeyElement.Columns)
                     {
-                        arguments.Add(SyntaxFactory.Argument(SyntaxFactory.IdentifierName(columnSchema.CamelCaseName)));
+                        ColumnElement columnElement = columnReferenceElement.Column;
+                        arguments.Add(SyntaxFactory.Argument(SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase())));
                     }
 
                     //            ConfigurationKeySet configurationKeySet = new ConfigurationKeySet(configurationIdKey, sourceKey);
                     statements.Add(
                         SyntaxFactory.LocalDeclarationStatement(
                             SyntaxFactory.VariableDeclaration(
-                                SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Name + "Set"))
+                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name + "Set"))
                             .WithVariables(
                                 SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                     SyntaxFactory.VariableDeclarator(
-                                        SyntaxFactory.Identifier(this.uniqueConstraintSchema.CamelCaseName + "Set"))
+                                        SyntaxFactory.Identifier(this.uniqueKeyElement.Name.ToCamelCase() + "Set"))
                                     .WithInitializer(
                                         SyntaxFactory.EqualsValueClause(
                                             SyntaxFactory.ObjectCreationExpression(
-                                                SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Name + "Set"))
+                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name + "Set"))
                                             .WithArgumentList(
                                                 SyntaxFactory.ArgumentList(
                                                     SyntaxFactory.SeparatedList<ArgumentSyntax>(arguments)))))))));
@@ -215,9 +216,9 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.CamelCaseName + "Set"))))),
+                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name.ToCamelCase() + "Set"))))),
                             SyntaxFactory.Block(
-                                ThrowDuplicateKeyException.GetSyntax(this.uniqueConstraintSchema, this.uniqueConstraintSchema.Columns))));
+                                ThrowDuplicateKeyException.GetSyntax(this.uniqueKeyElement, this.uniqueKeyElement.Columns))));
 
                     //            this.dictionary.Add(configurationKey, configurationRow);
                     statements.Add(
@@ -236,10 +237,10 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                         new SyntaxNodeOrToken[]
                                         {
                                             SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.CamelCaseName + "Set")),
+                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name.ToCamelCase() + "Set")),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Table.CamelCaseName + "Row"))
+                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase() + "Row"))
                                         })))));
                 }
 
@@ -304,10 +305,11 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                         }))))));
 
                 // Add a comment for each of the key parameters.
-                foreach (ColumnSchema columnSchema in this.uniqueConstraintSchema.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.uniqueKeyElement.Columns)
                 {
                     //        /// <param name="configurationId">The ConfigurationId key element.</param>
-                    string description = "The " + columnSchema.Name + " key element.";
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    string description = "The " + columnElement.Name + " key element.";
                     comments.Add(
                         SyntaxFactory.Trivia(
                             SyntaxFactory.DocumentationCommentTrivia(
@@ -320,7 +322,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                                 {
                                                     SyntaxFactory.XmlTextLiteral(
                                                         SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                        " <param name=\"" + columnSchema.CamelCaseName + "\">" + description + "</param>",
+                                                        " <param name=\"" + columnElement.Name.ToCamelCase() + "\">" + description + "</param>",
                                                         string.Empty,
                                                         SyntaxFactory.TriviaList()),
                                                     SyntaxFactory.XmlTextNewLine(
@@ -344,7 +346,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    " <param name=\"" + this.uniqueConstraintSchema.Table.CamelCaseName + "Row\">The <see cref=\"" + this.uniqueConstraintSchema.Table.Name + "Row\"/> to be added to the index.</param>",
+                                                    " <param name=\"" + this.uniqueKeyElement.Table.Name.ToCamelCase() + "Row\">The <see cref=\"" + this.uniqueKeyElement.Table.Name + "Row\"/> to be added to the index.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -384,20 +386,21 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
             {
                 // string keyConfigurationId, string keySource
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-                foreach (ColumnSchema columnSchema in this.uniqueConstraintSchema.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.uniqueKeyElement.Columns)
                 {
                     // Add the next element of the primary key.
+                    ColumnElement columnElement = columnReferenceElement.Column;
                     parameters.Add(
                             SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier(columnSchema.CamelCaseName))
-                        .WithType(Conversions.FromType(columnSchema.Type)));
+                            SyntaxFactory.Identifier(columnElement.Name.ToCamelCase()))
+                        .WithType(Conversions.FromType(columnElement.Type)));
                 }
 
                 // , CountryRow countryRow
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(this.uniqueConstraintSchema.Table.CamelCaseName + "Row"))
-                        .WithType(SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Table.Name + "Row")));
+                        SyntaxFactory.Identifier(this.uniqueKeyElement.Table.Name.ToCamelCase() + "Row"))
+                        .WithType(SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name + "Row")));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

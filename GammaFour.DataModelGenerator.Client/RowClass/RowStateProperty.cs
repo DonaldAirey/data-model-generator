@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RowStateProperty"/> class.
         /// </summary>
-        /// <param name="tableSchema">The column schema.</param>
-        public RowStateProperty(TableSchema tableSchema)
+        /// <param name="tableElement">The column schema.</param>
+        public RowStateProperty(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
 
             // This is the name of the field.
             this.Name = "RowState";

@@ -19,22 +19,22 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private RelationSchema relationSchema;
+        private ForeignKeyElement foreignKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RelationChangedEvent"/> class.
         /// </summary>
-        /// <param name="relationSchema">The table schema.</param>
-        public RelationChangedEvent(RelationSchema relationSchema)
+        /// <param name="foreignKeyElement">The table schema.</param>
+        public RelationChangedEvent(ForeignKeyElement foreignKeyElement)
         {
             // Initialize the object.
-            this.relationSchema = relationSchema;
+            this.foreignKeyElement = foreignKeyElement;
             this.Name = "RelationChanged";
 
             // Evaluate the argument to the generic type declaration for the event handler.
-            TypeSyntax genericTypeArgument = this.relationSchema.ParentKeyConstraint.Columns.Count > 1 ?
-                SyntaxFactory.IdentifierName(this.relationSchema.ParentKeyConstraint.Name + "Set") :
-                Conversions.FromType(this.relationSchema.ParentKeyConstraint.Columns[0].Type);
+            TypeSyntax genericTypeArgument = this.foreignKeyElement.UniqueKey.Columns.Count > 1 ?
+                SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Name + "Set") :
+                Conversions.FromType(this.foreignKeyElement.UniqueKey.Columns[0].Column.Type);
 
             //        /// <summary>
             //        /// Handles a change to the relation between parent and child.

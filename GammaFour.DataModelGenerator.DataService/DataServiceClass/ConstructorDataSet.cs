@@ -30,19 +30,19 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstructorDataSet"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The table schema.</param>
-        public ConstructorDataSet(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The table schema.</param>
+        public ConstructorDataSet(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "DataService";
-            this.dataModelName = this.dataModelSchema.CamelCaseName;
-            this.dataModelType = this.dataModelSchema.Name;
+            this.dataModelName = this.xmlSchemaDocument.Name.ToCamelCase();
+            this.dataModelType = this.xmlSchemaDocument.Name;
 
             //        /// <summary>
             //        /// Initializes a new instance of the <see cref="DataModelService"/> class.
@@ -76,8 +76,8 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("dataModel")),
-                            SyntaxFactory.IdentifierName("dataModel"))));
+                                SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToCamelCase())),
+                            SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToCamelCase()))));
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -155,7 +155,7 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    " <param name=\"dataModel\">The data model.</param>",
+                                                    $" <param name=\"{this.xmlSchemaDocument.Name.ToCamelCase()}\">The data model.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(

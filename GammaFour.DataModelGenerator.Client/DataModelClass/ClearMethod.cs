@@ -20,16 +20,16 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ClearMethod"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The data model schema.</param>
-        public ClearMethod(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The data model schema.</param>
+        public ClearMethod(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "Clear";
 
             //        /// <summary>
@@ -58,9 +58,27 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 // Clear out each of the tables.
-                foreach (TableSchema tableSchema in this.dataModelSchema.Tables.OrderBy(t => t.Name))
+                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables.OrderBy(t => t.Name))
                 {
-                        //                    this.Configuration.Clear();
+                    //                    this.Configuration.Clear();
+                    statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName(tableElement.Name)),
+                                SyntaxFactory.IdentifierName("Clear")))));
+                }
+
+                // Initialize each of the unique keys.
+                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
+                {
+                    foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
+                    {
+                        //            this.ConfigurationKey.Clear();
                         statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.InvocationExpression(
@@ -69,35 +87,13 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(tableSchema.Name)),
+                                        SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
                                     SyntaxFactory.IdentifierName("Clear")))));
-                }
-
-                // Initialize each of the (non-primary key) unique keys.
-                foreach (TableSchema tableSchema in this.dataModelSchema.Tables.OrderBy(t => t.Name))
-                {
-                    foreach (ConstraintSchema constraintSchema in tableSchema.Constraints.OrderBy(c => c.Name))
-                    {
-                        UniqueConstraintSchema uniqueConstraintSchema = constraintSchema as UniqueConstraintSchema;
-                        if (uniqueConstraintSchema != null)
-                        {
-                            //            this.ConfigurationKey.Clear();
-                            statements.Add(
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(uniqueConstraintSchema.Name)),
-                                        SyntaxFactory.IdentifierName("Clear")))));
-                        }
                     }
                 }
 
                 // This will initialize each of the foreign relations.
-                foreach (RelationSchema relationSchema in this.dataModelSchema.Relations.OrderBy(r => r.ParentTable.Name))
+                foreach (ForeignKeyElement foreignKeyElement in this.xmlSchemaDocument.ForeignKeys)
                 {
                     //            this.CountryCustomerCountryIdKey.Clear();
                     statements.Add(
@@ -108,7 +104,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(relationSchema.Name)),
+                                    SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
                                 SyntaxFactory.IdentifierName("Clear")))));
                 }
 

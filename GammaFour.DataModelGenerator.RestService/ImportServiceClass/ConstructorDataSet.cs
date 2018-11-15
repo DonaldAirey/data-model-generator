@@ -2,7 +2,7 @@
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
+namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 {
     using System;
     using System.Collections.Generic;
@@ -30,22 +30,22 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstructorDataSet"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The table schema.</param>
-        public ConstructorDataSet(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The table schema.</param>
+        public ConstructorDataSet(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
-            this.Name = "ImportService";
-            this.dataModelName = this.dataModelSchema.CamelCaseName;
-            this.dataModelType = this.dataModelSchema.Name;
+            this.xmlSchemaDocument = xmlSchemaDocument;
+            this.Name = "RestService";
+            this.dataModelName = this.xmlSchemaDocument.Name.ToCamelCase();
+            this.dataModelType = this.xmlSchemaDocument.Name;
 
             //        /// <summary>
-            //        /// Initializes a new instance of the <see cref="ImportService"/> class.
+            //        /// Initializes a new instance of the <see cref="RestService"/> class.
             //        /// </summary>
             //        public DataModelService()
             //        {
@@ -76,8 +76,8 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("dataModel")),
-                            SyntaxFactory.IdentifierName("dataModel"))));
+                                SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToCamelCase())),
+                            SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToCamelCase()))));
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -95,7 +95,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Initializes a new instance of the <see cref="ImportService"/> class.
+                //        /// Initializes a new instance of the <see cref="RestService"/> class.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -155,7 +155,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    " <param name=\"dataModel\">The data model.</param>",
+                                                    $" <param name=\"{this.xmlSchemaDocument.Name.ToCamelCase()}\">The data model.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(

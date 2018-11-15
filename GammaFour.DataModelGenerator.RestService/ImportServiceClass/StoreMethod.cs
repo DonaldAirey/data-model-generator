@@ -2,7 +2,7 @@
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
+namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 {
     using System;
     using System.Collections.Generic;
@@ -21,17 +21,23 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
+
+        /// <summary>
+        /// The table schema.
+        /// </summary>
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StoreMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public StoreMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public StoreMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
-            this.Name = "Store" + tableSchema.Name;
+            this.tableElement = tableElement;
+            this.xmlSchemaDocument = this.tableElement.XmlSchemaDocument;
+            this.Name = "Store" + tableElement.Name;
 
             //        /// <summary>
             //        /// Create a record in the Province table.
@@ -158,11 +164,11 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 // Check for a key to resolve any of the parent tables.
-                foreach (RelationSchema relationSchema in this.tableSchema.ParentRelations)
+                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
                 {
-                    if (!relationSchema.ChildKeyConstraint.IsNullable)
+                    if (!foreignKeyElement.IsNullable)
                     {
-                        statements.Add(CheckNullArgument.GetSyntax(relationSchema.UniqueParentName));
+                        statements.Add(CheckNullArgument.GetSyntax(foreignKeyElement.UniqueParentName));
                     }
                 }
 
@@ -281,9 +287,10 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 // This will provide a default value for any auto-generated identifiers.
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
-                    if (columnSchema.Type == typeof(Guid))
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    if (columnElement.Type == typeof(Guid))
                     {
                         //                if (customerIdParsed == default(Guid))
                         //                {
@@ -293,10 +300,10 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                             SyntaxFactory.IfStatement(
                                 SyntaxFactory.BinaryExpression(
                                     SyntaxKind.EqualsExpression,
-                                    SyntaxFactory.IdentifierName(columnSchema.CamelCaseName + "Parsed"),
+                                    SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase() + "Parsed"),
                                     SyntaxFactory.DefaultExpression(
                                         SyntaxFactory.IdentifierName("Guid"))),
-                                SyntaxFactory.Block(this.GenerateGuid(columnSchema))));
+                                SyntaxFactory.Block(this.GenerateGuid(columnElement))));
                     }
                 }
 
@@ -305,25 +312,25 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
 
                 // Add a argument for each of the columns in the table except the row version.  Use the parsed version for any data types that are
                 // not strings.
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
                     // Columns that are either natively strings, or extracted from parent relations, are not parsed and the variable names are not
                     // decorated.
-                    bool isParsed = columnSchema.Type != typeof(string);
-                    foreach (RelationSchema relationSchema in this.tableSchema.ParentRelations)
+                    bool isParsed = columnElement.Type != typeof(string);
+                    foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
                     {
-                        foreach (ColumnSchema childColumnSchema in relationSchema.ChildColumns)
+                        foreach (ColumnReferenceElement columnReference in foreignKeyElement.Columns)
                         {
-                            if (columnSchema == childColumnSchema)
+                            if (columnElement == columnReference.Column)
                             {
                                 isParsed = false;
                             }
                         }
                     }
 
-                    if (!columnSchema.IsRowVersion)
+                    if (!columnElement.IsRowVersion)
                     {
-                        string identifier = columnSchema.CamelCaseName;
+                        string identifier = columnElement.Name.ToCamelCase();
                         arguments.Add(
                             new KeyValuePair<string, ArgumentSyntax>(
                                 identifier,
@@ -341,8 +348,8 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("dataModel")),
-                                SyntaxFactory.IdentifierName("Create" + this.tableSchema.Name)))
+                                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToCamelCase())),
+                                SyntaxFactory.IdentifierName("Create" + this.tableElement.Name)))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(
@@ -388,7 +395,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Stores a record in the " + this.tableSchema.Name + " table.",
+                                                " Stores a record in the " + this.tableElement.Name + " table.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -412,7 +419,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 List<KeyValuePair<string, SyntaxTrivia>> parameterTrivia = new List<KeyValuePair<string, SyntaxTrivia>>();
 
                 //        /// <param name="configurationId">Selects a configuration of unique indices used to resolve external identifiers.</param>
-                if (this.tableSchema.Name != "Configuration")
+                if (this.tableElement.Name != "Configuration")
                 {
                     string configurationIdentifier = "configurationId";
                     string configurationDescription = "Selects a configuration of unique indices used to resolve external identifiers.";
@@ -445,8 +452,8 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 // types depending on the requirements of the index specified by the 'configurationId' parameter.  The choice of index will determine
                 // which of the unique indices is used to find the record.  We might want to use 'externalId0' for an import an identity from one
                 // vendor and 'externalId2' import an identity from a second vendor.
-                string primaryKeyIdentifier = this.tableSchema.CamelCaseName + "Key";
-                string primaryKeyDescription = "A required unique key for the " + this.tableSchema.Name + " record.";
+                string primaryKeyIdentifier = this.tableElement.Name.ToCamelCase() + "Key";
+                string primaryKeyDescription = "A required unique key for the " + this.tableElement.Name + " record.";
                 parameterTrivia.Add(
                     new KeyValuePair<string, SyntaxTrivia>(
                         primaryKeyIdentifier,
@@ -472,31 +479,31 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                                                 })))))));
 
                 // Add a parameter for each of the parent tables referenced by foreign keys.
-                foreach (RelationSchema relationSchema in this.tableSchema.ParentRelations)
+                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
                 {
                     string uniqueKeyDescription = default(string);
-                    if (relationSchema.IsDistinctPathToParent)
+                    if (foreignKeyElement.IsDistinctPathToParent)
                     {
-                        uniqueKeyDescription = relationSchema.ChildKeyConstraint.IsNullable ?
-                            "An optional unique key for the parent " + relationSchema.ParentTable.Name + " record." :
-                            "A required unique key for the parent " + relationSchema.ParentTable.Name + " record.";
+                        uniqueKeyDescription = foreignKeyElement.IsNullable ?
+                            "An optional unique key for the parent " + foreignKeyElement.UniqueKey.Table.Name + " record." :
+                            "A required unique key for the parent " + foreignKeyElement.UniqueKey.Table.Name + " record.";
                     }
                     else
                     {
-                        string parentTableDescription = relationSchema.ParentTable.CamelCaseName + " using";
-                        foreach (ColumnSchema columnSchema in relationSchema.ChildColumns)
+                        string parentTableDescription = foreignKeyElement.UniqueKey.Table.Name.ToCamelCase() + " using";
+                        foreach (ColumnReferenceElement columnReferenceElement in foreignKeyElement.UniqueKey.Columns)
                         {
-                            parentTableDescription += " " + columnSchema.Name;
+                            parentTableDescription += " " + columnReferenceElement.Column.Name;
                         }
 
-                        uniqueKeyDescription = relationSchema.ChildKeyConstraint.IsNullable ?
+                        uniqueKeyDescription = foreignKeyElement.IsNullable ?
                             "An optional unique key for the parent " + parentTableDescription + " record." :
                             "A required unique key for the parent " + parentTableDescription + " record.";
                     }
 
                     parameterTrivia.Add(
                         new KeyValuePair<string, SyntaxTrivia>(
-                            relationSchema.UniqueParentName,
+                            foreignKeyElement.UniqueParentName,
                             SyntaxFactory.Trivia(
                                 SyntaxFactory.DocumentationCommentTrivia(
                                     SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -508,7 +515,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                                                     {
                                                         SyntaxFactory.XmlTextLiteral(
                                                             SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                            " <param name=\"" + relationSchema.UniqueParentName + "\">" + uniqueKeyDescription + "</param>",
+                                                            " <param name=\"" + foreignKeyElement.UniqueParentName + "\">" + uniqueKeyDescription + "</param>",
                                                             string.Empty,
                                                             SyntaxFactory.TriviaList()),
                                                         SyntaxFactory.XmlTextNewLine(
@@ -520,15 +527,15 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 }
 
                 // A parameter is needed for each column in the table.
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
-                    if (!columnSchema.IsRowVersion && !columnSchema.IsInParentKey)
+                    if (!columnElement.IsRowVersion && !columnElement.IsInParentKey)
                     {
                         //        /// <param name="configurationId">The optional value for the ConfigurationId column.</param>
-                        string identifier = columnSchema.CamelCaseName;
-                        string description = columnSchema.IsNullable ?
-                            "The required value for the " + columnSchema.CamelCaseName + " column." :
-                            "The optional value for the " + columnSchema.CamelCaseName + " column.";
+                        string identifier = columnElement.Name.ToCamelCase();
+                        string description = columnElement.IsNullable ?
+                            "The required value for the " + columnElement.Name.ToCamelCase() + " column." :
+                            "The optional value for the " + columnElement.Name.ToCamelCase() + " column.";
                         parameterTrivia.Add(
                             new KeyValuePair<string, SyntaxTrivia>(
                                 identifier,
@@ -593,7 +600,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 // types depending on the requirements of the index specified by the 'configurationId' parameter.  The choice of index will determine
                 // which of the unique indices is used to find the record.  We might want to use 'externalId0' for an import an identity from one
                 // vendor and 'externalId2' import an identity from a second vendor.
-                string uniqueKeyIdentifier = this.tableSchema.CamelCaseName + "Key";
+                string uniqueKeyIdentifier = this.tableElement.Name.ToCamelCase() + "Key";
                 parameterPairs.Add(
                     new KeyValuePair<string, ParameterSyntax>(
                         uniqueKeyIdentifier,
@@ -610,19 +617,19 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                                             SyntaxFactory.OmittedArraySizeExpression())))))));
 
                 // Add a parameter for each of the parent tables referenced by foreign keys.
-                foreach (RelationSchema relationSchema in this.tableSchema.ParentRelations)
+                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
                 {
                     string parentIdentifier = default(string);
-                    if (relationSchema.IsDistinctPathToParent)
+                    if (foreignKeyElement.IsDistinctPathToParent)
                     {
-                        parentIdentifier = relationSchema.ParentTable.CamelCaseName + "Key";
+                        parentIdentifier = foreignKeyElement.UniqueKey.Table.Name.ToCamelCase() + "Key";
                     }
                     else
                     {
-                        parentIdentifier = relationSchema.ParentTable.CamelCaseName + "By";
-                        foreach (ColumnSchema columnSchema in relationSchema.ChildColumns)
+                        parentIdentifier = foreignKeyElement.UniqueKey.Table.Name.ToCamelCase() + "By";
+                        foreach (ColumnReferenceElement columnReferenceElement in foreignKeyElement.Columns)
                         {
-                            parentIdentifier += columnSchema.Name;
+                            parentIdentifier += columnReferenceElement.Column.Name;
                         }
 
                         parentIdentifier += "Key";
@@ -648,11 +655,11 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
 
                 // Add a parameter for each of the columns in the table that is not part of a parent key (which are provided when we find the parent
                 // record) or the row version (which is not provided for import functions because we bypass the concurrency checking).
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
-                    if (!columnSchema.IsRowVersion && !columnSchema.IsInParentKey)
+                    if (!columnElement.IsRowVersion && !columnElement.IsInParentKey)
                     {
-                        string identifier = columnSchema.CamelCaseName;
+                        string identifier = columnElement.Name.ToCamelCase();
                         parameterPairs.Add(
                             new KeyValuePair<string, ParameterSyntax>(
                                 identifier,
@@ -666,7 +673,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
 
                 // Every table except for the Configuration table uses a 'configurationId' to identify a set of indices that will be used for
                 // resolving external identifiers.
-                if (this.tableSchema.Name != "Configuration")
+                if (this.tableElement.Name != "Configuration")
                 {
                     string identifier = "configurationId";
                     parameterPairs.Add(
@@ -699,33 +706,33 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 // The function of the import is to take data from external systems.  Being external systems, the only guaranteed, common encoding
                 // for data is strings.  So we're going to convert all the strings that are destined for columns having native data types (other than
                 // strings) and parse them.
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
-                    if (!columnSchema.IsRowVersion && !columnSchema.IsInParentKey)
+                    if (!columnElement.IsRowVersion && !columnElement.IsInParentKey)
                     {
-                        if (columnSchema.Type != typeof(string))
+                        if (columnElement.Type != typeof(string))
                         {
                             statements.Add(
                                 SyntaxFactory.LocalDeclarationStatement(
-                                    SyntaxFactory.VariableDeclaration(Conversions.FromType(columnSchema.Type))
+                                    SyntaxFactory.VariableDeclaration(Conversions.FromType(columnElement.Type))
                                     .WithVariables(
                                         SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                             SyntaxFactory.VariableDeclarator(
-                                                SyntaxFactory.Identifier(columnSchema.CamelCaseName + "Parsed"))
+                                                SyntaxFactory.Identifier(columnElement.Name.ToCamelCase() + "Parsed"))
                                             .WithInitializer(
                                                 SyntaxFactory.EqualsValueClause(
                                                     Conversions.CreateConditionalParseExpression(
-                                                        SyntaxFactory.IdentifierName(columnSchema.CamelCaseName),
-                                                        columnSchema.Type)))))));
+                                                        SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase()),
+                                                        columnElement.Type)))))));
                         }
                     }
                 }
 
                 // This will resolve the external identifiers that relate to foreign tables.  The main idea is to map elements from foreign rows into
                 // parameters that can be used to call the internal methods.
-                foreach (RelationSchema relationSchema in this.tableSchema.ParentRelations)
+                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
                 {
-                    statements.AddRange(new ResolveForeignKey(relationSchema));
+                    statements.AddRange(new ResolveForeignKey(foreignKeyElement));
                 }
 
                 //            long rowVersion = default(long);
@@ -763,7 +770,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 // the values that will uniquely identify them and placed those values in variables.  Now we need to find the target record (for an
                 // update) or determine that it doesn't exist (for an insert).  This will find the record using a method similar to the parent
                 // records: use the configuration and a generic array of values to create a key.
-                statements.AddRange(new ResolveUniqueKey(this.tableSchema, true));
+                statements.AddRange(new ResolveUniqueKey(this.tableElement, true));
 
                 //            if (isFound)
                 //            {
@@ -800,9 +807,10 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 // the new key.  Since this is a rare case and we don't want to bugger up the incoming parameter list with an old and new key each
                 // time, we assume that the unique key used to find the record is the same as the updated value for the key (unless the updated value
                 // for the key is explicitly provided).
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
-                    if (columnSchema.Type == typeof(Guid))
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    if (columnElement.Type == typeof(Guid))
                     {
                         //                if (customerIdParsed == default(Guid))
                         //                {
@@ -812,10 +820,10 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                             SyntaxFactory.IfStatement(
                                 SyntaxFactory.BinaryExpression(
                                     SyntaxKind.EqualsExpression,
-                                    SyntaxFactory.IdentifierName(columnSchema.CamelCaseName + "Parsed"),
+                                    SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase() + "Parsed"),
                                     SyntaxFactory.DefaultExpression(
                                         SyntaxFactory.IdentifierName("Guid"))),
-                                SyntaxFactory.Block(this.AssignImpliedGuid(columnSchema))));
+                                SyntaxFactory.Block(this.AssignImpliedGuid(columnElement))));
                     }
                 }
 
@@ -823,9 +831,10 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 List<KeyValuePair<string, ArgumentSyntax>> arguments = new List<KeyValuePair<string, ArgumentSyntax>>();
 
                 // Add an argument for each member of the key that uniquely identifies the target record.
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
-                    string identifier = columnSchema.CamelCaseName + "Key";
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    string identifier = columnElement.Name.ToCamelCase() + "Key";
                     arguments.Add(
                         new KeyValuePair<string, ArgumentSyntax>(
                             identifier,
@@ -835,23 +844,23 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
 
                 // Add a argument for each of the columns in the table except the row version.  Use the parsed version for any data types that are
                 // not strings.
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
                     // Columns that are either natively strings, or extracted from parent relations, are not parsed and the variable names are not
                     // decorated.
-                    bool isParsed = !columnSchema.IsRowVersion && columnSchema.Type != typeof(string);
-                    foreach (RelationSchema relationSchema in this.tableSchema.ParentRelations)
+                    bool isParsed = !columnElement.IsRowVersion && columnElement.Type != typeof(string);
+                    foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
                     {
-                        foreach (ColumnSchema childColumnSchema in relationSchema.ChildColumns)
+                        foreach (ColumnReferenceElement childColumnReferenceElement in foreignKeyElement.Columns)
                         {
-                            if (columnSchema == childColumnSchema)
+                            if (columnElement == childColumnReferenceElement.Column)
                             {
                                 isParsed = false;
                             }
                         }
                     }
 
-                    string identifier = columnSchema.CamelCaseName;
+                    string identifier = columnElement.Name.ToCamelCase();
                     arguments.Add(
                         new KeyValuePair<string, ArgumentSyntax>(
                             identifier,
@@ -868,8 +877,8 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("dataModel")),
-                                SyntaxFactory.IdentifierName("Update" + this.tableSchema.Name)))
+                                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToCamelCase())),
+                                SyntaxFactory.IdentifierName("Update" + this.tableElement.Name)))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(
@@ -883,9 +892,9 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="columnSchema">The column schema.</param>
+        /// <param name="columnElement">The column schema.</param>
         /// <returns>A block of code that generates a <see cref="Guid"/> for a unique identifier.</returns>
-        private List<StatementSyntax> AssignImpliedGuid(ColumnSchema columnSchema)
+        private List<StatementSyntax> AssignImpliedGuid(ColumnElement columnElement)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -895,8 +904,8 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AssignmentExpression(
                         SyntaxKind.SimpleAssignmentExpression,
-                        SyntaxFactory.IdentifierName(columnSchema.CamelCaseName + "Parsed"),
-                        SyntaxFactory.IdentifierName(columnSchema.CamelCaseName + "Key"))));
+                        SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase() + "Parsed"),
+                        SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase() + "Key"))));
 
             // This is the complete block.
             return statements;
@@ -905,9 +914,9 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="columnSchema">The column schema.</param>
+        /// <param name="columnElement">The column schema.</param>
         /// <returns>A block of code that generates a <see cref="Guid"/> for a unique identifier.</returns>
-        private List<StatementSyntax> GenerateGuid(ColumnSchema columnSchema)
+        private List<StatementSyntax> GenerateGuid(ColumnElement columnElement)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -917,7 +926,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AssignmentExpression(
                         SyntaxKind.SimpleAssignmentExpression,
-                        SyntaxFactory.IdentifierName(columnSchema.CamelCaseName + "Parsed"),
+                        SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase() + "Parsed"),
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,

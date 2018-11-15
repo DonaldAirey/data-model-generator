@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RowVersionIndexField"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The data model schema.</param>
-        public RowVersionIndexField(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The data model schema.</param>
+        public RowVersionIndexField(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "rowVersionIndex";
 
             //            /// <summary>
@@ -123,16 +123,16 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             {
                 // Create a list of the indices of the row version columns of each of the tables.
                 List<ExpressionSyntax> indices = new List<ExpressionSyntax>();
-                foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
-                    foreach (ColumnSchema columnSchema in tableSchema.Columns)
+                    foreach (ColumnElement columnElement in tableElement.Columns)
                     {
-                        if (columnSchema.IsRowVersion)
+                        if (columnElement.IsRowVersion)
                         {
                             indices.Add(
                                 SyntaxFactory.LiteralExpression(
                                     SyntaxKind.NumericLiteralExpression,
-                                    SyntaxFactory.Literal(columnSchema.Index + 2)));
+                                    SyntaxFactory.Literal(columnElement.Index + 2)));
                         }
                     }
                 }

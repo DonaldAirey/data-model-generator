@@ -19,17 +19,17 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private RelationSchema relationSchema;
+        private ForeignKeyElement foreignKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetChildRowsMethod"/> class.
         /// </summary>
-        /// <param name="relationSchema">The unique constraint schema.</param>
-        public GetChildRowsMethod(RelationSchema relationSchema)
+        /// <param name="foreignKeyElement">The unique constraint schema.</param>
+        public GetChildRowsMethod(ForeignKeyElement foreignKeyElement)
         {
             // Initialize the object.
-            this.relationSchema = relationSchema;
-            this.Name = "Get" + relationSchema.ChildTable.Name + "Rows";
+            this.foreignKeyElement = foreignKeyElement;
+            this.Name = "Get" + foreignKeyElement.Table.Name + "Rows";
 
             //        /// <summary>
             //        /// Gets a collection of child rows.
@@ -46,7 +46,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                     .WithTypeArgumentList(
                         SyntaxFactory.TypeArgumentList(
                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                SyntaxFactory.IdentifierName(this.relationSchema.ChildTable.Name + "Row")))),
+                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name + "Row")))),
                     SyntaxFactory.Identifier(this.Name))
                 .WithModifiers(this.Modifiers)
                 .WithParameterList(this.ParameterList)
@@ -73,7 +73,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                             .WithTypeArgumentList(
                                 SyntaxFactory.TypeArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                        SyntaxFactory.IdentifierName(this.relationSchema.ChildTable.Name + "Row")))))
+                                        SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name + "Row")))))
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
@@ -81,13 +81,14 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
 
                 // These are the arguments for the key lookup.
                 List<ArgumentSyntax> arguments = new List<ArgumentSyntax>();
-                foreach (ColumnSchema columnSchema in this.relationSchema.ParentColumns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.foreignKeyElement.ParentColumns)
                 {
-                    arguments.Add(SyntaxFactory.Argument(SyntaxFactory.IdentifierName(columnSchema.CamelCaseName)));
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    arguments.Add(SyntaxFactory.Argument(SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase())));
                 }
 
                 // Compound keys are handled differently than simple keys.
-                if (this.relationSchema.ParentColumns.Count == 1)
+                if (this.foreignKeyElement.ParentColumns.Count == 1)
                 {
                     //            if (!this.dictionary.TryGetValue(countryId, out hashSet))
                     //            {
@@ -112,7 +113,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                             {
                                                 SyntaxFactory.Argument(
                                                     SyntaxFactory.IdentifierName(
-                                                        this.relationSchema.ParentKeyConstraint.Columns[0].CamelCaseName)),
+                                                        this.foreignKeyElement.UniqueKey.Columns[0].Column.Name.ToCamelCase())),
                                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                 SyntaxFactory.Argument(
                                                     SyntaxFactory.IdentifierName("hashSet"))
@@ -208,7 +209,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Gets a collection of child <see cref=\"" + this.relationSchema.ChildTable.Name + "Row" + "\"/> rows.",
+                                                " Gets a collection of child <see cref=\"" + this.foreignKeyElement.Table.Name + "Row" + "\"/> rows.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -229,10 +230,11 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                         }))))));
 
                 // Add a comment for each of the key parameters.
-                foreach (ColumnSchema columnSchema in this.relationSchema.ParentColumns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.foreignKeyElement.ParentColumns)
                 {
                     //        /// <param name="configurationId">The ConfigurationId key element.</param>
-                    string description = "The " + columnSchema.Name + " key element.";
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    string description = "The " + columnElement.Name + " key element.";
                     comments.Add(
                         SyntaxFactory.Trivia(
                             SyntaxFactory.DocumentationCommentTrivia(
@@ -245,7 +247,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                                 {
                                                     SyntaxFactory.XmlTextLiteral(
                                                         SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                        " <param name=\"" + columnSchema.CamelCaseName + "\">" + description + "</param>",
+                                                        " <param name=\"" + columnElement.Name.ToCamelCase() + "\">" + description + "</param>",
                                                         string.Empty,
                                                         SyntaxFactory.TriviaList()),
                                                     SyntaxFactory.XmlTextNewLine(
@@ -269,7 +271,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    " <returns>A collection of child <see cref=\"" + this.relationSchema.ChildTable.Name + "Row" + "\"/> rows.</returns>",
+                                                    " <returns>A collection of child <see cref=\"" + this.foreignKeyElement.Table.Name + "Row" + "\"/> rows.</returns>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -322,7 +324,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                 .WithTypeArgumentList(
                                     SyntaxFactory.TypeArgumentList(
                                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                            SyntaxFactory.IdentifierName(this.relationSchema.ChildTable.Name + "Row")))))
+                                            SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name + "Row")))))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList()))));
 
@@ -340,13 +342,14 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
             {
                 // string keyConfigurationId, string keySource
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-                foreach (ColumnSchema columnSchema in this.relationSchema.ParentColumns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.foreignKeyElement.ParentColumns)
                 {
                     // Add the next element of the key.
+                    ColumnElement columnElement = columnReferenceElement.Column;
                     parameters.Add(
                             SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier(columnSchema.CamelCaseName))
-                        .WithType(Conversions.FromType(columnSchema.Type)));
+                            SyntaxFactory.Identifier(columnElement.Name.ToCamelCase()))
+                        .WithType(Conversions.FromType(columnElement.Type)));
                 }
 
                 // This is the complete parameter specification for this constructor.

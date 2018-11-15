@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ColumnNamesField"/> class.
         /// </summary>
-        /// <param name="tableSchema">The table schema.</param>
-        public ColumnNamesField(TableSchema tableSchema)
+        /// <param name="tableElement">The table schema.</param>
+        public ColumnNamesField(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
             this.Name = "columnNames";
 
             //        /// <summary>
@@ -123,13 +123,13 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             {
                 // Create a list of all the column names that will be used to initialize the array.
                 List<ExpressionSyntax> expressions = new List<ExpressionSyntax>();
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
                     // "ConfigurationId"
                     expressions.Add(
                         SyntaxFactory.LiteralExpression(
                             SyntaxKind.StringLiteralExpression,
-                            SyntaxFactory.Literal(columnSchema.Name)));
+                            SyntaxFactory.Literal(columnElement.Name)));
                 }
 
                 // new List<ConfigurationData>()

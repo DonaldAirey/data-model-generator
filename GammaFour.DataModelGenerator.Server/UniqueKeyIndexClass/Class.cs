@@ -22,17 +22,23 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private UniqueConstraintSchema uniqueConstraintSchema;
+        private UniqueKeyElement uniqueKeyElement;
+
+        /// <summary>
+        /// The XML Schema document.
+        /// </summary>
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Class"/> class.
         /// </summary>
-        /// <param name="uniqueConstraintSchema">A description of a unique constraint.</param>
-        public Class(UniqueConstraintSchema uniqueConstraintSchema)
+        /// <param name="uniqueKeyElement">A description of a unique constraint.</param>
+        public Class(UniqueKeyElement uniqueKeyElement)
         {
             // Initialize the object.
-            this.uniqueConstraintSchema = uniqueConstraintSchema;
-            this.Name = uniqueConstraintSchema.Name;
+            this.uniqueKeyElement = uniqueKeyElement;
+            this.xmlSchemaDocument = this.uniqueKeyElement.XmlSchemaDocument;
+            this.Name = uniqueKeyElement.Name;
 
             //    /// <summary>
             //    /// Unique key index for the Configuration table.
@@ -99,7 +105,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Unique key index for the " + this.uniqueConstraintSchema.Table.Name + " table.",
+                                                " Unique key index for the " + this.uniqueKeyElement.Table.Name + " table.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -163,7 +169,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // These are the constructors.
-            members = members.Add(new ConstructorDataModel(this.uniqueConstraintSchema).Syntax);
+            members = members.Add(new ConstructorDataModel(this.uniqueKeyElement).Syntax);
 
             // Return the new collection of members.
             return members;
@@ -178,9 +184,9 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new AddReaderLockMethod());
-            methods.Add(new AddWriterLockMethod());
-            methods.Add(new FindMethod(this.uniqueConstraintSchema));
+            methods.Add(new AddReaderLockMethod(this.xmlSchemaDocument));
+            methods.Add(new AddWriterLockMethod(this.xmlSchemaDocument));
+            methods.Add(new FindMethod(this.uniqueKeyElement));
 
             // Alphabetize and add the properties as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
@@ -201,7 +207,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
         {
             // This will create the internal instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new DataModelProperty(this.uniqueConstraintSchema.Table.DataModel));
+            properties.Add(new DataModelProperty(this.uniqueKeyElement.Table.XmlSchemaDocument));
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in properties.OrderBy(m => m.Name))
@@ -222,16 +228,16 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new AddMethod(this.uniqueConstraintSchema));
-            methods.Add(new RemoveMethod(this.uniqueConstraintSchema));
+            methods.Add(new AddMethod(this.uniqueKeyElement));
+            methods.Add(new RemoveMethod(this.uniqueKeyElement));
 
             // Determine if this unique constraint is the parent for some other key.  If so, we'll need to add a 'ContainsKey' method.
             bool isParent = false;
-            foreach (TableSchema tableSchema in this.uniqueConstraintSchema.Table.DataModel.Tables)
+            foreach (TableElement tableElement in this.uniqueKeyElement.Table.XmlSchemaDocument.Tables)
             {
-                foreach (RelationSchema relationSchema in tableSchema.ParentRelations)
+                foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys)
                 {
-                    if (relationSchema.ParentKeyConstraint == this.uniqueConstraintSchema)
+                    if (foreignKeyElement.UniqueKey == this.uniqueKeyElement)
                     {
                         isParent = true;
                     }
@@ -240,13 +246,13 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
 
             if (isParent)
             {
-                methods.Add(new ContainsKeyMethod(this.uniqueConstraintSchema));
+                methods.Add(new ContainsKeyMethod(this.uniqueKeyElement));
             }
 
             // Non-nullable unique keys can use the 'Update' method which does the work of an 'Add' and a 'Remove' in a single call.
-            if (!this.uniqueConstraintSchema.IsNullable)
+            if (!this.uniqueKeyElement.IsNullable)
             {
-                methods.Add(new UpdateMethod(this.uniqueConstraintSchema));
+                methods.Add(new UpdateMethod(this.uniqueKeyElement));
             }
 
             // Alphabetize and add the properties as members of the class.
@@ -268,7 +274,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new DictionaryField(this.uniqueConstraintSchema));
+            fields.Add(new DictionaryField(this.uniqueKeyElement));
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
@@ -291,9 +297,9 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
             List<SyntaxElement> structs = new List<SyntaxElement>();
 
             // Create a compound key when there are more than one columns.
-            if (this.uniqueConstraintSchema.Columns.Count > 1)
+            if (this.uniqueKeyElement.Columns.Count > 1)
             {
-                structs.Add(new Struct(this.uniqueConstraintSchema));
+                structs.Add(new Struct(this.uniqueKeyElement));
             }
 
             // Alphabetize and add the fields as members of the class.

@@ -6,6 +6,7 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Reflection;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -19,19 +20,19 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
         /// <summary>
         /// The column schema.
         /// </summary>
-        private UniqueConstraintSchema uniqueConstraintSchema;
+        private UniqueKeyElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Constructor"/> class.
         /// </summary>
-        /// <param name="uniqueConstraintSchema">The unique constraint schema.</param>
-        public Constructor(UniqueConstraintSchema uniqueConstraintSchema)
+        /// <param name="uniqueKeyElement">The unique constraint schema.</param>
+        public Constructor(UniqueKeyElement uniqueKeyElement)
         {
             // Initialize the object.
-            this.uniqueConstraintSchema = uniqueConstraintSchema;
+            this.uniqueKeyElement = uniqueKeyElement;
 
             // This is the name of the constructor.
-            this.Name = this.uniqueConstraintSchema.Name + "Set";
+            this.Name = this.uniqueKeyElement.Name + "Set";
 
             // This is the syntax of the constructor.
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
@@ -53,15 +54,18 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 // Make sure we check for nulls on reference types.
-                foreach (ColumnSchema columnSchema in this.uniqueConstraintSchema.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.uniqueKeyElement.Columns)
                 {
-                    if (!columnSchema.Type.GetTypeInfo().IsValueType)
+                    // Get the underlying column element.
+                    ColumnElement columnElement = columnReferenceElement.Column;
+
+                    if (!columnElement.Type.GetTypeInfo().IsValueType)
                     {
                         //            if (configurationRow == null)
                         //            {
                         //                throw new ArgumentNullException("configurationRow");
                         //            }
-                        string parameter = columnSchema.CamelCaseName;
+                        string parameter = columnElement.Name.ToCamelCase();
                         statements.Add(
                             SyntaxFactory.IfStatement(
                                 SyntaxFactory.BinaryExpression(
@@ -85,10 +89,11 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
 
                 //            this.ConfigurationId = configurationId;
                 //            this.TargetKey = targetKey;
-                foreach (ColumnSchema columnSchema in this.uniqueConstraintSchema.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.uniqueKeyElement.Columns)
                 {
-                    string parameter = columnSchema.CamelCaseName;
-                    string property = columnSchema.Name;
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    string parameter = columnElement.Name.ToCamelCase();
+                    string property = columnElement.Name;
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.AssignmentExpression(
@@ -162,8 +167,10 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
 
                 //        /// <param name="configurationId">A component of the key.</param>
                 //        /// <param name="targetKey">A component of the key.</param>
-                foreach (ColumnSchema columnSchema in this.uniqueConstraintSchema.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.uniqueKeyElement.Columns)
                 {
+                    ColumnElement columnElement = columnReferenceElement.Column;
+
                     comments.Add(
                         SyntaxFactory.Trivia(
                             SyntaxFactory.DocumentationCommentTrivia(
@@ -176,7 +183,7 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
                                                 {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    " <param name=\"" + columnSchema.CamelCaseName + "\">A " + columnSchema.Name + " component of the key.</param>",
+                                                    " <param name=\"" + columnElement.Name.ToCamelCase() + "\">A " + columnElement.Name + " component of the key.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -217,10 +224,11 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
             {
                 // Create a list of parameters from the columns in the unique constraint.
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-                foreach (ColumnSchema columnSchema in this.uniqueConstraintSchema.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.uniqueKeyElement.Columns)
                 {
+                    ColumnElement columnElement = columnReferenceElement.Column;
                     parameters.Add(
-                        SyntaxFactory.Parameter(SyntaxFactory.Identifier(columnSchema.CamelCaseName)).WithType(Conversions.FromType(columnSchema.Type)));
+                        SyntaxFactory.Parameter(SyntaxFactory.Identifier(columnElement.Name.ToCamelCase())).WithType(Conversions.FromType(columnElement.Type)));
                 }
 
                 // This is the complete parameter specification for this constructor.

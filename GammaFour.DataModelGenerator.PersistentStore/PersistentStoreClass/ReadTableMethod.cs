@@ -19,17 +19,17 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReadTableMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The table schema.</param>
-        public ReadTableMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The table schema.</param>
+        public ReadTableMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
-            this.Name = "Read" + tableSchema.Name + "Data";
+            this.tableElement = tableElement;
+            this.Name = "Read" + tableElement.Name + "Data";
 
             //        /// <summary>
             //        /// Read the data for the Configuration table.
@@ -59,7 +59,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                string updateCommandText = "read" + this.tableSchema.Name;
+                string updateCommandText = "read" + this.tableElement.Name;
 
                 //            using (SqlCommand sqlCommand = new SqlCommand("readConfiguration", sqlConnection))
                 //            {
@@ -254,7 +254,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(this.tableSchema.Name + "RowRead")))
+                                SyntaxFactory.IdentifierName(this.tableElement.Name + "RowRead")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(
@@ -372,7 +372,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                                         SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
                                                             SyntaxFactory.LiteralExpression(
                                                                 SyntaxKind.NumericLiteralExpression,
-                                                                SyntaxFactory.Literal(this.tableSchema.Columns.Count + 2)))))))))))));
+                                                                SyntaxFactory.Literal(this.tableElement.Columns.Count + 2)))))))))))));
 
                 //                        transactionItem[0] = 0;
                 statements.Add(
@@ -390,7 +390,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                                 SyntaxFactory.Literal(0)))))),
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.NumericLiteralExpression,
-                                SyntaxFactory.Literal(this.tableSchema.Index)))));
+                                SyntaxFactory.Literal(this.tableElement.Index)))));
 
                 //                        transactionItem[1] = RecordState.Added;
                 statements.Add(
@@ -412,13 +412,13 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                 SyntaxFactory.IdentifierName("Added")))));
 
                 // Read each of the columns.
-                for (int index = 0; index < this.tableSchema.Columns.Count; index++)
+                for (int index = 0; index < this.tableElement.Columns.Count; index++)
                 {
                     // This is the column we're decoding.
-                    ColumnSchema columnSchema = this.tableSchema.Columns[index];
+                    ColumnElement columnElement = this.tableElement.Columns[index];
 
                     //                        transactionItem[3] = sqlDataReader.IsDBNull(1) ? null : sqlDataReader.GetValue(1);
-                    if (columnSchema.IsNullable)
+                    if (columnElement.IsNullable)
                     {
                         statements.Add(
                             SyntaxFactory.ExpressionStatement(
@@ -449,7 +449,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                         SyntaxFactory.LiteralExpression(
                                             SyntaxKind.NullLiteralExpression),
                                         SyntaxFactory.CastExpression(
-                                            Conversions.FromType(columnSchema.Type),
+                                            Conversions.FromType(columnElement.Type),
                                             SyntaxFactory.InvocationExpression(
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
@@ -480,7 +480,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                                         SyntaxKind.NumericLiteralExpression,
                                                         SyntaxFactory.Literal(index + 2)))))),
                                     SyntaxFactory.CastExpression(
-                                        Conversions.FromType(columnSchema.Type),
+                                        Conversions.FromType(columnElement.Type),
                                         SyntaxFactory.InvocationExpression(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,

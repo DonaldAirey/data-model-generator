@@ -25,18 +25,18 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NonGenericGetEnumeratorMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public NonGenericGetEnumeratorMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public NonGenericGetEnumeratorMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
             this.Name = "GetEnumerator";
-            this.rowType = string.Format(CultureInfo.InvariantCulture, "{0}Row", this.tableSchema.Name);
+            this.rowType = string.Format(CultureInfo.InvariantCulture, "{0}Row", this.tableElement.Name);
 
             //        /// <summary>
             //        /// Returns an enumerator that iterates through the collection.
@@ -103,7 +103,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                             SyntaxFactory.AttributeArgument(
                                                 SyntaxFactory.LiteralExpression(
                                                     SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal(this.tableSchema.Name)))
+                                                    SyntaxFactory.Literal(this.tableElement.Name)))
                                             .WithNameEquals(SyntaxFactory.NameEquals(SyntaxFactory.IdentifierName("MessageId"))),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.AttributeArgument(
@@ -132,7 +132,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 //            {
                 //                throw new LockException("Configuration table is not locked.");
                 //            }
-                string message = this.tableSchema.Name + " table is not locked.";
+                string message = this.tableElement.Name + " table is not locked.";
                 statements.Add(
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.PrefixUnaryExpression(

@@ -19,26 +19,26 @@ namespace GammaFour.DataModelGenerator.Common.RowDataClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private ColumnSchema columnSchema;
+        private ColumnElement columnElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ColumnProperty"/> class.
         /// </summary>
-        /// <param name="columnSchema">The column schema.</param>
-        public ColumnProperty(ColumnSchema columnSchema)
+        /// <param name="columnElement">The column schema.</param>
+        public ColumnProperty(ColumnElement columnElement)
         {
             // Initialize the object.
-            this.columnSchema = columnSchema;
+            this.columnElement = columnElement;
 
             // This is the name of the property.
-            this.Name = this.columnSchema.Name;
+            this.Name = this.columnElement.Name;
 
             //            /// <summary>
             //            /// Gets the ConfigurationId.
             //            /// </summary>
             //            public string ConfigurationId { get; }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                Conversions.FromType(columnSchema.Type),
+                Conversions.FromType(columnElement.Type),
                 SyntaxFactory.Identifier(this.Name))
                 .WithAccessorList(this.AccessorList)
                 .WithModifiers(this.Modifiers)

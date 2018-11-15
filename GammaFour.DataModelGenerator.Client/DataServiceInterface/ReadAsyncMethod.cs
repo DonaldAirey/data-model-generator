@@ -20,16 +20,16 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceInterface
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReadAsyncMethod"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The data model schema.</param>
-        public ReadAsyncMethod(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The data model schema.</param>
+        public ReadAsyncMethod(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "ReadAsync";
 
             //        /// <summary>
@@ -88,7 +88,7 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceInterface
                                         }))))));
 
                 //        [ServiceKnownType(typeof(LicenseTypeCode))]
-                attributes.AddRange(KnownTypes.Emit(this.dataModelSchema));
+                attributes.AddRange(KnownTypes.Emit(this.xmlSchemaDocument));
 
                 //        [FaultContract(typeof(SecurityFault))]
                 attributes.Add(

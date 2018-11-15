@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceClient
         /// <summary>
         /// The table schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstructorEtc"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The table schema.</param>
-        public ConstructorEtc(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The table schema.</param>
+        public ConstructorEtc(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "DataServiceClient";
 
             //        /// <summary>

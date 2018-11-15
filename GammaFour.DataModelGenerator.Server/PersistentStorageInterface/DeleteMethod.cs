@@ -20,17 +20,17 @@ namespace GammaFour.DataModelGenerator.Server.PersistentStoreageInterface
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DeleteMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public DeleteMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public DeleteMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
-            this.Name = "Delete" + tableSchema.Name;
+            this.tableElement = tableElement;
+            this.Name = "Delete" + tableElement.Name;
 
             //        /// <summary>
             //        /// Creates a Configuration record.
@@ -84,7 +84,7 @@ namespace GammaFour.DataModelGenerator.Server.PersistentStoreageInterface
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Deletes a " + this.tableSchema.Name + " record.",
+                                                " Deletes a " + this.tableElement.Name + " record.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -108,11 +108,12 @@ namespace GammaFour.DataModelGenerator.Server.PersistentStoreageInterface
                 List<KeyValuePair<string, SyntaxTrivia>> parameterTrivia = new List<KeyValuePair<string, SyntaxTrivia>>();
 
                 // A parameter is needed for each element of the primary key.
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
                     //        /// <param name="configurationIdKey">The ConfigurationId primary key element.</param>
-                    string identifier = columnSchema.CamelCaseName;
-                    string description = "The " + columnSchema.Name + " key element.";
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    string identifier = columnElement.Name.ToCamelCase();
+                    string description = "The " + columnElement.Name + " key element.";
                     parameterTrivia.Add(
                         new KeyValuePair<string, SyntaxTrivia>(
                             identifier,
@@ -157,16 +158,17 @@ namespace GammaFour.DataModelGenerator.Server.PersistentStoreageInterface
                 List<KeyValuePair<string, ParameterSyntax>> parameterPairs = new List<KeyValuePair<string, ParameterSyntax>>();
 
                 // Add the primary key to the set of parameters.
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
-                    string identifier = columnSchema.CamelCaseName;
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    string identifier = columnElement.Name.ToCamelCase();
                     parameterPairs.Add(
                         new KeyValuePair<string, ParameterSyntax>(
                             identifier,
                             SyntaxFactory.Parameter(
                                 SyntaxFactory.Identifier(identifier))
                             .WithType(
-                                Conversions.FromType(columnSchema.Type))));
+                                Conversions.FromType(columnElement.Type))));
                 }
 
                 // This is the complete set of comma separated parameters for the method.

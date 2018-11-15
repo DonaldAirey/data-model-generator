@@ -24,18 +24,18 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RowsField"/> class.
         /// </summary>
-        /// <param name="tableSchema">The table schema.</param>
-        public RowsField(TableSchema tableSchema)
+        /// <param name="tableElement">The table schema.</param>
+        public RowsField(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
             this.Name = "rows";
-            this.rowType = this.tableSchema.Name + "Row";
+            this.rowType = this.tableElement.Name + "Row";
 
             //        /// <summary>
             //        /// The rows of the Configuration table.
@@ -91,7 +91,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " The rows of the " + this.tableSchema.Name + " table.",
+                                                " The rows of the " + this.tableElement.Name + " table.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

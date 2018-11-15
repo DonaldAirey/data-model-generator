@@ -21,17 +21,17 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
         /// <summary>
         /// The foreign relation schema.
         /// </summary>
-        private RelationSchema relationSchema;
+        private ForeignKeyElement foreignKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Class"/> class.
         /// </summary>
-        /// <param name="relationSchema">A description of a unique constraint.</param>
-        public Class(RelationSchema relationSchema)
+        /// <param name="foreignKeyElement">A description of a unique constraint.</param>
+        public Class(ForeignKeyElement foreignKeyElement)
         {
             // Initialize the object.
-            this.relationSchema = relationSchema;
-            this.Name = relationSchema.Name;
+            this.foreignKeyElement = foreignKeyElement;
+            this.Name = foreignKeyElement.Name;
 
             //    /// <summary>
             //    /// Relates rows in the Country table to the Customer table.
@@ -78,7 +78,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                    " Relates rows in the " + this.relationSchema.ParentTable.Name + " table to the " + this.relationSchema.ChildTable.Name + " table.",
+                                                    " Relates rows in the " + this.foreignKeyElement.UniqueKey.Table.Name + " table to the " + this.foreignKeyElement.Table.Name + " table.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -143,7 +143,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // These are the constructors.
-            members = members.Add(new ConstructorDataModel(this.relationSchema).Syntax);
+            members = members.Add(new ConstructorDataModel(this.foreignKeyElement).Syntax);
 
             // Return the new collection of members.
             return members;
@@ -158,7 +158,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new RelationChangedEvent(this.relationSchema));
+            fields.Add(new RelationChangedEvent(this.foreignKeyElement));
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
@@ -179,7 +179,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new GetChildRowsMethod(this.relationSchema));
+            methods.Add(new GetChildRowsMethod(this.foreignKeyElement));
 
             // Alphabetize and add the properties as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
@@ -200,7 +200,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
         {
             // This will create the internal instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new DataModelProperty(this.relationSchema.ParentTable.DataModel));
+            properties.Add(new DataModelProperty(this.foreignKeyElement.UniqueKey.Table.XmlSchemaDocument));
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in properties.OrderBy(m => m.Name))
@@ -221,15 +221,15 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new AddChildMethod(this.relationSchema));
-            methods.Add(new ClearMethod(this.relationSchema));
-            methods.Add(new RemoveChildMethod(this.relationSchema));
+            methods.Add(new AddChildMethod(this.foreignKeyElement));
+            methods.Add(new ClearMethod(this.foreignKeyElement));
+            methods.Add(new RemoveChildMethod(this.foreignKeyElement));
 
             // Non-nullable child constraints can use the 'Update' method which combines the action of 'Add' and 'Remove' in a single operation.
             // Nullable constraints will need to check for nulls and use the discrete 'Add' and 'Remove' calls.
-            if (!this.relationSchema.ChildKeyConstraint.IsNullable)
+            if (!this.foreignKeyElement.IsNullable)
             {
-                methods.Add(new UpdateChildMethod(this.relationSchema));
+                methods.Add(new UpdateChildMethod(this.foreignKeyElement));
             }
 
             // Alphabetize and add the properties as members of the class.
@@ -251,7 +251,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new DictionaryField(this.relationSchema));
+            fields.Add(new DictionaryField(this.foreignKeyElement));
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))

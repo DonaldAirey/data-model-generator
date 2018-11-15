@@ -24,16 +24,16 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RowChangingEvent"/> class.
         /// </summary>
-        /// <param name="tableSchema">The column schema.</param>
-        public RowChangingEvent(TableSchema tableSchema)
+        /// <param name="tableElement">The column schema.</param>
+        public RowChangingEvent(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
             this.Name = "RowChanging";
 
             // The type of event.
@@ -46,7 +46,7 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                             string.Format(
                                 CultureInfo.InvariantCulture,
                                 "{0}RowChangeEventArgs",
-                                this.tableSchema.Name))))
+                                this.tableElement.Name))))
                 .WithLessThanToken(SyntaxFactory.Token(SyntaxKind.LessThanToken))
                 .WithGreaterThanToken(SyntaxFactory.Token(SyntaxKind.GreaterThanToken)));
 

@@ -19,24 +19,24 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DataModelProperty"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The column schema.</param>
-        public DataModelProperty(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The column schema.</param>
+        public DataModelProperty(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
-            this.Name = "DataModel";
+            this.xmlSchemaDocument = xmlSchemaDocument;
+            this.Name = this.xmlSchemaDocument.Name;
 
             //        /// <summary>
             //        /// Gets the DataModel.
             //        /// </summary>
             //        public DataModel DataModel { get; private set; }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                    SyntaxFactory.IdentifierName(this.dataModelSchema.Name),
+                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name),
                     SyntaxFactory.Identifier(this.Name))
                 .WithAccessorList(this.AccessorList)
                 .WithModifiers(this.Modifiers)

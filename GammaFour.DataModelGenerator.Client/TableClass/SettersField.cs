@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SettersField"/> class.
         /// </summary>
-        /// <param name="tableSchema">The table schema.</param>
-        public SettersField(TableSchema tableSchema)
+        /// <param name="tableElement">The table schema.</param>
+        public SettersField(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
             this.Name = "setters";
 
             //        /// <summary>
@@ -61,7 +61,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                             SyntaxFactory.SeparatedList<TypeSyntax>(
                                 new SyntaxNodeOrToken[]
                                 {
-                                    SyntaxFactory.IdentifierName(this.tableSchema.Name + "Data"),
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name + "Data"),
                                     SyntaxFactory.Token(SyntaxKind.CommaToken),
                                     SyntaxFactory.PredefinedType(
                                         SyntaxFactory.Token(SyntaxKind.ObjectKeyword))
@@ -152,7 +152,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                     SyntaxFactory.SeparatedList<TypeSyntax>(
                                         new SyntaxNodeOrToken[]
                                         {
-                                            SyntaxFactory.IdentifierName(this.tableSchema.Name + "Data"),
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name + "Data"),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.PredefinedType(
                                                 SyntaxFactory.Token(SyntaxKind.ObjectKeyword))
@@ -163,7 +163,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                     SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
                                         SyntaxFactory.LiteralExpression(
                                             SyntaxKind.NumericLiteralExpression,
-                                            SyntaxFactory.Literal(this.tableSchema.Columns.Count))))))));
+                                            SyntaxFactory.Literal(this.tableElement.Columns.Count))))))));
             }
         }
 

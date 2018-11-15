@@ -19,19 +19,19 @@ namespace GammaFour.DataModelGenerator.Common.RowChangeEventArgsClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Constructor"/> class.
         /// </summary>
-        /// <param name="tableSchema">The table schema.</param>
-        public Constructor(TableSchema tableSchema)
+        /// <param name="tableElement">The table schema.</param>
+        public Constructor(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
 
             // This is the name of the constructor.
-            this.Name = string.Format(CultureInfo.InvariantCulture, "{0}RowChangeEventArgs", tableSchema.Name);
+            this.Name = string.Format(CultureInfo.InvariantCulture, "{0}RowChangeEventArgs", tableElement.Name);
 
             //        /// <summary>
             //        /// Initializes a new instance of the <see cref="ConfigurationRowChangeEventArgs"/> class.
@@ -79,7 +79,7 @@ namespace GammaFour.DataModelGenerator.Common.RowChangeEventArgsClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName("Row")),
-                            SyntaxFactory.IdentifierName(string.Format(CultureInfo.InvariantCulture, "{0}Row", this.tableSchema.CamelCaseName)))));
+                            SyntaxFactory.IdentifierName(string.Format(CultureInfo.InvariantCulture, "{0}Row", this.tableElement.Name.ToCamelCase())))));
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -124,7 +124,7 @@ namespace GammaFour.DataModelGenerator.Common.RowChangeEventArgsClass
                                                 string.Format(
                                                     CultureInfo.InvariantCulture,
                                                     " Initializes a new instance of the <see cref=\"{0}RowChangeEventArgs\"/> class.",
-                                                    this.tableSchema.Name),
+                                                    this.tableElement.Name),
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -183,8 +183,8 @@ namespace GammaFour.DataModelGenerator.Common.RowChangeEventArgsClass
                                                     string.Format(
                                                         CultureInfo.InvariantCulture,
                                                         " <param name=\"{0}Row\">The {1} row that has changed.</param>",
-                                                        this.tableSchema.CamelCaseName,
-                                                        this.tableSchema.Name),
+                                                        this.tableElement.Name.ToCamelCase(),
+                                                        this.tableElement.Name),
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -231,8 +231,8 @@ namespace GammaFour.DataModelGenerator.Common.RowChangeEventArgsClass
                     .WithType(SyntaxFactory.IdentifierName("DataAction")));
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(string.Format(CultureInfo.InvariantCulture, "{0}Row", this.tableSchema.CamelCaseName)))
-                    .WithType(SyntaxFactory.IdentifierName(string.Format(CultureInfo.InvariantCulture, "{0}Row", this.tableSchema.Name))));
+                        SyntaxFactory.Identifier(string.Format(CultureInfo.InvariantCulture, "{0}Row", this.tableElement.Name.ToCamelCase())))
+                    .WithType(SyntaxFactory.IdentifierName(string.Format(CultureInfo.InvariantCulture, "{0}Row", this.tableElement.Name))));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

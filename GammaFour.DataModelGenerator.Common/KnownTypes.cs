@@ -98,9 +98,9 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Emits all the 'KnowType' attributes for a given interface for the datatypes that are not implicitly known to the serializer.
         /// </summary>
-        /// <param name="dataModelSchema">The data model schema.</param>
+        /// <param name="xmlSchemaDocument">The data model schema.</param>
         /// <returns>A list of attributes describing the data types that are not predefined..</returns>
-        public static IEnumerable<AttributeListSyntax> Emit(DataModelSchema dataModelSchema)
+        public static IEnumerable<AttributeListSyntax> Emit(XmlSchemaDocument xmlSchemaDocument)
         {
             // Once a 'KnownType' attribute has been emitted for a given data type, we don't need to emit it again.  This table keeps track of what
             // has been emitted for the current interface.
@@ -111,14 +111,14 @@ namespace GammaFour.DataModelGenerator.Common
 
             // Run through every data type in the data model.  If a datatype is not implicit (or previously recognized 'KnownType'), then emit a
             // compiler directive to serialize the type should it appear in a generic object.
-            foreach (TableSchema tableSchema in dataModelSchema.Tables)
+            foreach (TableElement tableElement in xmlSchemaDocument.Tables)
             {
-                foreach (ColumnSchema columnSchema in tableSchema.Columns)
+                foreach (ColumnElement columnElement in tableElement.Columns)
                 {
-                    if (!KnownTypes.knownTypes.Contains(columnSchema.Type.FullName) && !unknownTypes.Contains(columnSchema.Type.FullName))
+                    if (!KnownTypes.knownTypes.Contains(columnElement.Type.FullName) && !unknownTypes.Contains(columnElement.Type.FullName))
                     {
-                        unknownTypes.Add(columnSchema.Type.FullName);
-                        attributes.Add(KnownTypes.Emit(columnSchema.Type));
+                        unknownTypes.Add(columnElement.Type.FullName);
+                        attributes.Add(KnownTypes.Emit(columnElement.Type));
                     }
                 }
             }
@@ -130,9 +130,9 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Emits all the 'KnowType' attributes for a given interface for the datatypes that are not implicitly known to the serializer.
         /// </summary>
-        /// <param name="tableSchema">The table schema for which we're generating an interface.</param>
+        /// <param name="tableElement">The table schema for which we're generating an interface.</param>
         /// <returns>A list of attributes describing the data types that are not predefined..</returns>
-        public static SyntaxList<AttributeListSyntax> Emit(TableSchema tableSchema)
+        public static SyntaxList<AttributeListSyntax> Emit(TableElement tableElement)
         {
             // Once a 'KnownType' attribute has been emitted for a given data type, we don't need to emit it again.  This table keeps track of what
             // has been emitted for the current interface.
@@ -144,12 +144,12 @@ namespace GammaFour.DataModelGenerator.Common
 
             // Run through every data type in the table.  If a datatype is not implicit (or previously recognized 'KnownType'), then emit a compiler
             // directive to serialize the type should it appear in a generic object.
-            foreach (ColumnSchema columnSchema in tableSchema.Columns)
+            foreach (ColumnElement columnElement in tableElement.Columns)
             {
-                if (!KnownTypes.knownTypes.Contains(columnSchema.Type.FullName) && !unknownTypes.Contains(columnSchema.Type.FullName))
+                if (!KnownTypes.knownTypes.Contains(columnElement.Type.FullName) && !unknownTypes.Contains(columnElement.Type.FullName))
                 {
-                    unknownTypes.Add(columnSchema.Type.FullName);
-                    attributes.Add(KnownTypes.Emit(columnSchema.Type));
+                    unknownTypes.Add(columnElement.Type.FullName);
+                    attributes.Add(KnownTypes.Emit(columnElement.Type));
                 }
             }
 

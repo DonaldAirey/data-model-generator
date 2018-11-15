@@ -20,16 +20,16 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ItemProperty"/> class.
         /// </summary>
-        /// <param name="tableSchema">The column schema.</param>
-        public ItemProperty(TableSchema tableSchema)
+        /// <param name="tableElement">The column schema.</param>
+        public ItemProperty(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
             this.Name = "Item";
 
             //        /// <summary>
@@ -42,7 +42,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             //            <AccessorList>
             //        }
             this.Syntax = SyntaxFactory.IndexerDeclaration(
-                    SyntaxFactory.IdentifierName(this.tableSchema.Name + "Data"))
+                    SyntaxFactory.IdentifierName(this.tableElement.Name + "Data"))
                 .WithAttributeLists(this.AttributeLists)
                 .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
                 .WithThisKeyword(SyntaxFactory.Token(SyntaxKind.ThisKeyword))
@@ -101,7 +101,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                             SyntaxFactory.AttributeArgument(
                                                 SyntaxFactory.LiteralExpression(
                                                     SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal(this.tableSchema.Name)))
+                                                    SyntaxFactory.Literal(this.tableElement.Name)))
                                             .WithNameEquals(SyntaxFactory.NameEquals(SyntaxFactory.IdentifierName("MessageId"))),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.AttributeArgument(
@@ -139,7 +139,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName("IsLockHeld"))),
                         SyntaxFactory.Block(
-                            ThrowLockException.GetSyntax(this.tableSchema.Name + " row is not locked."))));
+                            ThrowLockException.GetSyntax(this.tableElement.Name + " row is not locked."))));
 
                 //                switch (dataRowVersion)
                 //                {
@@ -295,7 +295,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 string.Format(
                                                     CultureInfo.InvariantCulture,
                                                     " Gets the various row versions (original, previous, current).",
-                                                    this.tableSchema.Name),
+                                                    this.tableElement.Name),
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

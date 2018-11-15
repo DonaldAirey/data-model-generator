@@ -20,16 +20,22 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
+
+        /// <summary>
+        /// The XML Schema document.
+        /// </summary>
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommitDeleteMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public CommitDeleteMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public CommitDeleteMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
+            this.xmlSchemaDocument = this.tableElement.XmlSchemaDocument;
             this.Name = "CommitDelete";
 
             //        /// <summary>
@@ -127,7 +133,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 SyntaxFactory.IdentifierName("actionIndex")))))))));
 
                 //            object[] transactionItem = new object[4];
-                int bufferLength = 2 + this.tableSchema.PrimaryKey.Columns.Count;
+                int bufferLength = 2 + this.tableElement.PrimaryKey.Columns.Count;
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
@@ -155,8 +161,8 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                         .WithNewKeyword(SyntaxFactory.Token(SyntaxKind.NewKeyword))))))));
 
                 //            transactionItem[0] = 0;
-                int tableIndex = this.tableSchema.DataModel.Tables.Select((value, index) => new { value, index })
-                    .Where(pair => pair.value == this.tableSchema)
+                int tableIndex = this.tableElement.XmlSchemaDocument.Tables.Select((value, index) => new { value, index })
+                    .Where(pair => pair.value == this.tableElement)
                     .Select(pair => pair.index + 1)
                     .FirstOrDefault() - 1;
                 statements.Add(
@@ -208,10 +214,11 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                 SyntaxFactory.IdentifierName("Deleted")))));
 
                 int keyIndex = 2;
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
                     //            transactionItem[2] = this.currentData.ConfigurationId;
-                    string fieldName = columnSchema.Name;
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    string fieldName = columnElement.Name;
                     statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
@@ -253,7 +260,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
                                         SyntaxFactory.IdentifierName("Table")),
-                                    SyntaxFactory.IdentifierName("DataModel")),
+                                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name)),
                                 SyntaxFactory.IdentifierName("AddTransaction")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(

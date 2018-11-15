@@ -19,16 +19,22 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
+
+        /// <summary>
+        /// The table schema.
+        /// </summary>
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MergeDeleteMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public MergeDeleteMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public MergeDeleteMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
+            this.xmlSchemaDocument = this.tableElement.XmlSchemaDocument;
             this.Name = "MergeDelete";
 
             //        /// <summary>
@@ -59,24 +65,24 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 // Extract the primary key elements from the transaction record.
-                for (int keyIndex = 0; keyIndex < this.tableSchema.PrimaryKey.Columns.Count; keyIndex++)
+                for (int keyIndex = 0; keyIndex < this.tableElement.PrimaryKey.Columns.Count; keyIndex++)
                 {
                     // This is the column associated with the primary key index;
-                    ColumnSchema columnSchema = this.tableSchema.PrimaryKey.Columns[keyIndex];
+                    ColumnElement columnElement = this.tableElement.PrimaryKey.Columns[keyIndex].Column;
 
                     //            string configurationId = (string)transactionItem[2];
                     statements.Add(
                         SyntaxFactory.LocalDeclarationStatement(
                             SyntaxFactory.VariableDeclaration(
-                                Conversions.FromType(columnSchema.Type))
+                                Conversions.FromType(columnElement.Type))
                             .WithVariables(
                                 SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                     SyntaxFactory.VariableDeclarator(
-                                        SyntaxFactory.Identifier(columnSchema.CamelCaseName))
+                                        SyntaxFactory.Identifier(columnElement.Name.ToCamelCase()))
                                     .WithInitializer(
                                         SyntaxFactory.EqualsValueClause(
                                             SyntaxFactory.CastExpression(
-                                                Conversions.FromType(columnSchema.Type),
+                                                Conversions.FromType(columnElement.Type),
                                                 SyntaxFactory.ElementAccessExpression(
                                                     SyntaxFactory.IdentifierName("transactionItem"))
                                                 .WithArgumentList(
@@ -90,22 +96,23 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
 
                 // The primary key makes up the arguments for the 'Find' operation.
                 List<ArgumentSyntax> arguments = new List<ArgumentSyntax>();
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
+                    ColumnElement columnElement = columnReferenceElement.Column;
                     arguments.Add(
                         SyntaxFactory.Argument(
-                            SyntaxFactory.IdentifierName(columnSchema.CamelCaseName)));
+                            SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase())));
                 }
 
                 //            ConfigurationRow configurationRow = this.DataModel.ConfigurationKey.Find(configurationId, source);
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(this.tableSchema.Name + "Row"))
+                            SyntaxFactory.IdentifierName(this.tableElement.Name + "Row"))
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier(this.tableSchema.CamelCaseName + "Row"))
+                                    SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase() + "Row"))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
                                         SyntaxFactory.InvocationExpression(
@@ -116,8 +123,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.ThisExpression(),
-                                                        SyntaxFactory.IdentifierName("DataModel")),
-                                                    SyntaxFactory.IdentifierName(this.tableSchema.PrimaryKey.Name)),
+                                                        SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name)),
+                                                    SyntaxFactory.IdentifierName(this.tableElement.PrimaryKey.Name)),
                                                 SyntaxFactory.IdentifierName("Find")))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
@@ -129,7 +136,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableSchema.CamelCaseName + "Row"),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
                                 SyntaxFactory.IdentifierName("Delete")))));
 
                 // This is the syntax for the body of the method.

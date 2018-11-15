@@ -20,19 +20,19 @@ namespace GammaFour.DataModelGenerator.Common.RowChangeEventArgsClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Class"/> class.
         /// </summary>
-        /// <param name="tableSchema">A description of a unique constraint.</param>
-        public Class(TableSchema tableSchema)
+        /// <param name="tableElement">A description of a unique constraint.</param>
+        public Class(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
 
             // The name of this structure.
-            this.Name = string.Format(CultureInfo.InvariantCulture, "{0}RowChangeEventArgs", tableSchema.Name);
+            this.Name = string.Format(CultureInfo.InvariantCulture, "{0}RowChangeEventArgs", tableElement.Name);
 
             //    /// <summary>
             //    /// Arguments that describe a change in a Configuration table row.
@@ -97,7 +97,7 @@ namespace GammaFour.DataModelGenerator.Common.RowChangeEventArgsClass
                                                 string.Format(
                                                     CultureInfo.InvariantCulture,
                                                     " Arguments that describe a change in a {0} table row.",
-                                                    this.tableSchema.Name),
+                                                    this.tableElement.Name),
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -157,7 +157,7 @@ namespace GammaFour.DataModelGenerator.Common.RowChangeEventArgsClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // Add the constructors.
-            members = members.Add(new Constructor(this.tableSchema).Syntax);
+            members = members.Add(new Constructor(this.tableElement).Syntax);
 
             // Return the new collection of members.
             return members;
@@ -172,7 +172,7 @@ namespace GammaFour.DataModelGenerator.Common.RowChangeEventArgsClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new RowProperty(this.tableSchema));
+            properties.Add(new RowProperty(this.tableElement));
             properties.Add(new DataActionProperty());
 
             // Alphabetize and add the properties as members of the class.

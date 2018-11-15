@@ -20,16 +20,16 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ItemProperty"/> class.
         /// </summary>
-        /// <param name="tableSchema">The column schema.</param>
-        public ItemProperty(TableSchema tableSchema)
+        /// <param name="tableElement">The column schema.</param>
+        public ItemProperty(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
 
             // This is the name of the property.
             this.Name = "Item";
@@ -41,7 +41,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             //        /// <returns>The Configuration row found at the given index.</returns>
             //        public ConfigurationRow this[int index] { get; }
             this.Syntax = SyntaxFactory.IndexerDeclaration(
-                    SyntaxFactory.IdentifierName(string.Format(CultureInfo.InvariantCulture, "{0}Row", this.tableSchema.Name)))
+                    SyntaxFactory.IdentifierName(string.Format(CultureInfo.InvariantCulture, "{0}Row", this.tableElement.Name)))
                 .WithAttributeLists(this.AttributeLists)
                 .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
                 .WithThisKeyword(SyntaxFactory.Token(SyntaxKind.ThisKeyword))
@@ -100,7 +100,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                             SyntaxFactory.AttributeArgument(
                                                 SyntaxFactory.LiteralExpression(
                                                     SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal(this.tableSchema.Name)))
+                                                    SyntaxFactory.Literal(this.tableElement.Name)))
                                             .WithNameEquals(SyntaxFactory.NameEquals(SyntaxFactory.IdentifierName("MessageId"))),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.AttributeArgument(
@@ -138,7 +138,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName("IsLockHeld"))),
                         SyntaxFactory.Block(
-                            ThrowLockException.GetSyntax(this.tableSchema.Name + " table is not locked."))));
+                            ThrowLockException.GetSyntax(this.tableElement.Name + " table is not locked."))));
 
                 //                return this.rows[index];
                 statements.Add(
@@ -202,7 +202,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 string.Format(
                                                     CultureInfo.InvariantCulture,
                                                     " Indexer to a row in the {0} table.",
-                                                    this.tableSchema.Name),
+                                                    this.tableElement.Name),
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -261,7 +261,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                     string.Format(
                                                         CultureInfo.InvariantCulture,
                                                         " <returns>The {0} row found at the given index.</returns>",
-                                                        this.tableSchema.Name),
+                                                        this.tableElement.Name),
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(

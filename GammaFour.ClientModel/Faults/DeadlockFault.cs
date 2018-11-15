@@ -26,10 +26,6 @@ namespace GammaFour.ClientModel
         /// Gets the message of the fault.
         /// </summary>
         [DataMember]
-        public string Message
-        {
-            get;
-            private set;
-        }
+        public string Message { get; private set; }
     }
 }

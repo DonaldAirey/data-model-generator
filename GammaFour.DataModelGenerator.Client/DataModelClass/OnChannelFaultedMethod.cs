@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OnChannelFaultedMethod"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The data model schema.</param>
-        public OnChannelFaultedMethod(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The data model schema.</param>
+        public OnChannelFaultedMethod(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "OnChannelFaulted";
 
             //        /// <summary>

@@ -12,8 +12,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server Compiler", "Server C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data Service Compiler", "Data Service Compiler\Data Service Compiler.csproj", "{7DAFC054-485A-43D8-8E12-55607C116B47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Import Service Compiler", "Import Service Compiler\Import Service Compiler.csproj", "{4D13E76C-2AC6-4D33-8060-17A788872BAA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistent Store Compiler", "Persistent Store Compiler\Persistent Store Compiler.csproj", "{92035F53-4582-4CC4-A282-58F9DDE945D5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client Compiler", "Client Compiler\Client Compiler.csproj", "{060F4FF1-EBF8-418A-A8B6-51AC9604CE3A}"
@@ -36,11 +34,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database Compiler", "Databa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.DataService", "GammaFour.DataModelGenerator.DataService\GammaFour.DataModelGenerator.DataService.csproj", "{CED1908A-6CBF-4065-9616-F959DB2736CF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.ImportService", "GammaFour.DataModelGenerator.ImportService\GammaFour.DataModelGenerator.ImportService.csproj", "{DE1462F3-B85F-4EDC-8E43-5790959B7FB9}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.PersistentStore", "GammaFour.DataModelGenerator.PersistentStore\GammaFour.DataModelGenerator.PersistentStore.csproj", "{1CCCDC82-E9F4-4B05-828A-FDD8B8087339}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.Server", "GammaFour.DataModelGenerator.Server\GammaFour.DataModelGenerator.Server.csproj", "{12EB72BA-3516-4BBF-8512-CE9BB16E2EF7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.RestService", "GammaFour.DataModelGenerator.RestService\GammaFour.DataModelGenerator.RestService.csproj", "{2923CC9D-7C5B-4167-94E4-D6922A4BF3A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "REST Service Compiler", "REST Service Compiler\REST Service Compiler.csproj", "{4D13E76C-2AC6-4D33-8060-17A788872BAA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,12 +61,6 @@ Global
 		{7DAFC054-485A-43D8-8E12-55607C116B47}.Production|Any CPU.Build.0 = Production|Any CPU
 		{7DAFC054-485A-43D8-8E12-55607C116B47}.Staging|Any CPU.ActiveCfg = Staging|Any CPU
 		{7DAFC054-485A-43D8-8E12-55607C116B47}.Staging|Any CPU.Build.0 = Staging|Any CPU
-		{4D13E76C-2AC6-4D33-8060-17A788872BAA}.Development|Any CPU.ActiveCfg = Development|Any CPU
-		{4D13E76C-2AC6-4D33-8060-17A788872BAA}.Development|Any CPU.Build.0 = Development|Any CPU
-		{4D13E76C-2AC6-4D33-8060-17A788872BAA}.Production|Any CPU.ActiveCfg = Production|Any CPU
-		{4D13E76C-2AC6-4D33-8060-17A788872BAA}.Production|Any CPU.Build.0 = Production|Any CPU
-		{4D13E76C-2AC6-4D33-8060-17A788872BAA}.Staging|Any CPU.ActiveCfg = Staging|Any CPU
-		{4D13E76C-2AC6-4D33-8060-17A788872BAA}.Staging|Any CPU.Build.0 = Staging|Any CPU
 		{92035F53-4582-4CC4-A282-58F9DDE945D5}.Development|Any CPU.ActiveCfg = Development|Any CPU
 		{92035F53-4582-4CC4-A282-58F9DDE945D5}.Development|Any CPU.Build.0 = Development|Any CPU
 		{92035F53-4582-4CC4-A282-58F9DDE945D5}.Production|Any CPU.ActiveCfg = Production|Any CPU
@@ -92,7 +86,6 @@ Global
 		{E4BC1263-CC34-4E2B-BEE5-4306D1392648}.Staging|Any CPU.ActiveCfg = Staging|Any CPU
 		{E4BC1263-CC34-4E2B-BEE5-4306D1392648}.Staging|Any CPU.Build.0 = Staging|Any CPU
 		{AFCB57EE-9BA5-4420-AF72-B7A3ABB7F9EB}.Development|Any CPU.ActiveCfg = Development|Any CPU
-		{AFCB57EE-9BA5-4420-AF72-B7A3ABB7F9EB}.Development|Any CPU.Build.0 = Development|Any CPU
 		{AFCB57EE-9BA5-4420-AF72-B7A3ABB7F9EB}.Production|Any CPU.ActiveCfg = Production|Any CPU
 		{AFCB57EE-9BA5-4420-AF72-B7A3ABB7F9EB}.Production|Any CPU.Build.0 = Production|Any CPU
 		{AFCB57EE-9BA5-4420-AF72-B7A3ABB7F9EB}.Staging|Any CPU.ActiveCfg = Staging|Any CPU
@@ -133,12 +126,6 @@ Global
 		{CED1908A-6CBF-4065-9616-F959DB2736CF}.Production|Any CPU.Build.0 = Production|Any CPU
 		{CED1908A-6CBF-4065-9616-F959DB2736CF}.Staging|Any CPU.ActiveCfg = Staging|Any CPU
 		{CED1908A-6CBF-4065-9616-F959DB2736CF}.Staging|Any CPU.Build.0 = Staging|Any CPU
-		{DE1462F3-B85F-4EDC-8E43-5790959B7FB9}.Development|Any CPU.ActiveCfg = Development|Any CPU
-		{DE1462F3-B85F-4EDC-8E43-5790959B7FB9}.Development|Any CPU.Build.0 = Development|Any CPU
-		{DE1462F3-B85F-4EDC-8E43-5790959B7FB9}.Production|Any CPU.ActiveCfg = Production|Any CPU
-		{DE1462F3-B85F-4EDC-8E43-5790959B7FB9}.Production|Any CPU.Build.0 = Production|Any CPU
-		{DE1462F3-B85F-4EDC-8E43-5790959B7FB9}.Staging|Any CPU.ActiveCfg = Staging|Any CPU
-		{DE1462F3-B85F-4EDC-8E43-5790959B7FB9}.Staging|Any CPU.Build.0 = Staging|Any CPU
 		{1CCCDC82-E9F4-4B05-828A-FDD8B8087339}.Development|Any CPU.ActiveCfg = Development|Any CPU
 		{1CCCDC82-E9F4-4B05-828A-FDD8B8087339}.Development|Any CPU.Build.0 = Development|Any CPU
 		{1CCCDC82-E9F4-4B05-828A-FDD8B8087339}.Production|Any CPU.ActiveCfg = Production|Any CPU
@@ -151,6 +138,18 @@ Global
 		{12EB72BA-3516-4BBF-8512-CE9BB16E2EF7}.Production|Any CPU.Build.0 = Production|Any CPU
 		{12EB72BA-3516-4BBF-8512-CE9BB16E2EF7}.Staging|Any CPU.ActiveCfg = Staging|Any CPU
 		{12EB72BA-3516-4BBF-8512-CE9BB16E2EF7}.Staging|Any CPU.Build.0 = Staging|Any CPU
+		{2923CC9D-7C5B-4167-94E4-D6922A4BF3A0}.Development|Any CPU.ActiveCfg = Development|Any CPU
+		{2923CC9D-7C5B-4167-94E4-D6922A4BF3A0}.Development|Any CPU.Build.0 = Development|Any CPU
+		{2923CC9D-7C5B-4167-94E4-D6922A4BF3A0}.Production|Any CPU.ActiveCfg = Production|Any CPU
+		{2923CC9D-7C5B-4167-94E4-D6922A4BF3A0}.Production|Any CPU.Build.0 = Production|Any CPU
+		{2923CC9D-7C5B-4167-94E4-D6922A4BF3A0}.Staging|Any CPU.ActiveCfg = Staging|Any CPU
+		{2923CC9D-7C5B-4167-94E4-D6922A4BF3A0}.Staging|Any CPU.Build.0 = Staging|Any CPU
+		{4D13E76C-2AC6-4D33-8060-17A788872BAA}.Development|Any CPU.ActiveCfg = Development|Any CPU
+		{4D13E76C-2AC6-4D33-8060-17A788872BAA}.Development|Any CPU.Build.0 = Development|Any CPU
+		{4D13E76C-2AC6-4D33-8060-17A788872BAA}.Production|Any CPU.ActiveCfg = Production|Any CPU
+		{4D13E76C-2AC6-4D33-8060-17A788872BAA}.Production|Any CPU.Build.0 = Production|Any CPU
+		{4D13E76C-2AC6-4D33-8060-17A788872BAA}.Staging|Any CPU.ActiveCfg = Staging|Any CPU
+		{4D13E76C-2AC6-4D33-8060-17A788872BAA}.Staging|Any CPU.Build.0 = Staging|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

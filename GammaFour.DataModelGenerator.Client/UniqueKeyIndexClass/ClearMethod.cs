@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Client.UniqueKeyIndexClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private UniqueConstraintSchema uniqueConstraintSchema;
+        private UniqueKeyElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ClearMethod"/> class.
         /// </summary>
-        /// <param name="uniqueConstraintSchema">The unique constraint schema.</param>
-        public ClearMethod(UniqueConstraintSchema uniqueConstraintSchema)
+        /// <param name="uniqueKeyElement">The unique constraint schema.</param>
+        public ClearMethod(UniqueKeyElement uniqueKeyElement)
         {
             // Initialize the object.
-            this.uniqueConstraintSchema = uniqueConstraintSchema;
+            this.uniqueKeyElement = uniqueKeyElement;
             this.Name = "Clear";
 
             //        /// <summary>

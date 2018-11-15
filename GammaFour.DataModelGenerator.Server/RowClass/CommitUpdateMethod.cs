@@ -25,20 +25,26 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
+
+        /// <summary>
+        /// The XML Schema document.
+        /// </summary>
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommitUpdateMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public CommitUpdateMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public CommitUpdateMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
+            this.xmlSchemaDocument = this.tableElement.XmlSchemaDocument;
             this.Name = "CommitUpdate";
 
             // The row type.
-            this.rowType = this.tableSchema.Name + "Row";
+            this.rowType = this.tableElement.Name + "Row";
 
             //        /// <summary>
             //        /// Commit an updated row.
@@ -115,7 +121,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(this.tableSchema.Name + "Data"))
+                            SyntaxFactory.IdentifierName(this.tableElement.Name + "Data"))
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
@@ -193,8 +199,8 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                             SyntaxFactory.ArgumentList())))))));
 
                 //            transactionItem.Add(0);
-                int tableIndex = this.tableSchema.DataModel.Tables.Select((value, index) => new { value, index })
-                    .Where(pair => pair.value == this.tableSchema)
+                int tableIndex = this.tableElement.XmlSchemaDocument.Tables.Select((value, index) => new { value, index })
+                    .Where(pair => pair.value == this.tableElement)
                     .Select(pair => pair.index + 1)
                     .FirstOrDefault() - 1;
                 statements.Add(
@@ -230,9 +236,10 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                             SyntaxFactory.IdentifierName("Modified"))))))));
 
                 // Add the primary key into the transaction record.
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
                     //            transactionItem.Add(previousData.ConfigurationId);
+                    ColumnElement columnElement = columnReferenceElement.Column;
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.InvocationExpression(
@@ -247,19 +254,19 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.IdentifierName("previousData"),
-                                                SyntaxFactory.IdentifierName(columnSchema.Name))))))));
+                                                SyntaxFactory.IdentifierName(columnElement.Name))))))));
                 }
 
                 // This will add each column that has changed to the record.
                 int columnIndex = 0;
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
                     // The row version has always chanced, so we don't need to check.  Other columns will only be updated if they changed from the original value.
-                    if (columnSchema.IsRowVersion)
+                    if (columnElement.IsRowVersion)
                     {
                         //            transactionItem.Add(1);
                         //            transactionItem.Add(this.currentData.RowVersion);
-                        statements.AddRange(this.AddColumnToBuffer(columnIndex, columnSchema.Name));
+                        statements.AddRange(this.AddColumnToBuffer(columnIndex, columnElement.Name));
                     }
                     else
                     {
@@ -278,12 +285,12 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
                                             SyntaxFactory.IdentifierName("currentData")),
-                                        SyntaxFactory.IdentifierName(columnSchema.Name)),
+                                        SyntaxFactory.IdentifierName(columnElement.Name)),
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.IdentifierName("previousData"),
-                                        SyntaxFactory.IdentifierName(columnSchema.Name))),
-                                SyntaxFactory.Block(this.AddColumnToBuffer(columnIndex, columnSchema.Name))));
+                                        SyntaxFactory.IdentifierName(columnElement.Name))),
+                                SyntaxFactory.Block(this.AddColumnToBuffer(columnIndex, columnElement.Name))));
                     }
 
                     // Repeat for each of the columns in the table.
@@ -302,7 +309,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
                                         SyntaxFactory.IdentifierName("Table")),
-                                    SyntaxFactory.IdentifierName("DataModel")),
+                                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name)),
                                 SyntaxFactory.IdentifierName("AddTransaction")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(

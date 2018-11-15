@@ -19,16 +19,22 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
+
+        /// <summary>
+        /// The XML Schema document.
+        /// </summary>
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RollbackDeleteMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public RollbackDeleteMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public RollbackDeleteMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
+            this.xmlSchemaDocument = this.tableElement.XmlSchemaDocument;
             this.Name = "RollbackDelete";
 
             //        /// <summary>
@@ -59,15 +65,16 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
 
                 // This creates the comma-separated list of parameters that are used to create a key.
                 List<ArgumentSyntax> arguments = new List<ArgumentSyntax>();
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
                     // Each of the columns belonging to the key are added to the list.
+                    ColumnElement columnElement = columnReferenceElement.Column;
                     arguments.Add(
                         SyntaxFactory.Argument(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("previousData"),
-                                SyntaxFactory.IdentifierName(columnSchema.Name))));
+                                SyntaxFactory.IdentifierName(columnElement.Name))));
                 }
 
                 // The current object is the final parameter.
@@ -107,7 +114,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(this.tableSchema.Name + "Data"))
+                            SyntaxFactory.IdentifierName(this.tableElement.Name + "Data"))
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
@@ -175,11 +182,11 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                     SyntaxFactory.IdentifierName("actionIndex"))))))))));
 
                 // Rollback the addition for each of the unique constraints.
-                foreach (UniqueConstraintSchema uniqueConstraintSchema in this.tableSchema.UniqueKeys)
+                foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
                 {
                     // Indices with nullable columns are handled differently than non-nullable columns.  We are going to generate code that will ignore
                     // an entry when it all of the components in the key are null.
-                    if (uniqueConstraintSchema.IsNullable)
+                    if (uniqueKeyElement.IsNullable)
                     {
                         // The general idea here is build a sequence of binary expressions, each of them testing for a null value in the index.  The
                         // first column acts as the seed and the binary expressions are built up by a succession of logical 'AND' statements from here.
@@ -191,12 +198,12 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName("currentData")),
-                                SyntaxFactory.IdentifierName(uniqueConstraintSchema.Columns[0].Name)),
+                                SyntaxFactory.IdentifierName(uniqueKeyElement.Columns[0].Column.Name)),
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.NullLiteralExpression));
 
                         // Combine multiple key elements with a logical 'AND' binary expression.
-                        for (int index = 1; index < uniqueConstraintSchema.Columns.Count; index++)
+                        for (int index = 1; index < uniqueKeyElement.Columns.Count; index++)
                         {
                             expression = SyntaxFactory.BinaryExpression(
                                 SyntaxKind.LogicalAndExpression,
@@ -209,7 +216,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
                                             SyntaxFactory.IdentifierName("currentData")),
-                                        SyntaxFactory.IdentifierName(uniqueConstraintSchema.Columns[index].Name)),
+                                        SyntaxFactory.IdentifierName(uniqueKeyElement.Columns[index].Column.Name)),
                                     SyntaxFactory.LiteralExpression(
                                         SyntaxKind.NullLiteralExpression)));
                         }
@@ -221,37 +228,37 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                         statements.Add(
                             SyntaxFactory.IfStatement(
                                 expression,
-                                SyntaxFactory.Block(this.AddUniqueIndexBlock(uniqueConstraintSchema))));
+                                SyntaxFactory.Block(this.AddUniqueIndexBlock(uniqueKeyElement))));
                     }
                     else
                     {
-                        statements.AddRange(this.AddUniqueIndexBlock(uniqueConstraintSchema));
+                        statements.AddRange(this.AddUniqueIndexBlock(uniqueKeyElement));
                     }
                 }
 
                 // Delete the row from each of the parent relations.
-                foreach (RelationSchema relationSchema in this.tableSchema.ParentRelations)
+                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
                 {
                     // Indices with nullable columns are handled differently than non-nullable columns.  We are going to generate code that will
                     // ignore an entry when it all of the key components are null.
-                    if (relationSchema.ChildKeyConstraint.IsNullable)
+                    if (foreignKeyElement.IsNullable)
                     {
                         // The general idea here is build a sequence of binary expressions, each of them testing for a null value in the index.  The
                         // first column acts as the seed and the binary expressions are built up by a succession of logical 'AND' statements from
                         // here.
                         bool isFirstColumn = true;
                         ExpressionSyntax testIndexExpression = null;
-                        for (int index = 0; index < relationSchema.ChildKeyConstraint.Columns.Count; index++)
+                        for (int index = 0; index < foreignKeyElement.Columns.Count; index++)
                         {
-                            ColumnSchema columnSchema = relationSchema.ChildKeyConstraint.Columns[0];
-                            if (!columnSchema.IsNullable)
+                            ColumnElement columnElement = foreignKeyElement.Columns[0].Column;
+                            if (!columnElement.IsNullable)
                             {
                                 continue;
                             }
 
                             // Create an expression to test if the column is null.  Value types are implemented as the generic 'Nullable' and have a
                             // different syntax than reference types to test for null.
-                            ExpressionSyntax testColumnExpression = columnSchema.IsNullable && columnSchema.IsValueType ?
+                            ExpressionSyntax testColumnExpression = columnElement.IsNullable && columnElement.IsValueType ?
                                 (ExpressionSyntax)SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.MemberAccessExpression(
@@ -260,7 +267,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
                                             SyntaxFactory.IdentifierName("currentData")),
-                                        SyntaxFactory.IdentifierName(columnSchema.Name)),
+                                        SyntaxFactory.IdentifierName(columnElement.Name)),
                                     SyntaxFactory.IdentifierName("HasValue")) :
                                 (ExpressionSyntax)SyntaxFactory.BinaryExpression(
                                     SyntaxKind.NotEqualsExpression,
@@ -270,7 +277,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
                                             SyntaxFactory.IdentifierName("currentData")),
-                                        SyntaxFactory.IdentifierName(columnSchema.Name)),
+                                        SyntaxFactory.IdentifierName(columnElement.Name)),
                                     SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)
                                     .WithToken(SyntaxFactory.Token(SyntaxKind.NullKeyword)));
 
@@ -295,12 +302,12 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                         statements.Add(
                             SyntaxFactory.IfStatement(
                                 testIndexExpression,
-                                SyntaxFactory.Block(this.AddParentKeyIndexBlock(relationSchema))));
+                                SyntaxFactory.Block(this.AddParentKeyIndexBlock(foreignKeyElement))));
                     }
                     else
                     {
                         //                this.Table.CountryExternalId0KeyIndex.Remove(new CountryExternalId0Key(this.Current.ExternalId0));
-                        statements.AddRange(this.AddParentKeyIndexBlock(relationSchema));
+                        statements.AddRange(this.AddParentKeyIndexBlock(foreignKeyElement));
                     }
                 }
 
@@ -496,20 +503,21 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="relationSchema">The unique constraint schema.</param>
+        /// <param name="foreignKeyElement">The unique constraint schema.</param>
         /// <returns>A block of code that deletes a row from a unique index.</returns>
-        private SyntaxList<StatementSyntax> AddParentKeyIndexBlock(RelationSchema relationSchema)
+        private SyntaxList<StatementSyntax> AddParentKeyIndexBlock(ForeignKeyElement foreignKeyElement)
         {
             // This list collects the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 
             // This creates the comma-separated list of parameters that are used to create a key.
             List<ArgumentSyntax> arguments = new List<ArgumentSyntax>();
-            foreach (ColumnSchema columnSchema in relationSchema.ChildKeyConstraint.Columns)
+            foreach (ColumnReferenceElement columnReferenceElement in foreignKeyElement.Columns)
             {
                 // Each of the columns belonging to the key are added to the list.
+                ColumnElement columnElement = columnReferenceElement.Column;
                 arguments.Add(
-                    columnSchema.IsNullable && columnSchema.IsValueType ?
+                    columnElement.IsNullable && columnElement.IsValueType ?
                     SyntaxFactory.Argument(
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
@@ -519,7 +527,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName("currentData")),
-                                SyntaxFactory.IdentifierName(columnSchema.Name)),
+                                SyntaxFactory.IdentifierName(columnElement.Name)),
                             SyntaxFactory.IdentifierName("Value"))) :
                     SyntaxFactory.Argument(
                         SyntaxFactory.MemberAccessExpression(
@@ -528,7 +536,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName("currentData")),
-                            SyntaxFactory.IdentifierName(columnSchema.Name))));
+                            SyntaxFactory.IdentifierName(columnElement.Name))));
             }
 
             // The current object is the final parameter.
@@ -548,8 +556,8 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
                                         SyntaxFactory.IdentifierName("Table")),
-                                    SyntaxFactory.IdentifierName("DataModel")),
-                                SyntaxFactory.IdentifierName(relationSchema.Name)),
+                                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name)),
+                                SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
                             SyntaxFactory.IdentifierName("AddChild")))
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList(
@@ -562,24 +570,25 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="uniqueConstraintSchema">The unique constraint schema.</param>
+        /// <param name="uniqueKeyElement">The unique constraint schema.</param>
         /// <returns>A block of code that removes an entry in a unique index.</returns>
-        private SyntaxList<StatementSyntax> AddUniqueIndexBlock(UniqueConstraintSchema uniqueConstraintSchema)
+        private SyntaxList<StatementSyntax> AddUniqueIndexBlock(UniqueKeyElement uniqueKeyElement)
         {
             // This list collects the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 
             // This creates the comma-separated list of parameters that are used to create a key.
             List<ArgumentSyntax> arguments = new List<ArgumentSyntax>();
-            foreach (ColumnSchema columnSchema in uniqueConstraintSchema.Columns)
+            foreach (ColumnReferenceElement columnReferenceElement in uniqueKeyElement.Columns)
             {
                 // Each of the columns belonging to the key are added to the list.
+                ColumnElement columnElement = columnReferenceElement.Column;
                 arguments.Add(
                     SyntaxFactory.Argument(
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.IdentifierName("previousData"),
-                            SyntaxFactory.IdentifierName(columnSchema.Name))));
+                            SyntaxFactory.IdentifierName(columnElement.Name))));
             }
 
             // The current object is the final parameter.
@@ -599,8 +608,8 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
                                         SyntaxFactory.IdentifierName("Table")),
-                                    SyntaxFactory.IdentifierName("DataModel")),
-                                SyntaxFactory.IdentifierName(uniqueConstraintSchema.Name)),
+                                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name)),
+                                SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
                             SyntaxFactory.IdentifierName("Add")))
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList(

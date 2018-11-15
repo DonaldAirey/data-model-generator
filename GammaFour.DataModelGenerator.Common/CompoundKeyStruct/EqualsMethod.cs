@@ -7,6 +7,7 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -19,16 +20,16 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
         /// <summary>
         /// The column schema.
         /// </summary>
-        private UniqueConstraintSchema uniqueConstraintSchema;
+        private UniqueKeyElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EqualsMethod"/> class.
         /// </summary>
-        /// <param name="uniqueConstraintSchema">The unique constraint schema.</param>
-        public EqualsMethod(UniqueConstraintSchema uniqueConstraintSchema)
+        /// <param name="uniqueKeyElement">The unique constraint schema.</param>
+        public EqualsMethod(UniqueKeyElement uniqueKeyElement)
         {
             // Initialize the object.
-            this.uniqueConstraintSchema = uniqueConstraintSchema;
+            this.uniqueKeyElement = uniqueKeyElement;
 
             // This is the name of the method.
             this.Name = "Equals";
@@ -54,20 +55,21 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 //            return this.targetKeyField == ((ConfigurationKey)(obj)).targetKeyField && this.configurationIdField == ((ConfigurationKey)(obj)).configurationIdField);
+                List<ColumnReferenceElement> columns = this.uniqueKeyElement.Columns;
                 BinaryExpressionSyntax binaryExpression = SyntaxFactory.BinaryExpression(
                     SyntaxKind.EqualsExpression,
                     SyntaxFactory.MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
                         SyntaxFactory.ThisExpression().WithToken(SyntaxFactory.Token(SyntaxKind.ThisKeyword)),
-                        SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Columns[0].Name)),
+                        SyntaxFactory.IdentifierName(columns[0].Column.Name)),
                     SyntaxFactory.MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
                         SyntaxFactory.ParenthesizedExpression(
                             SyntaxFactory.CastExpression(
-                                SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Name + "Set"),
+                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name + "Set"),
                                 SyntaxFactory.IdentifierName("obj"))),
-                        SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Columns[0].Name)));
-                for (int index = 1; index < this.uniqueConstraintSchema.Columns.Count; index++)
+                        SyntaxFactory.IdentifierName(columns[0].Column.Name)));
+                for (int index = 1; index < columns.Count; index++)
                 {
                     binaryExpression = SyntaxFactory.BinaryExpression(
                         SyntaxKind.LogicalAndExpression,
@@ -76,14 +78,14 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Columns[index].Name)),
+                                    SyntaxFactory.IdentifierName(columns[index].Column.Name)),
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ParenthesizedExpression(
                                         SyntaxFactory.CastExpression(
-                                            SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Name + "Set"),
+                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name + "Set"),
                                             SyntaxFactory.IdentifierName("obj"))),
-                                    SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Columns[index].Name))),
+                                    SyntaxFactory.IdentifierName(columns[index].Column.Name))),
                             binaryExpression);
                 }
 

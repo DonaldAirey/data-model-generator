@@ -20,17 +20,17 @@ namespace GammaFour.DataModelGenerator.Server.PersistentStoreageInterface
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public CreateMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public CreateMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
-            this.Name = "Create" + tableSchema.Name;
+            this.tableElement = tableElement;
+            this.Name = "Create" + tableElement.Name;
 
             //        /// <summary>
             //        /// Creates a Configuration record.
@@ -84,7 +84,7 @@ namespace GammaFour.DataModelGenerator.Server.PersistentStoreageInterface
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Creates a " + this.tableSchema.Name + " record.",
+                                                " Creates a " + this.tableElement.Name + " record.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -108,11 +108,11 @@ namespace GammaFour.DataModelGenerator.Server.PersistentStoreageInterface
                 List<KeyValuePair<string, SyntaxTrivia>> parameterTrivia = new List<KeyValuePair<string, SyntaxTrivia>>();
 
                 // Add comments for each of the parameters.
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
                     //        /// <param name="configurationId">The required value for the ConfigurationId column.</param>
-                    string identifier = columnSchema.CamelCaseName;
-                    string description = "The " + (columnSchema.IsNullable ? "optional" : "required") + " value for the " + columnSchema.Name + " column.";
+                    string identifier = columnElement.Name.ToCamelCase();
+                    string description = "The " + (columnElement.IsNullable ? "optional" : "required") + " value for the " + columnElement.Name + " column.";
                     parameterTrivia.Add(
                         new KeyValuePair<string, SyntaxTrivia>(
                             identifier,
@@ -127,7 +127,7 @@ namespace GammaFour.DataModelGenerator.Server.PersistentStoreageInterface
                                                     {
                                                         SyntaxFactory.XmlTextLiteral(
                                                             SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                            " <param name=\"" + columnSchema.CamelCaseName + "\">" + description + "</param>",
+                                                            " <param name=\"" + columnElement.Name.ToCamelCase() + "\">" + description + "</param>",
                                                             string.Empty,
                                                             SyntaxFactory.TriviaList()),
                                                         SyntaxFactory.XmlTextNewLine(
@@ -157,16 +157,16 @@ namespace GammaFour.DataModelGenerator.Server.PersistentStoreageInterface
                 List<KeyValuePair<string, ParameterSyntax>> parameterPair = new List<KeyValuePair<string, ParameterSyntax>>();
 
                 // Add the columns of the table to the set of parameters.
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
-                    string identifier = columnSchema.CamelCaseName;
+                    string identifier = columnElement.Name.ToCamelCase();
                     parameterPair.Add(
                         new KeyValuePair<string, ParameterSyntax>(
                             identifier,
                             SyntaxFactory.Parameter(
                                 SyntaxFactory.Identifier(identifier))
                                     .WithType(
-                                        Conversions.FromType(columnSchema.Type))));
+                                        Conversions.FromType(columnElement.Type))));
                 }
 
                 // Sort and separate the parameters.

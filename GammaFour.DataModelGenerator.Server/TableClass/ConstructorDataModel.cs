@@ -20,19 +20,25 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
+
+        /// <summary>
+        /// The data model schema.
+        /// </summary>
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstructorDataModel"/> class.
         /// </summary>
-        /// <param name="tableSchema">The table schema.</param>
-        public ConstructorDataModel(TableSchema tableSchema)
+        /// <param name="tableElement">The table schema.</param>
+        public ConstructorDataModel(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
+            this.xmlSchemaDocument = this.tableElement.XmlSchemaDocument;
 
             // This is the name of the constructor.
-            this.Name = string.Format(CultureInfo.InvariantCulture, "{0}Table", this.tableSchema.Name);
+            this.Name = string.Format(CultureInfo.InvariantCulture, "{0}Table", this.tableElement.Name);
 
             //        /// <summary>
             //        /// Initializes a new instance of the <see cref="ConfigurationTable"/> class.
@@ -67,8 +73,8 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(this.tableSchema.DataModel.Name)),
-                            SyntaxFactory.IdentifierName(this.tableSchema.DataModel.CamelCaseName))));
+                                SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
+                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToCamelCase()))));
 
                 //            this.mergeFunctions[RecordState.Added] = this.MergeAddition;
                 statements.Add(
@@ -136,7 +142,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 string.Format(
                                                     CultureInfo.InvariantCulture,
                                                     " Initializes a new instance of the <see cref=\"{0}Table\"/> class.",
-                                                    this.tableSchema.Name),
+                                                    this.tableElement.Name),
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -169,7 +175,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    " <param name=\"dataModel\">The data model.</param>",
+                                                    $" <param name=\"{this.xmlSchemaDocument.Name.ToCamelCase()}\">The data model.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -212,8 +218,8 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
 
                 // DataModel dataModel;
                 parameters.Add(
-                    SyntaxFactory.Parameter(SyntaxFactory.Identifier(this.tableSchema.DataModel.CamelCaseName))
-                    .WithType(SyntaxFactory.IdentifierName(this.tableSchema.DataModel.Name)));
+                    SyntaxFactory.Parameter(SyntaxFactory.Identifier(this.tableElement.XmlSchemaDocument.Name.ToCamelCase()))
+                    .WithType(SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

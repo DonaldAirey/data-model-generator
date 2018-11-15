@@ -20,16 +20,16 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstructorIServerSettings"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The table schema.</param>
-        public ConstructorIServerSettings(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The table schema.</param>
+        public ConstructorIServerSettings(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "PersistentStore";
 
             //        /// <summary>
@@ -82,7 +82,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                             SyntaxFactory.AttributeArgument(
                                                 SyntaxFactory.LiteralExpression(
                                                     SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal(this.dataModelSchema.Name)))
+                                                    SyntaxFactory.Literal(this.xmlSchemaDocument.Name)))
                                             .WithNameEquals(SyntaxFactory.NameEquals(SyntaxFactory.IdentifierName("MessageId"))),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.AttributeArgument(

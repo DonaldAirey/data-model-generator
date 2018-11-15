@@ -18,16 +18,16 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
         /// <summary>
         /// The column schema.
         /// </summary>
-        private UniqueConstraintSchema uniqueConstraintSchema;
+        private UniqueKeyElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GreaterThanOperator"/> class.
         /// </summary>
-        /// <param name="uniqueConstraintSchema">The unique constraint schema.</param>
-        public GreaterThanOperator(UniqueConstraintSchema uniqueConstraintSchema)
+        /// <param name="uniqueKeyElement">The unique constraint schema.</param>
+        public GreaterThanOperator(UniqueKeyElement uniqueKeyElement)
         {
             // Initialize the object.
-            this.uniqueConstraintSchema = uniqueConstraintSchema;
+            this.uniqueKeyElement = uniqueKeyElement;
 
             //        /// <summary>
             //        /// Greater than Operator.
@@ -240,10 +240,10 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
                 // ConfigurationKey key1, ConfigurationKey key2
                 parameters.Add(
                     SyntaxFactory.Parameter(SyntaxFactory.Identifier("key1"))
-                    .WithType(SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Name + "Set")));
+                    .WithType(SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name + "Set")));
                 parameters.Add(
                     SyntaxFactory.Parameter(SyntaxFactory.Identifier("key2"))
-                    .WithType(SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Name + "Set")));
+                    .WithType(SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name + "Set")));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

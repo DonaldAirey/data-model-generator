@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PropertyChangedEvent"/> class.
         /// </summary>
-        /// <param name="tableSchema">The table schema.</param>
-        public PropertyChangedEvent(TableSchema tableSchema)
+        /// <param name="tableElement">The table schema.</param>
+        public PropertyChangedEvent(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
             this.Name = "PropertyChanged";
 
             //        /// <summary>

@@ -6,6 +6,7 @@ namespace GammaFour.DataModelGenerator.Common.UniqueKeyIndexClass
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -18,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Common.UniqueKeyIndexClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private UniqueConstraintSchema uniqueConstraintSchema;
+        private UniqueKeyElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DictionaryField"/> class.
         /// </summary>
-        /// <param name="uniqueConstraintSchema">The table schema.</param>
-        public DictionaryField(UniqueConstraintSchema uniqueConstraintSchema)
+        /// <param name="uniqueKeyElement">The table schema.</param>
+        public DictionaryField(UniqueKeyElement uniqueKeyElement)
         {
             // Initialize the object.
-            this.uniqueConstraintSchema = uniqueConstraintSchema;
+            this.uniqueKeyElement = uniqueKeyElement;
 
             // This is the name of the field.
             this.Name = "dictionary";
@@ -149,17 +150,17 @@ namespace GammaFour.DataModelGenerator.Common.UniqueKeyIndexClass
                 List<TypeSyntax> types = new List<TypeSyntax>();
 
                 // Keys with a single element don't require a compound key in order to access the dictionary.
-                if (this.uniqueConstraintSchema.Columns.Count == 1)
+                if (this.uniqueKeyElement.Columns.Count == 1)
                 {
-                    types.Add(Conversions.FromType(this.uniqueConstraintSchema.Columns[0].Type));
+                    types.Add(Conversions.FromType(this.uniqueKeyElement.Columns.First().Column.Type));
                 }
                 else
                 {
-                    types.Add(SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Name + "Set"));
+                    types.Add(SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name + "Set"));
                 }
 
                 // And finally the type of row found in this dictionary.
-                types.Add(SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Table.Name + "Row"));
+                types.Add(SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name + "Row"));
 
                 // Dictionary<Guid, ProvinceRow>
                 return SyntaxFactory.GenericName(

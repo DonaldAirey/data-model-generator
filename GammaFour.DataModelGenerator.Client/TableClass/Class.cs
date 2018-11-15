@@ -26,18 +26,18 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Class"/> class.
         /// </summary>
-        /// <param name="tableSchema">A description of a unique constraint.</param>
-        public Class(TableSchema tableSchema)
+        /// <param name="tableElement">A description of a unique constraint.</param>
+        public Class(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
-            this.Name = tableSchema.Name + "Table";
-            this.rowType = this.tableSchema.Name + "Row";
+            this.tableElement = tableElement;
+            this.Name = tableElement.Name + "Table";
+            this.rowType = this.tableElement.Name + "Row";
 
             //    /// <summary>
             //    /// The Configuration table.
@@ -154,7 +154,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                 string.Format(
                                                     CultureInfo.InvariantCulture,
                                                     " The {0} table.",
-                                                    this.tableSchema.Name),
+                                                    this.tableElement.Name),
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -220,7 +220,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // Add the constructors.
-            members = members.Add(new ConstructorDataModel(this.tableSchema).Syntax);
+            members = members.Add(new ConstructorDataModel(this.tableElement).Syntax);
 
             // Return the new collection of members.
             return members;
@@ -255,8 +255,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new MergeActionsField(this.tableSchema));
-            fields.Add(new SettersField(this.tableSchema));
+            fields.Add(new MergeActionsField(this.tableElement));
+            fields.Add(new SettersField(this.tableElement));
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(f => f.Name))
@@ -277,7 +277,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new DataModelProperty(this.tableSchema.DataModel));
+            properties.Add(new DataModelProperty(this.tableElement.XmlSchemaDocument));
 
             // Alphabetize and add the properties as members of the class.
             foreach (SyntaxElement syntaxElement in properties.OrderBy(m => m.Name))
@@ -298,10 +298,10 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new AddRowMethod(this.tableSchema));
-            methods.Add(new BinarySearchMethod(this.tableSchema));
-            methods.Add(new MergeRecordMethod(this.tableSchema));
-            methods.Add(new RemoveRowMethod(this.tableSchema));
+            methods.Add(new AddRowMethod(this.tableElement));
+            methods.Add(new BinarySearchMethod(this.tableElement));
+            methods.Add(new MergeRecordMethod(this.tableElement));
+            methods.Add(new RemoveRowMethod(this.tableElement));
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
@@ -342,9 +342,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new MergeAddMethod(this.tableSchema));
-            methods.Add(new MergeDeleteMethod(this.tableSchema));
-            methods.Add(new MergeUpdateMethod(this.tableSchema));
+            methods.Add(new MergeAddMethod(this.tableElement));
+            methods.Add(new MergeDeleteMethod(this.tableElement));
+            methods.Add(new MergeUpdateMethod(this.tableElement));
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))

@@ -1,4 +1,4 @@
-﻿// <copyright file="ImportServiceGenerator.cs" company="Gamma Four, Inc.">
+﻿// <copyright file="RestServiceGenerator.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -9,7 +9,7 @@ namespace GammaFour.VisualStudioPackage
     using System.Runtime.InteropServices;
     using System.Text;
     using GammaFour.DataModelGenerator.Common;
-    using GammaFour.DataModelGenerator.ImportService;
+    using GammaFour.DataModelGenerator.RestService;
     using GammaFour.VisualStudio;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Formatting;
@@ -22,11 +22,11 @@ namespace GammaFour.VisualStudioPackage
     /// </summary>
     [ComVisible(true)]
     [Guid(PackageGuid)]
-    [CodeGeneratorRegistration(typeof(ImportServiceGenerator), nameof(ImportServiceGenerator), "{FAE04EC1-301F-11D3-BF4B-00C04F79EFBC}", GeneratesDesignTimeSource = true)]
-    [CodeGeneratorRegistration(typeof(ImportServiceGenerator), nameof(ImportServiceGenerator), "{9A19103F-16F7-4668-BE54-9A1E7A4F7556}", GeneratesDesignTimeSource = true)]
-    [CodeGeneratorRegistration(typeof(ImportServiceGenerator), nameof(ImportServiceGenerator), "{694DD9B6-B865-4C5B-AD85-86356E9C88DC}", GeneratesDesignTimeSource = true)]
-    [ProvideObject(typeof(ImportServiceGenerator))]
-    public sealed class ImportServiceGenerator : BaseCodeGeneratorWithSite
+    [CodeGeneratorRegistration(typeof(RestServiceGenerator), nameof(RestServiceGenerator), "{FAE04EC1-301F-11D3-BF4B-00C04F79EFBC}", GeneratesDesignTimeSource = true)]
+    [CodeGeneratorRegistration(typeof(RestServiceGenerator), nameof(RestServiceGenerator), "{9A19103F-16F7-4668-BE54-9A1E7A4F7556}", GeneratesDesignTimeSource = true)]
+    [CodeGeneratorRegistration(typeof(RestServiceGenerator), nameof(RestServiceGenerator), "{694DD9B6-B865-4C5B-AD85-86356E9C88DC}", GeneratesDesignTimeSource = true)]
+    [ProvideObject(typeof(RestServiceGenerator))]
+    public sealed class RestServiceGenerator : BaseCodeGeneratorWithSite
     {
         /// <summary>
         /// The package identifier.
@@ -45,10 +45,10 @@ namespace GammaFour.VisualStudioPackage
 
             // This creates the compilation unit from the schema.
             // This schema describes the data model that is to be generated.
-            DataModelSchema dataModelSchema = new DataModelSchema(inputFileContent, this.TargetNamespace);
+            XmlSchemaDocument xmlSchemaDocument = new XmlSchemaDocument(inputFileContent, this.TargetNamespace);
 
             // This creates the compilation unit from the schema.
-            CompilationUnit compilationUnit = new CompilationUnit(dataModelSchema);
+            CompilationUnit compilationUnit = new CompilationUnit(xmlSchemaDocument);
 
             // A workspace is needed in order to turn the compilation unit into code.
             AdhocWorkspace adhocWorkspace = new AdhocWorkspace();

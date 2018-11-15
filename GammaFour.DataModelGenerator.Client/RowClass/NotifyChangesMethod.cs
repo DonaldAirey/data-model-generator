@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NotifyChangesMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public NotifyChangesMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public NotifyChangesMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
             this.Name = "NotifyChanges";
 
             //        /// <summary>
@@ -78,7 +78,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                     SyntaxFactory.EqualsValueClause(
                                         SyntaxFactory.LiteralExpression(
                                             SyntaxKind.NumericLiteralExpression,
-                                            SyntaxFactory.Literal(this.tableSchema.PrimaryKey.Columns.Count + 2)))))))
+                                            SyntaxFactory.Literal(this.tableElement.PrimaryKey.Columns.Count + 2)))))))
                     .WithCondition(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.LessThanExpression,
@@ -274,7 +274,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                                                 SyntaxFactory.ElementAccessExpression(
                                                                     SyntaxFactory.MemberAccessExpression(
                                                                         SyntaxKind.SimpleMemberAccessExpression,
-                                                                        SyntaxFactory.IdentifierName(this.tableSchema.Name + "Row"),
+                                                                        SyntaxFactory.IdentifierName(this.tableElement.Name + "Row"),
                                                                         SyntaxFactory.IdentifierName("columnNames")))
                                                                 .WithArgumentList(
                                                                     SyntaxFactory.BracketedArgumentList(

@@ -17,16 +17,16 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="uniqueConstraintSchema">The unique constraint schema that was violated.</param>
+        /// <param name="uniqueKeyElement">The unique constraint schema that was violated.</param>
         /// <param name="columns">The columns of the key that was violated.</param>
         /// <returns>A block of code.</returns>
-        public static StatementSyntax GetSyntax(UniqueConstraintSchema uniqueConstraintSchema, List<ColumnSchema> columns)
+        public static StatementSyntax GetSyntax(UniqueKeyElement uniqueKeyElement, List<ColumnReferenceElement> columns)
         {
             // This creates the comma-separated list of parameters that are used to create a key.
             List<ExpressionSyntax> expressions = new List<ExpressionSyntax>();
-            foreach (ColumnSchema columnSchema in columns)
+            foreach (ColumnReferenceElement columnReferenceElement in columns)
             {
-                expressions.Add(SyntaxFactory.IdentifierName(columnSchema.CamelCaseName));
+                expressions.Add(SyntaxFactory.IdentifierName(columnReferenceElement.Column.Name.ToCamelCase()));
             }
 
             //                throw new DuplicateKeyException("Configuration", new object[] { keyConfigurationId, keySource });
@@ -41,7 +41,7 @@ namespace GammaFour.DataModelGenerator.Common
                                 SyntaxFactory.Argument(
                                     SyntaxFactory.LiteralExpression(
                                         SyntaxKind.StringLiteralExpression,
-                                        SyntaxFactory.Literal(uniqueConstraintSchema.Name))),
+                                        SyntaxFactory.Literal(uniqueKeyElement.Name))),
                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                                 SyntaxFactory.Argument(
                                     SyntaxFactory.ArrayCreationExpression(
@@ -63,21 +63,21 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="uniqueConstraintSchema">The unique constraint schema that was violated.</param>
+        /// <param name="uniqueKeyElement">The unique constraint schema that was violated.</param>
         /// <param name="propertyOwner">The object that owns the columns in the specified key.</param>
         /// <param name="columns">The columns of the key that was violated.</param>
         /// <returns>A block of code.</returns>
-        public static StatementSyntax GetSyntax(UniqueConstraintSchema uniqueConstraintSchema, ExpressionSyntax propertyOwner, List<ColumnSchema> columns)
+        public static StatementSyntax GetSyntax(UniqueKeyElement uniqueKeyElement, ExpressionSyntax propertyOwner, List<ColumnElement> columns)
         {
             // This creates the comma-separated list of parameters that are used to create a key.
             List<ExpressionSyntax> expressions = new List<ExpressionSyntax>();
-            foreach (ColumnSchema columnSchema in columns)
+            foreach (ColumnElement columnElement in columns)
             {
                 expressions.Add(
                     SyntaxFactory.MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
                         propertyOwner,
-                        SyntaxFactory.IdentifierName(columnSchema.Name)));
+                        SyntaxFactory.IdentifierName(columnElement.Name)));
             }
 
             //                throw new DuplicateKeyException("Configuration", new object[] { keyConfigurationId, keySource });
@@ -92,7 +92,7 @@ namespace GammaFour.DataModelGenerator.Common
                                 SyntaxFactory.Argument(
                                     SyntaxFactory.LiteralExpression(
                                         SyntaxKind.StringLiteralExpression,
-                                        SyntaxFactory.Literal(uniqueConstraintSchema.Name))),
+                                        SyntaxFactory.Literal(uniqueKeyElement.Name))),
                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                                 SyntaxFactory.Argument(
                                     SyntaxFactory.ArrayCreationExpression(

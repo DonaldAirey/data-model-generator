@@ -2,7 +2,7 @@
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
+namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 {
     using System;
     using System.Collections.Generic;
@@ -21,19 +21,19 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Class"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">A description of a unique constraint.</param>
-        public Class(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">A description of a unique constraint.</param>
+        public Class(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
 
             // The name of this structure.
-            this.Name = "ImportService";
+            this.Name = "RestService";
 
             //    /// <summary>
             //    /// A thread-safe, multi-tiered DataModel Service.
@@ -60,7 +60,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 return SyntaxFactory.BaseList(
                     SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(
                         SyntaxFactory.SimpleBaseType(
-                            SyntaxFactory.IdentifierName("IImportService"))));
+                            SyntaxFactory.IdentifierName("IRestService"))));
             }
         }
 
@@ -99,7 +99,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                                                 string.Format(
                                                     CultureInfo.InvariantCulture,
                                                     " Provides import services.",
-                                                    this.dataModelSchema.Name),
+                                                    this.xmlSchemaDocument.Name),
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -161,7 +161,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new DataSetField(this.dataModelSchema));
+            fields.Add(new DataSetField(this.xmlSchemaDocument));
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
@@ -181,7 +181,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // Add the constructors.
-            members = members.Add(new ConstructorDataSet(this.dataModelSchema).Syntax);
+            members = members.Add(new ConstructorDataSet(this.xmlSchemaDocument).Syntax);
 
             // Return the new collection of members.
             return members;
@@ -198,10 +198,10 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
             List<SyntaxElement> methods = new List<SyntaxElement>();
 
             // Each of the tables has a method to store and remove the records.
-            foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                methods.Add(new RemoveMethod(tableSchema));
-                methods.Add(new StoreMethod(tableSchema));
+                methods.Add(new RemoveMethod(tableElement));
+                methods.Add(new StoreMethod(tableElement));
             }
 
             // Alphabetize and add the methods as members of the class.

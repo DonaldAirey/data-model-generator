@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
         /// <summary>
         /// The Relation schema.
         /// </summary>
-        private RelationSchema relationSchema;
+        private ForeignKeyElement foreignKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ClearMethod"/> class.
         /// </summary>
-        /// <param name="relationSchema">The relation schema.</param>
-        public ClearMethod(RelationSchema relationSchema)
+        /// <param name="foreignKeyElement">The relation schema.</param>
+        public ClearMethod(ForeignKeyElement foreignKeyElement)
         {
             // Initialize the object.
-            this.relationSchema = relationSchema;
+            this.foreignKeyElement = foreignKeyElement;
             this.Name = "Clear";
 
             //        /// <summary>
@@ -71,9 +71,9 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                 // This collects the generic type arguments of the primary key of the parent table.
                 List<TypeSyntax> genericTypes = new List<TypeSyntax>();
                 genericTypes.Add(
-                    this.relationSchema.ParentKeyConstraint.Columns.Count == 1 ?
-                    Conversions.FromType(this.relationSchema.ParentKeyConstraint.Columns[0].Type) :
-                    SyntaxFactory.IdentifierName(this.relationSchema.ParentKeyConstraint.Name + "Set"));
+                    this.foreignKeyElement.UniqueKey.Columns.Count == 1 ?
+                    Conversions.FromType(this.foreignKeyElement.UniqueKey.Columns[0].Column.Type) :
+                    SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Name + "Set"));
 
                 //            this.RelationChanged?.Invoke(this, new NotifyRelationChangedEventArgs<Guid>(NotifyRelationChangedAction.Reset));
                 statements.Add(

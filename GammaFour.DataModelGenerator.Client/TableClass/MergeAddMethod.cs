@@ -20,16 +20,16 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MergeAddMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public MergeAddMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public MergeAddMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
             this.Name = "MergeAdd";
 
             //        /// <summary>
@@ -63,20 +63,20 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(this.tableSchema.Name + "Data"))
+                            SyntaxFactory.IdentifierName(this.tableElement.Name + "Data"))
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier(this.tableSchema.CamelCaseName + "Data"))
+                                    SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase() + "Data"))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
                                         SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName(this.tableSchema.Name + "Data"))
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name + "Data"))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList())))))));
 
                 // Copy the data from the transaction record into the strongly typed record.
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
                     //            this.currentData.ConfigurationId = (string)transactionItem[2];
                     statements.Add(
@@ -85,10 +85,10 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                 SyntaxKind.SimpleAssignmentExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(this.tableSchema.CamelCaseName + "Data"),
-                                    SyntaxFactory.IdentifierName(columnSchema.Name)),
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Data"),
+                                    SyntaxFactory.IdentifierName(columnElement.Name)),
                                 SyntaxFactory.CastExpression(
-                                    Conversions.FromType(columnSchema.Type),
+                                    Conversions.FromType(columnElement.Type),
                                     SyntaxFactory.ElementAccessExpression(
                                         SyntaxFactory.IdentifierName("transactionItem"))
                                     .WithArgumentList(
@@ -97,22 +97,22 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                 SyntaxFactory.Argument(
                                                     SyntaxFactory.LiteralExpression(
                                                         SyntaxKind.NumericLiteralExpression,
-                                                        SyntaxFactory.Literal(columnSchema.Index + 2))))))))));
+                                                        SyntaxFactory.Literal(columnElement.Index + 2))))))))));
                 }
 
                 //            ConfigurationRow configurationRow = new ConfigurationRow(this, configurationData);
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(this.tableSchema.Name + "Row"))
+                            SyntaxFactory.IdentifierName(this.tableElement.Name + "Row"))
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier(this.tableSchema.CamelCaseName + "Row"))
+                                    SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase() + "Row"))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
                                         SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName(this.tableSchema.Name + "Row"))
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name + "Row"))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
                                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(
@@ -122,7 +122,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                             SyntaxFactory.ThisExpression()),
                                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                         SyntaxFactory.Argument(
-                                                            SyntaxFactory.IdentifierName(this.tableSchema.CamelCaseName + "Data"))
+                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Data"))
                                                     })))))))));
 
                 //            configurationRow.Add();
@@ -131,7 +131,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableSchema.CamelCaseName + "Row"),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
                                 SyntaxFactory.IdentifierName("Add")))));
 
                 // This is the syntax for the body of the method.

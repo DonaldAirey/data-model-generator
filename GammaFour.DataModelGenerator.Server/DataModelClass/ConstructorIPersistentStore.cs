@@ -21,17 +21,17 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstructorIPersistentStore"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The table schema.</param>
-        public ConstructorIPersistentStore(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The table schema.</param>
+        public ConstructorIPersistentStore(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
-            this.Name = this.dataModelSchema.Name;
+            this.xmlSchemaDocument = xmlSchemaDocument;
+            this.Name = this.xmlSchemaDocument.Name;
 
             //        /// <summary>
             //        /// Initializes a new instance of the <see cref="DataModel"/> class.
@@ -112,7 +112,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                             SyntaxFactory.ElementAccessExpression(
                                                                 SyntaxFactory.MemberAccessExpression(
                                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                                    SyntaxFactory.IdentifierName("DataModel"),
+                                                                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name),
                                                                     SyntaxFactory.IdentifierName("rowVersionIndex")))
                                                             .WithArgumentList(
                                                                 SyntaxFactory.BracketedArgumentList(
@@ -238,9 +238,9 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                             SyntaxFactory.IdentifierName("persistentStore"))));
 
                 // This will create a table for merging the service data with the client-side data.
-                for (int tableIndex = 0; tableIndex < this.dataModelSchema.Tables.Count; tableIndex++)
+                for (int tableIndex = 0; tableIndex < this.xmlSchemaDocument.Tables.Count; tableIndex++)
                 {
-                    TableSchema tableSchema = this.dataModelSchema.Tables[tableIndex];
+                    TableElement tableElement = this.xmlSchemaDocument.Tables[tableIndex];
 
                     //            this.transactionHandlers[0] = (d) => this.Configuration.Merge(d);
                     statements.Add(
@@ -266,7 +266,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName(tableSchema.Name)),
+                                                SyntaxFactory.IdentifierName(tableElement.Name)),
                                             SyntaxFactory.IdentifierName("MergeRecord")))
                                     .WithArgumentList(
                                         SyntaxFactory.ArgumentList(
@@ -281,11 +281,11 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 }
 
                 // Initialize each of the tables.
-                foreach (TableSchema tableSchema in this.dataModelSchema.Tables.OrderBy(t => t.Name))
+                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables.OrderBy(t => t.Name))
                 {
                     //            this.configurationTableField = new ConfigurationTable(this);
-                    string fieldName = tableSchema.Name;
-                    string typeName = string.Format(CultureInfo.InvariantCulture, "{0}Table", tableSchema.Name);
+                    string fieldName = tableElement.Name;
+                    string typeName = string.Format(CultureInfo.InvariantCulture, "{0}Table", tableElement.Name);
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.AssignmentExpression(
@@ -302,35 +302,31 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 }
 
                 // Initialize each of the (non-primary key) unique keys.
-                foreach (TableSchema tableSchema in this.dataModelSchema.Tables.OrderBy(t => t.Name))
+                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables.OrderBy(t => t.Name))
                 {
-                    foreach (ConstraintSchema constraintSchema in tableSchema.Constraints.OrderBy(c => c.Name))
+                    foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
                     {
-                        UniqueConstraintSchema uniqueConstraintSchema = constraintSchema as UniqueConstraintSchema;
-                        if (uniqueConstraintSchema != null)
-                        {
-                            //            this.CountryExternalId0KeyIndex = new CountryExternalId0KeyIndex(this);
-                            statements.Add(
-                                SyntaxFactory.ExpressionStatement(
-                                    SyntaxFactory.AssignmentExpression(
-                                        SyntaxKind.SimpleAssignmentExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(uniqueConstraintSchema.Name)),
-                                        SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName(uniqueConstraintSchema.Name))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.ThisExpression())))))));
-                        }
+                        //            this.CountryExternalId0KeyIndex = new CountryExternalId0KeyIndex(this);
+                        statements.Add(
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.AssignmentExpression(
+                                    SyntaxKind.SimpleAssignmentExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
+                                    SyntaxFactory.ObjectCreationExpression(
+                                        SyntaxFactory.IdentifierName(uniqueKeyElement.Name))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.ThisExpression())))))));
                     }
                 }
 
                 // This will initialize each of the foreign relations.
-                foreach (RelationSchema relationSchema in this.dataModelSchema.Relations.OrderBy(r => r.ParentTable.Name))
+                foreach (ForeignKeyElement foreignKeyElement in this.xmlSchemaDocument.ForeignKeys)
                 {
                     //            this.CountryCustomerCountryIdKeyIndex = new CountryCustomerCountryIdKeyIndex(this);
                     statements.Add(
@@ -340,9 +336,9 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(relationSchema.Name)),
+                                    SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
                                 SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.IdentifierName(relationSchema.Name))
+                                    SyntaxFactory.IdentifierName(foreignKeyElement.Name))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
                                         SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(

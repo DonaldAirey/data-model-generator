@@ -20,16 +20,22 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
+
+        /// <summary>
+        /// The XML Schema document.
+        /// </summary>
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommitAddMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public CommitAddMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public CommitAddMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
+            this.xmlSchemaDocument = this.tableElement.XmlSchemaDocument;
             this.Name = "CommitAdd";
 
             //        /// <summary>
@@ -102,7 +108,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 // The row type.
-                string rowType = this.tableSchema.Name + "Row";
+                string rowType = this.tableElement.Name + "Row";
 
                 //            this.currentData = this.data[this.actionIndex];
                 statements.Add(
@@ -155,11 +161,11 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                         SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
                                                             SyntaxFactory.LiteralExpression(
                                                                 SyntaxKind.NumericLiteralExpression,
-                                                                SyntaxFactory.Literal(2 + this.tableSchema.Columns.Count)))))))))))));
+                                                                SyntaxFactory.Literal(2 + this.tableElement.Columns.Count)))))))))))));
 
                 //            transactionItem[0] = 0;
-                int tableIndex = this.tableSchema.DataModel.Tables.Select((value, index) => new { value, index })
-                    .Where(pair => pair.value == this.tableSchema)
+                int tableIndex = this.tableElement.XmlSchemaDocument.Tables.Select((value, index) => new { value, index })
+                    .Where(pair => pair.value == this.tableElement)
                     .Select(pair => pair.index + 1)
                     .FirstOrDefault() - 1;
                 statements.Add(
@@ -199,7 +205,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                 SyntaxFactory.IdentifierName("Added")))));
 
                 int bufferIndex = 2;
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
                     //            transactionItem[2] = this.current.ConfigurationId;
                     statements.Add(
@@ -221,7 +227,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
                                         SyntaxFactory.IdentifierName("currentData")),
-                                    SyntaxFactory.IdentifierName(columnSchema.Name)))));
+                                    SyntaxFactory.IdentifierName(columnElement.Name)))));
                 }
 
                 //            this.Table.DataModel.AddTransaction(transactionItem);
@@ -236,7 +242,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
                                         SyntaxFactory.IdentifierName("Table")),
-                                    SyntaxFactory.IdentifierName("DataModel")),
+                                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name)),
                                 SyntaxFactory.IdentifierName("AddTransaction")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(

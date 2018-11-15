@@ -19,8 +19,8 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         /// <summary>
         /// Initializes a new instance of the <see cref="CurrentDataField"/> class.
         /// </summary>
-        /// <param name="tableSchema">The table schema.</param>
-        public CurrentDataField(TableSchema tableSchema)
+        /// <param name="tableElement">The table schema.</param>
+        public CurrentDataField(TableElement tableElement)
         {
             // Initialize the object.
             this.Name = "currentData";
@@ -31,7 +31,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             //        private ConfigurationData current;
             this.Syntax = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
-                    SyntaxFactory.IdentifierName(tableSchema.Name + "Data"))
+                    SyntaxFactory.IdentifierName(tableElement.Name + "Data"))
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList(
                         SyntaxFactory.VariableDeclarator(

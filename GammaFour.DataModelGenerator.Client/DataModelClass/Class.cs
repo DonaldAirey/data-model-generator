@@ -7,6 +7,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Xml.Linq;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -20,17 +21,17 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Class"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">A description of a unique constraint.</param>
-        public Class(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">A description of a unique constraint.</param>
+        public Class(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
-            this.Name = dataModelSchema.Name;
+            this.xmlSchemaDocument = xmlSchemaDocument;
+            this.Name = xmlSchemaDocument.Name;
 
             //    /// <summary>
             //    /// A thread-safe data model.
@@ -161,7 +162,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // These are the constructors.
-            members = members.Add(new ConstructorEtc(this.dataModelSchema).Syntax);
+            members = members.Add(new ConstructorEtc(this.xmlSchemaDocument).Syntax);
 
             // Return the new collection of members.
             return members;
@@ -206,7 +207,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             fields.Add(new EndpointAddressField());
             fields.Add(new IsReadingField());
             fields.Add(new SequenceField());
-            fields.Add(new TransactionHandlersField(this.dataModelSchema));
+            fields.Add(new TransactionHandlersField(this.xmlSchemaDocument));
             fields.Add(new TransactionLogField());
             fields.Add(new TransactionLogIndexField());
 
@@ -232,27 +233,23 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             properties.Add(new IsReadingProperty());
 
             // Create a field for each of the tables.
-            foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
                 // This insures that we only have one relation to the parent table when there are multiple relations.
-                foreach (RelationSchema relationSchema in tableSchema.ParentRelations)
+                foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys)
                 {
                     // Create a field to hold each of the parent relations.
-                    properties.Add(new ParentRelationProperty(relationSchema));
+                    properties.Add(new ParentRelationProperty(foreignKeyElement));
                 }
 
                 // Add a field for each of the unique constraints that are not the primary key.
-                foreach (ConstraintSchema constraintSchema in tableSchema.Constraints)
+                foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
                 {
-                    UniqueConstraintSchema uniqueConstraintSchema = constraintSchema as UniqueConstraintSchema;
-                    if (uniqueConstraintSchema != null)
-                    {
-                        properties.Add(new UniqueIndexProperty(uniqueConstraintSchema));
-                    }
+                    properties.Add(new UniqueIndexProperty(uniqueKeyElement));
                 }
 
                 // And the tables.
-                properties.Add(new TableProperty(tableSchema));
+                properties.Add(new TableProperty(tableElement));
             }
 
             // Alphabetize and add the fields as members of the class.
@@ -316,9 +313,9 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new OnChannelFaultedMethod(this.dataModelSchema));
-            methods.Add(new ReadTransactionsAsyncMethod(this.dataModelSchema));
-            methods.Add(new ClearMethod(this.dataModelSchema));
+            methods.Add(new OnChannelFaultedMethod(this.xmlSchemaDocument));
+            methods.Add(new ReadTransactionsAsyncMethod(this.xmlSchemaDocument));
+            methods.Add(new ClearMethod(this.xmlSchemaDocument));
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))

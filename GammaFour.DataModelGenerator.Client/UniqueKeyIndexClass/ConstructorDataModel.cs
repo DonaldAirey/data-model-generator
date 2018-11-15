@@ -6,7 +6,6 @@ namespace GammaFour.DataModelGenerator.Client.UniqueKeyIndexClass
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -20,19 +19,25 @@ namespace GammaFour.DataModelGenerator.Client.UniqueKeyIndexClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private UniqueConstraintSchema uniqueConstraintSchema;
+        private UniqueKeyElement uniqueKeyElement;
+
+        /// <summary>
+        /// The data model schema.
+        /// </summary>
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstructorDataModel"/> class.
         /// </summary>
-        /// <param name="uniqueConstraintSchema">The table schema.</param>
-        public ConstructorDataModel(UniqueConstraintSchema uniqueConstraintSchema)
+        /// <param name="uniqueKeyElement">The table schema.</param>
+        public ConstructorDataModel(UniqueKeyElement uniqueKeyElement)
         {
             // Initialize the object.
-            this.uniqueConstraintSchema = uniqueConstraintSchema;
+            this.uniqueKeyElement = uniqueKeyElement;
+            this.xmlSchemaDocument = this.uniqueKeyElement.XmlSchemaDocument;
 
             // This is the name of the constructor.
-            this.Name = this.uniqueConstraintSchema.Name;
+            this.Name = this.uniqueKeyElement.Name;
 
             //        /// <summary>
             //        /// Initializes a new instance of the <see cref="ConfigurationTable"/> class.
@@ -67,8 +72,8 @@ namespace GammaFour.DataModelGenerator.Client.UniqueKeyIndexClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("DataModel")),
-                            SyntaxFactory.IdentifierName("dataModel"))));
+                                SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name)),
+                            SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToCamelCase()))));
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -110,7 +115,7 @@ namespace GammaFour.DataModelGenerator.Client.UniqueKeyIndexClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Initializes a new instance of the <see cref=\"" + this.uniqueConstraintSchema + "\"/> class.",
+                                                " Initializes a new instance of the <see cref=\"" + this.uniqueKeyElement + "\"/> class.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -143,7 +148,7 @@ namespace GammaFour.DataModelGenerator.Client.UniqueKeyIndexClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    " <param name=\"dataModel\">The data model.</param>",
+                                                    $" <param name=\"{this.xmlSchemaDocument.Name.ToCamelCase()}\">The data model.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -186,8 +191,8 @@ namespace GammaFour.DataModelGenerator.Client.UniqueKeyIndexClass
 
                 // DataModel dataModel;
                 parameters.Add(
-                    SyntaxFactory.Parameter(SyntaxFactory.Identifier("dataModel"))
-                    .WithType(SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Table.DataModel.Name)));
+                    SyntaxFactory.Parameter(SyntaxFactory.Identifier(this.xmlSchemaDocument.Name.ToCamelCase()))
+                    .WithType(SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name)));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

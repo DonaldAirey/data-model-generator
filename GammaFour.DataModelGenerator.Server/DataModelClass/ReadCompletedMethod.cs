@@ -20,16 +20,16 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReadCompletedMethod"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The data model schema.</param>
-        public ReadCompletedMethod(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The data model schema.</param>
+        public ReadCompletedMethod(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "ReadCompleted";
 
             //        /// <summary>
@@ -92,7 +92,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                 SyntaxFactory.IdentifierName("Commit")))));
 
                 // Initialize each of the tables.
-                foreach (TableSchema tableSchema in this.dataModelSchema.Tables.OrderBy(t => t.Name))
+                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables.OrderBy(t => t.Name))
                 {
                     //            this.Country.ReleaseWriterLock();
                     statements.Add(
@@ -103,14 +103,14 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(tableSchema.Name)),
+                                        SyntaxFactory.IdentifierName(tableElement.Name)),
                                     SyntaxFactory.IdentifierName("ReleaseWriterLock")))));
                 }
 
                 // Initialize each of the (non-primary key) unique keys.
-                foreach (TableSchema tableSchema in this.dataModelSchema.Tables.OrderBy(t => t.Name))
+                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables.OrderBy(t => t.Name))
                 {
-                    foreach (UniqueConstraintSchema uniqueConstraintSchema in tableSchema.UniqueKeys.OrderBy(uk => uk.Name))
+                    foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys.OrderBy(uk => uk.Name))
                     {
                         //            this.CountryKey.ReleaseWriterLock();
                         statements.Add(
@@ -121,13 +121,13 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(uniqueConstraintSchema.Name)),
+                                            SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
                                         SyntaxFactory.IdentifierName("ReleaseWriterLock")))));
                     }
                 }
 
                 // This will initialize each of the foreign relations.
-                foreach (RelationSchema relationSchema in this.dataModelSchema.Relations.OrderBy(r => r.ParentTable.Name))
+                foreach (ForeignKeyElement foreignKeyElement in this.xmlSchemaDocument.ForeignKeys)
                 {
                     //            this.CountryCustomerCountryIdKeyIndex.ReleaseWriterLock();
                     statements.Add(
@@ -138,7 +138,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(relationSchema.Name)),
+                                        SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
                                     SyntaxFactory.IdentifierName("ReleaseWriterLock")))));
                 }
 

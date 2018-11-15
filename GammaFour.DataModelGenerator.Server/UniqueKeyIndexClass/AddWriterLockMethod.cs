@@ -17,11 +17,18 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
     public class AddWriterLockMethod : SyntaxElement
     {
         /// <summary>
+        /// The XML Schema document.
+        /// </summary>
+        private XmlSchemaDocument xmlSchemaDocument;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="AddWriterLockMethod"/> class.
         /// </summary>
-        public AddWriterLockMethod()
+        /// <param name="xmlSchemaDocument">The XML Schema document.</param>
+        public AddWriterLockMethod(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "AddWriterLock";
 
             //        /// <summary>
@@ -69,7 +76,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("DataModel")),
+                                        SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name)),
                                     SyntaxFactory.IdentifierName("Transaction")),
                                 SyntaxFactory.IdentifierName("AddFinally")))
                         .WithArgumentList(

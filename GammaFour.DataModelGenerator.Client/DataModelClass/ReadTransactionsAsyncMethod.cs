@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReadTransactionsAsyncMethod"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The data model schema.</param>
-        public ReadTransactionsAsyncMethod(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The data model schema.</param>
+        public ReadTransactionsAsyncMethod(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "ReadTransactionsAsync";
 
             //        /// <summary>
@@ -457,7 +457,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                                             SyntaxFactory.Argument(
                                                                                 SyntaxFactory.MemberAccessExpression(
                                                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                                                    SyntaxFactory.IdentifierName("DataModel"),
+                                                                                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name),
                                                                                     SyntaxFactory.IdentifierName("refreshInterval")))))))),
                                                         SyntaxFactory.ExpressionStatement(
                                                             SyntaxFactory.InvocationExpression(
@@ -738,7 +738,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("DataModel"),
+                                                SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name),
                                                 SyntaxFactory.IdentifierName("refreshInterval")))))))));
 
                 // This is the complete statement block.
@@ -844,7 +844,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                         SyntaxFactory.Argument(
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.IdentifierName("DataModel"),
+                                                                SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name),
                                                                 SyntaxFactory.IdentifierName("batchSize"))),
                                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                         SyntaxFactory.Argument(
@@ -889,7 +889,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("DataModel"),
+                                                SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name),
                                                 SyntaxFactory.IdentifierName("courtesyInterval")))))))));
 
                 // This is the complete statement block.

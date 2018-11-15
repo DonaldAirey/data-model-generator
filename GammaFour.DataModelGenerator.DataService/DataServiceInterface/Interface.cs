@@ -21,16 +21,16 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceInterface
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Interface"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">A description of a unique constraint.</param>
-        public Interface(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">A description of a unique constraint.</param>
+        public Interface(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "IDataService";
 
             //    /// <summary>
@@ -100,7 +100,7 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceInterface
                                                 string.Format(
                                                     CultureInfo.InvariantCulture,
                                                     " Abstract interface to a thread-safe, multi-tiered {0}.",
-                                                    this.dataModelSchema.Name),
+                                                    this.xmlSchemaDocument.Name),
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -160,14 +160,14 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceInterface
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new ReadMethod(this.dataModelSchema));
+            methods.Add(new ReadMethod(this.xmlSchemaDocument));
 
             // Each of the tables has a method to create, update and delete the records.
-            foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                methods.Add(new CreateMethod(tableSchema));
-                methods.Add(new DeleteMethod(tableSchema));
-                methods.Add(new UpdateMethod(tableSchema));
+                methods.Add(new CreateMethod(tableElement));
+                methods.Add(new DeleteMethod(tableElement));
+                methods.Add(new UpdateMethod(tableElement));
             }
 
             // Alphabetize and add the methods as members of the class.

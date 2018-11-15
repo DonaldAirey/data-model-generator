@@ -19,24 +19,24 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TableProperty"/> class.
         /// </summary>
-        /// <param name="tableSchema">The table schema.</param>
-        public TableProperty(TableSchema tableSchema)
+        /// <param name="tableElement">The table schema.</param>
+        public TableProperty(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
-            this.Name = this.tableSchema.Name;
+            this.tableElement = tableElement;
+            this.Name = this.tableElement.Name;
 
             //        /// <summary>
             //        /// Gets the Configuration table.
             //        /// </summary>
             //        public ConfigurationTable configurationTableField { get; private set; }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                    SyntaxFactory.IdentifierName(tableSchema.Name + "Table"),
+                    SyntaxFactory.IdentifierName(tableElement.Name + "Table"),
                     SyntaxFactory.Identifier(this.Name))
                 .WithAccessorList(this.AccessorList)
                 .WithModifiers(this.Modifiers)
@@ -95,7 +95,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Gets the " + this.tableSchema.Name + " table.",
+                                                " Gets the " + this.tableElement.Name + " table.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

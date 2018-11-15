@@ -2,13 +2,13 @@
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace ImportServiceCompiler
+namespace RestServiceCompiler
 {
     using System.Globalization;
     using System.IO;
     using System.Text;
     using GammaFour.DataModelGenerator.Common;
-    using GammaFour.DataModelGenerator.ImportService;
+    using GammaFour.DataModelGenerator.RestService;
     using GammaFour.VisualStudio;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Formatting;
@@ -32,10 +32,10 @@ namespace ImportServiceCompiler
 
             // This creates the compilation unit from the schema.
             // This schema describes the data model that is to be generated.
-            DataModelSchema dataModelSchema = new DataModelSchema(inputFileContent, this.TargetNamespace);
+            XmlSchemaDocument xmlSchemaDocument = new XmlSchemaDocument(inputFileContent, this.TargetNamespace);
 
             // This creates the compilation unit from the schema.
-            CompilationUnit compilationUnit = new CompilationUnit(dataModelSchema);
+            CompilationUnit compilationUnit = new CompilationUnit(xmlSchemaDocument);
 
             // A workspace is needed in order to turn the compilation unit into code.
             byte[] buffer = null;

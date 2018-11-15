@@ -29,19 +29,19 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RemoveRowMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public RemoveRowMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public RemoveRowMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
             this.Name = "RemoveRow";
-            this.keyVariable = this.tableSchema.PrimaryKey.CamelCaseName;
-            this.keyType = this.tableSchema.PrimaryKey.Name;
+            this.keyVariable = this.tableElement.PrimaryKey.Name.ToCamelCase();
+            this.keyType = this.tableElement.PrimaryKey.Name;
 
             //        /// <summary>
             //        /// Removes a row from the table.
@@ -95,7 +95,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                             SyntaxFactory.AttributeArgument(
                                                 SyntaxFactory.LiteralExpression(
                                                     SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal(this.tableSchema.Name)))
+                                                    SyntaxFactory.Literal(this.tableElement.Name)))
                                             .WithNameEquals(SyntaxFactory.NameEquals(SyntaxFactory.IdentifierName("MessageId"))),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.AttributeArgument(
@@ -124,7 +124,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 //                {
                 //                      <LockWriterLockNotHeld>
                 //                }
-                string message = this.tableSchema.Name + " table is not locked.";
+                string message = this.tableElement.Name + " table is not locked.";
                 statements.Add(
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.PrefixUnaryExpression(
@@ -137,11 +137,12 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
 
                 // This creates the list of arguments that are used to create a key.
                 List<ArgumentSyntax> arguments = new List<ArgumentSyntax>();
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
+                    ColumnElement columnElement = columnReferenceElement.Column;
                     arguments.Add(
                         SyntaxFactory.Argument(
-                            SyntaxFactory.IdentifierName(columnSchema.CamelCaseName)));
+                            SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase())));
                 }
 
                 //            int index = this.BinarySearch(configurationKey);
@@ -238,9 +239,10 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                         }))))));
 
                 // Add a (comma separated) parameter for each element of the key.
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
                     //        /// <param name="keyConfigurationKey">The unique key of the row.</param>
+                    ColumnElement columnElement = columnReferenceElement.Column;
                     comments.Add(
                         SyntaxFactory.Trivia(
                             SyntaxFactory.DocumentationCommentTrivia(
@@ -253,7 +255,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 {
                                                     SyntaxFactory.XmlTextLiteral(
                                                         SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                        " <param name=\"" + columnSchema.CamelCaseName + "\">The " + columnSchema.Name + " key element.</param>",
+                                                        " <param name=\"" + columnElement.Name.ToCamelCase() + "\">The " + columnElement.Name + " key element.</param>",
                                                         string.Empty,
                                                         SyntaxFactory.TriviaList()),
                                                     SyntaxFactory.XmlTextNewLine(
@@ -296,12 +298,13 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
 
                 // Add a (comma separated) parameter for each element of the key.
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
+                    ColumnElement columnElement = columnReferenceElement.Column;
                     parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(columnSchema.CamelCaseName))
-                        .WithType(Conversions.FromType(columnSchema.Type)));
+                        SyntaxFactory.Identifier(columnElement.Name.ToCamelCase()))
+                        .WithType(Conversions.FromType(columnElement.Type)));
                 }
 
                 // This is the complete parameter specification for this constructor.

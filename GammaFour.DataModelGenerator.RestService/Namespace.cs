@@ -2,7 +2,7 @@
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.ImportService
+namespace GammaFour.DataModelGenerator.RestService
 {
     using System.Collections.Generic;
     using GammaFour.DataModelGenerator.Common;
@@ -18,19 +18,19 @@ namespace GammaFour.DataModelGenerator.ImportService
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Namespace"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The name of the namespace.</param>
-        public Namespace(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The name of the namespace.</param>
+        public Namespace(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
 
             // This is the syntax of the namespace.
-            this.Syntax = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.IdentifierName(dataModelSchema.TargetNamespace))
+            this.Syntax = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.IdentifierName(xmlSchemaDocument.TargetNamespace))
                 .WithUsings(SyntaxFactory.List<UsingDirectiveSyntax>(this.UsingStatements))
                 .WithMembers(this.Members)
                 .WithLeadingTrivia(this.LeadingTrivia);
@@ -73,7 +73,6 @@ namespace GammaFour.DataModelGenerator.ImportService
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = this.CreateInterfaces(members);
                 members = this.CreatePublicClasses(members);
                 return members;
             }
@@ -109,21 +108,7 @@ namespace GammaFour.DataModelGenerator.ImportService
         private SyntaxList<MemberDeclarationSyntax> CreatePublicClasses(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This is the actual service component - the part that speaks to the outside world.
-            members = members.Add(new ImportServiceClass.Class(this.dataModelSchema).Syntax);
-
-            // This is the collection of alphabetized fields.
-            return members;
-        }
-
-        /// <summary>
-        /// Creates the classes.
-        /// </summary>
-        /// <param name="members">The collection of members.</param>
-        /// <returns>The collection of members augmented with the classes.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreateInterfaces(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // This is the actual service component - the part that speaks to the outside world.
-            members = members.Add(new ImportServiceInterface.Interface(this.dataModelSchema).Syntax);
+            members = members.Add(new RestServiceClass.Class(this.xmlSchemaDocument).Syntax);
 
             // This is the collection of alphabetized fields.
             return members;

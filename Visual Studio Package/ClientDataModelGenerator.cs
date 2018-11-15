@@ -45,10 +45,10 @@ namespace GammaFour.VisualStudioPackage
 
             // This creates the compilation unit from the schema.
             // This schema describes the data model that is to be generated.
-            DataModelSchema dataModelSchema = new DataModelSchema(inputFileContent, this.TargetNamespace);
+            XmlSchemaDocument xmlSchemaDocument = new XmlSchemaDocument(inputFileContent, this.TargetNamespace);
 
             // This creates the compilation unit from the schema.
-            CompilationUnit compilationUnit = new CompilationUnit(dataModelSchema);
+            CompilationUnit compilationUnit = new CompilationUnit(xmlSchemaDocument);
 
             // A workspace is needed in order to turn the compilation unit into code.
             AdhocWorkspace adhocWorkspace = new AdhocWorkspace();

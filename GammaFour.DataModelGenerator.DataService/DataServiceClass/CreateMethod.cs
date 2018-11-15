@@ -21,17 +21,23 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
+
+        /// <summary>
+        /// The table schema.
+        /// </summary>
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public CreateMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public CreateMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
-            this.Name = "Create" + tableSchema.Name;
+            this.tableElement = tableElement;
+            this.xmlSchemaDocument = this.tableElement.XmlSchemaDocument;
+            this.Name = "Create" + tableElement.Name;
 
             //        /// <summary>
             //        /// Creates a record in the Configuration table.
@@ -204,7 +210,7 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Creates a " + this.tableSchema.Name + " record.",
+                                                " Creates a " + this.tableElement.Name + " record.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -228,17 +234,17 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceClass
                 List<KeyValuePair<string, SyntaxTrivia>> parameterTrivia = new List<KeyValuePair<string, SyntaxTrivia>>();
 
                 // Add comments for each of the parameters.
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
                     // The row's version is not part of the input for a create operation.
-                    if (columnSchema.IsRowVersion)
+                    if (columnElement.IsRowVersion)
                     {
                         continue;
                     }
 
                     //        /// <param name="configurationId">The required value for the ConfigurationId column.</param>
-                    string identifier = columnSchema.CamelCaseName;
-                    string description = "The " + (columnSchema.IsNullable ? "optional" : "required") + " value for the " + columnSchema.Name + " column.";
+                    string identifier = columnElement.Name.ToCamelCase();
+                    string description = "The " + (columnElement.IsNullable ? "optional" : "required") + " value for the " + columnElement.Name + " column.";
                     parameterTrivia.Add(
                         new KeyValuePair<string, SyntaxTrivia>(
                             identifier,
@@ -253,7 +259,7 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceClass
                                                     {
                                                         SyntaxFactory.XmlTextLiteral(
                                                             SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                            " <param name=\"" + columnSchema.CamelCaseName + "\">" + description + "</param>",
+                                                            " <param name=\"" + columnElement.Name.ToCamelCase() + "\">" + description + "</param>",
                                                             string.Empty,
                                                             SyntaxFactory.TriviaList()),
                                                         SyntaxFactory.XmlTextNewLine(
@@ -299,17 +305,17 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceClass
                 List<KeyValuePair<string, ParameterSyntax>> parameters = new List<KeyValuePair<string, ParameterSyntax>>();
 
                 // Add a parameter for each of the columns in the table except the row version.
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
-                    if (!columnSchema.IsRowVersion)
+                    if (!columnElement.IsRowVersion)
                     {
-                        string identifier = columnSchema.CamelCaseName;
+                        string identifier = columnElement.Name.ToCamelCase();
                         parameters.Add(
                             new KeyValuePair<string, ParameterSyntax>(
                                 identifier,
                                 SyntaxFactory.Parameter(
                                     SyntaxFactory.Identifier(identifier))
-                                        .WithType(Conversions.FromType(columnSchema.Type))));
+                                        .WithType(Conversions.FromType(columnElement.Type))));
                     }
                 }
 
@@ -344,11 +350,11 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceClass
                 List<KeyValuePair<string, ArgumentSyntax>> argumentPairs = new List<KeyValuePair<string, ArgumentSyntax>>();
 
                 // Add a argument for each of the columns in the table except the row version.
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
-                    if (!columnSchema.IsRowVersion)
+                    if (!columnElement.IsRowVersion)
                     {
-                        string identifier = columnSchema.CamelCaseName;
+                        string identifier = columnElement.Name.ToCamelCase();
                         argumentPairs.Add(
                             new KeyValuePair<string, ArgumentSyntax>(
                                 identifier,
@@ -366,7 +372,7 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("dataModel")),
+                                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToCamelCase())),
                                 SyntaxFactory.IdentifierName(this.Name)))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(

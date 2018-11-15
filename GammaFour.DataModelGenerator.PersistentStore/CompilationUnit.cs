@@ -17,16 +17,16 @@ namespace GammaFour.DataModelGenerator.PersistentStore
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CompilationUnit"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The data model schema.</param>
-        public CompilationUnit(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The data model schema.</param>
+        public CompilationUnit(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
 
             // This is the syntax for the compilation unit.
             this.Syntax = SyntaxFactory.CompilationUnit().WithMembers(this.Members);
@@ -49,7 +49,7 @@ namespace GammaFour.DataModelGenerator.PersistentStore
             get
             {
                 // The compilation unit consists of a single namespace.
-                Namespace @namespace = new Namespace(this.dataModelSchema);
+                Namespace @namespace = new Namespace(this.xmlSchemaDocument);
                 return SyntaxFactory.SingletonList<MemberDeclarationSyntax>(@namespace.Syntax);
             }
         }

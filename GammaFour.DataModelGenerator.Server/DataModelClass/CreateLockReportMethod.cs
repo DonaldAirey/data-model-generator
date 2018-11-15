@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateLockReportMethod"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The data model schema.</param>
-        public CreateLockReportMethod(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The data model schema.</param>
+        public CreateLockReportMethod(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "CreateLockReport";
 
             //        /// <summary>
@@ -365,7 +365,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                 SyntaxFactory.IdentifierName("Current")),
                             SyntaxFactory.IdentifierName("committableTransaction"))));
 
-                foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
                     //            if (this.Configuration.Readers.Count != 0)
                     //            {
@@ -382,14 +382,14 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(tableSchema.Name)),
+                                            SyntaxFactory.IdentifierName(tableElement.Name)),
                                         SyntaxFactory.IdentifierName("Readers")),
                                     SyntaxFactory.IdentifierName("Count")),
                                 SyntaxFactory.LiteralExpression(
                                     SyntaxKind.NumericLiteralExpression,
                                     SyntaxFactory.Literal(0))),
                             SyntaxFactory.Block(
-                                this.IssueWarning(tableSchema.Name + " table still has a reader lock."))));
+                                this.IssueWarning(tableElement.Name + " table still has a reader lock."))));
 
                     //            if (this.Configuration.Writer != null)
                     //            {
@@ -404,15 +404,15 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(tableSchema.Name)),
+                                        SyntaxFactory.IdentifierName(tableElement.Name)),
                                     SyntaxFactory.IdentifierName("Writer")),
                                 SyntaxFactory.LiteralExpression(
                                     SyntaxKind.NullLiteralExpression)),
                             SyntaxFactory.Block(
-                                this.IssueWarning(tableSchema.Name + " table still has a writer lock."))));
+                                this.IssueWarning(tableElement.Name + " table still has a writer lock."))));
 
                     // Generate a report for each of the unique indices.
-                    foreach (UniqueConstraintSchema uniqueConstraintSchema in tableSchema.UniqueKeys)
+                    foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
                     {
                         //            if (this.Configuration.ConfigurationKeyIndex.Readers.Count != 0)
                         //            {
@@ -429,14 +429,14 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName(uniqueConstraintSchema.Name)),
+                                                SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
                                             SyntaxFactory.IdentifierName("Readers")),
                                         SyntaxFactory.IdentifierName("Count")),
                                     SyntaxFactory.LiteralExpression(
                                         SyntaxKind.NumericLiteralExpression,
                                         SyntaxFactory.Literal(0))),
                                 SyntaxFactory.Block(
-                                    this.IssueWarning(uniqueConstraintSchema.Name + " index still has a reader lock."))));
+                                    this.IssueWarning(uniqueKeyElement.Name + " index still has a reader lock."))));
 
                         //            if (this.Configuration.ConfigurationKeyIndex.Writer != null)
                         //                <IssueWarning>
@@ -450,12 +450,12 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(uniqueConstraintSchema.Name)),
+                                            SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
                                         SyntaxFactory.IdentifierName("Writer")),
                                     SyntaxFactory.LiteralExpression(
                                         SyntaxKind.NullLiteralExpression)),
                                 SyntaxFactory.Block(
-                                    this.IssueWarning(uniqueConstraintSchema.Name + " index still has a writer lock."))));
+                                    this.IssueWarning(uniqueKeyElement.Name + " index still has a writer lock."))));
                     }
 
                     //            try
@@ -469,10 +469,10 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                     statements.Add(
                     SyntaxFactory.TryStatement()
                     .WithBlock(
-                        SyntaxFactory.Block(this.TryBlock2(tableSchema)))
+                        SyntaxFactory.Block(this.TryBlock2(tableElement)))
                     .WithFinally(
                         SyntaxFactory.FinallyClause(
-                            SyntaxFactory.Block(this.FinallyBlock2(tableSchema)))));
+                            SyntaxFactory.Block(this.FinallyBlock2(tableElement)))));
                 }
 
                 //                    committableTransaction.Commit();
@@ -523,9 +523,9 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="tableSchema">The table schema.</param>
+        /// <param name="tableElement">The table schema.</param>
         /// <returns>A block of code to check a row for locks.</returns>
-        private SyntaxList<StatementSyntax> CheckRowLock(TableSchema tableSchema)
+        private SyntaxList<StatementSyntax> CheckRowLock(TableElement tableElement)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -542,13 +542,13 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(tableSchema.CamelCaseName + "Row"),
+                                SyntaxFactory.IdentifierName(tableElement.Name.ToCamelCase() + "Row"),
                                 SyntaxFactory.IdentifierName("Readers")),
                             SyntaxFactory.IdentifierName("Count")),
                         SyntaxFactory.LiteralExpression(
                             SyntaxKind.NumericLiteralExpression,
                             SyntaxFactory.Literal(0))),
-                    SyntaxFactory.Block(this.IssueWarning(tableSchema.Name + " row still has a reader lock."))));
+                    SyntaxFactory.Block(this.IssueWarning(tableElement.Name + " row still has a reader lock."))));
 
             //                    if (configurationRow.Writer != null)
             //                    {
@@ -560,11 +560,11 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                         SyntaxKind.NotEqualsExpression,
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName(tableSchema.CamelCaseName + "Row"),
+                            SyntaxFactory.IdentifierName(tableElement.Name.ToCamelCase() + "Row"),
                             SyntaxFactory.IdentifierName("Writer")),
                         SyntaxFactory.LiteralExpression(
                             SyntaxKind.NullLiteralExpression)),
-                    SyntaxFactory.Block(this.IssueWarning(tableSchema.Name + " row still has a writer lock."))));
+                    SyntaxFactory.Block(this.IssueWarning(tableElement.Name + " row still has a writer lock."))));
 
             // This is the complete block.
             return SyntaxFactory.List(statements);
@@ -573,9 +573,9 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="tableSchema">The table schema.</param>
+        /// <param name="tableElement">The table schema.</param>
         /// <returns>A block of code to release the table lock.</returns>
-        private SyntaxList<StatementSyntax> FinallyBlock2(TableSchema tableSchema)
+        private SyntaxList<StatementSyntax> FinallyBlock2(TableElement tableElement)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -589,7 +589,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(tableSchema.Name)),
+                                SyntaxFactory.IdentifierName(tableElement.Name)),
                             SyntaxFactory.IdentifierName("ReleaseReaderLock")))));
 
             // This is the complete block.
@@ -638,9 +638,9 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="tableSchema">The table schema.</param>
+        /// <param name="tableElement">The table schema.</param>
         /// <returns>A block of code to cycle through the rows and check for locks.</returns>
-        private SyntaxList<StatementSyntax> TryBlock2(TableSchema tableSchema)
+        private SyntaxList<StatementSyntax> TryBlock2(TableElement tableElement)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -654,7 +654,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(tableSchema.Name)),
+                                SyntaxFactory.IdentifierName(tableElement.Name)),
                             SyntaxFactory.IdentifierName("AcquireReaderLock")))));
 
             //                foreach (ConfigurationRow configurationRow in this.Configuration)
@@ -663,13 +663,13 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             //                }
             statements.Add(
                 SyntaxFactory.ForEachStatement(
-                    SyntaxFactory.IdentifierName(tableSchema.Name + "Row"),
-                    SyntaxFactory.Identifier(tableSchema.CamelCaseName + "Row"),
+                    SyntaxFactory.IdentifierName(tableElement.Name + "Row"),
+                    SyntaxFactory.Identifier(tableElement.Name.ToCamelCase() + "Row"),
                     SyntaxFactory.MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
                         SyntaxFactory.ThisExpression(),
-                        SyntaxFactory.IdentifierName(tableSchema.Name)),
-                    SyntaxFactory.Block(this.CheckRowLock(tableSchema))));
+                        SyntaxFactory.IdentifierName(tableElement.Name)),
+                    SyntaxFactory.Block(this.CheckRowLock(tableElement))));
 
             // This is the complete block.
             return SyntaxFactory.List(statements);

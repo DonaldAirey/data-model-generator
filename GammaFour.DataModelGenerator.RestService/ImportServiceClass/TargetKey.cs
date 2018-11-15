@@ -2,10 +2,11 @@
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
+namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 {
     using System.Collections.Generic;
     using GammaFour.ClientModel;
+    using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -26,15 +27,22 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
         private string targetKey;
 
         /// <summary>
+        /// The XML Schema document.
+        /// </summary>
+        private XmlSchemaDocument xmlSchemaDocument;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="TargetKey"/> class.
         /// </summary>
         /// <param name="source">The value for the source (with the configuration id, makes up a key that references an index).</param>
         /// <param name="targetKey">The target key variable.</param>
-        public TargetKey(string source, string targetKey)
+        /// <param name="xmlSchemaDocument">The XML Schema document.</param>
+        public TargetKey(string source, string targetKey, XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
             this.source = source;
             this.targetKey = targetKey;
+            this.xmlSchemaDocument = xmlSchemaDocument;
 
             //            string licenseTypeTargetKey = default(string);
             this.Add(
@@ -90,7 +98,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("dataModel")),
+                                        SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToCamelCase())),
                                     SyntaxFactory.IdentifierName("ConfigurationKey")),
                                 SyntaxFactory.IdentifierName("ReleaseReaderLock")))));
 
@@ -144,7 +152,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("dataModel")),
+                                        SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToCamelCase())),
                                     SyntaxFactory.IdentifierName("ConfigurationKey")),
                                 SyntaxFactory.IdentifierName("AcquireReaderLock")))));
 
@@ -167,7 +175,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.ThisExpression(),
-                                                        SyntaxFactory.IdentifierName("dataModel")),
+                                                        SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToCamelCase())),
                                                     SyntaxFactory.IdentifierName("ConfigurationKey")),
                                                 SyntaxFactory.IdentifierName("Find")))
                                         .WithArgumentList(

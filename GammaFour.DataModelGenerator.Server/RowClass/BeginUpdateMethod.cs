@@ -20,16 +20,16 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BeginUpdateMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public BeginUpdateMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public BeginUpdateMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
 
             // This is the name of the method.
             this.Name = "BeginUpdate";
@@ -146,7 +146,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 string.Format(
                                                     CultureInfo.InvariantCulture,
                                                     " Starts an edit operation on a {0}Row object.",
-                                                    this.tableSchema.Name),
+                                                    this.tableElement.Name),
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

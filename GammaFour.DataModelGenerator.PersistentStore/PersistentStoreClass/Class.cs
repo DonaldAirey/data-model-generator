@@ -20,16 +20,16 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Class"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">A description of a unique constraint.</param>
-        public Class(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">A description of a unique constraint.</param>
+        public Class(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "PersistentStore";
 
             //    /// <summary>
@@ -161,7 +161,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // These are the constructors.
-            members = members.Add(new ConstructorIServerSettings(this.dataModelSchema).Syntax);
+            members = members.Add(new ConstructorIServerSettings(this.xmlSchemaDocument).Syntax);
 
             // Return the new collection of members.
             return members;
@@ -261,10 +261,10 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new OnTransactionCompletedMethod(this.dataModelSchema));
-            foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+            methods.Add(new OnTransactionCompletedMethod(this.xmlSchemaDocument));
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                methods.Add(new ReadTableMethod(tableSchema));
+                methods.Add(new ReadTableMethod(tableElement));
             }
 
             // Alphabetize and add the methods as members of the class.
@@ -286,12 +286,12 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new ReadMethod(this.dataModelSchema));
-            foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+            methods.Add(new ReadMethod(this.xmlSchemaDocument));
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                methods.Add(new CreateMethod(tableSchema));
-                methods.Add(new DeleteMethod(tableSchema));
-                methods.Add(new UpdateMethod(tableSchema));
+                methods.Add(new CreateMethod(tableElement));
+                methods.Add(new DeleteMethod(tableElement));
+                methods.Add(new UpdateMethod(tableElement));
             }
 
             // Alphabetize and add the methods as members of the class.

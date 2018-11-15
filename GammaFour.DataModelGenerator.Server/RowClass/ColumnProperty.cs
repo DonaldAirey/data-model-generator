@@ -19,26 +19,26 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private ColumnSchema columnSchema;
+        private ColumnElement columnElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ColumnProperty"/> class.
         /// </summary>
-        /// <param name="columnSchema">The column schema.</param>
-        public ColumnProperty(ColumnSchema columnSchema)
+        /// <param name="columnElement">The column schema.</param>
+        public ColumnProperty(ColumnElement columnElement)
         {
             // Initialize the object.
-            this.columnSchema = columnSchema;
+            this.columnElement = columnElement;
 
             // This is the name of the property.
-            this.Name = this.columnSchema.Name;
+            this.Name = this.columnElement.Name;
 
             //        /// <summary>
             //        /// Gets the ConfigurationId.
             //        /// </summary>
             //        public string ConfigurationId { get; set; }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                    Conversions.FromType(columnSchema.Type),
+                    Conversions.FromType(columnElement.Type),
                     SyntaxFactory.Identifier(this.Name))
                 .WithAttributeLists(this.AttributeLists)
                 .WithAccessorList(this.AccessorList)
@@ -96,7 +96,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                             SyntaxFactory.AttributeArgument(
                                                 SyntaxFactory.LiteralExpression(
                                                     SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal(this.columnSchema.Table.Name)))
+                                                    SyntaxFactory.Literal(this.columnElement.Table.Name)))
                                             .WithNameEquals(SyntaxFactory.NameEquals(SyntaxFactory.IdentifierName("MessageId"))),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.AttributeArgument(
@@ -120,7 +120,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             {
                 // This list collects the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
-                string property = this.columnSchema.Name;
+                string property = this.columnElement.Name;
 
                 //                if (!this.IsLockHeld)
                 //                {
@@ -135,7 +135,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName("IsLockHeld"))),
                         SyntaxFactory.Block(
-                            ThrowLockException.GetSyntax(this.columnSchema.Table.Name + " row is not locked."))));
+                            ThrowLockException.GetSyntax(this.columnElement.Table.Name + " row is not locked."))));
 
                 //                return this.Current.ConfigurationId;
                 statements.Add(
@@ -245,7 +245,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             {
                 // This list collects the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
-                string property = this.columnSchema.Name;
+                string property = this.columnElement.Name;
 
                 //                if (!this.IsWriterLockHeld)
                 //                {
@@ -260,7 +260,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName("IsWriterLockHeld"))),
                         SyntaxFactory.Block(
-                            ThrowLockException.GetSyntax(this.columnSchema.Table.Name + " row is not locked."))));
+                            ThrowLockException.GetSyntax(this.columnElement.Table.Name + " row is not locked."))));
 
                 //                this.Current.configurationIdField = value;
                 statements.Add(

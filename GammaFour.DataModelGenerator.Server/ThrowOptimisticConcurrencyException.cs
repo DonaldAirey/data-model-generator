@@ -18,18 +18,19 @@ namespace GammaFour.DataModelGenerator.Server
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="tableSchema">The table schema.</param>
+        /// <param name="tableElement">The table schema.</param>
         /// <returns>A block of code.</returns>
-        public static SyntaxList<StatementSyntax> GetSyntax(TableSchema tableSchema)
+        public static SyntaxList<StatementSyntax> GetSyntax(TableElement tableElement)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 
             // Create a list of parameters that comprise the primary key.
             List<ExpressionSyntax> expressions = new List<ExpressionSyntax>();
-            foreach (ColumnSchema columnSchema in tableSchema.PrimaryKey.Columns)
+            foreach (ColumnReferenceElement columnReferenceElement in tableElement.PrimaryKey.Columns)
             {
-                expressions.Add(SyntaxFactory.IdentifierName(columnSchema.CamelCaseName));
+                ColumnElement columnElement = columnReferenceElement.Column;
+                expressions.Add(SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase()));
             }
 
             //                    throw new ConcurrencyException("Configuration", configurationKey.Elements);
@@ -45,7 +46,7 @@ namespace GammaFour.DataModelGenerator.Server
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.LiteralExpression(
                                             SyntaxKind.StringLiteralExpression,
-                                            SyntaxFactory.Literal(tableSchema.Name))),
+                                            SyntaxFactory.Literal(tableElement.Name))),
                                     SyntaxFactory.Token(SyntaxKind.CommaToken),
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.ArrayCreationExpression(

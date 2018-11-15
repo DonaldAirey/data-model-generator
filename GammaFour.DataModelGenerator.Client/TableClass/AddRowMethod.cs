@@ -34,20 +34,20 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AddRowMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public AddRowMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public AddRowMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
             this.Name = "AddRow";
-            this.keyType = this.tableSchema.PrimaryKey.Name;
-            this.rowName = this.tableSchema.CamelCaseName + "Row";
-            this.rowType = this.tableSchema.Name + "Row";
+            this.keyType = this.tableElement.PrimaryKey.Name;
+            this.rowName = this.tableElement.Name.ToCamelCase() + "Row";
+            this.rowType = this.tableElement.Name + "Row";
 
             //        /// <summary>
             //        /// Add a row to the table.
@@ -101,7 +101,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                             SyntaxFactory.AttributeArgument(
                                                 SyntaxFactory.LiteralExpression(
                                                     SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal(this.tableSchema.Name)))
+                                                    SyntaxFactory.Literal(this.tableElement.Name)))
                                             .WithNameEquals(SyntaxFactory.NameEquals(SyntaxFactory.IdentifierName("MessageId"))),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.AttributeArgument(
@@ -151,11 +151,12 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
 
                 // This creates the list of arguments used to create a key.
                 List<ArgumentSyntax> arguments = new List<ArgumentSyntax>();
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
+                    ColumnElement columnElement = columnReferenceElement.Column;
                     arguments.Add(
                         SyntaxFactory.Argument(
-                            SyntaxFactory.IdentifierName(columnSchema.CamelCaseName)));
+                            SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase())));
                 }
 
                 //            int index = this.BinarySearch(configurationKey);
@@ -189,7 +190,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                             SyntaxKind.GreaterThanOrEqualExpression,
                             SyntaxFactory.IdentifierName("index"),
                             SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(0))),
-                        SyntaxFactory.Block(ThrowDuplicateKeyException.GetSyntax(this.tableSchema.PrimaryKey, this.tableSchema.PrimaryKey.Columns))));
+                        SyntaxFactory.Block(ThrowDuplicateKeyException.GetSyntax(this.tableElement.PrimaryKey, this.tableElement.PrimaryKey.Columns))));
 
                 //            this.Insert(~index, countryRow);
                 statements.Add(
@@ -274,9 +275,10 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                         }))))));
 
                 // Add a parameter for each element of the key.
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
                     //        /// <param name="keyConfigurationId">The ConfigurationId key element.</param>
+                    ColumnElement columnElement = columnReferenceElement.Column;
                     comments.Add(
                         SyntaxFactory.Trivia(
                             SyntaxFactory.DocumentationCommentTrivia(
@@ -289,7 +291,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                 {
                                                     SyntaxFactory.XmlTextLiteral(
                                                         SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                        " <param name=\"" + columnSchema.CamelCaseName + "\">The " + columnSchema.Name + " key element.</param>",
+                                                        " <param name=\"" + columnElement.Name.ToCamelCase() + "\">The " + columnElement.Name + " key element.</param>",
                                                         string.Empty,
                                                         SyntaxFactory.TriviaList()),
                                                     SyntaxFactory.XmlTextNewLine(
@@ -313,7 +315,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    " <param name=\"" + this.tableSchema.CamelCaseName + "Row\">The row to be added.</param>",
+                                                    " <param name=\"" + this.tableElement.Name.ToCamelCase() + "Row\">The row to be added.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -355,12 +357,13 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
 
                 // Add a parameter for each element of the key.
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
+                    ColumnElement columnElement = columnReferenceElement.Column;
                     parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(columnSchema.CamelCaseName))
-                        .WithType(Conversions.FromType(columnSchema.Type)));
+                        SyntaxFactory.Identifier(columnElement.Name.ToCamelCase()))
+                        .WithType(Conversions.FromType(columnElement.Type)));
                 }
 
                 // The row parameter comes after the key elements.
@@ -377,27 +380,28 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="uniqueConstraintSchema">The unique constraint schema.</param>
+        /// <param name="uniqueKeyElement">The unique constraint schema.</param>
         /// <returns>A block of code to add the row to the index.</returns>
-        private SyntaxList<StatementSyntax> AddRowToIndexBlock(UniqueConstraintSchema uniqueConstraintSchema)
+        private SyntaxList<StatementSyntax> AddRowToIndexBlock(UniqueKeyElement uniqueKeyElement)
         {
             // This list collects the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 
             // This creates the comma-separated list of parameters that are used to create a key.
             List<ArgumentSyntax> arguments = new List<ArgumentSyntax>();
-            foreach (ColumnSchema columnSchema in uniqueConstraintSchema.Columns)
+            foreach (ColumnReferenceElement columnReferenceElement in uniqueKeyElement.Columns)
             {
+                ColumnElement columnElement = columnReferenceElement.Column;
                 arguments.Add(
                     SyntaxFactory.Argument(
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.IdentifierName(this.rowName),
-                            SyntaxFactory.IdentifierName(columnSchema.Name))));
+                            SyntaxFactory.IdentifierName(columnElement.Name))));
             }
 
             //            this.CountryKeyIndex.Add(new CountryKey(countryRow.CountryId), countryRow);
-            string indexProperty = uniqueConstraintSchema.Name;
+            string indexProperty = uniqueKeyElement.Name;
             statements.Add(
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.InvocationExpression(
@@ -415,7 +419,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                 {
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName(uniqueConstraintSchema.Name))
+                                            SyntaxFactory.IdentifierName(uniqueKeyElement.Name))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList<ArgumentSyntax>(
                                                 arguments)))),

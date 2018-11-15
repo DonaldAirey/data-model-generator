@@ -2,7 +2,7 @@
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
+namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 {
     using System;
     using System.Collections.Generic;
@@ -21,17 +21,23 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
+
+        /// <summary>
+        /// The table schema.
+        /// </summary>
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RemoveMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public RemoveMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public RemoveMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
-            this.Name = "Remove" + tableSchema.Name;
+            this.tableElement = tableElement;
+            this.xmlSchemaDocument = this.tableElement.XmlSchemaDocument;
+            this.Name = "Remove" + tableElement.Name;
 
             //        /// <summary>
             //        /// Loads a record into the Department table from an external source.
@@ -126,13 +132,13 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 // Make sure a configuration has been provided (even if it's the default).
-                if (this.tableSchema.Name != "Configuration")
+                if (this.tableElement.Name != "Configuration")
                 {
                     statements.Add(CheckNullArgument.GetSyntax("configurationId"));
                 }
 
                 // This creates a check for every key that is passed in to make sure it isn't null.
-                statements.Add(CheckNullArgument.GetSyntax(this.tableSchema.CamelCaseName + "Key"));
+                statements.Add(CheckNullArgument.GetSyntax(this.tableElement.Name.ToCamelCase() + "Key"));
 
                 //            try
                 //            {
@@ -252,9 +258,10 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 List<KeyValuePair<string, ArgumentSyntax>> argumentPair = new List<KeyValuePair<string, ArgumentSyntax>>();
 
                 // Add a argument for each column in the primary key.
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
-                    string identifier = columnSchema.CamelCaseName;
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    string identifier = columnElement.Name.ToCamelCase();
                     argumentPair.Add(
                         new KeyValuePair<string, ArgumentSyntax>(
                             identifier,
@@ -263,11 +270,11 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 }
 
                 // Add a row version for consistency checking.
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
-                    if (columnSchema.IsRowVersion)
+                    if (columnElement.IsRowVersion)
                     {
-                        string identifier = columnSchema.CamelCaseName;
+                        string identifier = columnElement.Name.ToCamelCase();
                         argumentPair.Add(
                             new KeyValuePair<string, ArgumentSyntax>(
                                 identifier,
@@ -292,8 +299,8 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("dataModel")),
-                                SyntaxFactory.IdentifierName("Delete" + this.tableSchema.Name)))
+                                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToCamelCase())),
+                                SyntaxFactory.IdentifierName("Delete" + this.tableElement.Name)))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(arguments)))));
@@ -338,7 +345,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Removes a record from the " + this.tableSchema.Name + " table.",
+                                                " Removes a record from the " + this.tableElement.Name + " table.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -362,7 +369,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 List<KeyValuePair<string, SyntaxTrivia>> parameterTrivia = new List<KeyValuePair<string, SyntaxTrivia>>();
 
                 // <param name="configurationId">Selects a configuration of unique indices used to resolve external identifiers.</param>
-                if (this.tableSchema.Name != "Configuration")
+                if (this.tableElement.Name != "Configuration")
                 {
                     comments.Add(
                         SyntaxFactory.Trivia(
@@ -388,7 +395,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 }
 
                 //        /// <param name="countryKey">The key elements to find the Country record.</param>
-                string description = "The key elements to find the " + this.tableSchema.Name + " record.";
+                string description = "The key elements to find the " + this.tableElement.Name + " record.";
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -401,7 +408,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    " <param name=\"" + this.tableSchema.CamelCaseName + "Key" + "\">" + description + "</param>",
+                                                    " <param name=\"" + this.tableElement.Name.ToCamelCase() + "Key" + "\">" + description + "</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -443,7 +450,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
 
                 // string configurationId,
-                if (this.tableSchema.Name != "Configuration")
+                if (this.tableElement.Name != "Configuration")
                 {
                     parameters.Add(
                         SyntaxFactory.Parameter(
@@ -458,7 +465,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                 // construct the key.
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                    SyntaxFactory.Identifier(this.tableSchema.CamelCaseName + "Key"))
+                    SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase() + "Key"))
                     .WithType(
                         SyntaxFactory.ArrayType(
                             SyntaxFactory.PredefinedType(
@@ -517,7 +524,7 @@ namespace GammaFour.DataModelGenerator.ImportService.ImportServiceClass
                                             SyntaxKind.FalseLiteralExpression)))))));
 
                 // Find the record using the primary key.
-                statements.AddRange(new ResolveUniqueKey(this.tableSchema, false));
+                statements.AddRange(new ResolveUniqueKey(this.tableElement, false));
 
                 //                if (isFound)
                 //                {

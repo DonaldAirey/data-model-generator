@@ -19,24 +19,24 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private RelationSchema relationSchema;
+        private ForeignKeyElement foreignKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ParentRelationProperty"/> class.
         /// </summary>
-        /// <param name="relationSchema">The table schema.</param>
-        public ParentRelationProperty(RelationSchema relationSchema)
+        /// <param name="foreignKeyElement">The table schema.</param>
+        public ParentRelationProperty(ForeignKeyElement foreignKeyElement)
         {
             // Initialize the object.
-            this.relationSchema = relationSchema;
-            this.Name = relationSchema.Name;
+            this.foreignKeyElement = foreignKeyElement;
+            this.Name = foreignKeyElement.Name;
 
             //        /// <summary>
             //        /// Gets or sets the foreign index for the child Customer table.
             //        /// </summary>
             //        public CountryCustomerCountryIdIndex countryCustomerCountryIdIndex { get; set; }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.IdentifierName(relationSchema.Name),
+                SyntaxFactory.IdentifierName(foreignKeyElement.Name),
                 SyntaxFactory.Identifier(this.Name))
                 .WithAccessorList(this.AccessorList)
                 .WithModifiers(this.Modifiers)
@@ -95,7 +95,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Gets or sets the unique index for the parent " + this.relationSchema.ParentTable.Name + " table.",
+                                                " Gets or sets the unique index for the parent " + this.foreignKeyElement.UniqueKey.Table.Name + " table.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

@@ -20,16 +20,16 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceInterface
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReadMethod"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The data model schema.</param>
-        public ReadMethod(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The data model schema.</param>
+        public ReadMethod(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "Read";
 
             //        [OperationContractAttribute(Action = "http://tempuri.org/IDataModel/Read", ReplyAction = "http://tempuri.org/IDataModel/ReadResponse")]
@@ -96,7 +96,7 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceInterface
                                                 SyntaxFactory.IdentifierName("Allowed")))))))));
 
                 //        [ServiceKnownType(typeof(LicenseTypeCode))]
-                attributes.AddRange(KnownTypes.Emit(this.dataModelSchema));
+                attributes.AddRange(KnownTypes.Emit(this.xmlSchemaDocument));
 
                 //        [FaultContract(typeof(SecurityFault))]
                 attributes.Add(

@@ -22,17 +22,17 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceInterface
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public CreateMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public CreateMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
-            this.Name = string.Format(CultureInfo.InvariantCulture, "Create{0}", tableSchema.Name);
+            this.tableElement = tableElement;
+            this.Name = string.Format(CultureInfo.InvariantCulture, "Create{0}", tableElement.Name);
 
             //        [OperationContractAttribute(Action = "http://tempuri.org/IDataModel/CreateLicense", ReplyAction = "http://tempuri.org/IDataModel/CreateLicenseResponse")]
             //        void CreateLicense(Guid customerId, DateTime dateCreated, DateTime dateModified, LicenseTypeCode developerLicenseTypeCode, string externalId0, Guid licenseId, Guid productId, LicenseTypeCode runtimeLicenseTypeCode);
@@ -57,11 +57,11 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceInterface
                 List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
 
                 //        [OperationContract(Action = "http://tempuri.org/IDataModel/CreateLicense", ReplyAction = "http://tempuri.org/IDataModel/CreateLicenseResponse")]
-                string callUrl = string.Format(CultureInfo.InvariantCulture, "http://tempuri.org/IDataModel/Create{0}", this.tableSchema.Name);
+                string callUrl = string.Format(CultureInfo.InvariantCulture, "http://tempuri.org/IDataModel/Create{0}", this.tableElement.Name);
                 string responseUrl = string.Format(
                     CultureInfo.InvariantCulture,
                     "http://tempuri.org/IDataModel/Create{0}Response",
-                    this.tableSchema.Name);
+                    this.tableElement.Name);
                 attributes.Add(
                     SyntaxFactory.AttributeList(
                         SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
@@ -165,7 +165,7 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceInterface
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Creates a " + this.tableSchema.Name + " record.",
+                                                " Creates a " + this.tableElement.Name + " record.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -189,17 +189,17 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceInterface
                 List<KeyValuePair<string, SyntaxTrivia>> parameterTrivia = new List<KeyValuePair<string, SyntaxTrivia>>();
 
                 // Add comments for each of the parameters.
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
                     // The row's version is not part of the input for a create operation.
-                    if (columnSchema.IsRowVersion)
+                    if (columnElement.IsRowVersion)
                     {
                         continue;
                     }
 
                     //        /// <param name="configurationId">The required value for the ConfigurationId column.</param>
-                    string identifier = columnSchema.CamelCaseName;
-                    string description = "The " + (columnSchema.IsNullable ? "optional" : "required") + " value for the " + columnSchema.Name + " column.";
+                    string identifier = columnElement.Name.ToCamelCase();
+                    string description = "The " + (columnElement.IsNullable ? "optional" : "required") + " value for the " + columnElement.Name + " column.";
                     parameterTrivia.Add(
                         new KeyValuePair<string, SyntaxTrivia>(
                             identifier,
@@ -214,7 +214,7 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceInterface
                                                     {
                                                         SyntaxFactory.XmlTextLiteral(
                                                             SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                            " <param name=\"" + columnSchema.CamelCaseName + "\">" + description + "</param>",
+                                                            " <param name=\"" + columnElement.Name.ToCamelCase() + "\">" + description + "</param>",
                                                             string.Empty,
                                                             SyntaxFactory.TriviaList()),
                                                         SyntaxFactory.XmlTextNewLine(
@@ -244,17 +244,17 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceInterface
                 List<KeyValuePair<string, ParameterSyntax>> parameterPairs = new List<KeyValuePair<string, ParameterSyntax>>();
 
                 // Add a parameter for each of the columns in the table except the row version.
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
-                    if (!columnSchema.IsRowVersion)
+                    if (!columnElement.IsRowVersion)
                     {
-                        string identifier = columnSchema.CamelCaseName;
+                        string identifier = columnElement.Name.ToCamelCase();
                         parameterPairs.Add(
                             new KeyValuePair<string, ParameterSyntax>(
                                 identifier,
                                 SyntaxFactory.Parameter(
                                     SyntaxFactory.Identifier(identifier))
-                                        .WithType(Conversions.FromType(columnSchema.Type))));
+                                        .WithType(Conversions.FromType(columnElement.Type))));
                     }
                 }
 

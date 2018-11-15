@@ -30,19 +30,19 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReadMethod"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The unique constraint schema.</param>
-        public ReadMethod(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The unique constraint schema.</param>
+        public ReadMethod(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "Read";
-            this.dataModel = this.dataModelSchema.CamelCaseName;
-            this.dataModelType = this.dataModelSchema.Name;
+            this.dataModel = this.xmlSchemaDocument.Name.ToCamelCase();
+            this.dataModelType = this.xmlSchemaDocument.Name;
 
             //        /// <summary>
             //        /// Collects the set of modified records that will reconcile the client data model to the master data model.
@@ -145,7 +145,7 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("dataModel")),
+                                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToCamelCase())),
                                 SyntaxFactory.IdentifierName("Read")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(

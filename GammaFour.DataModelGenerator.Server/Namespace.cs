@@ -20,20 +20,20 @@ namespace GammaFour.DataModelGenerator.Server
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Namespace"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The name of the namespace.</param>
-        public Namespace(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The name of the namespace.</param>
+        public Namespace(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
 
             // This is the syntax of the namespace.
             this.Syntax = SyntaxFactory.NamespaceDeclaration(
-                    SyntaxFactory.IdentifierName(dataModelSchema.TargetNamespace))
+                    SyntaxFactory.IdentifierName(xmlSchemaDocument.TargetNamespace))
                 .WithUsings(SyntaxFactory.List<UsingDirectiveSyntax>(this.UsingStatements))
                 .WithMembers(this.Members)
                 .WithLeadingTrivia(this.LeadingTrivia)
@@ -172,9 +172,9 @@ namespace GammaFour.DataModelGenerator.Server
         {
             // Create the data for the row classes.
             List<Common.RowDataClass.Class> rowDataClasses = new List<Common.RowDataClass.Class>();
-            foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                rowDataClasses.Add(new Common.RowDataClass.Class(tableSchema));
+                rowDataClasses.Add(new Common.RowDataClass.Class(tableElement));
             }
 
             // Alphabetize the list of row classes and add them to the structure.
@@ -185,9 +185,9 @@ namespace GammaFour.DataModelGenerator.Server
 
             // Create the row classes.
             List<RowClass.Class> rowClasses = new List<RowClass.Class>();
-            foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                rowClasses.Add(new RowClass.Class(tableSchema));
+                rowClasses.Add(new RowClass.Class(tableElement));
             }
 
             // Alphabetize the list of row classes and add them to the structure.
@@ -198,9 +198,9 @@ namespace GammaFour.DataModelGenerator.Server
 
             // Create the list of row change event classes.
             List<Common.RowChangeEventArgsClass.Class> rowChangeEventClasses = new List<Common.RowChangeEventArgsClass.Class>();
-            foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                rowChangeEventClasses.Add(new Common.RowChangeEventArgsClass.Class(tableSchema));
+                rowChangeEventClasses.Add(new Common.RowChangeEventArgsClass.Class(tableElement));
             }
 
             // Alphabetize the list of change event classes and add them to the structure.
@@ -211,9 +211,9 @@ namespace GammaFour.DataModelGenerator.Server
 
             // Create the list of tables.
             List<TableClass.Class> tableClasses = new List<TableClass.Class>();
-            foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                tableClasses.Add(new TableClass.Class(tableSchema));
+                tableClasses.Add(new TableClass.Class(tableElement));
             }
 
             // Alphabetize the list of tables and add them to the structure.
@@ -223,22 +223,18 @@ namespace GammaFour.DataModelGenerator.Server
             }
 
             // The actual data model class.
-            members = members.Add(new DataModelClass.Class(this.dataModelSchema).Syntax);
+            members = members.Add(new DataModelClass.Class(this.xmlSchemaDocument).Syntax);
 
             // Holds the individual transactions used to reconcile the client data models.
-            members = members.Add(new TransactionLogItemClass.Class(this.dataModelSchema).Syntax);
+            members = members.Add(new TransactionLogItemClass.Class(this.xmlSchemaDocument).Syntax);
 
             // Create the unique index classes.
             List<UniqueKeyIndexClass.Class> uniqueIndexClasses = new List<UniqueKeyIndexClass.Class>();
-            foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                foreach (ConstraintSchema constraintSchema in tableSchema.Constraints)
+                foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
                 {
-                    UniqueConstraintSchema uniqueConstraintSchema = constraintSchema as UniqueConstraintSchema;
-                    if (uniqueConstraintSchema != null)
-                    {
-                        uniqueIndexClasses.Add(new UniqueKeyIndexClass.Class(uniqueConstraintSchema));
-                    }
+                    uniqueIndexClasses.Add(new UniqueKeyIndexClass.Class(uniqueKeyElement));
                 }
             }
 
@@ -250,9 +246,9 @@ namespace GammaFour.DataModelGenerator.Server
 
             // Create the list of foreign indices.
             List<ForeignKeyIndexClass.Class> foreignIndexClasses = new List<ForeignKeyIndexClass.Class>();
-            foreach (RelationSchema relationSchema in this.dataModelSchema.Relations)
+            foreach (ForeignKeyElement foreignKeyElement in this.xmlSchemaDocument.ForeignKeys)
             {
-                foreignIndexClasses.Add(new ForeignKeyIndexClass.Class(relationSchema));
+                foreignIndexClasses.Add(new ForeignKeyIndexClass.Class(foreignKeyElement));
             }
 
             // Alphabetize the list of foreign indices and add them to the structure.
@@ -273,7 +269,7 @@ namespace GammaFour.DataModelGenerator.Server
         private SyntaxList<MemberDeclarationSyntax> CreatePublicInterfaces(SyntaxList<MemberDeclarationSyntax> members)
         {
             // The interface for implementing a persistent store.
-            members = members.Add(new PersistentStoreageInterface.Interface(this.dataModelSchema).Syntax);
+            members = members.Add(new PersistentStoreageInterface.Interface(this.xmlSchemaDocument).Syntax);
 
             // This is the collection of alphabetized fields.
             return members;

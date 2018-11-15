@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DataField"/> class.
         /// </summary>
-        /// <param name="tableSchema">The table schema.</param>
-        public DataField(TableSchema tableSchema)
+        /// <param name="tableElement">The table schema.</param>
+        public DataField(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
             this.Name = "data";
 
             //        /// <summary>
@@ -42,7 +42,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                         .WithTypeArgumentList(
                             SyntaxFactory.TypeArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName(this.tableSchema.Name + "Data")))))
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name + "Data")))))
                     .WithVariables(
                         SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                             SyntaxFactory.VariableDeclarator(
@@ -127,7 +127,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                         .WithTypeArgumentList(
                             SyntaxFactory.TypeArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName(this.tableSchema.Name + "Data")))))
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name + "Data")))))
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList()));
             }

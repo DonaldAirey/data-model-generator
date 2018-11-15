@@ -26,10 +26,10 @@ namespace DatabaseCompiler
 
             // This creates the compilation unit from the schema.
             // This schema describes the data model that is to be generated.
-            DataModelSchema dataModelSchema = new DataModelSchema(inputFileContent, this.TargetNamespace);
+            XmlSchemaDocument xmlSchemaDocument = new XmlSchemaDocument(inputFileContent, this.TargetNamespace);
 
             // This creates the schema unit from the schema.
-            SchemaUnit schemaUnit = new SchemaUnit(dataModelSchema);
+            SchemaUnit schemaUnit = new SchemaUnit(xmlSchemaDocument);
 
             // This performs the work of outputting the formatted code to a file.
             return schemaUnit.Generate();

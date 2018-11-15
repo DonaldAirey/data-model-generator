@@ -21,17 +21,17 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Class"/> class.
         /// </summary>
-        /// <param name="tableSchema">A description of a unique constraint.</param>
-        public Class(TableSchema tableSchema)
+        /// <param name="tableElement">A description of a unique constraint.</param>
+        public Class(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
-            this.Name = tableSchema.Name + "Row";
+            this.tableElement = tableElement;
+            this.Name = tableElement.Name + "Row";
 
             //    /// <summary>
             //    /// A row of data in the Configuration table.
@@ -94,7 +94,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " A row of data in the " + this.tableSchema.Name + " table.",
+                                                " A row of data in the " + this.tableElement.Name + " table.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -159,7 +159,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // Add the constructors.
-            members = members.Add(new ConstructorTableTableData(this.tableSchema).Syntax);
+            members = members.Add(new ConstructorTableTableData(this.tableElement).Syntax);
 
             // Return the new collection of members.
             return members;
@@ -174,9 +174,9 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new AddMethod(this.tableSchema));
-            methods.Add(new DeleteMethod(this.tableSchema));
-            methods.Add(new UpdateMethod(this.tableSchema));
+            methods.Add(new AddMethod(this.tableElement));
+            methods.Add(new DeleteMethod(this.tableElement));
+            methods.Add(new UpdateMethod(this.tableElement));
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
@@ -197,8 +197,8 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new CurrentDataField(this.tableSchema));
-            fields.Add(new PreviousDataField(this.tableSchema));
+            fields.Add(new CurrentDataField(this.tableElement));
+            fields.Add(new PreviousDataField(this.tableElement));
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
@@ -219,7 +219,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new ColumnNamesField(this.tableSchema));
+            fields.Add(new ColumnNamesField(this.tableElement));
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
@@ -240,7 +240,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new PropertyChangedEvent(this.tableSchema));
+            fields.Add(new PropertyChangedEvent(this.tableElement));
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
@@ -261,7 +261,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new ItemProperty(this.tableSchema));
+            properties.Add(new ItemProperty(this.tableElement));
 
             // Alphabetize and add the properties as members of the class.
             foreach (SyntaxElement syntaxElement in properties.OrderBy(m => m.Name))
@@ -282,13 +282,13 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new RowStateProperty(this.tableSchema));
-            properties.Add(new TableProperty(this.tableSchema));
+            properties.Add(new RowStateProperty(this.tableElement));
+            properties.Add(new TableProperty(this.tableElement));
 
             // Create a property for each column.
-            foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+            foreach (ColumnElement columnElement in this.tableElement.Columns)
             {
-                properties.Add(new ColumnProperty(columnSchema));
+                properties.Add(new ColumnProperty(columnElement));
             }
 
             // Alphabetize and add the properties as members of the class.

@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReadMethod"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The data model schema.</param>
-        public ReadMethod(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The data model schema.</param>
+        public ReadMethod(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "Read";
 
             //        /// <summary>
@@ -325,7 +325,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                 SyntaxFactory.IdentifierName("Open")))));
 
                 // Read the data into each of the tables.
-                foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
                     //                    PersistentStore.ReadConfigurationData(sqlConnection, transactionLog);
                     statements.Add(
@@ -334,7 +334,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.IdentifierName("PersistentStore"),
-                                    SyntaxFactory.IdentifierName("Read" + tableSchema.Name + "Data")))
+                                    SyntaxFactory.IdentifierName("Read" + tableElement.Name + "Data")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SeparatedList<ArgumentSyntax>(

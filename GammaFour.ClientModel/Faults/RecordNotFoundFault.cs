@@ -41,20 +41,12 @@ namespace GammaFour.ClientModel
         /// Gets the unique key of the record where the fault occurred.
         /// </summary>
         [DataMember]
-        public ReadOnlyCollection<object> KeyElements
-        {
-            get;
-            private set;
-        }
+        public ReadOnlyCollection<object> KeyElements { get; private set; }
 
         /// <summary>
         /// Gets the target table where the fault occurred.
         /// </summary>
         [DataMember]
-        public string TableName
-        {
-            get;
-            private set;
-        }
+        public string TableName { get; private set; }
     }
 }

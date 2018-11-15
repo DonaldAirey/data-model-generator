@@ -19,19 +19,19 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private UniqueConstraintSchema uniqueConstraintSchema;
+        private UniqueKeyElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Struct"/> class.
         /// </summary>
-        /// <param name="uniqueConstraintSchema">A description of a unique constraint.</param>
-        public Struct(UniqueConstraintSchema uniqueConstraintSchema)
+        /// <param name="uniqueKeyElement">A description of a unique constraint.</param>
+        public Struct(UniqueKeyElement uniqueKeyElement)
         {
             // Initialize the object.
-            this.uniqueConstraintSchema = uniqueConstraintSchema;
+            this.uniqueKeyElement = uniqueKeyElement;
 
             // The name of this structure.
-            this.Name = uniqueConstraintSchema.Name + "Set";
+            this.Name = uniqueKeyElement.Name + "Set";
 
             // Create the syntax of the structure.
             this.Syntax = SyntaxFactory.StructDeclaration(this.Name)
@@ -96,7 +96,7 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " A compound key for finding objects in the " + this.uniqueConstraintSchema.Name + " index.",
+                                                " A compound key for finding objects in the " + this.uniqueKeyElement.Name + " index.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -162,7 +162,7 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // Each field is added to the collection of structure members.
-            members = members.Add(new Constructor(this.uniqueConstraintSchema).Syntax);
+            members = members.Add(new Constructor(this.uniqueKeyElement).Syntax);
 
             // Return the new collection of members.
             return members;
@@ -177,10 +177,10 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
         {
             // This will alphabetize the methods and add them to the collection of members in this structure.
             List<SyntaxElement> fields = new List<SyntaxElement>();
-            foreach (ColumnSchema columnSchema in this.uniqueConstraintSchema.Columns)
+            foreach (ColumnReferenceElement columnReferenceElement in this.uniqueKeyElement.Columns)
             {
                 // Add each of the fields with a trailing space.
-                fields.Add(new ColumnProperty(columnSchema));
+                fields.Add(new ColumnProperty(columnReferenceElement.Column));
             }
 
             // Sort the fields before adding them to the members.
@@ -202,9 +202,9 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
         {
             // This will alphabetize the methods and add them to the collection of members in this structure.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new CompareToMethod(this.uniqueConstraintSchema));
-            methods.Add(new EqualsMethod(this.uniqueConstraintSchema));
-            methods.Add(new HashMethod(this.uniqueConstraintSchema));
+            methods.Add(new CompareToMethod(this.uniqueKeyElement));
+            methods.Add(new EqualsMethod(this.uniqueKeyElement));
+            methods.Add(new HashMethod(this.uniqueKeyElement));
 
             // This will sort the elements.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
@@ -224,10 +224,10 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
         private SyntaxList<MemberDeclarationSyntax> CreatePublicStaticOperators(SyntaxList<MemberDeclarationSyntax> members)
         {
             // Add the operators (not that sorting is not an option on a math symbol).
-            members = members.Add(new EqualityOperator(this.uniqueConstraintSchema).Syntax);
-            members = members.Add(new InequalityOperator(this.uniqueConstraintSchema).Syntax);
-            members = members.Add(new LessThanOperator(this.uniqueConstraintSchema).Syntax);
-            members = members.Add(new GreaterThanOperator(this.uniqueConstraintSchema).Syntax);
+            members = members.Add(new EqualityOperator(this.uniqueKeyElement).Syntax);
+            members = members.Add(new InequalityOperator(this.uniqueKeyElement).Syntax);
+            members = members.Add(new LessThanOperator(this.uniqueKeyElement).Syntax);
+            members = members.Add(new GreaterThanOperator(this.uniqueKeyElement).Syntax);
 
             // Return the new collection of members.
             return members;

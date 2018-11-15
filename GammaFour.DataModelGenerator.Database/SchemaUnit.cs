@@ -23,16 +23,16 @@ namespace GammaFour.DataModelGenerator.Database
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SchemaUnit"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The data model schema.</param>
-        public SchemaUnit(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The data model schema.</param>
+        public SchemaUnit(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
         }
 
         /// <summary>
@@ -47,23 +47,23 @@ namespace GammaFour.DataModelGenerator.Database
             {
                 // The tables must be written out to the DDL file so that parent tables are written out before child tables.  As tables are emitted
                 // into the DDL file, they are removed from the list.  This continues until the list of tables is empty.
-                var orderedTables = from t in this.dataModelSchema.Tables
+                var orderedTables = from t in this.xmlSchemaDocument.Tables
                                     orderby t.Name
                                     where t.IsPersistent
                                     select t;
 
                 // Write the tables out such that the parent tables are written before the children to prevent forward reference errors when creating
                 // the foreign indices.  As tables are emitted to the DDL, they are removed from the list until the list is empty.
-                List<TableSchema> tables = orderedTables.ToList<TableSchema>();
+                List<TableElement> tables = orderedTables.ToList<TableElement>();
                 while (tables.Count > 0)
                 {
-                    foreach (TableSchema tableSchema in tables)
+                    foreach (TableElement tableElement in tables)
                     {
                         // This will search the tables to see if the current table has any parent dependencies that haven't been written yet.
                         bool isParentDefined = true;
-                        foreach (RelationSchema relationSchema in tableSchema.ParentRelations)
+                        foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys)
                         {
-                            if (tables.Contains(relationSchema.ParentTable))
+                            if (tables.Contains(foreignKeyElement.UniqueKey.Table))
                             {
                                 isParentDefined = false;
                                 break;
@@ -77,16 +77,16 @@ namespace GammaFour.DataModelGenerator.Database
                         }
 
                         // The table schema is removed from the list after it is written to the stream.
-                        Tables.Generate(streamWriter, tableSchema);
-                        tables.Remove(tableSchema);
+                        Tables.Generate(streamWriter, tableElement);
+                        tables.Remove(tableElement);
                         break;
                     }
                 }
 
                 // Generate the CRUD procedures (create, delete, update) for each of the tables.
-                foreach (TableSchema tableSchema in orderedTables)
+                foreach (TableElement tableElement in orderedTables)
                 {
-                    Procedures.Generate(streamWriter, tableSchema);
+                    Procedures.Generate(streamWriter, tableElement);
                 }
             }
 
@@ -97,12 +97,12 @@ namespace GammaFour.DataModelGenerator.Database
         /// <summary>
         /// Converts the system type into an equivalent Sql data type.
         /// </summary>
-        /// <param name="columnSchema">The column schema.</param>
+        /// <param name="columnElement">The column schema.</param>
         /// <returns>An equivalent SQL datatype.</returns>
-        internal static string GetSqlDataType(ColumnSchema columnSchema)
+        internal static string GetSqlDataType(ColumnElement columnElement)
         {
             // This will convert the system datatype into the SQL equivalent.
-            switch (columnSchema.Type.FullName)
+            switch (columnElement.Type.FullName)
             {
                 case "System.Object":
                 case "System.Boolean":
@@ -115,22 +115,22 @@ namespace GammaFour.DataModelGenerator.Database
                 case "System.DateTime":
                 case "System.Byte[]":
 
-                    return GetSqlDataType(columnSchema.Type);
+                    return GetSqlDataType(columnElement.Type);
 
                 case "System.Guid":
 
-                    return GetSqlDataType(columnSchema.Type);
+                    return GetSqlDataType(columnElement.Type);
 
                 case "System.String":
-                    return string.Format("NVARCHAR({0})", columnSchema.MaximumLength == int.MaxValue ? "MAX" : Convert.ToString(columnSchema.MaximumLength));
+                    return string.Format("NVARCHAR({0})", columnElement.MaximumLength == int.MaxValue ? "MAX" : Convert.ToString(columnElement.MaximumLength));
 
                 default:
 
-                    return GetSqlDataType(columnSchema.Type);
+                    return GetSqlDataType(columnElement.Type);
             }
 
             // Failure to convert a data type generates an exception.
-            throw new Exception(string.Format("The type {0} can't be converted to an SQL data type", columnSchema.Type.FullName));
+            throw new Exception(string.Format("The type {0} can't be converted to an SQL data type", columnElement.Type.FullName));
         }
 
         /// <summary>

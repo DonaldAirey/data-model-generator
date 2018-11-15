@@ -20,17 +20,17 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public CreateMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public CreateMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
-            this.Name = "Create" + tableSchema.Name;
+            this.tableElement = tableElement;
+            this.Name = "Create" + tableElement.Name;
 
             //        /// <summary>
             //        /// Creates a Configuration record.
@@ -77,12 +77,12 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
 
                 // This constructs the SQL Command to create a record.
                 string variableList = string.Empty;
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
-                    variableList += (variableList == string.Empty ? "@" : ",@") + columnSchema.CamelCaseName;
+                    variableList += (variableList == string.Empty ? "@" : ",@") + columnElement.Name.ToCamelCase();
                 }
 
-                string createCommandText = "create" + this.tableSchema.Name + " " + variableList;
+                string createCommandText = "create" + this.tableElement.Name + " " + variableList;
 
                 //            using (SqlCommand sqlCommand = new SqlCommand("createConfiguration @configurationId,@rowVersion,@source,@targetKey", sqlConnection))
                 //            {
@@ -156,7 +156,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Creates a " + this.tableSchema.Name + " record.",
+                                                " Creates a " + this.tableElement.Name + " record.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -180,11 +180,11 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                 List<KeyValuePair<string, SyntaxTrivia>> parameterTrivia = new List<KeyValuePair<string, SyntaxTrivia>>();
 
                 // Add comments for each of the parameters.
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
                     //        /// <param name="configurationId">The required value for the ConfigurationId column.</param>
-                    string identifier = columnSchema.CamelCaseName;
-                    string description = "The " + (columnSchema.IsNullable ? "optional" : "required") + " value for the " + columnSchema.Name + " column.";
+                    string identifier = columnElement.Name.ToCamelCase();
+                    string description = "The " + (columnElement.IsNullable ? "optional" : "required") + " value for the " + columnElement.Name + " column.";
                     parameterTrivia.Add(
                         new KeyValuePair<string, SyntaxTrivia>(
                             identifier,
@@ -243,16 +243,16 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
             {
                 // Assemble the list of parameters to the 'Create' method.
                 List<KeyValuePair<string, ParameterSyntax>> parameters = new List<KeyValuePair<string, ParameterSyntax>>();
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
-                    string identifier = columnSchema.CamelCaseName;
+                    string identifier = columnElement.Name.ToCamelCase();
                     parameters.Add(
                         new KeyValuePair<string, ParameterSyntax>(
                             identifier,
                             SyntaxFactory.Parameter(
                                 SyntaxFactory.Identifier(identifier))
                             .WithType(
-                                Conversions.FromType(columnSchema.Type))));
+                                Conversions.FromType(columnElement.Type))));
                 }
 
                 // This is the complete set of alphabetized, comma separated parameters for the method.
@@ -273,17 +273,17 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 //                sqlCommand.Parameters.Add(new SqlParameter("@configurationId", configurationId));
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
-                    string variableName = columnSchema.CamelCaseName;
-                    string parameterName = "@" + columnSchema.CamelCaseName;
-                    if (columnSchema.IsAutoIncrement)
+                    string variableName = columnElement.Name.ToCamelCase();
+                    string parameterName = "@" + columnElement.Name.ToCamelCase();
+                    if (columnElement.IsAutoIncrement)
                     {
                     }
                     else
                     {
                         // Nullable properties need to check for null values before adding the parameters.
-                        if (columnSchema.IsNullable)
+                        if (columnElement.IsNullable)
                         {
                             //            if (externalId0 == null)
                             //            {
@@ -299,8 +299,8 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                         SyntaxKind.EqualsExpression,
                                         SyntaxFactory.IdentifierName(variableName),
                                         SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)),
-                                    SyntaxFactory.Block(this.CreateNullParameterBlock(columnSchema)))
-                                .WithElse(SyntaxFactory.ElseClause(SyntaxFactory.Block(this.CreateNonNullParameterBlock(columnSchema)))));
+                                    SyntaxFactory.Block(this.CreateNullParameterBlock(columnElement)))
+                                .WithElse(SyntaxFactory.ElseClause(SyntaxFactory.Block(this.CreateNonNullParameterBlock(columnElement)))));
                         }
                         else
                         {
@@ -353,16 +353,16 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="columnSchema">The column schema.</param>
+        /// <param name="columnElement">The column schema.</param>
         /// <returns>A block of code.</returns>
-        private List<StatementSyntax> CreateNonNullParameterBlock(ColumnSchema columnSchema)
+        private List<StatementSyntax> CreateNonNullParameterBlock(ColumnElement columnElement)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 
             //                sqlCommand.Parameters.Add(new SqlParameter("@externalId0", externalId0));
-            string variableName = columnSchema.CamelCaseName;
-            string parameterName = "@" + columnSchema.CamelCaseName;
+            string variableName = columnElement.Name.ToCamelCase();
+            string parameterName = "@" + columnElement.Name.ToCamelCase();
             statements.Add(
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.InvocationExpression(
@@ -398,15 +398,15 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="columnSchema">The column schema.</param>
+        /// <param name="columnElement">The column schema.</param>
         /// <returns>A block of code.</returns>
-        private List<StatementSyntax> CreateNullParameterBlock(ColumnSchema columnSchema)
+        private List<StatementSyntax> CreateNullParameterBlock(ColumnElement columnElement)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 
             //                sqlCommand.Parameters.Add(new SqlParameter("@externalId0", DBNull.Value));
-            string parameterName = "@" + columnSchema.CamelCaseName;
+            string parameterName = "@" + columnElement.Name.ToCamelCase();
             statements.Add(
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.InvocationExpression(

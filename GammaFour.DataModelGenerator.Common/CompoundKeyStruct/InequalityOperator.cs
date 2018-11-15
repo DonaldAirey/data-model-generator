@@ -6,6 +6,7 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -18,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
         /// <summary>
         /// The column schema.
         /// </summary>
-        private UniqueConstraintSchema uniqueConstraintSchema;
+        private UniqueKeyElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InequalityOperator"/> class.
         /// </summary>
-        /// <param name="uniqueConstraintSchema">The unique constraint schema.</param>
-        public InequalityOperator(UniqueConstraintSchema uniqueConstraintSchema)
+        /// <param name="uniqueKeyElement">The unique constraint schema.</param>
+        public InequalityOperator(UniqueKeyElement uniqueKeyElement)
         {
             // Initialize the object.
-            this.uniqueConstraintSchema = uniqueConstraintSchema;
+            this.uniqueKeyElement = uniqueKeyElement;
 
             //        /// <summary>
             //        /// Inequality Operator.
@@ -59,7 +60,8 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 // Construct the expression to evaluate the inequality of the two keys.
-                string property = this.uniqueConstraintSchema.Columns[0].Name;
+                List<ColumnReferenceElement> columns = this.uniqueKeyElement.Columns;
+                string property = columns[0].Column.Name;
                 BinaryExpressionSyntax binaryExpression = SyntaxFactory.BinaryExpression(
                     SyntaxKind.NotEqualsExpression,
                     SyntaxFactory.MemberAccessExpression(
@@ -70,9 +72,9 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
                         SyntaxKind.SimpleMemberAccessExpression,
                         SyntaxFactory.IdentifierName("key2"),
                         SyntaxFactory.IdentifierName(property)));
-                for (int index = 1; index < this.uniqueConstraintSchema.Columns.Count; index++)
+                for (int index = 1; index < columns.Count; index++)
                 {
-                    property = this.uniqueConstraintSchema.Columns[index].Name;
+                    property = columns[index].Column.Name;
                     binaryExpression = SyntaxFactory.BinaryExpression(
                         SyntaxKind.LogicalOrExpression,
                         SyntaxFactory.BinaryExpression(
@@ -255,10 +257,10 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
                 // ConfigurationKey key1, ConfigurationKey key2
                 parameters.Add(
                     SyntaxFactory.Parameter(SyntaxFactory.Identifier("key1"))
-                    .WithType(SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Name + "Set")));
+                    .WithType(SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name + "Set")));
                 parameters.Add(
                     SyntaxFactory.Parameter(SyntaxFactory.Identifier("key2"))
-                    .WithType(SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Name + "Set")));
+                    .WithType(SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name + "Set")));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

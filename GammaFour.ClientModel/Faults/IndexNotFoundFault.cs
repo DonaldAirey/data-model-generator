@@ -28,20 +28,12 @@ namespace GammaFour.ClientModel
         /// Gets the index of the fault.
         /// </summary>
         [DataMember]
-        public string IndexName
-        {
-            get;
-            private set;
-        }
+        public string IndexName { get; private set; }
 
         /// <summary>
         /// Gets the target table name of the fault.
         /// </summary>
         [DataMember]
-        public string TableName
-        {
-            get;
-            private set;
-        }
+        public string TableName { get; private set; }
     }
 }

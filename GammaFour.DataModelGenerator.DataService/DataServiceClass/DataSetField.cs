@@ -19,26 +19,26 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceClass
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DataSetField"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The data model schema.</param>
-        public DataSetField(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The data model schema.</param>
+        public DataSetField(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
 
             // This is the name of the field.
-            this.Name = "dataModel";
+            this.Name = this.xmlSchemaDocument.Name.ToCamelCase();
 
             //        /// <summary>
             //        /// The parent Configuration table
             //        /// </summary>
             //        private DataModel dataModel;
             this.Syntax = SyntaxFactory.FieldDeclaration(
-                SyntaxFactory.VariableDeclaration(SyntaxFactory.IdentifierName(this.dataModelSchema.Name))
+                SyntaxFactory.VariableDeclaration(SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name))
                 .WithVariables(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(this.Name)))))
                 .WithModifiers(this.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);

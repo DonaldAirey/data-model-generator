@@ -29,18 +29,18 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RowsProperty"/> class.
         /// </summary>
-        /// <param name="tableSchema">The column schema.</param>
-        public RowsProperty(TableSchema tableSchema)
+        /// <param name="tableElement">The column schema.</param>
+        public RowsProperty(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
             this.Name = "Rows";
-            this.rowType = string.Format(CultureInfo.InvariantCulture, "{0}Row", this.tableSchema.Name);
+            this.rowType = string.Format(CultureInfo.InvariantCulture, "{0}Row", this.tableElement.Name);
 
             // The row collection type.
             this.collectionTypeSyntax = SyntaxFactory.GenericName(
@@ -136,7 +136,7 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                                 string.Format(
                                                     CultureInfo.InvariantCulture,
                                                     " Gets the rows of the {0} table.",
-                                                    this.tableSchema.Name),
+                                                    this.tableElement.Name),
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

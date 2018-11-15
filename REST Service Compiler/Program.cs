@@ -2,7 +2,7 @@
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace ImportServiceCompiler
+namespace RestServiceCompiler
 {
     using System;
     using System.Collections.Generic;

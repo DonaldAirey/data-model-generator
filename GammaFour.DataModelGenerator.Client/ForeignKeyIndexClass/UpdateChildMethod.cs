@@ -29,19 +29,19 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private RelationSchema relationSchema;
+        private ForeignKeyElement foreignKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UpdateChildMethod"/> class.
         /// </summary>
-        /// <param name="relationSchema">The unique constraint schema.</param>
-        public UpdateChildMethod(RelationSchema relationSchema)
+        /// <param name="foreignKeyElement">The unique constraint schema.</param>
+        public UpdateChildMethod(ForeignKeyElement foreignKeyElement)
         {
             // Initialize the object.
-            this.relationSchema = relationSchema;
+            this.foreignKeyElement = foreignKeyElement;
             this.Name = "UpdateChild";
-            this.rowType = this.relationSchema.ChildTable.Name + "Row";
-            this.rowParameter = this.relationSchema.ChildTable.CamelCaseName + "Row";
+            this.rowType = this.foreignKeyElement.Table.Name + "Row";
+            this.rowParameter = this.foreignKeyElement.Table.Name.ToCamelCase() + "Row";
 
             //        /// <summary>
             //        /// Removes a <see cref="CustomerRow"/> child relation.
@@ -91,7 +91,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                 SyntaxFactory.ArgumentList()))));
 
                 // Compound keys are handled differently than simple keys.
-                if (this.relationSchema.ParentColumns.Count == 1)
+                if (this.foreignKeyElement.ParentColumns.Count == 1)
                 {
                     //                this.Current.Add(newCountryKey, hashSet);
                     statements.Add(
@@ -110,7 +110,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                         new SyntaxNodeOrToken[]
                                         {
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName("new" + this.relationSchema.ParentColumns[0].Name)),
+                                            SyntaxFactory.IdentifierName("new" + this.foreignKeyElement.ParentColumns[0].Column.Name)),
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.Argument(SyntaxFactory.IdentifierName("hashSet"))
                                         })))));
@@ -134,7 +134,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                         new SyntaxNodeOrToken[]
                                         {
                                             SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName("new" + this.relationSchema.ParentKeyConstraint.Name + "Set")),
+                                                SyntaxFactory.IdentifierName("new" + this.foreignKeyElement.UniqueKey.Name + "Set")),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.Argument(SyntaxFactory.IdentifierName("hashSet"))
                                         })))));
@@ -172,7 +172,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                 SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier("hashSet"))))));
 
                 // Compound keys are handled differently than simple keys.
-                if (this.relationSchema.ParentColumns.Count == 1)
+                if (this.foreignKeyElement.ParentColumns.Count == 1)
                 {
                     //            if (this.dictionary.TryGetValue(oldCountryIdKey, out hashSet))
                     //            {
@@ -195,7 +195,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                         {
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.IdentifierName(
-                                                    "old" + this.relationSchema.ParentKeyConstraint.Columns[0].Name)),
+                                                    "old" + this.foreignKeyElement.UniqueKey.Columns[0].Column.Name)),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.IdentifierName("hashSet"))
@@ -227,7 +227,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                             {
                                                 SyntaxFactory.Argument(
                                                     SyntaxFactory.IdentifierName(
-                                                        "new" + this.relationSchema.ParentKeyConstraint.Columns[0].Name)),
+                                                        "new" + this.foreignKeyElement.UniqueKey.Columns[0].Column.Name)),
                                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                 SyntaxFactory.Argument(
                                                     SyntaxFactory.IdentifierName("hashSet"))
@@ -240,24 +240,24 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                 {
                     // These are the arguments for the old key lookup.
                     List<ArgumentSyntax> oldArguments = new List<ArgumentSyntax>();
-                    foreach (ColumnSchema columnSchema in this.relationSchema.ParentColumns)
+                    foreach (ColumnReferenceElement columnReferenceElement in this.foreignKeyElement.ParentColumns)
                     {
-                        oldArguments.Add(SyntaxFactory.Argument(SyntaxFactory.IdentifierName("old" + columnSchema.Name)));
+                        oldArguments.Add(SyntaxFactory.Argument(SyntaxFactory.IdentifierName("old" + columnReferenceElement.Column.Name)));
                     }
 
                     //            CustomerLastNameDateOfBirthKeySet oldCustomerLastNameDateOfBirthKeySet = new CustomerLastNameDateOfBirthKeySet(oldDateOfBirth, oldLastName);
                     statements.Add(
                         SyntaxFactory.LocalDeclarationStatement(
                             SyntaxFactory.VariableDeclaration(
-                                SyntaxFactory.IdentifierName(this.relationSchema.ParentKeyConstraint.Name + "Set"))
+                                SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Name + "Set"))
                             .WithVariables(
                                 SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                     SyntaxFactory.VariableDeclarator(
-                                        SyntaxFactory.Identifier("old" + this.relationSchema.ParentKeyConstraint.Name + "Set"))
+                                        SyntaxFactory.Identifier("old" + this.foreignKeyElement.UniqueKey.Name + "Set"))
                                     .WithInitializer(
                                         SyntaxFactory.EqualsValueClause(
                                             SyntaxFactory.ObjectCreationExpression(
-                                                SyntaxFactory.IdentifierName(this.relationSchema.ParentKeyConstraint.Name + "Set"))
+                                                SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Name + "Set"))
                                             .WithArgumentList(
                                                 SyntaxFactory.ArgumentList(
                                                     SyntaxFactory.SeparatedList<ArgumentSyntax>(oldArguments)))))))));
@@ -282,7 +282,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                         new SyntaxNodeOrToken[]
                                         {
                                             SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName("old" + this.relationSchema.ParentKeyConstraint.Name + "Set")),
+                                                SyntaxFactory.IdentifierName("old" + this.foreignKeyElement.UniqueKey.Name + "Set")),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.IdentifierName("hashSet"))
@@ -293,24 +293,24 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
 
                     // These are the arguments for the new key lookup.
                     List<ArgumentSyntax> newArguments = new List<ArgumentSyntax>();
-                    foreach (ColumnSchema columnSchema in this.relationSchema.ParentColumns)
+                    foreach (ColumnReferenceElement columnReferenceElement in this.foreignKeyElement.ParentColumns)
                     {
-                        newArguments.Add(SyntaxFactory.Argument(SyntaxFactory.IdentifierName("new" + columnSchema.Name)));
+                        newArguments.Add(SyntaxFactory.Argument(SyntaxFactory.IdentifierName("new" + columnReferenceElement.Column.Name)));
                     }
 
                     //            CustomerLastNameDateOfBirthKeySet oldCustomerLastNameDateOfBirthKeySet = new CustomerLastNameDateOfBirthKeySet(oldDateOfBirth, oldLastName);
                     statements.Add(
                         SyntaxFactory.LocalDeclarationStatement(
                             SyntaxFactory.VariableDeclaration(
-                                SyntaxFactory.IdentifierName(this.relationSchema.ParentKeyConstraint.Name + "Set"))
+                                SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Name + "Set"))
                             .WithVariables(
                                 SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                     SyntaxFactory.VariableDeclarator(
-                                        SyntaxFactory.Identifier("new" + this.relationSchema.ParentKeyConstraint.Name + "Set"))
+                                        SyntaxFactory.Identifier("new" + this.foreignKeyElement.UniqueKey.Name + "Set"))
                                     .WithInitializer(
                                         SyntaxFactory.EqualsValueClause(
                                             SyntaxFactory.ObjectCreationExpression(
-                                                SyntaxFactory.IdentifierName(this.relationSchema.ParentKeyConstraint.Name + "Set"))
+                                                SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Name + "Set"))
                                             .WithArgumentList(
                                                 SyntaxFactory.ArgumentList(
                                                     SyntaxFactory.SeparatedList<ArgumentSyntax>(newArguments)))))))));
@@ -335,7 +335,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                         new SyntaxNodeOrToken[]
                                         {
                                             SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName("new" + this.relationSchema.ParentKeyConstraint.Name + "Set")),
+                                                SyntaxFactory.IdentifierName("new" + this.foreignKeyElement.UniqueKey.Name + "Set")),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.IdentifierName("hashSet"))
@@ -361,9 +361,9 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                 // This collects the generic type arguments of the primary key of the parent table.
                 List<TypeSyntax> genericTypes = new List<TypeSyntax>();
                 genericTypes.Add(
-                    this.relationSchema.ParentKeyConstraint.Columns.Count == 1 ?
-                    Conversions.FromType(this.relationSchema.ParentKeyConstraint.Columns[0].Type) :
-                    SyntaxFactory.IdentifierName(this.relationSchema.ParentKeyConstraint.Name + "Set"));
+                    this.foreignKeyElement.UniqueKey.Columns.Count == 1 ?
+                    Conversions.FromType(this.foreignKeyElement.UniqueKey.Columns[0].Column.Type) :
+                    SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Name + "Set"));
 
                 // This list constructs the actual arguments that go into a NotifyRelationChanged call.
                 List<ArgumentSyntax> constructorArguments = new List<ArgumentSyntax>();
@@ -373,23 +373,23 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.IdentifierName("NotifyRelationChangedAction"),
                             SyntaxFactory.IdentifierName("Change"))));
-                if (this.relationSchema.ParentKeyConstraint.Columns.Count == 1)
+                if (this.foreignKeyElement.UniqueKey.Columns.Count == 1)
                 {
                     constructorArguments.Add(
                         SyntaxFactory.Argument(
-                                SyntaxFactory.IdentifierName("new" + this.relationSchema.ParentKeyConstraint.Columns[0].Name)));
+                                SyntaxFactory.IdentifierName("new" + this.foreignKeyElement.UniqueKey.Columns[0].Column.Name)));
                     constructorArguments.Add(
                         SyntaxFactory.Argument(
-                                SyntaxFactory.IdentifierName("old" + this.relationSchema.ParentKeyConstraint.Columns[0].Name)));
+                                SyntaxFactory.IdentifierName("old" + this.foreignKeyElement.UniqueKey.Columns[0].Column.Name)));
                 }
                 else
                 {
                     constructorArguments.Add(
                         SyntaxFactory.Argument(
-                                SyntaxFactory.IdentifierName("new" + this.relationSchema.ParentKeyConstraint.Name + "Set")));
+                                SyntaxFactory.IdentifierName("new" + this.foreignKeyElement.UniqueKey.Name + "Set")));
                     constructorArguments.Add(
                         SyntaxFactory.Argument(
-                                SyntaxFactory.IdentifierName("old" + this.relationSchema.ParentKeyConstraint.Name + "Set")));
+                                SyntaxFactory.IdentifierName("old" + this.foreignKeyElement.UniqueKey.Name + "Set")));
                 }
 
                 //            this.RelationChanged?.Invoke(this, new NotifyRelationChangedEventArgs<Guid>(NotifyRelationChangedAction.Change, newCustomerId, oldCustomerId));
@@ -484,10 +484,10 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                         }))))));
 
                 // Add a comment for each of the old key parameters.
-                foreach (ColumnSchema columnSchema in this.relationSchema.ParentColumns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.foreignKeyElement.ParentColumns)
                 {
                     //        /// <param name="configurationId">The ConfigurationId key element.</param>
-                    string description = "The old " + columnSchema.Name + " key element.";
+                    string description = "The old " + columnReferenceElement.Column.Name + " key element.";
                     comments.Add(
                         SyntaxFactory.Trivia(
                             SyntaxFactory.DocumentationCommentTrivia(
@@ -500,7 +500,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                                 {
                                                     SyntaxFactory.XmlTextLiteral(
                                                         SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                        " <param name=\"" + "old" + columnSchema.Name + "\">" + description + "</param>",
+                                                        " <param name=\"" + "old" + columnReferenceElement.Column.Name + "\">" + description + "</param>",
                                                         string.Empty,
                                                         SyntaxFactory.TriviaList()),
                                                     SyntaxFactory.XmlTextNewLine(
@@ -512,10 +512,10 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                 }
 
                 // Add a comment for each of the new key parameters.
-                foreach (ColumnSchema columnSchema in this.relationSchema.ParentColumns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.foreignKeyElement.ParentColumns)
                 {
                     //        /// <param name="configurationId">The ConfigurationId key element.</param>
-                    string description = "The new " + columnSchema.Name + " key element.";
+                    string description = "The new " + columnReferenceElement.Column.Name + " key element.";
                     comments.Add(
                         SyntaxFactory.Trivia(
                             SyntaxFactory.DocumentationCommentTrivia(
@@ -528,7 +528,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                                 {
                                                     SyntaxFactory.XmlTextLiteral(
                                                         SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                        " <param name=\"" + "new" + columnSchema.Name + "\">" + description + "</param>",
+                                                        " <param name=\"" + "new" + columnReferenceElement.Column.Name + "\">" + description + "</param>",
                                                         string.Empty,
                                                         SyntaxFactory.TriviaList()),
                                                     SyntaxFactory.XmlTextNewLine(
@@ -592,23 +592,23 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
             {
                 // string oldConfigurationIdKey, string oldSourceKey
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-                foreach (ColumnSchema columnSchema in this.relationSchema.ParentColumns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.foreignKeyElement.ParentColumns)
                 {
                     // Add the next element of the old unique key.
                     parameters.Add(
                             SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier("old" + columnSchema.Name))
-                        .WithType(Conversions.FromType(columnSchema.Type)));
+                            SyntaxFactory.Identifier("old" + columnReferenceElement.Column.Name))
+                        .WithType(Conversions.FromType(columnReferenceElement.Column.Type)));
                 }
 
                 // string newConfigurationIdKey, string newSourceKey
-                foreach (ColumnSchema columnSchema in this.relationSchema.ParentColumns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.foreignKeyElement.ParentColumns)
                 {
                     // Add the next element of the new unique key.
                     parameters.Add(
                             SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier("new" + columnSchema.Name))
-                        .WithType(Conversions.FromType(columnSchema.Type)));
+                            SyntaxFactory.Identifier("new" + columnReferenceElement.Column.Name))
+                        .WithType(Conversions.FromType(columnReferenceElement.Column.Type)));
                 }
 
                 // , CountryRow countryRow
@@ -680,7 +680,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 // Compound keys are handled differently than simple keys.
-                if (this.relationSchema.ChildColumns.Count == 1)
+                if (this.foreignKeyElement.Columns.Count == 1)
                 {
                     //                    this.dictionary.Remove(oldCountryIdKey);
                     statements.Add(
@@ -698,7 +698,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.IdentifierName(
-                                                "old" + this.relationSchema.ParentKeyConstraint.Columns[0].Name)))))));
+                                                "old" + this.foreignKeyElement.UniqueKey.Columns[0].Column.Name)))))));
                 }
                 else
                 {
@@ -717,7 +717,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName("old" + this.relationSchema.ParentKeyConstraint.Name + "Set")))))));
+                                            SyntaxFactory.IdentifierName("old" + this.foreignKeyElement.UniqueKey.Name + "Set")))))));
                 }
 
                 // This is the complete block.

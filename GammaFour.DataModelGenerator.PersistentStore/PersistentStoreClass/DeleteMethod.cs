@@ -19,17 +19,17 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DeleteMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public DeleteMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public DeleteMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
-            this.Name = "Delete" + tableSchema.Name;
+            this.tableElement = tableElement;
+            this.Name = "Delete" + tableElement.Name;
 
             //        /// <summary>
             //        /// Creates a Configuration record.
@@ -76,12 +76,13 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
 
                 // This constructs the SQL Command to delete a record.
                 string variableList = string.Empty;
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
-                    variableList += (variableList == string.Empty ? "@" : ",@") + columnSchema.CamelCaseName;
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    variableList += (variableList == string.Empty ? "@" : ",@") + columnElement.Name.ToCamelCase();
                 }
 
-                string deleteCommandText = "delete" + this.tableSchema.Name + " " + variableList;
+                string deleteCommandText = "delete" + this.tableElement.Name + " " + variableList;
 
                 //            using (SqlCommand sqlCommand = new SqlCommand("deleteConfiguration @configurationId,@targetKey", dataModelTransaction.SqlConnection))
                 //            {
@@ -151,7 +152,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Deletes a " + this.tableSchema.Name + " record.",
+                                                " Deletes a " + this.tableElement.Name + " record.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -172,9 +173,10 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                         }))))));
 
                 // Add comments for each of the parameters.
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
                     //        /// <param name="configurationId">The required value for the ConfigurationId column.</param>
+                    ColumnElement columnElement = columnReferenceElement.Column;
                     comments.Add(
                         SyntaxFactory.Trivia(
                             SyntaxFactory.DocumentationCommentTrivia(
@@ -187,7 +189,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                                 {
                                                     SyntaxFactory.XmlTextLiteral(
                                                         SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                        " <param name=\"" + columnSchema.CamelCaseName + "\">" + "The " + columnSchema.Name + " key element.</param>",
+                                                        " <param name=\"" + columnElement.Name.ToCamelCase() + "\">" + "The " + columnElement.Name + " key element.</param>",
                                                         string.Empty,
                                                         SyntaxFactory.TriviaList()),
                                                     SyntaxFactory.XmlTextNewLine(
@@ -214,11 +216,12 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 // Create a parameter for each of the columns in the primary key.
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
                     // These are the replaceable parameters.
-                    string propertyName = columnSchema.Name;
-                    string parameterName = "@" + columnSchema.CamelCaseName;
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    string propertyName = columnElement.Name;
+                    string parameterName = "@" + columnElement.Name.ToCamelCase();
 
                     //            sqlCommand.Parameters.Add(new SqlParameter("@configurationId", configurationId));
                     statements.Add(
@@ -248,7 +251,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                                                 SyntaxFactory.Literal(parameterName))),
                                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                         SyntaxFactory.Argument(
-                                                            SyntaxFactory.IdentifierName(columnSchema.CamelCaseName))
+                                                            SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase()))
                                                     })))))))));
                 }
 
@@ -293,13 +296,14 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
 
                 // A parameter for each of the key elements.
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
+                    ColumnElement columnElement = columnReferenceElement.Column;
                     parameters.Add(
                         SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier(columnSchema.CamelCaseName))
+                            SyntaxFactory.Identifier(columnElement.Name.ToCamelCase()))
                         .WithType(
-                            Conversions.FromType(columnSchema.Type)));
+                            Conversions.FromType(columnElement.Type)));
                 }
 
                 // This is the complete set of comma separated parameters for the method.

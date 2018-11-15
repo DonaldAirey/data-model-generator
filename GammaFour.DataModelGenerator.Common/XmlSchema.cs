@@ -21,12 +21,12 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// The namespace for the Microsoft Data elements.
         /// </summary>
-        internal const string MicrosoftDataNamespace = "urn:schemas-microsoft-com:xml-msdata";
+        internal const string GammaFourDataNamespace = "urn:schemas-gamma-four-com:xml-gfdata";
 
         /// <summary>
         /// The AcceptRejectRule attribute.
         /// </summary>
-        private static XName acceptRejectRule = XName.Get("AcceptRejectRule", XmlSchema.MicrosoftDataNamespace);
+        private static XName acceptRejectRule = XName.Get("AcceptRejectRule", XmlSchema.GammaFourDataNamespace);
 
         /// <summary>
         /// Indicates a custom type is specified.
@@ -36,17 +36,17 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// The AutoIncrement attribute.
         /// </summary>
-        private static XName autoIncrement = XName.Get("AutoIncrement", XmlSchema.MicrosoftDataNamespace);
+        private static XName autoIncrement = XName.Get("AutoIncrement", XmlSchema.GammaFourDataNamespace);
 
         /// <summary>
         /// The AutoIncrementSeed attribute.
         /// </summary>
-        private static XName autoIncrementSeed = XName.Get("AutoIncrementSeed", XmlSchema.MicrosoftDataNamespace);
+        private static XName autoIncrementSeed = XName.Get("AutoIncrementSeed", XmlSchema.GammaFourDataNamespace);
 
         /// <summary>
         /// The AutoIncrementStep attribute.
         /// </summary>
-        private static XName autoIncrementStep = XName.Get("AutoIncrementStep", XmlSchema.MicrosoftDataNamespace);
+        private static XName autoIncrementStep = XName.Get("AutoIncrementStep", XmlSchema.GammaFourDataNamespace);
 
         /// <summary>
         /// The Base attribute.
@@ -66,12 +66,12 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// The ConstraintOnly attribute.
         /// </summary>
-        private static XName constraintOnly = XName.Get("ConstraintOnly", XmlSchema.MicrosoftDataNamespace);
+        private static XName constraintOnly = XName.Get("ConstraintOnly", XmlSchema.GammaFourDataNamespace);
 
         /// <summary>
         /// The Datatype attribute.
         /// </summary>
-        private static XName dataType = XName.Get("DataType", XmlSchema.MicrosoftDataNamespace);
+        private static XName dataType = XName.Get("DataType", XmlSchema.GammaFourDataNamespace);
 
         /// <summary>
         /// The Default attribute.
@@ -81,7 +81,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// The DeleteRule attribute.
         /// </summary>
-        private static XName deleteRule = XName.Get("DeleteRule", XmlSchema.MicrosoftDataNamespace);
+        private static XName deleteRule = XName.Get("DeleteRule", XmlSchema.GammaFourDataNamespace);
 
         /// <summary>
         /// The Element element.
@@ -96,7 +96,12 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// The IsPrimaryKey attribute.
         /// </summary>
-        private static XName isPrimaryKey = XName.Get("PrimaryKey", XmlSchema.MicrosoftDataNamespace);
+        private static XName isPrimaryKey = XName.Get("isPrimaryKey", XmlSchema.GammaFourDataNamespace);
+
+        /// <summary>
+        /// The IsRowVersion attribute.
+        /// </summary>
+        private static XName isRowVersion = XName.Get("isRowVersion", XmlSchema.GammaFourDataNamespace);
 
         /// <summary>
         /// The Keyref element.
@@ -161,7 +166,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// The UpdateRule attribute.
         /// </summary>
-        private static XName updateRule = XName.Get("UpdateRule", XmlSchema.MicrosoftDataNamespace);
+        private static XName updateRule = XName.Get("UpdateRule", XmlSchema.GammaFourDataNamespace);
 
         /// <summary>
         /// The mapping of XmlSchema type names into CLR types.
@@ -356,6 +361,17 @@ namespace GammaFour.DataModelGenerator.Common
             get
             {
                 return XmlSchema.isPrimaryKey;
+            }
+        }
+
+        /// <summary>
+        /// Gets the IsRowVersion attribute.
+        /// </summary>
+        internal static XName IsRowVersion
+        {
+            get
+            {
+                return XmlSchema.isRowVersion;
             }
         }
 

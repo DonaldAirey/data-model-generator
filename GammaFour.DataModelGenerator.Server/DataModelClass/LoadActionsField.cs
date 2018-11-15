@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LoadActionsField"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The data model schema.</param>
-        public LoadActionsField(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The data model schema.</param>
+        public LoadActionsField(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "loadActions";
 
             //        /// <summary>
@@ -155,7 +155,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                     SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
                                         SyntaxFactory.LiteralExpression(
                                             SyntaxKind.NumericLiteralExpression,
-                                            SyntaxFactory.Literal(this.dataModelSchema.Tables.Count))))))));
+                                            SyntaxFactory.Literal(this.xmlSchemaDocument.Tables.Count))))))));
             }
         }
 

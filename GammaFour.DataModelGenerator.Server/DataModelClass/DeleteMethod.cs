@@ -22,17 +22,17 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DeleteMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public DeleteMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public DeleteMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
-            this.Name = string.Format(CultureInfo.InvariantCulture, "Delete{0}", tableSchema.Name);
+            this.tableElement = tableElement;
+            this.Name = string.Format(CultureInfo.InvariantCulture, "Delete{0}", tableElement.Name);
 
             //        /// <summary>
             //        /// Deletes a Configuration record.
@@ -64,7 +64,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
 
                 // Ignore the spelling in the diagnostic messages for the child constraints.
-                foreach (RelationSchema relationSchema in this.tableSchema.ChildRelations)
+                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ChildKeys)
                 {
                     //        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "ConfigurationKey")]
                     attributes.Add(
@@ -89,7 +89,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 SyntaxFactory.AttributeArgument(
                                                     SyntaxFactory.LiteralExpression(
                                                         SyntaxKind.StringLiteralExpression,
-                                                        SyntaxFactory.Literal(relationSchema.ChildKeyConstraint.Name)))
+                                                        SyntaxFactory.Literal(foreignKeyElement.Name)))
                                                 .WithNameEquals(SyntaxFactory.NameEquals(SyntaxFactory.IdentifierName("MessageId"))),
                                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                 SyntaxFactory.AttributeArgument(
@@ -116,18 +116,19 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 // Scrub the incoming data for any violations.
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
-                    if (!columnSchema.Type.GetTypeInfo().IsValueType)
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    if (!columnElement.Type.GetTypeInfo().IsValueType)
                     {
                         statements.Add(
                             SyntaxFactory.IfStatement(
                                 SyntaxFactory.BinaryExpression(
                                     SyntaxKind.EqualsExpression,
-                                    SyntaxFactory.IdentifierName(columnSchema.CamelCaseName),
+                                    SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase()),
                                     SyntaxFactory.LiteralExpression(
                                         SyntaxKind.NullLiteralExpression)),
-                                SyntaxFactory.Block(ThrowArgumentNullException.GetSyntax(columnSchema.CamelCaseName))));
+                                SyntaxFactory.Block(ThrowArgumentNullException.GetSyntax(columnElement.Name.ToCamelCase()))));
                     }
                 }
 
@@ -150,10 +151,10 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 //            ConfigurationRow configurationRow;
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(SyntaxFactory.IdentifierName(this.tableSchema.Name + "Row"))
+                        SyntaxFactory.VariableDeclaration(SyntaxFactory.IdentifierName(this.tableElement.Name + "Row"))
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(this.tableSchema.CamelCaseName + "Row"))))));
+                                SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase() + "Row"))))));
 
                 //            try
                 //            {
@@ -177,7 +178,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableSchema.CamelCaseName + "Row"),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
                                 SyntaxFactory.IdentifierName("AddWriterLock")))));
 
                 //            if (customerRow.RowState == RowState.Deleted)
@@ -190,7 +191,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                             SyntaxKind.EqualsExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableSchema.CamelCaseName + "Row"),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
                                 SyntaxFactory.IdentifierName("RowState")),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -210,13 +211,13 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                             SyntaxKind.NotEqualsExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableSchema.CamelCaseName + "Row"),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
                                 SyntaxFactory.IdentifierName("RowVersion")),
                             SyntaxFactory.IdentifierName("rowVersion")),
-                        SyntaxFactory.Block(ThrowOptimisticConcurrencyException.GetSyntax(this.tableSchema))));
+                        SyntaxFactory.Block(ThrowOptimisticConcurrencyException.GetSyntax(this.tableElement))));
 
                 // Lock each of the child tables so we can query them to make sure they're empty.
-                foreach (RelationSchema relationSchema in this.tableSchema.ChildRelations)
+                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ChildKeys)
                 {
                     //            try
                     //            {
@@ -229,10 +230,10 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                     statements.Add(
                         SyntaxFactory.TryStatement()
                         .WithBlock(
-                            SyntaxFactory.Block(this.TryBlock2(relationSchema)))
+                            SyntaxFactory.Block(this.TryBlock2(foreignKeyElement)))
                         .WithFinally(
                             SyntaxFactory.FinallyClause(
-                                SyntaxFactory.Block(this.FinallyBlock2(relationSchema)))));
+                                SyntaxFactory.Block(this.FinallyBlock2(foreignKeyElement)))));
                 }
 
                 //            this.Country.AddWriterLock();
@@ -244,32 +245,32 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(this.tableSchema.Name)),
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name)),
                                 SyntaxFactory.IdentifierName("AddWriterLock")))));
 
                 // Lock each of the unique key indices that are associated with this record.
-                foreach (UniqueConstraintSchema uniqueConstraintSchema in this.tableSchema.UniqueKeys)
+                foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
                 {
                     // We don't need to lock indices that not connected to this record because the key values are null.
-                    if (uniqueConstraintSchema.IsNullable)
+                    if (uniqueKeyElement.IsNullable)
                     {
                         // The general idea here is build a sequence of binary expressions, each of them testing for a null value in the index.  The
                         // first column acts as the seed and the binary expressions are built up by a succession of logical 'AND' statements from
                         // here.
-                        string columnParameter = uniqueConstraintSchema.Columns[0].Name;
+                        string columnParameter = uniqueKeyElement.Columns[0].Column.Name;
                         BinaryExpressionSyntax expression = SyntaxFactory.BinaryExpression(
                             SyntaxKind.NotEqualsExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableSchema.CamelCaseName + "Row"),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
                                 SyntaxFactory.IdentifierName(columnParameter)),
                             SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)
                             .WithToken(SyntaxFactory.Token(SyntaxKind.NullKeyword)));
 
                         // Combine multiple key elements with a logical 'AND' binary expression.
-                        for (int andIndex = 1; andIndex < uniqueConstraintSchema.Columns.Count; andIndex++)
+                        for (int andIndex = 1; andIndex < uniqueKeyElement.Columns.Count; andIndex++)
                         {
-                            columnParameter = uniqueConstraintSchema.Columns[andIndex].Name;
+                            columnParameter = uniqueKeyElement.Columns[andIndex].Column.Name;
                             expression = SyntaxFactory.BinaryExpression(
                                 SyntaxKind.LogicalAndExpression,
                                 expression,
@@ -277,7 +278,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                     SyntaxKind.NotEqualsExpression,
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(this.tableSchema.CamelCaseName + "Row"),
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
                                         SyntaxFactory.IdentifierName(columnParameter)),
                                     SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)
                                     .WithToken(SyntaxFactory.Token(SyntaxKind.NullKeyword)))
@@ -291,39 +292,39 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                         statements.Add(
                             SyntaxFactory.IfStatement(
                                 expression,
-                                SyntaxFactory.Block(this.LockUniqueKeyIndexBlock(uniqueConstraintSchema))));
+                                SyntaxFactory.Block(this.LockUniqueKeyIndexBlock(uniqueKeyElement))));
                     }
                     else
                     {
                         //            this.CountryKey.AddWriterLock();
-                        statements.AddRange(this.LockUniqueKeyIndexBlock(uniqueConstraintSchema));
+                        statements.AddRange(this.LockUniqueKeyIndexBlock(uniqueKeyElement));
                     }
                 }
 
                 // Lock the parent key indices that are related to this record.
-                foreach (RelationSchema relationSchema in this.tableSchema.ParentRelations)
+                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
                 {
                     // Indices with nullable columns are handled differently than non-nullable columns.  We are going to generate code that will
                     // ignore an entry when it all of the key components are null.
-                    if (relationSchema.ChildKeyConstraint.IsNullable)
+                    if (foreignKeyElement.IsNullable)
                     {
                         // The general idea here is build a sequence of binary expressions, each of them testing for a null value in the index.  The
                         // first column acts as the seed and the binary expressions are built up by a succession of logical 'AND' statements from
                         // here.
-                        string columnParameter = relationSchema.ChildKeyConstraint.Columns[0].Name;
+                        string columnParameter = foreignKeyElement.Columns[0].Column.Name;
                         BinaryExpressionSyntax expression = SyntaxFactory.BinaryExpression(
                             SyntaxKind.NotEqualsExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableSchema.CamelCaseName + "Row"),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
                                 SyntaxFactory.IdentifierName(columnParameter)),
                             SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)
                             .WithToken(SyntaxFactory.Token(SyntaxKind.NullKeyword)));
 
                         // Combine multiple key elements with a logical 'AND' binary expression.
-                        for (int andIndex = 1; andIndex < relationSchema.ChildKeyConstraint.Columns.Count; andIndex++)
+                        for (int andIndex = 1; andIndex < foreignKeyElement.Columns.Count; andIndex++)
                         {
-                            columnParameter = relationSchema.ChildKeyConstraint.Columns[andIndex].Name;
+                            columnParameter = foreignKeyElement.Columns[andIndex].Column.Name;
                             expression = SyntaxFactory.BinaryExpression(
                                 SyntaxKind.LogicalAndExpression,
                                 expression,
@@ -331,7 +332,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                     SyntaxKind.NotEqualsExpression,
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(this.tableSchema.CamelCaseName + "Row"),
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
                                         SyntaxFactory.IdentifierName(columnParameter)),
                                     SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)
                                     .WithToken(SyntaxFactory.Token(SyntaxKind.NullKeyword)))
@@ -345,12 +346,12 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                         statements.Add(
                             SyntaxFactory.IfStatement(
                                 expression,
-                                SyntaxFactory.Block(this.LockParentKeyIndexBlock(relationSchema))));
+                                SyntaxFactory.Block(this.LockParentKeyIndexBlock(foreignKeyElement))));
                     }
                     else
                     {
                         //                this.Table.CountryExternalId0KeyIndex.Remove(new CountryExternalId0Key(this.Current.ExternalId0));
-                        statements.AddRange(this.LockParentKeyIndexBlock(relationSchema));
+                        statements.AddRange(this.LockParentKeyIndexBlock(foreignKeyElement));
                     }
                 }
 
@@ -360,7 +361,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableSchema.CamelCaseName + "Row"),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
                                 SyntaxFactory.IdentifierName("Delete")))));
 
                 //            volatileTransaction.AddActions(customerRow.CommitDelete, customerRow.RollbackDelete);
@@ -379,26 +380,27 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName(this.tableSchema.CamelCaseName + "Row"),
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
                                                 SyntaxFactory.IdentifierName("CommitDelete"))),
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName(this.tableSchema.CamelCaseName + "Row"),
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
                                                 SyntaxFactory.IdentifierName("RollbackDelete")))
                                     })))));
 
                 // This will destroy the persistent version of the data.
-                if (this.tableSchema.IsPersistent)
+                if (this.tableElement.IsPersistent)
                 {
                     // Collect the arguments for the persistent store method.
                     List<KeyValuePair<string, ArgumentSyntax>> argumentPair = new List<KeyValuePair<string, ArgumentSyntax>>();
 
                     // Add the primary key to the set of arguments.
-                    foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                    foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                     {
-                        string identifierName = columnSchema.CamelCaseName;
+                        ColumnElement columnElement = columnReferenceElement.Column;
+                        string identifierName = columnElement.Name.ToCamelCase();
                         argumentPair.Add(
                             new KeyValuePair<string, ArgumentSyntax>(
                                 identifierName,
@@ -422,7 +424,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
                                         SyntaxFactory.IdentifierName("persistentStore")),
-                                    SyntaxFactory.IdentifierName("Delete" + this.tableSchema.Name)))
+                                    SyntaxFactory.IdentifierName("Delete" + this.tableElement.Name)))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SeparatedList<ArgumentSyntax>(arguments)))));
@@ -468,7 +470,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Deletes a " + this.tableSchema.Name + " record.",
+                                                " Deletes a " + this.tableElement.Name + " record.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -492,11 +494,12 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 List<KeyValuePair<string, SyntaxTrivia>> parameterTrivia = new List<KeyValuePair<string, SyntaxTrivia>>();
 
                 // A parameter is needed for each element of the primary key.
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
                     //        /// <param name="configurationIdKey">The ConfigurationId primary key element.</param>
-                    string identifier = columnSchema.CamelCaseName;
-                    string description = "The " + columnSchema.Name + " key element.";
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    string identifier = columnElement.Name.ToCamelCase();
+                    string description = "The " + columnElement.Name + " key element.";
                     parameterTrivia.Add(
                         new KeyValuePair<string, SyntaxTrivia>(
                             identifier,
@@ -523,15 +526,15 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 }
 
                 // A parameter is needed for the row version for the concurrency check.
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
-                    if (columnSchema.IsRowVersion)
+                    if (columnElement.IsRowVersion)
                     {
                         //        /// <param name="configurationId">The optional value for the ConfigurationId column.</param>
-                        string identifier = columnSchema.CamelCaseName;
-                        string description = columnSchema.IsRowVersion ?
-                            "The required value for the " + columnSchema.CamelCaseName + " column." :
-                            "The optional value for the " + columnSchema.CamelCaseName + " column.";
+                        string identifier = columnElement.Name.ToCamelCase();
+                        string description = columnElement.IsRowVersion ?
+                            "The required value for the " + columnElement.Name.ToCamelCase() + " column." :
+                            "The optional value for the " + columnElement.Name.ToCamelCase() + " column.";
                         parameterTrivia.Add(
                             new KeyValuePair<string, SyntaxTrivia>(
                                 identifier,
@@ -577,11 +580,12 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 //            sqlCommand.Parameters.Add(new System.Data.SqlClient.SqlParameter("@abbreviation", System.Data.SqlDbType.NVarChar, 0, System.Data.ParameterDirection.Input, false, 0, 0, null, System.Data.DataRowVersion.Current, abbreviation));
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
                     // These are the replaceable parameters.
-                    string propertyName = columnSchema.Name;
-                    string parameterName = string.Format(CultureInfo.InvariantCulture, "@{0}", columnSchema.CamelCaseName);
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    string propertyName = columnElement.Name;
+                    string parameterName = string.Format(CultureInfo.InvariantCulture, "@{0}", columnElement.Name.ToCamelCase());
 
                     //            sqlCommand.Parameters.Add(new SqlParameter("@configurationId", configurationId));
                     statements.Add(
@@ -615,7 +619,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                                         SyntaxFactory.MemberAccessExpression(
                                                                             SyntaxKind.SimpleMemberAccessExpression,
-                                                                            SyntaxFactory.IdentifierName(this.tableSchema.CamelCaseName + "Row"),
+                                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
                                                                             SyntaxFactory.IdentifierName("original")),
                                                                         SyntaxFactory.IdentifierName(propertyName)))
                                                     })))))))));
@@ -658,7 +662,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(this.tableSchema.PrimaryKey.Name)),
+                                    SyntaxFactory.IdentifierName(this.tableElement.PrimaryKey.Name)),
                                 SyntaxFactory.IdentifierName("ReleaseReaderLock")))));
 
                 // This is the complete block.
@@ -693,29 +697,30 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 List<KeyValuePair<string, ParameterSyntax>> parameterPairs = new List<KeyValuePair<string, ParameterSyntax>>();
 
                 // Add a parameter for each column in the primary key.
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
-                    string identifier = columnSchema.CamelCaseName;
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    string identifier = columnElement.Name.ToCamelCase();
                     parameterPairs.Add(
                         new KeyValuePair<string, ParameterSyntax>(
                             identifier,
                             SyntaxFactory.Parameter(
                                 SyntaxFactory.Identifier(identifier))
-                            .WithType(Conversions.FromType(columnSchema.Type))));
+                            .WithType(Conversions.FromType(columnElement.Type))));
                 }
 
                 // Add a row version for consistency checking.
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
-                    if (columnSchema.IsRowVersion)
+                    if (columnElement.IsRowVersion)
                     {
-                        string identifier = columnSchema.CamelCaseName;
+                        string identifier = columnElement.Name.ToCamelCase();
                         parameterPairs.Add(
                             new KeyValuePair<string, ParameterSyntax>(
                                 identifier,
                                 SyntaxFactory.Parameter(
                                     SyntaxFactory.Identifier(identifier))
-                                        .WithType(Conversions.FromType(columnSchema.Type))));
+                                        .WithType(Conversions.FromType(columnElement.Type))));
                     }
                 }
 
@@ -745,16 +750,17 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(this.tableSchema.PrimaryKey.Name)),
+                                    SyntaxFactory.IdentifierName(this.tableElement.PrimaryKey.Name)),
                                 SyntaxFactory.IdentifierName("AcquireReaderLock")))));
 
                 // Create a list of parameters that comprise the primary key.
                 List<ArgumentSyntax> arguments = new List<ArgumentSyntax>();
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
+                    ColumnElement columnElement = columnReferenceElement.Column;
                     arguments.Add(
                         SyntaxFactory.Argument(
-                            SyntaxFactory.IdentifierName(columnSchema.CamelCaseName)));
+                            SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase())));
                 }
 
                 //                countryRow = this.CountryKey.Find(countryIdKey);
@@ -762,14 +768,14 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.IdentifierName(this.tableSchema.CamelCaseName + "Row"),
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.tableSchema.PrimaryKey.Name)),
+                                        SyntaxFactory.IdentifierName(this.tableElement.PrimaryKey.Name)),
                                     SyntaxFactory.IdentifierName("Find")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
@@ -783,7 +789,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.EqualsExpression,
-                            SyntaxFactory.IdentifierName(this.tableSchema.CamelCaseName + "Row"),
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.NullLiteralExpression)),
                         SyntaxFactory.Block(
@@ -798,9 +804,9 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="relationSchema">The relation schema.</param>
+        /// <param name="foreignKeyElement">The relation schema.</param>
         /// <returns>A block of code that releases the reader lock.</returns>
-        private List<StatementSyntax> FinallyBlock2(RelationSchema relationSchema)
+        private List<StatementSyntax> FinallyBlock2(ForeignKeyElement foreignKeyElement)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -814,7 +820,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(relationSchema.Name)),
+                                SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
                             SyntaxFactory.IdentifierName("ReleaseReaderLock")))));
 
             // This is the complete block.
@@ -824,9 +830,9 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="relationSchema">The unique constraint schema.</param>
+        /// <param name="foreignKeyElement">The unique constraint schema.</param>
         /// <returns>A block of code that deletes a row from a unique index.</returns>
-        private SyntaxList<StatementSyntax> LockParentKeyIndexBlock(RelationSchema relationSchema)
+        private SyntaxList<StatementSyntax> LockParentKeyIndexBlock(ForeignKeyElement foreignKeyElement)
         {
             // This list collects the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -839,7 +845,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.ThisExpression(),
-                            SyntaxFactory.IdentifierName(relationSchema.Name)),
+                            SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
                         SyntaxFactory.IdentifierName("AddWriterLock")))));
 
             // This is the complete block.
@@ -849,9 +855,9 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="uniqueConstraintSchema">The unique constraint schema.</param>
+        /// <param name="uniqueKeyElement">The unique constraint schema.</param>
         /// <returns>A block of code that deletes a row from a unique index.</returns>
-        private SyntaxList<StatementSyntax> LockUniqueKeyIndexBlock(UniqueConstraintSchema uniqueConstraintSchema)
+        private SyntaxList<StatementSyntax> LockUniqueKeyIndexBlock(UniqueKeyElement uniqueKeyElement)
         {
             // This list collects the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -864,7 +870,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.ThisExpression(),
-                            SyntaxFactory.IdentifierName(uniqueConstraintSchema.Name)),
+                            SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
                         SyntaxFactory.IdentifierName("AddWriterLock")))));
 
             // This is the complete block.
@@ -874,9 +880,9 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="relationSchema">The relation schema.</param>
+        /// <param name="foreignKeyElement">The relation schema.</param>
         /// <returns>A block of code that locks a child relation and examines it for a constraint violation.</returns>
-        private List<StatementSyntax> TryBlock2(RelationSchema relationSchema)
+        private List<StatementSyntax> TryBlock2(ForeignKeyElement foreignKeyElement)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -890,19 +896,19 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(relationSchema.ChildKeyConstraint.Name)),
+                                SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
                             SyntaxFactory.IdentifierName("AcquireReaderLock")))));
 
             // This creates the comma-separated list of parameters that are used to create a key.
             List<ArgumentSyntax> childArguments = new List<ArgumentSyntax>();
-            foreach (ColumnSchema columnSchema in relationSchema.ParentKeyConstraint.Columns)
+            foreach (ColumnReferenceElement columnReferenceElement in foreignKeyElement.UniqueKey.Columns)
             {
                 childArguments.Add(
                     SyntaxFactory.Argument(
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName(this.tableSchema.CamelCaseName + "Row"),
-                            SyntaxFactory.IdentifierName(columnSchema.Name))));
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                            SyntaxFactory.IdentifierName(columnReferenceElement.Column.Name))));
             }
 
             //            if (this.CountryCustomerCountryIdKey.ContainsKey(countryRow.CountryId))
@@ -917,13 +923,13 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(relationSchema.ChildKeyConstraint.Name)),
+                                SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
                             SyntaxFactory.IdentifierName("ContainsKey")))
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList(
                             SyntaxFactory.SeparatedList<ArgumentSyntax>(childArguments))),
                     SyntaxFactory.Block(
-                        ThrowConstraintException.GetSyntax("delete", relationSchema.ChildKeyConstraint.Name))));
+                        ThrowConstraintException.GetSyntax("delete", foreignKeyElement.Name))));
 
             // This is the complete block.
             return statements;

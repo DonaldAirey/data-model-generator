@@ -19,20 +19,20 @@ namespace GammaFour.DataModelGenerator.Client
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Namespace"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The name of the namespace.</param>
-        public Namespace(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The name of the namespace.</param>
+        public Namespace(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
 
             // This is the syntax of the namespace.
             this.Syntax = SyntaxFactory.NamespaceDeclaration(
-                    SyntaxFactory.IdentifierName(dataModelSchema.TargetNamespace))
+                    SyntaxFactory.IdentifierName(xmlSchemaDocument.TargetNamespace))
                 .WithUsings(SyntaxFactory.List<UsingDirectiveSyntax>(this.UsingStatements))
                 .WithMembers(this.Members)
                 .WithLeadingTrivia(this.LeadingTrivia)
@@ -171,13 +171,13 @@ namespace GammaFour.DataModelGenerator.Client
         private SyntaxList<MemberDeclarationSyntax> CreatePublicClasses(SyntaxList<MemberDeclarationSyntax> members)
         {
             // The class for accessing the data service.
-            members = members.Add(new DataServiceClient.Class(this.dataModelSchema).Syntax);
+            members = members.Add(new DataServiceClient.Class(this.xmlSchemaDocument).Syntax);
 
             // Create the data for the row classes.
             List<Common.RowDataClass.Class> rowDataClasses = new List<Common.RowDataClass.Class>();
-            foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                rowDataClasses.Add(new Common.RowDataClass.Class(tableSchema));
+                rowDataClasses.Add(new Common.RowDataClass.Class(tableElement));
             }
 
             // Alphabetize the list of row classes and add them to the namespace.
@@ -188,9 +188,9 @@ namespace GammaFour.DataModelGenerator.Client
 
             // Create the row classes.
             List<RowClass.Class> rowClasses = new List<RowClass.Class>();
-            foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                rowClasses.Add(new RowClass.Class(tableSchema));
+                rowClasses.Add(new RowClass.Class(tableElement));
             }
 
             // Alphabetize the list of row classes and add them to the namespace.
@@ -201,9 +201,9 @@ namespace GammaFour.DataModelGenerator.Client
 
             // Create the list of tables.
             List<TableClass.Class> tableClasses = new List<TableClass.Class>();
-            foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                tableClasses.Add(new TableClass.Class(tableSchema));
+                tableClasses.Add(new TableClass.Class(tableElement));
             }
 
             // Alphabetize the list of tables and add them to the namespace.
@@ -213,24 +213,20 @@ namespace GammaFour.DataModelGenerator.Client
             }
 
             // The actual data model class.
-            members = members.Add(new DataModelClass.Class(this.dataModelSchema).Syntax);
+            members = members.Add(new DataModelClass.Class(this.xmlSchemaDocument).Syntax);
 
             // Create the compound key sets.
             List<Common.CompoundKeyStruct.Struct> compoundKeys = new List<Common.CompoundKeyStruct.Struct>();
 
             // Create a compound key when there are more than one columns.
-            foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                foreach (ConstraintSchema constraintSchema in tableSchema.Constraints)
+                foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
                 {
-                    UniqueConstraintSchema uniqueConstraintSchema = constraintSchema as UniqueConstraintSchema;
-                    if (uniqueConstraintSchema != null)
+                    // If a key has more than one column, then we need a compound key structure to use it.
+                    if (uniqueKeyElement.Columns.Count > 1)
                     {
-                        // If a key has more than one column, then we need a compound key structure to use it.
-                        if (uniqueConstraintSchema.Columns.Count > 1)
-                        {
-                            compoundKeys.Add(new Common.CompoundKeyStruct.Struct(uniqueConstraintSchema));
-                        }
+                        compoundKeys.Add(new Common.CompoundKeyStruct.Struct(uniqueKeyElement));
                     }
                 }
             }
@@ -243,15 +239,11 @@ namespace GammaFour.DataModelGenerator.Client
 
             // Create the unique index classes.
             List<UniqueKeyIndexClass.Class> uniqueIndexClasses = new List<UniqueKeyIndexClass.Class>();
-            foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                foreach (ConstraintSchema constraintSchema in tableSchema.Constraints)
+                foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
                 {
-                    UniqueConstraintSchema uniqueConstraintSchema = constraintSchema as UniqueConstraintSchema;
-                    if (uniqueConstraintSchema != null)
-                    {
-                        uniqueIndexClasses.Add(new UniqueKeyIndexClass.Class(uniqueConstraintSchema));
-                    }
+                    uniqueIndexClasses.Add(new UniqueKeyIndexClass.Class(uniqueKeyElement));
                 }
             }
 
@@ -263,9 +255,9 @@ namespace GammaFour.DataModelGenerator.Client
 
             // Create the list of foreign indices.
             List<ForeignKeyIndexClass.Class> foreignIndexClasses = new List<ForeignKeyIndexClass.Class>();
-            foreach (RelationSchema relationSchema in this.dataModelSchema.Relations)
+            foreach (ForeignKeyElement foreignKeyElement in this.xmlSchemaDocument.ForeignKeys)
             {
-                foreignIndexClasses.Add(new ForeignKeyIndexClass.Class(relationSchema));
+                foreignIndexClasses.Add(new ForeignKeyIndexClass.Class(foreignKeyElement));
             }
 
             // Alphabetize the list of foreign indices and add them to the namespace.
@@ -286,7 +278,7 @@ namespace GammaFour.DataModelGenerator.Client
         private SyntaxList<MemberDeclarationSyntax> CreatePublicInterfaces(SyntaxList<MemberDeclarationSyntax> members)
         {
             // The interface for accessing the data service.
-            members = members.Add(new DataServiceInterface.Interface(this.dataModelSchema).Syntax);
+            members = members.Add(new DataServiceInterface.Interface(this.xmlSchemaDocument).Syntax);
 
             // This is the collection of alphabetized fields.
             return members;

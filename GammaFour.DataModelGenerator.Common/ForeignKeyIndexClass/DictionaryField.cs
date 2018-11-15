@@ -6,6 +6,7 @@ namespace GammaFour.DataModelGenerator.Common.ForeignKeyIndexClass
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -18,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Common.ForeignKeyIndexClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private RelationSchema relationSchema;
+        private ForeignKeyElement foreignKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DictionaryField"/> class.
         /// </summary>
-        /// <param name="relationSchema">The table schema.</param>
-        public DictionaryField(RelationSchema relationSchema)
+        /// <param name="foreignKeyElement">The table schema.</param>
+        public DictionaryField(ForeignKeyElement foreignKeyElement)
         {
             // Initialize the object.
-            this.relationSchema = relationSchema;
+            this.foreignKeyElement = foreignKeyElement;
 
             // This is the name of the field.
             this.Name = "dictionary";
@@ -149,13 +150,13 @@ namespace GammaFour.DataModelGenerator.Common.ForeignKeyIndexClass
                 List<TypeSyntax> types = new List<TypeSyntax>();
 
                 // The key of the dictionary is a simple or compound key that can uniquely identify the parent row.
-                if (this.relationSchema.ParentColumns.Count == 1)
+                if (this.foreignKeyElement.UniqueKey.Columns.Count == 1)
                 {
-                    types.Add(Conversions.FromType(this.relationSchema.ParentColumns[0].Type));
+                    types.Add(Conversions.FromType(this.foreignKeyElement.UniqueKey.Columns.Single().Column.Type));
                 }
                 else
                 {
-                    types.Add(SyntaxFactory.IdentifierName(this.relationSchema.ParentKeyConstraint + "Set"));
+                    types.Add(SyntaxFactory.IdentifierName(this.foreignKeyElement.Refer + "Set"));
                 }
 
                 // This HashSet holds the child rows.
@@ -165,7 +166,7 @@ namespace GammaFour.DataModelGenerator.Common.ForeignKeyIndexClass
                     .WithTypeArgumentList(
                         SyntaxFactory.TypeArgumentList(
                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                SyntaxFactory.IdentifierName(this.relationSchema.ChildTable.Name + "Row")))));
+                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name + "Row")))));
 
                 // Dictionary<Guid, HashSet<ProvinceRow>>
                 //                 or

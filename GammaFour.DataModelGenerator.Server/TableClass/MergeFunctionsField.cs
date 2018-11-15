@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MergeFunctionsField"/> class.
         /// </summary>
-        /// <param name="tableSchema">The table schema.</param>
-        public MergeFunctionsField(TableSchema tableSchema)
+        /// <param name="tableElement">The table schema.</param>
+        public MergeFunctionsField(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
             this.Name = "mergeFunctions";
 
             //        /// <summary>

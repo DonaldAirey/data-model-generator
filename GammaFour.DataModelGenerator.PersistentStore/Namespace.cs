@@ -18,19 +18,19 @@ namespace GammaFour.DataModelGenerator.PersistentStore
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Namespace"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">The name of the namespace.</param>
-        public Namespace(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">The name of the namespace.</param>
+        public Namespace(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
 
             // This is the syntax of the namespace.
-            this.Syntax = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.IdentifierName(dataModelSchema.TargetNamespace))
+            this.Syntax = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.IdentifierName(xmlSchemaDocument.TargetNamespace))
                 .WithUsings(SyntaxFactory.List<UsingDirectiveSyntax>(this.UsingStatements))
                 .WithMembers(this.Members)
                 .WithLeadingTrivia(this.LeadingTrivia)
@@ -146,7 +146,7 @@ namespace GammaFour.DataModelGenerator.PersistentStore
         private SyntaxList<MemberDeclarationSyntax> CreatePublicClasses(SyntaxList<MemberDeclarationSyntax> members)
         {
             // The persistent store class.
-            members = members.Add(new PersistentStoreClass.Class(this.dataModelSchema).Syntax);
+            members = members.Add(new PersistentStoreClass.Class(this.xmlSchemaDocument).Syntax);
 
             // This is the collection of alphabetized fields.
             return members;

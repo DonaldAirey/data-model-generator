@@ -19,7 +19,7 @@ namespace GammaFour.DataModelGenerator.Common.RowDataClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// The name of the type of object cloned.
@@ -29,12 +29,12 @@ namespace GammaFour.DataModelGenerator.Common.RowDataClass
         /// <summary>
         /// Initializes a new instance of the <see cref="CloneMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public CloneMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public CloneMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
-            this.typeName = string.Format(CultureInfo.InvariantCulture, "{0}Data", this.tableSchema.Name);
+            this.tableElement = tableElement;
+            this.typeName = string.Format(CultureInfo.InvariantCulture, "{0}Data", this.tableElement.Name);
 
             // This is the name of the method.
             this.Name = "Clone";

@@ -20,16 +20,16 @@ namespace GammaFour.DataModelGenerator.Server.PersistentStoreageInterface
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Interface"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">A description of a unique constraint.</param>
-        public Interface(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">A description of a unique constraint.</param>
+        public Interface(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "IPersistentStore";
 
             //    /// <summary>
@@ -161,11 +161,11 @@ namespace GammaFour.DataModelGenerator.Server.PersistentStoreageInterface
             methods.Add(new ReadMethod());
 
             // Generate a "load row" event for each of the tables.
-            foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                methods.Add(new CreateMethod(tableSchema));
-                methods.Add(new DeleteMethod(tableSchema));
-                methods.Add(new UpdateMethod(tableSchema));
+                methods.Add(new CreateMethod(tableElement));
+                methods.Add(new DeleteMethod(tableElement));
+                methods.Add(new UpdateMethod(tableElement));
             }
 
             // Alphabetize and add the methods as members of the class.

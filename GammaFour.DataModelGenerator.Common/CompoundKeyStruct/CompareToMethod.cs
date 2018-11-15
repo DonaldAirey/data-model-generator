@@ -7,6 +7,7 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -19,17 +20,17 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
         /// <summary>
         /// The column schema.
         /// </summary>
-        private UniqueConstraintSchema uniqueConstraintSchema;
+        private UniqueKeyElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CompareToMethod"/> class.
         /// </summary>
-        /// <param name="uniqueConstraintSchema">The unique constraint schema.</param>
-        public CompareToMethod(UniqueConstraintSchema uniqueConstraintSchema)
+        /// <param name="uniqueKeyElement">The unique constraint schema.</param>
+        public CompareToMethod(UniqueKeyElement uniqueKeyElement)
         {
             // Initialize the object.
             this.Name = "CompareTo";
-            this.uniqueConstraintSchema = uniqueConstraintSchema;
+            this.uniqueKeyElement = uniqueKeyElement;
 
             //        /// <summary>
             //        /// Compares the current object with another object of the same type.
@@ -60,14 +61,15 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 //            int compare0 = other.ConfigurationId.CompareTo(this.ConfigurationId);
-                for (int index = 0; index < this.uniqueConstraintSchema.Columns.Count - 1; index++)
+                List<ColumnReferenceElement> columns = this.uniqueKeyElement.Columns;
+                for (int index = 0; index < columns.Count - 1; index++)
                 {
                     string compare = string.Format(CultureInfo.InvariantCulture, "compare{0}", index);
-                    string property = this.uniqueConstraintSchema.Columns[index].Name;
+                    string property = columns[index].Column.Name;
 
                     // The code analyzer doesn't like generic string comparison calls (CompareTo) so the non-localized (cardinal) string comparison
                     // is used.
-                    if (this.uniqueConstraintSchema.Columns[index].Type == typeof(string))
+                    if (columns[index].Column.Type == typeof(string))
                     {
                         //            int compare0 = string.CompareOrdinal(other.ConfigurationId, this.ConfigurationId);
                         statements.Add(
@@ -152,9 +154,9 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
                 }
 
                 //            return other.TargetKey.CompareTo(this.TargetKey);
-                int count = this.uniqueConstraintSchema.Columns.Count;
-                string finalPropertyName = this.uniqueConstraintSchema.Columns[count - 1].Name;
-                if (this.uniqueConstraintSchema.Columns[count - 1].Type == typeof(string))
+                int count = columns.Count;
+                string finalPropertyName = columns[count - 1].Column.Name;
+                if (columns[count - 1].Column.Type == typeof(string))
                 {
                     statements.Add(
                         SyntaxFactory.ReturnStatement(
@@ -363,7 +365,7 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("other"))
                     .WithType(
-                        SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Name + "Set")));
+                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name + "Set")));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

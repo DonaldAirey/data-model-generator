@@ -19,16 +19,22 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
+
+        /// <summary>
+        /// The XML Schema document.
+        /// </summary>
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AddReaderLockMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public AddReaderLockMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public AddReaderLockMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
+            this.xmlSchemaDocument = this.tableElement.XmlSchemaDocument;
             this.Name = "AddReaderLock";
 
             //        /// <summary>
@@ -79,7 +85,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
                                             SyntaxFactory.IdentifierName("Table")),
-                                        SyntaxFactory.IdentifierName("DataModel")),
+                                        SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name)),
                                     SyntaxFactory.IdentifierName("Transaction")),
                                 SyntaxFactory.IdentifierName("AddFinally")))
                         .WithArgumentList(

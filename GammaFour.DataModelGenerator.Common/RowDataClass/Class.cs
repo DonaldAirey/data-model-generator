@@ -20,19 +20,19 @@ namespace GammaFour.DataModelGenerator.Common.RowDataClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Class"/> class.
         /// </summary>
-        /// <param name="tableSchema">A description of a unique constraint.</param>
-        public Class(TableSchema tableSchema)
+        /// <param name="tableElement">A description of a unique constraint.</param>
+        public Class(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
 
             // The name of this structure.
-            this.Name = string.Format(CultureInfo.InvariantCulture, "{0}Data", tableSchema.Name);
+            this.Name = string.Format(CultureInfo.InvariantCulture, "{0}Data", tableElement.Name);
 
             //        /// <summary>
             //        /// The fields of a ConfigurationRow.
@@ -82,7 +82,7 @@ namespace GammaFour.DataModelGenerator.Common.RowDataClass
                                                 string.Format(
                                                     CultureInfo.InvariantCulture,
                                                     " The fields of a {0}Row.",
-                                                    this.tableSchema.Name),
+                                                    this.tableElement.Name),
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -144,9 +144,9 @@ namespace GammaFour.DataModelGenerator.Common.RowDataClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
-            foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+            foreach (ColumnElement columnElement in this.tableElement.Columns)
             {
-                fields.Add(new ColumnProperty(columnSchema));
+                fields.Add(new ColumnProperty(columnElement));
             }
 
             // Alphabetize and add the fields as members of the class.
@@ -170,9 +170,9 @@ namespace GammaFour.DataModelGenerator.Common.RowDataClass
             List<SyntaxElement> properties = new List<SyntaxElement>();
 
             // Create a property for each column.
-            foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+            foreach (ColumnElement columnElement in this.tableElement.Columns)
             {
-                properties.Add(new RowDataClass.ColumnProperty(columnSchema));
+                properties.Add(new RowDataClass.ColumnProperty(columnElement));
             }
 
             // Alphabetize and add the properties as members of the class.
@@ -194,7 +194,7 @@ namespace GammaFour.DataModelGenerator.Common.RowDataClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new CloneMethod(this.tableSchema));
+            methods.Add(new CloneMethod(this.tableElement));
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))

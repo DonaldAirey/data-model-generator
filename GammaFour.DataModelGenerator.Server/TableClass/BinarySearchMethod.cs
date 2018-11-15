@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BinarySearchMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The table schema.</param>
-        public BinarySearchMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The table schema.</param>
+        public BinarySearchMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
             this.Name = "BinarySearch";
 
             //        /// <summary>
@@ -177,9 +177,10 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                         }))))));
 
                 // Add a parameter for each element of the key.
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
                     //        /// <param name="keyConfigurationId">The ConfigurationId key element.</param>
+                    ColumnElement columnElement = columnReferenceElement.Column;
                     comments.Add(
                         SyntaxFactory.Trivia(
                             SyntaxFactory.DocumentationCommentTrivia(
@@ -192,7 +193,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 {
                                                     SyntaxFactory.XmlTextLiteral(
                                                         SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                        " <param name=\"" + columnSchema.CamelCaseName + "\">The " + columnSchema.Name + " key element.</param>",
+                                                        " <param name=\"" + columnElement.Name.ToCamelCase() + "\">The " + columnElement.Name + " key element.</param>",
                                                         string.Empty,
                                                         SyntaxFactory.TriviaList()),
                                                     SyntaxFactory.XmlTextNewLine(
@@ -378,12 +379,13 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
 
                 // Add a parameter for each element of the key.
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
+                    ColumnElement columnElement = columnReferenceElement.Column;
                     parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(columnSchema.CamelCaseName))
-                        .WithType(Conversions.FromType(columnSchema.Type)));
+                        SyntaxFactory.Identifier(columnElement.Name.ToCamelCase()))
+                        .WithType(Conversions.FromType(columnElement.Type)));
                 }
 
                 // This is the complete parameter specification for this constructor.
@@ -452,7 +454,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(this.tableSchema.Name + "Row"))
+                            SyntaxFactory.IdentifierName(this.tableElement.Name + "Row"))
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
@@ -541,10 +543,10 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                 SyntaxFactory.IdentifierName("AcquireReaderLock")))));
 
                 // Compare the first elements of the key.
-                statements.AddRange(this.CompareElementBlock(this.tableSchema.PrimaryKey.Columns[0]));
+                statements.AddRange(this.CompareElementBlock(this.tableElement.PrimaryKey.Columns[0].Column));
 
                 // In a compound key, compare each of the additional elements until an inequality is found or we run out of columns in the key.
-                for (int index = 1; index < this.tableSchema.PrimaryKey.Columns.Count; index++)
+                for (int index = 1; index < this.tableElement.PrimaryKey.Columns.Count; index++)
                 {
                     //            if (compare == 0)
                     //            {
@@ -559,7 +561,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                     SyntaxKind.NumericLiteralExpression,
                                     SyntaxFactory.Literal(0))),
                             SyntaxFactory.Block(
-                                this.CompareElementBlock(this.tableSchema.PrimaryKey.Columns[index]))));
+                                this.CompareElementBlock(this.tableElement.PrimaryKey.Columns[index].Column))));
                 }
 
                 // This is the complete block.
@@ -570,16 +572,16 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="columnSchema">The column schema.</param>
+        /// <param name="columnElement">The column schema.</param>
         /// <returns>A block of code that compares the next element of a key.</returns>
-        private List<StatementSyntax> CompareElementBlock(ColumnSchema columnSchema)
+        private List<StatementSyntax> CompareElementBlock(ColumnElement columnElement)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 
             // The code analyzer doesn't like generic string comparison calls (CompareTo) so the non-localized (cardinal) string comparison
             // is used.
-            if (columnSchema.Type == typeof(string))
+            if (columnElement.Type == typeof(string))
             {
                 //                    compare = string.CompareOrdinal(midRow.ConfigurationId, keyConfigurationId);
                 statements.Add(
@@ -602,10 +604,10 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.IdentifierName("midRow"),
-                                                    SyntaxFactory.IdentifierName(columnSchema.Name))),
+                                                    SyntaxFactory.IdentifierName(columnElement.Name))),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName(columnSchema.CamelCaseName))
+                                                SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase()))
                                         }))))));
             }
             else
@@ -622,13 +624,13 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.IdentifierName("midRow"),
-                                        SyntaxFactory.IdentifierName(columnSchema.Name)),
+                                        SyntaxFactory.IdentifierName(columnElement.Name)),
                                     SyntaxFactory.IdentifierName("CompareTo")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(columnSchema.CamelCaseName))))))));
+                                            SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase()))))))));
             }
 
             // This is the complete block.

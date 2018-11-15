@@ -21,17 +21,17 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Class"/> class.
         /// </summary>
-        /// <param name="tableSchema">A description of a unique constraint.</param>
-        public Class(TableSchema tableSchema)
+        /// <param name="tableElement">A description of a unique constraint.</param>
+        public Class(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
-            this.Name = tableSchema.Name + "Row";
+            this.tableElement = tableElement;
+            this.Name = tableElement.Name + "Row";
 
             //    /// <summary>
             //    /// A row of data in the Configuration table.
@@ -98,7 +98,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " A row of data in the " + this.tableSchema.Name + " table.",
+                                                " A row of data in the " + this.tableElement.Name + " table.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -162,7 +162,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // Add the constructors.
-            members = members.Add(new ConstructorTableTableDataBool(this.tableSchema).Syntax);
+            members = members.Add(new ConstructorTableTableDataBool(this.tableElement).Syntax);
 
             // Return the new collection of members.
             return members;
@@ -177,16 +177,16 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new AddMethod(this.tableSchema));
-            methods.Add(new BeginUpdateMethod(this.tableSchema));
-            methods.Add(new CommitAddMethod(this.tableSchema));
-            methods.Add(new CommitDeleteMethod(this.tableSchema));
-            methods.Add(new CommitUpdateMethod(this.tableSchema));
-            methods.Add(new DeleteMethod(this.tableSchema));
-            methods.Add(new EndUpdateMethod(this.tableSchema));
-            methods.Add(new RollbackAddMethod(this.tableSchema));
-            methods.Add(new RollbackDeleteMethod(this.tableSchema));
-            methods.Add(new RollbackUpdateMethod(this.tableSchema));
+            methods.Add(new AddMethod(this.tableElement));
+            methods.Add(new BeginUpdateMethod(this.tableElement));
+            methods.Add(new CommitAddMethod(this.tableElement));
+            methods.Add(new CommitDeleteMethod(this.tableElement));
+            methods.Add(new CommitUpdateMethod(this.tableElement));
+            methods.Add(new DeleteMethod(this.tableElement));
+            methods.Add(new EndUpdateMethod(this.tableElement));
+            methods.Add(new RollbackAddMethod(this.tableElement));
+            methods.Add(new RollbackDeleteMethod(this.tableElement));
+            methods.Add(new RollbackUpdateMethod(this.tableElement));
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
@@ -208,8 +208,8 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
             fields.Add(new ActionIndexField());
-            fields.Add(new CurrentDataField(this.tableSchema));
-            fields.Add(new DataField(this.tableSchema));
+            fields.Add(new CurrentDataField(this.tableElement));
+            fields.Add(new DataField(this.tableElement));
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
@@ -230,8 +230,8 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new AddReaderLockMethod(this.tableSchema));
-            methods.Add(new AddWriterLockMethod(this.tableSchema));
+            methods.Add(new AddReaderLockMethod(this.tableElement));
+            methods.Add(new AddWriterLockMethod(this.tableElement));
 
            // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
@@ -252,7 +252,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new ItemProperty(this.tableSchema));
+            properties.Add(new ItemProperty(this.tableElement));
 
             // Alphabetize and add the properties as members of the class.
             foreach (SyntaxElement syntaxElement in properties.OrderBy(m => m.Name))
@@ -273,13 +273,13 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new RowStateProperty(this.tableSchema));
-            properties.Add(new TableProperty(this.tableSchema));
+            properties.Add(new RowStateProperty(this.tableElement));
+            properties.Add(new TableProperty(this.tableElement));
 
             // Create a property for each column.
-            foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+            foreach (ColumnElement columnElement in this.tableElement.Columns)
             {
-                properties.Add(new ColumnProperty(columnSchema));
+                properties.Add(new ColumnProperty(columnElement));
             }
 
             // Alphabetize and add the properties as members of the class.

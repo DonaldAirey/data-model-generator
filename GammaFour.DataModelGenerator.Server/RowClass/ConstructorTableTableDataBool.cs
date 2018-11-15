@@ -20,17 +20,17 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstructorTableTableDataBool"/> class.
         /// </summary>
-        /// <param name="tableSchema">The table schema.</param>
-        public ConstructorTableTableDataBool(TableSchema tableSchema)
+        /// <param name="tableElement">The table schema.</param>
+        public ConstructorTableTableDataBool(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
-            this.Name = this.tableSchema.Name + "Row";
+            this.tableElement = tableElement;
+            this.Name = this.tableElement.Name + "Row";
 
             //        /// <summary>
             //        /// Initializes a new instance of the <see cref="ConfigurationRow"/> class.
@@ -68,7 +68,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName("Table")),
-                            SyntaxFactory.IdentifierName(this.tableSchema.CamelCaseName + "Table"))));
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Table"))));
 
                 //            this.RowState = RowState.Detached;
                 statements.Add(
@@ -114,7 +114,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.ThisExpression(),
                                                 SyntaxFactory.IdentifierName("currentData")),
-                                            SyntaxFactory.IdentifierName(this.tableSchema.CamelCaseName + "Data"))))))));
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Data"))))))));
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -192,7 +192,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 string.Format(
                                                     CultureInfo.InvariantCulture,
                                                     " Initializes a new instance of the <see cref=\"{0}Row\"/> class.",
-                                                    this.tableSchema.Name),
+                                                    this.tableElement.Name),
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -225,7 +225,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    " <param name=\"" + this.tableSchema.CamelCaseName + "Table\">The parent table.</param>",
+                                                    " <param name=\"" + this.tableElement.Name.ToCamelCase() + "Table\">The parent table.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -248,7 +248,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    " <param name=\"" + this.tableSchema.CamelCaseName + "Data\">The initial data.</param>",
+                                                    " <param name=\"" + this.tableElement.Name.ToCamelCase() + "Data\">The initial data.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -315,16 +315,16 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 // ConfigurationTable configurationTable
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(this.tableSchema.CamelCaseName + "Table"))
+                        SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase() + "Table"))
                     .WithType(
-                        SyntaxFactory.IdentifierName(this.tableSchema.Name + "Table")));
+                        SyntaxFactory.IdentifierName(this.tableElement.Name + "Table")));
 
                 // ConfigurationData configurationData
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(this.tableSchema.CamelCaseName + "Data"))
+                        SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase() + "Data"))
                     .WithType(
-                        SyntaxFactory.IdentifierName(this.tableSchema.Name + "Data")));
+                        SyntaxFactory.IdentifierName(this.tableElement.Name + "Data")));
 
                 // boot isCommittable
                 parameters.Add(

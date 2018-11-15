@@ -21,17 +21,17 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UpdateMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public UpdateMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public UpdateMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
-            this.Name = "Update" + tableSchema.Name;
+            this.tableElement = tableElement;
+            this.Name = "Update" + tableElement.Name;
 
             //        /// <summary>
             //        /// Creates a Configuration record.
@@ -78,20 +78,21 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
 
                 // This constructs the SQL Command to update a record.
                 string variableList = string.Empty;
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
-                    if (!columnSchema.IsAutoIncrement)
+                    if (!columnElement.IsAutoIncrement)
                     {
-                        variableList += (variableList == string.Empty ? "@" : ",@") + columnSchema.CamelCaseName;
+                        variableList += (variableList == string.Empty ? "@" : ",@") + columnElement.Name.ToCamelCase();
                     }
                 }
 
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
-                    variableList += ",@" + columnSchema.CamelCaseName + "Key";
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    variableList += ",@" + columnElement.Name.ToCamelCase() + "Key";
                 }
 
-                string updateCommandText = "update" + this.tableSchema.Name + " " + variableList;
+                string updateCommandText = "update" + this.tableElement.Name + " " + variableList;
 
                 //            using (SqlCommand sqlCommand = new SqlCommand("updateConfiguration @configurationId,...,@targetKey", dataModelTransaction.SqlConnection))
                 //            {
@@ -161,7 +162,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Updates a " + this.tableSchema.Name + " record.",
+                                                " Updates a " + this.tableElement.Name + " record.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -185,11 +186,12 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                 List<KeyValuePair<string, SyntaxTrivia>> parameterTrivia = new List<KeyValuePair<string, SyntaxTrivia>>();
 
                 // A parameter is needed for each element of the primary key.
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
                     //        /// <param name="configurationIdKey">The ConfigurationId primary key element.</param>
-                    string identifier = columnSchema.CamelCaseName + "Key";
-                    string description = "The " + columnSchema.Name + " key element.";
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    string identifier = columnElement.Name.ToCamelCase() + "Key";
+                    string description = "The " + columnElement.Name + " key element.";
                     parameterTrivia.Add(
                         new KeyValuePair<string, SyntaxTrivia>(
                             identifier,
@@ -216,11 +218,11 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                 }
 
                 // A parameter is needed for each column in the table.
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
                     //        /// <param name="configurationId">The optional value for the ConfigurationId column.</param>
-                    string identifier = columnSchema.CamelCaseName;
-                    string description = "The " + (columnSchema.IsNullable ? "optional" : "required") + " value for the " + columnSchema.Name + " column.";
+                    string identifier = columnElement.Name.ToCamelCase();
+                    string description = "The " + (columnElement.IsNullable ? "optional" : "required") + " value for the " + columnElement.Name + " column.";
                     parameterTrivia.Add(
                         new KeyValuePair<string, SyntaxTrivia>(
                             identifier,
@@ -265,14 +267,14 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 //            sqlCommand.Parameters.Add(new System.Data.SqlClient.SqlParameter("@abbreviation", System.Data.SqlDbType.NVarChar, 0, System.Data.ParameterDirection.Input, false, 0, 0, null, System.Data.DataRowVersion.Current, abbreviation));
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
-                    string variableName = columnSchema.CamelCaseName;
-                    string parameterName = string.Format(CultureInfo.InvariantCulture, "@{0}", columnSchema.CamelCaseName);
-                    if (!columnSchema.IsAutoIncrement)
+                    string variableName = columnElement.Name.ToCamelCase();
+                    string parameterName = string.Format(CultureInfo.InvariantCulture, "@{0}", columnElement.Name.ToCamelCase());
+                    if (!columnElement.IsAutoIncrement)
                     {
                         // Nullable properties need to check for null values before adding the parameters.
-                        if (columnSchema.IsNullable)
+                        if (columnElement.IsNullable)
                         {
                             //            if (externalId0 == null)
                             //            {
@@ -286,7 +288,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                 SyntaxFactory.IfStatement(
                                     SyntaxFactory.BinaryExpression(
                                         SyntaxKind.EqualsExpression,
-                                        SyntaxFactory.IdentifierName(columnSchema.CamelCaseName),
+                                        SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase()),
                                         SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)),
                                     SyntaxFactory.Block(
                                         this.CreateParameterBlock(
@@ -294,7 +296,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                                 SyntaxFactory.LiteralExpression(
                                                     SyntaxKind.StringLiteralExpression,
                                                     SyntaxFactory.Literal(parameterName))),
-                                            Conversions.ToSqlType(columnSchema.Type),
+                                            Conversions.ToSqlType(columnElement.Type),
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
@@ -308,12 +310,12 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                                     SyntaxFactory.LiteralExpression(
                                                         SyntaxKind.StringLiteralExpression,
                                                         SyntaxFactory.Literal(parameterName))),
-                                                Conversions.ToSqlType(columnSchema.Type),
+                                                Conversions.ToSqlType(columnElement.Type),
                                                 SyntaxFactory.Argument(SyntaxFactory.IdentifierName(variableName)))))));
                         }
                         else
                         {
-                            if (columnSchema.IsRowVersion)
+                            if (columnElement.IsRowVersion)
                             {
                                 statements.AddRange(
                                     this.CreateParameterBlock(
@@ -323,7 +325,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                                 SyntaxFactory.Literal(parameterName))),
                                         Conversions.ToSqlType(typeof(long)),
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(columnSchema.CamelCaseName))));
+                                            SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase()))));
                             }
                             else
                             {
@@ -333,25 +335,26 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                             SyntaxFactory.LiteralExpression(
                                                 SyntaxKind.StringLiteralExpression,
                                                 SyntaxFactory.Literal(parameterName))),
-                                        Conversions.ToSqlType(columnSchema.Type),
+                                        Conversions.ToSqlType(columnElement.Type),
                                         SyntaxFactory.Argument(SyntaxFactory.IdentifierName(variableName))));
                             }
                         }
                     }
                 }
 
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
-                    string parameterName = "@" + columnSchema.CamelCaseName + "Key";
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    string parameterName = "@" + columnElement.Name.ToCamelCase() + "Key";
                     statements.AddRange(
                         this.CreateParameterBlock(
                             SyntaxFactory.Argument(
                                 SyntaxFactory.LiteralExpression(
                                     SyntaxKind.StringLiteralExpression,
                                     SyntaxFactory.Literal(parameterName))),
-                            Conversions.ToSqlType(columnSchema.Type),
+                            Conversions.ToSqlType(columnElement.Type),
                             SyntaxFactory.Argument(
-                                SyntaxFactory.IdentifierName(columnSchema.CamelCaseName + "Key"))));
+                                SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase() + "Key"))));
                 }
 
                 //                sqlCommand.ExecuteNonQuery();
@@ -395,29 +398,30 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                 List<KeyValuePair<string, ParameterSyntax>> parameterPairs = new List<KeyValuePair<string, ParameterSyntax>>();
 
                 // Add the primary key to the set of parameters.
-                foreach (ColumnSchema columnSchema in this.tableSchema.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
-                    string identifier = columnSchema.CamelCaseName + "Key";
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    string identifier = columnElement.Name.ToCamelCase() + "Key";
                     parameterPairs.Add(
                         new KeyValuePair<string, ParameterSyntax>(
                             identifier,
                             SyntaxFactory.Parameter(
                                 SyntaxFactory.Identifier(identifier))
                             .WithType(
-                                Conversions.FromType(columnSchema.Type))));
+                                Conversions.FromType(columnElement.Type))));
                 }
 
                 // Add the columns of the table to the set of parameters.
-                foreach (ColumnSchema columnSchema in this.tableSchema.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
-                    string identifier = columnSchema.CamelCaseName;
+                    string identifier = columnElement.Name.ToCamelCase();
                     parameterPairs.Add(
                         new KeyValuePair<string, ParameterSyntax>(
                             identifier,
                             SyntaxFactory.Parameter(
                                 SyntaxFactory.Identifier(identifier))
                             .WithType(
-                                Conversions.FromType(columnSchema.Type))));
+                                Conversions.FromType(columnElement.Type))));
                 }
 
                 // This is the complete set of comma separated parameters for the method.

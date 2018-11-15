@@ -18,10 +18,10 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="uniqueConstraintSchema">The unique constraint schema.</param>
+        /// <param name="uniqueKeyElement">The unique constraint schema.</param>
         /// <param name="arguments">The parameters that caused the exception.</param>
         /// <returns>A block of code.</returns>
-        public static SyntaxList<StatementSyntax> GetSyntax(UniqueConstraintSchema uniqueConstraintSchema, IEnumerable<ArgumentSyntax> arguments)
+        public static SyntaxList<StatementSyntax> GetSyntax(UniqueKeyElement uniqueKeyElement, IEnumerable<ArgumentSyntax> arguments)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -39,7 +39,7 @@ namespace GammaFour.DataModelGenerator.Common
                 SyntaxFactory.Argument(
                     SyntaxFactory.LiteralExpression(
                         SyntaxKind.StringLiteralExpression,
-                        SyntaxFactory.Literal(uniqueConstraintSchema.Name))));
+                        SyntaxFactory.Literal(uniqueKeyElement.Name))));
             faultArguments.Add(
                 SyntaxFactory.Argument(
                     SyntaxFactory.ArrayCreationExpression(

@@ -20,16 +20,16 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceClient
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Class"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">A description of a unique constraint.</param>
-        public Class(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">A description of a unique constraint.</param>
+        public Class(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "DataServiceClient";
 
             //    /// <summary>
@@ -168,7 +168,7 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceClient
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // These are the constructors.
-            members = members.Add(new ConstructorEtc(this.dataModelSchema).Syntax);
+            members = members.Add(new ConstructorEtc(this.xmlSchemaDocument).Syntax);
 
             // Return the new collection of members.
             return members;
@@ -183,14 +183,14 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceClient
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new ReadAsyncMethod(this.dataModelSchema));
+            methods.Add(new ReadAsyncMethod(this.xmlSchemaDocument));
 
             // Each of the tables has a method to create, update and delete the records.
-            foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                methods.Add(new CreateAsyncMethod(tableSchema));
-                methods.Add(new DeleteAsyncMethod(tableSchema));
-                methods.Add(new UpdateAsyncMethod(tableSchema));
+                methods.Add(new CreateAsyncMethod(tableElement));
+                methods.Add(new DeleteAsyncMethod(tableElement));
+                methods.Add(new UpdateAsyncMethod(tableElement));
             }
 
             // Alphabetize and add the methods as members of the class.

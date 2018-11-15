@@ -19,24 +19,24 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private UniqueConstraintSchema uniqueConstraintSchema;
+        private UniqueKeyElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UniqueIndexProperty"/> class.
         /// </summary>
-        /// <param name="uniqueConstraintSchema">The column schema.</param>
-        public UniqueIndexProperty(UniqueConstraintSchema uniqueConstraintSchema)
+        /// <param name="uniqueKeyElement">The column schema.</param>
+        public UniqueIndexProperty(UniqueKeyElement uniqueKeyElement)
         {
             // Initialize the object.
-            this.uniqueConstraintSchema = uniqueConstraintSchema;
-            this.Name = uniqueConstraintSchema.Name;
+            this.uniqueKeyElement = uniqueKeyElement;
+            this.Name = uniqueKeyElement.Name;
 
             //        /// <summary>
             //        /// Gets a unique index for the Configuration table.
             //        /// </summary>
             //        internal ConfigurationKeyIndex ConfigurationKeyIndex { get; set; }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                    SyntaxFactory.IdentifierName(this.uniqueConstraintSchema.Name),
+                    SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name),
                     SyntaxFactory.Identifier(this.Name))
                 .WithAccessorList(this.AccessorList)
                 .WithModifiers(this.Modifiers)
@@ -108,7 +108,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Gets a unique index for the " + this.uniqueConstraintSchema.Table.Name + " table.",
+                                                " Gets a unique index for the " + this.uniqueKeyElement.Table.Name + " table.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TableProperty"/> class.
         /// </summary>
-        /// <param name="tableSchema">The column schema.</param>
-        public TableProperty(TableSchema tableSchema)
+        /// <param name="tableElement">The column schema.</param>
+        public TableProperty(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
 
             // This is the name of the property.
             this.Name = "Table";
@@ -38,7 +38,7 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
             //        /// </summary>
             //        public ConfigurationTable Table { get; }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.IdentifierName(string.Format(CultureInfo.InvariantCulture, "{0}Table", this.tableSchema.Name)),
+                SyntaxFactory.IdentifierName(string.Format(CultureInfo.InvariantCulture, "{0}Table", this.tableElement.Name)),
                 SyntaxFactory.Identifier(this.Name))
                 .WithAccessorList(this.AccessorList)
                 .WithModifiers(this.Modifiers)

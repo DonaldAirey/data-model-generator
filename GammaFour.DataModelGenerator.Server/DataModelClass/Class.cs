@@ -20,17 +20,17 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private DataModelSchema dataModelSchema;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Class"/> class.
         /// </summary>
-        /// <param name="dataModelSchema">A description of a unique constraint.</param>
-        public Class(DataModelSchema dataModelSchema)
+        /// <param name="xmlSchemaDocument">A description of a unique constraint.</param>
+        public Class(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.dataModelSchema = dataModelSchema;
-            this.Name = dataModelSchema.Name;
+            this.xmlSchemaDocument = xmlSchemaDocument;
+            this.Name = xmlSchemaDocument.Name;
 
             //    /// <summary>
             //    /// A thread-safe DataSet able to handle transactions.
@@ -169,7 +169,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // These are the constructors.
-            members = members.Add(new ConstructorIPersistentStore(this.dataModelSchema).Syntax);
+            members = members.Add(new ConstructorIPersistentStore(this.xmlSchemaDocument).Syntax);
 
             // Return the new collection of members.
             return members;
@@ -187,27 +187,23 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             properties.Add(new TransactionProperty());
 
             // Create a field for each of the tables.
-            foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
                 // This insures that we only have one relation to the parent table when there are multiple relations.
-                foreach (RelationSchema relationSchema in tableSchema.ParentRelations)
+                foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys)
                 {
                     // Create a field to hold each of the parent relations.
-                    properties.Add(new ParentRelationProperty(relationSchema));
+                    properties.Add(new ParentRelationProperty(foreignKeyElement));
                 }
 
-                // Add a field for each of the unique constraints that are not the primary key.
-                foreach (ConstraintSchema constraintSchema in tableSchema.Constraints)
+                // Add a field for each of the unique constraints.
+                foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
                 {
-                    UniqueConstraintSchema uniqueConstraintSchema = constraintSchema as UniqueConstraintSchema;
-                    if (uniqueConstraintSchema != null)
-                    {
-                        properties.Add(new UniqueIndexProperty(uniqueConstraintSchema));
-                    }
+                    properties.Add(new UniqueIndexProperty(uniqueKeyElement));
                 }
 
                 // And the tables.
-                properties.Add(new TableProperty(tableSchema));
+                properties.Add(new TableProperty(tableElement));
             }
 
             // Alphabetize and add the fields as members of the class.
@@ -234,7 +230,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             fields.Add(new RowVersionField());
             fields.Add(new SequenceField());
             fields.Add(new SyncRootField());
-            fields.Add(new TransactionHandlersField(this.dataModelSchema));
+            fields.Add(new TransactionHandlersField(this.xmlSchemaDocument));
             fields.Add(new TransactionLogField());
             fields.Add(new TransactionTableField());
 
@@ -257,7 +253,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new RowVersionIndexField(this.dataModelSchema));
+            fields.Add(new RowVersionIndexField(this.xmlSchemaDocument));
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
@@ -279,16 +275,16 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
             methods.Add(new DisposeMethod());
-            methods.Add(new CreateLockReportMethod(this.dataModelSchema));
+            methods.Add(new CreateLockReportMethod(this.xmlSchemaDocument));
             methods.Add(new IncrementRowVersionMethod());
             methods.Add(new ReadMethod());
 
             // Add the CRUD operations for each of the tables.
-            foreach (TableSchema tableSchema in this.dataModelSchema.Tables)
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                methods.Add(new CreateMethod(tableSchema));
-                methods.Add(new DeleteMethod(tableSchema));
-                methods.Add(new UpdateMethod(tableSchema));
+                methods.Add(new CreateMethod(tableElement));
+                methods.Add(new DeleteMethod(tableElement));
+                methods.Add(new UpdateMethod(tableElement));
             }
 
             // Alphabetize and add the methods as members of the class.
@@ -331,9 +327,9 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new OnTransactionCompletedMethod(this.dataModelSchema));
-            methods.Add(new ReadCompletedMethod(this.dataModelSchema));
-            methods.Add(new ReadStartingMethod(this.dataModelSchema));
+            methods.Add(new OnTransactionCompletedMethod(this.xmlSchemaDocument));
+            methods.Add(new ReadCompletedMethod(this.xmlSchemaDocument));
+            methods.Add(new ReadStartingMethod(this.xmlSchemaDocument));
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))

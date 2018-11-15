@@ -7,6 +7,7 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using System.Reflection;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -20,17 +21,17 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
         /// <summary>
         /// The column schema.
         /// </summary>
-        private UniqueConstraintSchema uniqueConstraintSchema;
+        private UniqueKeyElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HashMethod"/> class.
         /// </summary>
-        /// <param name="uniqueConstraintSchema">The unique constraint schema.</param>
-        public HashMethod(UniqueConstraintSchema uniqueConstraintSchema)
+        /// <param name="uniqueKeyElement">The unique constraint schema.</param>
+        public HashMethod(UniqueKeyElement uniqueKeyElement)
         {
             // Initialize the object.
             this.Name = "GetHashCode";
-            this.uniqueConstraintSchema = uniqueConstraintSchema;
+            this.uniqueKeyElement = uniqueKeyElement;
 
             // This is the syntax of the method.
             this.Syntax = SyntaxFactory.MethodDeclaration(
@@ -58,14 +59,14 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                foreach (ColumnSchema columnSchema in this.uniqueConstraintSchema.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.uniqueKeyElement.Columns)
                 {
-                    string property = columnSchema.Name;
-                    hashCode = string.Format(CultureInfo.InvariantCulture, "{0}HashCode", columnSchema.CamelCaseName);
+                    string property = columnReferenceElement.Column.Name;
+                    hashCode = string.Format(CultureInfo.InvariantCulture, "{0}HashCode", columnReferenceElement.Column.Name.ToCamelCase());
 
                     // The hash code for value types is simple to procure.  The hash code for reference types need to check for null before attempting to collect the
                     // code.
-                    if (columnSchema.Type.GetTypeInfo().IsValueType)
+                    if (columnReferenceElement.Column.Type.GetTypeInfo().IsValueType)
                     {
                         //                int countryHashCode = this.CountryCode.GetHashCode();
                         statements.Add(
@@ -136,11 +137,12 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
                 }
 
                 //            return configurationIdHashCode + targetKeyHashCode;
-                hashCode = string.Format(CultureInfo.InvariantCulture, "{0}HashCode", this.uniqueConstraintSchema.Columns[0].CamelCaseName);
+                List<ColumnReferenceElement> columnRefs = this.uniqueKeyElement.Columns;
+                hashCode = string.Format(CultureInfo.InvariantCulture, "{0}HashCode", columnRefs[0].Column.Name.ToCamelCase());
                 ExpressionSyntax expression = SyntaxFactory.IdentifierName(hashCode);
-                for (int index = 1; index < this.uniqueConstraintSchema.Columns.Count; index++)
+                for (int index = 1; index < columnRefs.Count; index++)
                 {
-                    hashCode = string.Format(CultureInfo.InvariantCulture, "{0}HashCode", this.uniqueConstraintSchema.Columns[index].CamelCaseName);
+                    hashCode = string.Format(CultureInfo.InvariantCulture, "{0}HashCode", columnRefs[index].Column.Name.ToCamelCase());
                     expression = SyntaxFactory.BinaryExpression(SyntaxKind.AddExpression, expression, SyntaxFactory.IdentifierName(hashCode))
                         .WithOperatorToken(SyntaxFactory.Token(SyntaxKind.PlusToken));
                 }

@@ -29,19 +29,19 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableSchema tableSchema;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OnRowChangedMethod"/> class.
         /// </summary>
-        /// <param name="tableSchema">The unique constraint schema.</param>
-        public OnRowChangedMethod(TableSchema tableSchema)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public OnRowChangedMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableSchema = tableSchema;
+            this.tableElement = tableElement;
             this.Name = "OnRowChanged";
-            this.rowName = string.Format(CultureInfo.InvariantCulture, "{0}Row", this.tableSchema.CamelCaseName);
-            this.rowType = string.Format(CultureInfo.InvariantCulture, "{0}Row", this.tableSchema.Name);
+            this.rowName = string.Format(CultureInfo.InvariantCulture, "{0}Row", this.tableElement.Name.ToCamelCase());
+            this.rowType = string.Format(CultureInfo.InvariantCulture, "{0}Row", this.tableElement.Name);
 
             //        /// <summary>
             //        /// Handles a change to the Configuration row.
@@ -93,7 +93,7 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.ObjectCreationExpression(
                                                     SyntaxFactory.IdentifierName(
-                                                        this.tableSchema.Name + "RowChangeEventArgs"))
+                                                        this.tableElement.Name + "RowChangeEventArgs"))
                                                 .WithArgumentList(
                                                     SyntaxFactory.ArgumentList(
                                                         SyntaxFactory.SeparatedList<ArgumentSyntax>(
@@ -104,7 +104,7 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                                 SyntaxFactory.Argument(
                                                                     SyntaxFactory.IdentifierName(
-                                                                        this.tableSchema.CamelCaseName + "Row"))
+                                                                        this.tableElement.Name.ToCamelCase() + "Row"))
                                                             }))))
                                         }))))));
 
@@ -151,7 +151,7 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                                 string.Format(
                                                     CultureInfo.InvariantCulture,
                                                     " Handles a change to the {0} row.",
-                                                    this.tableSchema.Name),
+                                                    this.tableElement.Name),
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
