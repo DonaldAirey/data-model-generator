@@ -33,7 +33,7 @@ namespace GammaFour.DataModelGenerator.Common
                 new XElement(
                     XmlSchema.Element,
                     new XAttribute("name", "RowVersion"),
-                    new XAttribute(XName.Get("isRowVersion", "urn:schemas-gamma-four-com:xml-gfdata"), "true"),
+                    new XAttribute(XName.Get("IsRowVersion", "urn:schemas-gamma-four-com:xml-gfdata"), "true"),
                     new XAttribute("type", "xs:long")));
 
             // This will replace each of the undecorated elements with decorated ones.
@@ -54,18 +54,7 @@ namespace GammaFour.DataModelGenerator.Common
             {
                 XElement complexType = this.Element(XmlSchema.ComplexType);
                 XElement sequence = complexType.Element(XmlSchema.Sequence);
-                return sequence.Elements(XmlSchema.Element).Cast<ColumnElement>().ToList();
-            }
-        }
-
-        /// <summary>
-        /// Gets the owner document.
-        /// </summary>
-        public XmlSchemaDocument XmlSchemaDocument
-        {
-            get
-            {
-                return this.Document as XmlSchemaDocument;
+                return sequence.Elements(XmlSchema.Element).Cast<ColumnElement>().OrderBy(ce => ce.Name).ToList();
             }
         }
 
@@ -96,7 +85,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets a value indicating whether gets an indication whether the table is written to a persistent store.
         /// </summary>
-        public bool IsPersistent { get; private set; }
+        public bool IsPersistent { get; private set; } = true;
 
         /// <summary>
         /// Gets the name of the table.
@@ -112,6 +101,7 @@ namespace GammaFour.DataModelGenerator.Common
             {
                 return (from fke in this.XmlSchemaDocument.ForeignKeys
                         where fke.UniqueKey.Table == this
+                        orderby fke.Name
                         select fke).ToList();
             }
         }
@@ -125,6 +115,7 @@ namespace GammaFour.DataModelGenerator.Common
             {
                 return (from fke in this.XmlSchemaDocument.ForeignKeys
                         where fke.Table == this
+                        orderby fke.Name
                         select fke).ToList();
             }
         }
@@ -151,7 +142,19 @@ namespace GammaFour.DataModelGenerator.Common
             {
                 return (from uke in this.XmlSchemaDocument.UniqueKeys
                         where uke.Table == this
+                        orderby uke.Name
                         select uke).ToList();
+            }
+        }
+
+        /// <summary>
+        /// Gets the owner document.
+        /// </summary>
+        public XmlSchemaDocument XmlSchemaDocument
+        {
+            get
+            {
+                return this.Document as XmlSchemaDocument;
             }
         }
 

@@ -559,16 +559,16 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
 
             // Indices with nullable columns are handled differently than non-nullable columns.  We are going to generate code that will ignore an
             // entry when it all of the components in the key are null.
-            if (foreignKeyElement.UniqueKey.IsNullable)
+            if (foreignKeyElement.IsNullable)
             {
                 // The general idea here is build a sequence of binary expressions, each of them testing for a null value in the index.  The
                 // first column acts as the seed and the binary expressions are built up by a succession of logical 'AND' statements from
                 // here.
                 bool isFirstColumn = true;
                 ExpressionSyntax previousIndexExpression = null;
-                for (int index = 0; index < foreignKeyElement.UniqueKey.Columns.Count; index++)
+                for (int index = 0; index < foreignKeyElement.Columns.Count; index++)
                 {
-                    ColumnElement columnElement = foreignKeyElement.UniqueKey.Columns[index].Column;
+                    ColumnElement columnElement = foreignKeyElement.Columns[index].Column;
                     if (!columnElement.IsNullable)
                     {
                         continue;
@@ -625,9 +625,9 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 // Create a test expression for the current index.
                 isFirstColumn = true;
                 ExpressionSyntax currentIndexExpression = null;
-                for (int index = 0; index < foreignKeyElement.UniqueKey.Columns.Count; index++)
+                for (int index = 0; index < foreignKeyElement.Columns.Count; index++)
                 {
-                    ColumnElement columnElement = foreignKeyElement.UniqueKey.Columns[index].Column;
+                    ColumnElement columnElement = foreignKeyElement.Columns[index].Column;
                     if (!columnElement.IsNullable)
                     {
                         continue;

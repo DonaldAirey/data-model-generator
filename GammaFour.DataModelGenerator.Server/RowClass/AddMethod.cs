@@ -137,7 +137,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                     }
                 }
 
-                // Add each of the non-null keys to the unique indices.
+                // Add each of unique indices.
                 foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
                 {
                     // Indices with nullable columns are handled differently than non-nullable columns.  We are going to generate code that will ignore an entry when it all

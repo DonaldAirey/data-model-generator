@@ -96,12 +96,12 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// The IsPrimaryKey attribute.
         /// </summary>
-        private static XName isPrimaryKey = XName.Get("isPrimaryKey", XmlSchema.GammaFourDataNamespace);
+        private static XName isPrimaryKey = XName.Get("IsPrimaryKey", XmlSchema.GammaFourDataNamespace);
 
         /// <summary>
         /// The IsRowVersion attribute.
         /// </summary>
-        private static XName isRowVersion = XName.Get("isRowVersion", XmlSchema.GammaFourDataNamespace);
+        private static XName isRowVersion = XName.Get("IsRowVersion", XmlSchema.GammaFourDataNamespace);
 
         /// <summary>
         /// The Keyref element.

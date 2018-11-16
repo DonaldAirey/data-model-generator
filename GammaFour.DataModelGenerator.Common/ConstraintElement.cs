@@ -31,7 +31,7 @@ namespace GammaFour.DataModelGenerator.Common
             this.Name = this.Attribute(XmlSchema.Name).Value;
 
             // Replace the undecorated columns with decorated ones.
-            IEnumerable<XElement> columns = this.Elements(XmlSchema.Field);
+            List<XElement> columns = this.Elements(XmlSchema.Field).ToList();
             foreach (XElement column in columns)
             {
                 this.Add(new ColumnReferenceElement(column));

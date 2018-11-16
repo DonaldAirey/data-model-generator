@@ -234,7 +234,7 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
 
             // Non-nullable child constraints can use the 'Update' method which combines the action of 'Add' and 'Remove' in a single operation.
             // Nullable constraints will need to check for nulls and use the discrete 'Add' and 'Remove' calls.
-            if (!this.foreignKeyElement.UniqueKey.IsNullable)
+            if (!this.foreignKeyElement.IsNullable)
             {
                 methods.Add(new UpdateChildMethod(this.foreignKeyElement));
             }
