@@ -31,7 +31,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
             this.Syntax = SyntaxFactory.PropertyDeclaration(
                 SyntaxFactory.IdentifierName("DateTime"),
                 SyntaxFactory.Identifier(this.Name))
-                .WithAttributeLists(this.AttributeLists)
+                .WithAttributeLists(this.Attributes)
                 .WithAccessorList(this.AccessorList)
                 .WithModifiers(this.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
@@ -57,7 +57,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
         /// <summary>
         /// Gets the data contract attribute syntax.
         /// </summary>
-        private SyntaxList<AttributeListSyntax> AttributeLists
+        private SyntaxList<AttributeListSyntax> Attributes
         {
             get
             {

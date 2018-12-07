@@ -35,7 +35,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
             //        /// Adds a record to the index.
             //        /// </summary>
             //        /// <param name="configurationKey">The <see cref="ConfigurationKey"/> that uniquely identifies the row.</param>
-            //        /// <param name="configurationRow">The <see cref="ConfigurationRow"/> to be added.</param>
+            //        /// <param name="configuration">The <see cref="Configuration"/> to be added.</param>
             //        internal void Add(Guid customerIdKey, CustomerRow customerRow)
             //        {
             //            <Body>
@@ -43,9 +43,9 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
             this.Syntax = SyntaxFactory.MethodDeclaration(
                     SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                     SyntaxFactory.Identifier(this.Name))
-                .WithAttributeLists(this.AttributeLists)
+                .WithAttributeLists(this.Attributes)
                 .WithModifiers(this.Modifiers)
-                .WithParameterList(this.ParameterList)
+                .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -53,7 +53,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
         /// <summary>
         /// Gets the data contract attribute syntax.
         /// </summary>
-        private SyntaxList<AttributeListSyntax> AttributeLists
+        private SyntaxList<AttributeListSyntax> Attributes
         {
             get
             {
@@ -168,7 +168,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                             SyntaxFactory.IdentifierName(this.uniqueKeyElement.Columns[0].Column.Name.ToCamelCase())),
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase() + "Row"))
+                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase()))
                                         })))));
                 }
                 else
@@ -240,7 +240,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                                 SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name.ToCamelCase() + "Set")),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase() + "Row"))
+                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase()))
                                         })))));
                 }
 
@@ -333,7 +333,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                                 }))))));
                 }
 
-                //        /// <param name="configurationRow">The <see cref="ConfigurationRow"/> to be added.</param>
+                //        /// <param name="configuration">The <see cref="Configuration"/> to be added.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -346,7 +346,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    " <param name=\"" + this.uniqueKeyElement.Table.Name.ToCamelCase() + "Row\">The <see cref=\"" + this.uniqueKeyElement.Table.Name + "Row\"/> to be added to the index.</param>",
+                                                    " <param name=\"" + this.uniqueKeyElement.Table.Name.ToCamelCase() + "\">The <see cref=\"" + this.uniqueKeyElement.Table.Name + "\"/> to be added to the index.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -380,7 +380,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private ParameterListSyntax ParameterList
+        private ParameterListSyntax Parameters
         {
             get
             {
@@ -399,8 +399,8 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                 // , CountryRow countryRow
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(this.uniqueKeyElement.Table.Name.ToCamelCase() + "Row"))
-                        .WithType(SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name + "Row")));
+                        SyntaxFactory.Identifier(this.uniqueKeyElement.Table.Name.ToCamelCase()))
+                        .WithType(SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name)));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

@@ -363,7 +363,7 @@ namespace GammaFour.DataModelGenerator.Common
                 else
                 {
                     // This is the simplest method of specifying a datatype: a direct mapping to a CLR type.
-                    this.type = XmlSchema.TypeMap[typeXName];
+                    this.type = this.IsNullable ? XmlSchema.NullableTypeMap[typeXName] : XmlSchema.TypeMap[typeXName];
                 }
             }
 

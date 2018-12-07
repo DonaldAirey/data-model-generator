@@ -76,7 +76,7 @@ namespace GammaFour.DataModelGenerator.Common
         }
 
         /// <summary>
-        /// Gets the name of the column.
+        /// Gets the name of the index.
         /// </summary>
         public new string Name { get; private set; }
 

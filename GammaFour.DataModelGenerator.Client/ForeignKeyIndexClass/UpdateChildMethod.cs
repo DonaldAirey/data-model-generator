@@ -40,15 +40,15 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
             // Initialize the object.
             this.foreignKeyElement = foreignKeyElement;
             this.Name = "UpdateChild";
-            this.rowType = this.foreignKeyElement.Table.Name + "Row";
-            this.rowParameter = this.foreignKeyElement.Table.Name.ToCamelCase() + "Row";
+            this.rowType = this.foreignKeyElement.Table.Name;
+            this.rowParameter = this.foreignKeyElement.Table.Name.ToCamelCase();
 
             //        /// <summary>
-            //        /// Removes a <see cref="CustomerRow"/> child relation.
+            //        /// Removes a <see cref="Customer"/> child relation.
             //        /// </summary>
             //        /// <param name="oldCountryKey">A <see cref="CountryKey"/> that uniquely identifies the old parent row.</param>
             //        /// <param name="newCountryKey">A <see cref="CountryKey"/> that uniquely identifies the new parent row.</param>
-            //        /// <param name="customerRow">The child <see cref="CustomerRow"/>.</param>
+            //        /// <param name="customer">The child <see cref="Customer"/>.</param>
             //        internal void UpdateChild(CountryKey oldCountryKey, CountryKey newCountryKey, CustomerRow customerRow)
             //        {
             //            <Body>
@@ -57,7 +57,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                     SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                     SyntaxFactory.Identifier(this.Name))
                 .WithModifiers(this.Modifiers)
-                .WithParameterList(this.ParameterList)
+                .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -439,7 +439,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Updates a <see cref="CustomerRow"/> child relation.
+                //        /// Updates a <see cref="Customer"/> child relation.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -539,7 +539,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
                                                 }))))));
                 }
 
-                //        /// <param name="customerRow">The child <see cref="CustomerRow"/>.</param>
+                //        /// <param name="customer">The child <see cref="Customer"/>.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -586,7 +586,7 @@ namespace GammaFour.DataModelGenerator.Client.ForeignKeyIndexClass
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private ParameterListSyntax ParameterList
+        private ParameterListSyntax Parameters
         {
             get
             {

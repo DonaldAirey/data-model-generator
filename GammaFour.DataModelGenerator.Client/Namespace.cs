@@ -173,19 +173,6 @@ namespace GammaFour.DataModelGenerator.Client
             // The class for accessing the data service.
             members = members.Add(new DataServiceClient.Class(this.xmlSchemaDocument).Syntax);
 
-            // Create the data for the row classes.
-            List<Common.RowDataClass.Class> rowDataClasses = new List<Common.RowDataClass.Class>();
-            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
-            {
-                rowDataClasses.Add(new Common.RowDataClass.Class(tableElement));
-            }
-
-            // Alphabetize the list of row classes and add them to the namespace.
-            foreach (Common.RowDataClass.Class rowDataClass in rowDataClasses.OrderBy(c => c.Name))
-            {
-                members = members.Add(rowDataClass.Syntax);
-            }
-
             // Create the row classes.
             List<RowClass.Class> rowClasses = new List<RowClass.Class>();
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)

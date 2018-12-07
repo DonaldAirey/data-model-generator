@@ -40,7 +40,7 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceClient
                     SyntaxFactory.IdentifierName("Task"),
                     SyntaxFactory.Identifier(this.Name))
                 .WithModifiers(this.Modifiers)
-                .WithParameterList(this.ParameterList)
+                .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -262,7 +262,7 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceClient
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private ParameterListSyntax ParameterList
+        private ParameterListSyntax Parameters
         {
             get
             {

@@ -55,8 +55,8 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceClass
                     SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                     SyntaxFactory.Identifier(this.Name))
                 .WithModifiers(this.Modifiers)
-                .WithAttributeLists(this.AttributeLists)
-                .WithParameterList(this.ParameterList)
+                .WithAttributeLists(this.Attributes)
+                .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -64,7 +64,7 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceClass
         /// <summary>
         /// Gets the data contract attribute syntax.
         /// </summary>
-        private SyntaxList<AttributeListSyntax> AttributeLists
+        private SyntaxList<AttributeListSyntax> Attributes
         {
             get
             {
@@ -297,7 +297,7 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceClass
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private ParameterListSyntax ParameterList
+        private ParameterListSyntax Parameters
         {
             get
             {

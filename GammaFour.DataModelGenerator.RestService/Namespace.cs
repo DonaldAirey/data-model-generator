@@ -89,13 +89,10 @@ namespace GammaFour.DataModelGenerator.RestService
                 // [TODO] Make the addition of user namespaces part of the initialization.  Run through the tables and extract the
                 // namespaces from the types found therein.
                 List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>();
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Diagnostics.CodeAnalysis")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Globalization")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Security.Permissions")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.ServiceModel")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.ClientModel")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.ServiceModel")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.UnderWriter.ServerDataModel")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.AspNetCore.Mvc")));
                 return usingStatements;
             }
         }
@@ -107,8 +104,11 @@ namespace GammaFour.DataModelGenerator.RestService
         /// <returns>The collection of members augmented with the classes.</returns>
         private SyntaxList<MemberDeclarationSyntax> CreatePublicClasses(SyntaxList<MemberDeclarationSyntax> members)
         {
-            // This is the actual service component - the part that speaks to the outside world.
-            members = members.Add(new RestServiceClass.Class(this.xmlSchemaDocument).Syntax);
+            // Create a controller for each table in the schema.
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
+            {
+                members = members.Add(new RestServiceClass.Class(tableElement).Syntax);
+            }
 
             // This is the collection of alphabetized fields.
             return members;

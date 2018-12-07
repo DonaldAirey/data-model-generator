@@ -85,7 +85,7 @@ namespace GammaFour.DataModelGenerator.Common
             get
             {
                 XElement rootElement = this.Root.Element(XmlSchema.Element);
-                return rootElement.Elements(XmlSchema.Keyref).Cast<ForeignKeyElement>().OrderBy(fke => fke.Name).ToList();
+                return rootElement.Elements(XmlSchema.Keyref).Cast<ForeignKeyElement>().ToList();
             }
         }
 
@@ -109,7 +109,7 @@ namespace GammaFour.DataModelGenerator.Common
                 XElement dataModelElement = this.Root.Element(XmlSchema.Element);
                 XElement complexTypeElement = dataModelElement.Element(XmlSchema.ComplexType);
                 XElement choiceElement = complexTypeElement.Element(XmlSchema.Choice);
-                return choiceElement.Elements(XmlSchema.Element).Cast<TableElement>().OrderBy(te => te.Name).ToList();
+                return choiceElement.Elements(XmlSchema.Element).Cast<TableElement>().ToList();
             }
         }
 
@@ -126,7 +126,7 @@ namespace GammaFour.DataModelGenerator.Common
             get
             {
                 XElement rootElement = this.Root.Element(XmlSchema.Element);
-                return rootElement.Elements(XmlSchema.Unique).Cast<UniqueKeyElement>().OrderBy(uke => uke.Name).ToList();
+                return rootElement.Elements(XmlSchema.Unique).Cast<UniqueKeyElement>().ToList();
             }
         }
     }

@@ -39,8 +39,8 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceInterface
             this.Syntax = SyntaxFactory.MethodDeclaration(
                     SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                     SyntaxFactory.Identifier(this.Name))
-                .WithAttributeLists(this.AttributeLists)
-                .WithParameterList(this.ParameterList)
+                .WithAttributeLists(this.Attributes)
+                .WithParameterList(this.Parameters)
                 .WithLeadingTrivia(this.DocumentationComment)
                 .WithSemicolonToken(
                     SyntaxFactory.Token(SyntaxKind.SemicolonToken));
@@ -49,7 +49,7 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceInterface
         /// <summary>
         /// Gets the data contract attribute syntax.
         /// </summary>
-        private SyntaxList<AttributeListSyntax> AttributeLists
+        private SyntaxList<AttributeListSyntax> Attributes
         {
             get
             {
@@ -236,7 +236,7 @@ namespace GammaFour.DataModelGenerator.DataService.DataServiceInterface
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private ParameterListSyntax ParameterList
+        private ParameterListSyntax Parameters
         {
             get
             {

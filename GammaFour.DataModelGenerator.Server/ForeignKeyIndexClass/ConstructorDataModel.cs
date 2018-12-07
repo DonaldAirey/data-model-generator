@@ -50,7 +50,7 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
                     SyntaxFactory.Identifier(this.Name))
                 .WithModifiers(this.Modifiers)
-                .WithParameterList(this.ParameterList)
+                .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -183,7 +183,7 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private ParameterListSyntax ParameterList
+        private ParameterListSyntax Parameters
         {
             get
             {

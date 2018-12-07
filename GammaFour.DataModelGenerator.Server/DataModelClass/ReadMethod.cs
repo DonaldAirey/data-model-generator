@@ -38,7 +38,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                     SyntaxFactory.IdentifierName("DataHeader"),
                     SyntaxFactory.Identifier("Read"))
                 .WithModifiers(this.Modifiers)
-                .WithParameterList(this.ParameterList)
+                .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -317,7 +317,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private ParameterListSyntax ParameterList
+        private ParameterListSyntax Parameters
         {
             get
             {

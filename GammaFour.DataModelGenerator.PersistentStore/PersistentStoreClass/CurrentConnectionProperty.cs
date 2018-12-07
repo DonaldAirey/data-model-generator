@@ -34,7 +34,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
             this.Syntax = SyntaxFactory.PropertyDeclaration(
                     SyntaxFactory.IdentifierName("SqlConnection"),
                     SyntaxFactory.Identifier("CurrentConnection"))
-                .WithAttributeLists(this.AttributeLists)
+                .WithAttributeLists(this.Attributes)
                 .WithModifiers(this.Modifiers)
                 .WithAccessorList(this.AccessorList)
                 .WithModifiers(this.Modifiers)
@@ -60,7 +60,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
         /// <summary>
         /// Gets the data contract attribute syntax.
         /// </summary>
-        private SyntaxList<AttributeListSyntax> AttributeLists
+        private SyntaxList<AttributeListSyntax> Attributes
         {
             get
             {

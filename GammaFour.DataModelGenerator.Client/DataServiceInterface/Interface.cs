@@ -42,7 +42,7 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceInterface
             //        <Members>
             //    }
             this.Syntax = SyntaxFactory.InterfaceDeclaration(this.Name)
-            .WithAttributeLists(this.AttributeLists)
+            .WithAttributeLists(this.Attributes)
             .WithModifiers(this.Modifiers)
             .WithKeyword(SyntaxFactory.Token(SyntaxKind.InterfaceKeyword))
             .WithMembers(this.Members)
@@ -52,7 +52,7 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceInterface
         /// <summary>
         /// Gets the data contract attribute syntax.
         /// </summary>
-        private SyntaxList<AttributeListSyntax> AttributeLists
+        private SyntaxList<AttributeListSyntax> Attributes
         {
             get
             {

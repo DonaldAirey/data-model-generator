@@ -45,7 +45,7 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
                 Conversions.FromType(typeof(int)),
                 SyntaxFactory.Identifier(this.Name))
                 .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-                .WithParameterList(this.ParameterList)
+                .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentionComment);
         }
@@ -353,7 +353,7 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private ParameterListSyntax ParameterList
+        private ParameterListSyntax Parameters
         {
             get
             {

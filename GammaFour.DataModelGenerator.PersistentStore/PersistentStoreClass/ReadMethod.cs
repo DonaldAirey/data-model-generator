@@ -54,7 +54,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
                                             SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
                                                 SyntaxFactory.OmittedArraySizeExpression()))))))),
                     SyntaxFactory.Identifier("Read"))
-                .WithAttributeLists(this.AttributeLists)
+                .WithAttributeLists(this.Attributes)
                 .WithModifiers(this.Modifiers)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
@@ -63,7 +63,7 @@ namespace GammaFour.DataModelGenerator.PersistentStoreClass
         /// <summary>
         /// Gets the data contract attribute syntax.
         /// </summary>
-        private SyntaxList<AttributeListSyntax> AttributeLists
+        private SyntaxList<AttributeListSyntax> Attributes
         {
             get
             {

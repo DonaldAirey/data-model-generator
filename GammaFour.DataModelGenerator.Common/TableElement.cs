@@ -54,7 +54,7 @@ namespace GammaFour.DataModelGenerator.Common
             {
                 XElement complexType = this.Element(XmlSchema.ComplexType);
                 XElement sequence = complexType.Element(XmlSchema.Sequence);
-                return sequence.Elements(XmlSchema.Element).Cast<ColumnElement>().OrderBy(ce => ce.Name).ToList();
+                return sequence.Elements(XmlSchema.Element).Cast<ColumnElement>().ToList();
             }
         }
 

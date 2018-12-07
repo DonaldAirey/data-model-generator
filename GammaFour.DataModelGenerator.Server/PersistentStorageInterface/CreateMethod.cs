@@ -43,7 +43,7 @@ namespace GammaFour.DataModelGenerator.Server.PersistentStoreageInterface
                     SyntaxFactory.PredefinedType(
                         SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                     SyntaxFactory.Identifier(this.Name))
-                .WithParameterList(this.ParameterList)
+                .WithParameterList(this.Parameters)
                 .WithSemicolonToken(
                     SyntaxFactory.Token(SyntaxKind.SemicolonToken))
                 .WithLeadingTrivia(this.DocumentationComment);
@@ -149,7 +149,7 @@ namespace GammaFour.DataModelGenerator.Server.PersistentStoreageInterface
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private ParameterListSyntax ParameterList
+        private ParameterListSyntax Parameters
         {
             get
             {

@@ -166,7 +166,7 @@ namespace GammaFour.DataModelGenerator.Common.ForeignKeyIndexClass
                     .WithTypeArgumentList(
                         SyntaxFactory.TypeArgumentList(
                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name + "Row")))));
+                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name)))));
 
                 // Dictionary<Guid, HashSet<ProvinceRow>>
                 //                 or

@@ -190,6 +190,25 @@ namespace GammaFour.DataModelGenerator.Common
         };
 
         /// <summary>
+        /// The mapping of nullable XmlSchema type names into CLR types.
+        /// </summary>
+        private static Dictionary<XName, Type> nullableTypeMap = new Dictionary<XName, Type>
+        {
+            { XName.Get("boolean", XmlSchemaNamespace), typeof(bool?) },
+            { XName.Get("dateTime", XmlSchemaNamespace), typeof(DateTime?) },
+            { XName.Get("decimal", XmlSchemaNamespace), typeof(decimal?) },
+            { XName.Get("double", XmlSchemaNamespace), typeof(double?) },
+            { XName.Get("float", XmlSchemaNamespace), typeof(float?) },
+            { XName.Get("int", XmlSchemaNamespace), typeof(int?) },
+            { XName.Get("long", XmlSchemaNamespace), typeof(long?) },
+            { XName.Get("short", XmlSchemaNamespace), typeof(short?) },
+            { XName.Get("unsignedByte", XmlSchemaNamespace), typeof(byte?) },
+            { XName.Get("unsignedInt", XmlSchemaNamespace), typeof(uint?) },
+            { XName.Get("unsignedLong", XmlSchemaNamespace), typeof(ulong?) },
+            { XName.Get("unsignedShort", XmlSchemaNamespace), typeof(ushort?) }
+        };
+
+        /// <summary>
         /// The Value attribute.
         /// </summary>
         private static XName value = XName.Get("value", string.Empty);
@@ -427,6 +446,17 @@ namespace GammaFour.DataModelGenerator.Common
             get
             {
                 return XmlSchema.name;
+            }
+        }
+
+        /// <summary>
+        /// Gets the mapping of the XName to the corresponding nullable CLR type.
+        /// </summary>
+        internal static Dictionary<XName, Type> NullableTypeMap
+        {
+            get
+            {
+                return XmlSchema.nullableTypeMap;
             }
         }
 

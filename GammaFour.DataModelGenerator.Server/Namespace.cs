@@ -157,6 +157,7 @@ namespace GammaFour.DataModelGenerator.Server
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.ClientModel")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.ServiceModel")));
                 return usingStatements;
@@ -170,43 +171,17 @@ namespace GammaFour.DataModelGenerator.Server
         /// <returns>The collection of members augmented with the classes.</returns>
         private SyntaxList<MemberDeclarationSyntax> CreatePublicClasses(SyntaxList<MemberDeclarationSyntax> members)
         {
-            // Create the data for the row classes.
-            List<Common.RowDataClass.Class> rowDataClasses = new List<Common.RowDataClass.Class>();
-            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
-            {
-                rowDataClasses.Add(new Common.RowDataClass.Class(tableElement));
-            }
-
-            // Alphabetize the list of row classes and add them to the structure.
-            foreach (Common.RowDataClass.Class rowDataClass in rowDataClasses.OrderBy(c => c.Name))
-            {
-                members = members.Add(rowDataClass.Syntax);
-            }
-
             // Create the row classes.
-            List<RowClass.Class> rowClasses = new List<RowClass.Class>();
+            List<RecordClass.Class> rowClasses = new List<RecordClass.Class>();
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                rowClasses.Add(new RowClass.Class(tableElement));
+                rowClasses.Add(new RecordClass.Class(tableElement));
             }
 
             // Alphabetize the list of row classes and add them to the structure.
-            foreach (RowClass.Class rowClass in rowClasses.OrderBy(c => c.Name))
+            foreach (RecordClass.Class rowClass in rowClasses.OrderBy(c => c.Name))
             {
                 members = members.Add(rowClass.Syntax);
-            }
-
-            // Create the list of row change event classes.
-            List<Common.RowChangeEventArgsClass.Class> rowChangeEventClasses = new List<Common.RowChangeEventArgsClass.Class>();
-            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
-            {
-                rowChangeEventClasses.Add(new Common.RowChangeEventArgsClass.Class(tableElement));
-            }
-
-            // Alphabetize the list of change event classes and add them to the structure.
-            foreach (Common.RowChangeEventArgsClass.Class @class in rowChangeEventClasses.OrderBy(c => c.Name))
-            {
-                members = members.Add(@class.Syntax);
             }
 
             // Create the list of tables.
@@ -219,14 +194,14 @@ namespace GammaFour.DataModelGenerator.Server
             // Alphabetize the list of tables and add them to the structure.
             foreach (TableClass.Class @class in tableClasses.OrderBy(c => c.Name))
             {
-                members = members.Add(@class.Syntax);
+                // members = members.Add(@class.Syntax);
             }
 
             // The actual data model class.
-            members = members.Add(new DataModelClass.Class(this.xmlSchemaDocument).Syntax);
+            // members = members.Add(new DataModelClass.Class(this.xmlSchemaDocument).Syntax);
 
             // Holds the individual transactions used to reconcile the client data models.
-            members = members.Add(new TransactionLogItemClass.Class(this.xmlSchemaDocument).Syntax);
+            // members = members.Add(new TransactionLogItemClass.Class(this.xmlSchemaDocument).Syntax);
 
             // Create the unique index classes.
             List<UniqueKeyIndexClass.Class> uniqueIndexClasses = new List<UniqueKeyIndexClass.Class>();
@@ -241,7 +216,7 @@ namespace GammaFour.DataModelGenerator.Server
             // Alphabetize the list of unique indices and add them to the structure.
             foreach (UniqueKeyIndexClass.Class @class in uniqueIndexClasses.OrderBy(c => c.Name))
             {
-                members = members.Add(@class.Syntax);
+                // members = members.Add(@class.Syntax);
             }
 
             // Create the list of foreign indices.
@@ -254,7 +229,7 @@ namespace GammaFour.DataModelGenerator.Server
             // Alphabetize the list of foreign indices and add them to the structure.
             foreach (ForeignKeyIndexClass.Class @class in foreignIndexClasses.OrderBy(c => c.Name))
             {
-                members = members.Add(@class.Syntax);
+                // members = members.Add(@class.Syntax);
             }
 
             // This is the collection of alphabetized fields.

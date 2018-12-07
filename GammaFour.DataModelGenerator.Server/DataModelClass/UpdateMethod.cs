@@ -48,9 +48,9 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             this.Syntax = SyntaxFactory.MethodDeclaration(
                     SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                     SyntaxFactory.Identifier(this.Name))
-                .WithAttributeLists(this.AttributeLists)
+                .WithAttributeLists(this.Attributes)
                 .WithModifiers(this.Modifiers)
-                .WithParameterList(this.ParameterList)
+                .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -58,7 +58,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// Gets the data contract attribute syntax.
         /// </summary>
-        private SyntaxList<AttributeListSyntax> AttributeLists
+        private SyntaxList<AttributeListSyntax> Attributes
         {
             get
             {
@@ -176,10 +176,10 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(
-                                this.tableElement.Name + "Row"))
+                                this.tableElement.Name))
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase() + "Row"))))));
+                                SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase()))))));
 
                 //            try
                 //            {
@@ -203,7 +203,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                                 SyntaxFactory.IdentifierName("AddWriterLock")))));
 
                 // Create the list of parameters that were used in the previous try/finally block to find the record.  This set of parameters is used
@@ -227,7 +227,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                             SyntaxKind.EqualsExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                                 SyntaxFactory.IdentifierName("RowState")),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -245,7 +245,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                             SyntaxKind.NotEqualsExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                                 SyntaxFactory.IdentifierName("RowVersion")),
                             SyntaxFactory.IdentifierName("rowVersion")),
                         SyntaxFactory.Block(ThrowOptimisticConcurrencyException.GetSyntax(this.tableElement))));
@@ -259,7 +259,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                         SyntaxKind.NotEqualsExpression,
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                             SyntaxFactory.IdentifierName(propertyName)),
                         SyntaxFactory.IdentifierName(foreignKeyElement.ParentColumns[0].Column.Name.ToCamelCase()));
 
@@ -273,7 +273,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                 SyntaxKind.NotEqualsExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                                     SyntaxFactory.IdentifierName(propertyName)),
                                 SyntaxFactory.IdentifierName(foreignKeyElement.ParentColumns[index].Column.Name.ToCamelCase())),
                             expression);
@@ -297,7 +297,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                         SyntaxKind.NotEqualsExpression,
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                             SyntaxFactory.IdentifierName(uniqueKeyElement.Columns[0].Column.Name)),
                         SyntaxFactory.IdentifierName(uniqueKeyElement.Columns[0].Column.Name.ToCamelCase()));
 
@@ -311,7 +311,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                 SyntaxKind.NotEqualsExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                                     SyntaxFactory.IdentifierName(uniqueKeyElement.Columns[index].Column.Name)),
                                 SyntaxFactory.IdentifierName(uniqueKeyElement.Columns[index].Column.Name.ToCamelCase())));
                     }
@@ -334,7 +334,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                         SyntaxKind.NotEqualsExpression,
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                             SyntaxFactory.IdentifierName(foreignKeyElement.Columns[0].Column.Name)),
                         SyntaxFactory.IdentifierName(foreignKeyElement.Columns[0].Column.Name.ToCamelCase()));
 
@@ -347,7 +347,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                 SyntaxKind.NotEqualsExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                                     SyntaxFactory.IdentifierName(foreignKeyElement.Columns[0].Column.Name)),
                                 SyntaxFactory.IdentifierName(foreignKeyElement.Columns[0].Column.Name.ToCamelCase())),
                             expression);
@@ -369,7 +369,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                                 SyntaxFactory.IdentifierName("BeginUpdate")))));
 
                 // Create a line of code to update the row from the parameters.
@@ -391,7 +391,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                     SyntaxKind.SimpleAssignmentExpression,
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                                         SyntaxFactory.IdentifierName("RowVersion")),
                                     SyntaxFactory.InvocationExpression(
                                         SyntaxFactory.MemberAccessExpression(
@@ -408,7 +408,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                     SyntaxKind.SimpleAssignmentExpression,
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                                         SyntaxFactory.IdentifierName(columnElement.Name)),
                                     SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase()))));
                     }
@@ -420,7 +420,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                                 SyntaxFactory.IdentifierName("EndUpdate")))));
 
                 //            volatileTransaction.AddActions(customerRow.CommitUpdate, customerRow.RollbackUpdate);
@@ -439,13 +439,13 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                                                 SyntaxFactory.IdentifierName("CommitUpdate"))),
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                                                 SyntaxFactory.IdentifierName("RollbackUpdate")))
                                     })))));
 
@@ -476,7 +476,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                 SyntaxFactory.Argument(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                                         SyntaxFactory.IdentifierName(identifierName)))));
                     }
 
@@ -685,7 +685,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private ParameterListSyntax ParameterList
+        private ParameterListSyntax Parameters
         {
             get
             {
@@ -761,7 +761,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
@@ -782,7 +782,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.EqualsExpression,
-                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.NullLiteralExpression)),
                         SyntaxFactory.Block(ThrowRecordNotFoundException.GetSyntax(this.tableElement.PrimaryKey, arguments))));
@@ -1018,7 +1018,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                     SyntaxFactory.Argument(
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                             SyntaxFactory.IdentifierName(columnReferenceElement.Column.Name))));
             }
 

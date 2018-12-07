@@ -42,7 +42,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                     SyntaxFactory.PredefinedType(
                         SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
                     SyntaxFactory.Identifier(this.Name))
-                .WithAttributeLists(this.AttributeLists)
+                .WithAttributeLists(this.Attributes)
                 .WithModifiers(this.Modifiers)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
@@ -51,7 +51,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// Gets the attribute syntax.
         /// </summary>
-        private SyntaxList<AttributeListSyntax> AttributeLists
+        private SyntaxList<AttributeListSyntax> Attributes
         {
             get
             {
@@ -542,7 +542,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(tableElement.Name.ToCamelCase() + "Row"),
+                                SyntaxFactory.IdentifierName(tableElement.Name.ToCamelCase()),
                                 SyntaxFactory.IdentifierName("Readers")),
                             SyntaxFactory.IdentifierName("Count")),
                         SyntaxFactory.LiteralExpression(
@@ -560,7 +560,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                         SyntaxKind.NotEqualsExpression,
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName(tableElement.Name.ToCamelCase() + "Row"),
+                            SyntaxFactory.IdentifierName(tableElement.Name.ToCamelCase()),
                             SyntaxFactory.IdentifierName("Writer")),
                         SyntaxFactory.LiteralExpression(
                             SyntaxKind.NullLiteralExpression)),
@@ -663,8 +663,8 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             //                }
             statements.Add(
                 SyntaxFactory.ForEachStatement(
-                    SyntaxFactory.IdentifierName(tableElement.Name + "Row"),
-                    SyntaxFactory.Identifier(tableElement.Name.ToCamelCase() + "Row"),
+                    SyntaxFactory.IdentifierName(tableElement.Name),
+                    SyntaxFactory.Identifier(tableElement.Name.ToCamelCase()),
                     SyntaxFactory.MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
                         SyntaxFactory.ThisExpression(),

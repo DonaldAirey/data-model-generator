@@ -38,7 +38,7 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
                 SyntaxFactory.Identifier(this.Name))
                 .WithModifiers(this.Modifiers)
-                .WithParameterList(this.ParameterList)
+                .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentionComment);
         }
@@ -63,7 +63,7 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
                     {
                         //            if (configurationRow == null)
                         //            {
-                        //                throw new ArgumentNullException("configurationRow");
+                        //                throw new ArgumentNullException("configuration");
                         //            }
                         string parameter = columnElement.Name.ToCamelCase();
                         statements.Add(
@@ -218,7 +218,7 @@ namespace GammaFour.DataModelGenerator.Common.CompoundKeyStruct
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private ParameterListSyntax ParameterList
+        private ParameterListSyntax Parameters
         {
             get
             {

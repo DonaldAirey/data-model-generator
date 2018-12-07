@@ -42,11 +42,11 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
-                    SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name + "Row"),
+                    SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name),
                     SyntaxFactory.Identifier(this.Name))
-                .WithAttributeLists(this.AttributeLists)
+                .WithAttributeLists(this.Attributes)
                 .WithModifiers(this.Modifiers)
-                .WithParameterList(this.ParameterList)
+                .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -54,7 +54,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
         /// <summary>
         /// Gets the data contract attribute syntax.
         /// </summary>
-        private SyntaxList<AttributeListSyntax> AttributeLists
+        private SyntaxList<AttributeListSyntax> Attributes
         {
             get
             {
@@ -128,11 +128,11 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(SyntaxFactory.IdentifierName(
-                            this.uniqueKeyElement.Table.Name + "Row"))
+                            this.uniqueKeyElement.Table.Name))
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(
-                                    this.uniqueKeyElement.Table.Name.ToCamelCase() + "Row"))))));
+                                    this.uniqueKeyElement.Table.Name.ToCamelCase()))))));
 
                 // Keys with a single element don't need to construct a compound key in order to use the dictionary.
                 if (this.uniqueKeyElement.Columns.Count == 1)
@@ -159,7 +159,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.IdentifierName(
-                                                    this.uniqueKeyElement.Table.Name.ToCamelCase() + "Row"))
+                                                    this.uniqueKeyElement.Table.Name.ToCamelCase()))
                                             .WithRefOrOutKeyword(
                                                 SyntaxFactory.Token(SyntaxKind.OutKeyword))
                                         })))));
@@ -198,7 +198,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                                         SyntaxFactory.SeparatedList<ArgumentSyntax>(arguments)))),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase() + "Row"))
+                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase()))
                                             .WithRefOrOutKeyword(
                                                 SyntaxFactory.Token(SyntaxKind.OutKeyword))
                                         })))));
@@ -208,7 +208,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                 statements.Add(
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.IdentifierName(
-                            this.uniqueKeyElement.Table.Name.ToCamelCase() + "Row"))
+                            this.uniqueKeyElement.Table.Name.ToCamelCase()))
                     .WithReturnKeyword(SyntaxFactory.Token(SyntaxKind.ReturnKeyword)));
 
                 // This is the syntax for the body of the method.
@@ -347,7 +347,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private ParameterListSyntax ParameterList
+        private ParameterListSyntax Parameters
         {
             get
             {

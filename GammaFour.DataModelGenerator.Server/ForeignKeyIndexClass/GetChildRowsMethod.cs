@@ -46,11 +46,11 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
                     .WithTypeArgumentList(
                         SyntaxFactory.TypeArgumentList(
                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name + "Row")))),
+                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name)))),
                     SyntaxFactory.Identifier(this.Name))
-                .WithAttributeLists(this.AttributeLists)
+                .WithAttributeLists(this.Attributes)
                 .WithModifiers(this.Modifiers)
-                .WithParameterList(this.ParameterList)
+                .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -58,7 +58,7 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
         /// <summary>
         /// Gets the data contract attribute syntax.
         /// </summary>
-        private SyntaxList<AttributeListSyntax> AttributeLists
+        private SyntaxList<AttributeListSyntax> Attributes
         {
             get
             {
@@ -167,7 +167,7 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
                             .WithTypeArgumentList(
                                 SyntaxFactory.TypeArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                        SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name + "Row")))))
+                                        SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name)))))
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
@@ -278,7 +278,7 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Gets a collection of child <see cref="ProvinceRow"/> rows.
+                //        /// Gets a collection of child <see cref="Province"/> rows.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -302,7 +302,7 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Gets a collection of child <see cref=\"" + this.foreignKeyElement.Table.Name + "Row" + "\"/> rows.",
+                                                " Gets a collection of child <see cref=\"" + this.foreignKeyElement.Table.Name + "\"/> rows.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -350,7 +350,7 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
                                                 }))))));
                 }
 
-                //        /// <returns>A collection of child <see cref="ProvinceRow"/> rows.</returns>
+                //        /// <returns>A collection of child <see cref="Province"/> rows.</returns>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -363,7 +363,7 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    " <returns>A collection of child <see cref=\"" + this.foreignKeyElement.Table.Name + "Row" + "\"/> rows.</returns>",
+                                                    $" <returns>A collection of child <see cref=\"{this.foreignKeyElement.Table.Name}\"/> rows.</returns>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -416,7 +416,7 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
                                 .WithTypeArgumentList(
                                     SyntaxFactory.TypeArgumentList(
                                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                            SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name + "Row")))))
+                                            SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name)))))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList()))));
 
@@ -428,7 +428,7 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private ParameterListSyntax ParameterList
+        private ParameterListSyntax Parameters
         {
             get
             {

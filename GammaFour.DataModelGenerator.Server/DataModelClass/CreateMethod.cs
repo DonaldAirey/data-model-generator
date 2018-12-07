@@ -44,10 +44,10 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
-                    SyntaxFactory.IdentifierName(this.tableElement.Name + "Row"),
+                    SyntaxFactory.IdentifierName(this.tableElement.Name),
                     SyntaxFactory.Identifier(this.Name))
                 .WithModifiers(this.Modifiers)
-                .WithParameterList(this.ParameterList)
+                .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -327,15 +327,15 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(this.tableElement.Name + "Row"))
+                            SyntaxFactory.IdentifierName(this.tableElement.Name))
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase() + "Row"))
+                                    SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase()))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
                                         SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name + "Row"))
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
                                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(
@@ -361,7 +361,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                                 SyntaxFactory.IdentifierName("AddWriterLock")))));
 
                 //            configurationRow.Add();
@@ -370,7 +370,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                                 SyntaxFactory.IdentifierName("Add")))));
 
                 //            configurationRow.RowState = RowState.Added;
@@ -380,7 +380,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                             SyntaxKind.SimpleAssignmentExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                                 SyntaxFactory.IdentifierName("RowState")),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -403,13 +403,13 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                                                 SyntaxFactory.IdentifierName("CommitAdd"))),
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row"),
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                                                 SyntaxFactory.IdentifierName("RollbackAdd")))
                                     })))));
 
@@ -452,7 +452,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 //            return configurationRow;
                 statements.Add(
                     SyntaxFactory.ReturnStatement(
-                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase() + "Row")));
+                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())));
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -604,7 +604,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private ParameterListSyntax ParameterList
+        private ParameterListSyntax Parameters
         {
             get
             {

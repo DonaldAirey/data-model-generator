@@ -160,7 +160,7 @@ namespace GammaFour.DataModelGenerator.Common.UniqueKeyIndexClass
                 }
 
                 // And finally the type of row found in this dictionary.
-                types.Add(SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name + "Row"));
+                types.Add(SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name));
 
                 // Dictionary<Guid, ProvinceRow>
                 return SyntaxFactory.GenericName(

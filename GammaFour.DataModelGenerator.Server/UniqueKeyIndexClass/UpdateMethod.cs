@@ -43,9 +43,9 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
             this.Syntax = SyntaxFactory.MethodDeclaration(
                     SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                     SyntaxFactory.Identifier(this.Name))
-                .WithAttributeLists(this.AttributeLists)
+                .WithAttributeLists(this.Attributes)
                 .WithModifiers(this.Modifiers)
-                .WithParameterList(this.ParameterList)
+                .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -53,7 +53,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
         /// <summary>
         /// Gets the data contract attribute syntax.
         /// </summary>
-        private SyntaxList<AttributeListSyntax> AttributeLists
+        private SyntaxList<AttributeListSyntax> Attributes
         {
             get
             {
@@ -130,11 +130,11 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                     statements.Add(
                         SyntaxFactory.LocalDeclarationStatement(
                             SyntaxFactory.VariableDeclaration(
-                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name + "Row"))
+                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name))
                             .WithVariables(
                                 SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                     SyntaxFactory.VariableDeclarator(
-                                        SyntaxFactory.Identifier(this.uniqueKeyElement.Table.Name.ToCamelCase() + "Row"))
+                                        SyntaxFactory.Identifier(this.uniqueKeyElement.Table.Name.ToCamelCase()))
                                     .WithInitializer(
                                         SyntaxFactory.EqualsValueClause(
                                             SyntaxFactory.ElementAccessExpression(
@@ -189,7 +189,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.IdentifierName(
-                                                    this.uniqueKeyElement.Table.Name.ToCamelCase() + "Row"))
+                                                    this.uniqueKeyElement.Table.Name.ToCamelCase()))
                                         })))));
                 }
                 else
@@ -223,11 +223,11 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                     statements.Add(
                         SyntaxFactory.LocalDeclarationStatement(
                             SyntaxFactory.VariableDeclaration(
-                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name + "Row"))
+                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name))
                             .WithVariables(
                                 SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                     SyntaxFactory.VariableDeclarator(
-                                        SyntaxFactory.Identifier(this.uniqueKeyElement.Table.Name.ToCamelCase() + "Row"))
+                                        SyntaxFactory.Identifier(this.uniqueKeyElement.Table.Name.ToCamelCase()))
                                     .WithInitializer(
                                         SyntaxFactory.EqualsValueClause(
                                             SyntaxFactory.ElementAccessExpression(
@@ -290,7 +290,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                                         SyntaxFactory.SeparatedList<ArgumentSyntax>(newArguments)))),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase() + "Row"))
+                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase()))
                                         })))));
                 }
 
@@ -436,7 +436,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private ParameterListSyntax ParameterList
+        private ParameterListSyntax Parameters
         {
             get
             {

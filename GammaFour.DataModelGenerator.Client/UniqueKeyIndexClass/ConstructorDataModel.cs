@@ -49,7 +49,7 @@ namespace GammaFour.DataModelGenerator.Client.UniqueKeyIndexClass
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
                 SyntaxFactory.Identifier(this.Name))
                 .WithModifiers(this.Modifiers)
-                .WithParameterList(this.ParameterList)
+                .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -182,7 +182,7 @@ namespace GammaFour.DataModelGenerator.Client.UniqueKeyIndexClass
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private ParameterListSyntax ParameterList
+        private ParameterListSyntax Parameters
         {
             get
             {
