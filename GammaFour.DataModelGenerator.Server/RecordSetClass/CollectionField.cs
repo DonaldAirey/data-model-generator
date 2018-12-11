@@ -1,8 +1,8 @@
-// <copyright file="DataModelProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="CollectionField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
+namespace GammaFour.DataModelGenerator.Server.RecordSetClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,66 +12,50 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field that holds the column.
+    /// Creates a field to hold the current contents of the record.
     /// </summary>
-    public class DataModelProperty : SyntaxElement
+    public class CollectionField : SyntaxElement
     {
         /// <summary>
-        /// The data model schema.
+        /// The description of the table.
         /// </summary>
-        private XmlSchemaDocument xmlSchemaDocument;
+        private TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DataModelProperty"/> class.
+        /// Initializes a new instance of the <see cref="CollectionField"/> class.
         /// </summary>
-        /// <param name="xmlSchemaDocument">The column schema.</param>
-        public DataModelProperty(XmlSchemaDocument xmlSchemaDocument)
+        /// <param name="tableElement">The table element.</param>
+        public CollectionField(TableElement tableElement)
         {
             // Initialize the object.
-            this.xmlSchemaDocument = xmlSchemaDocument;
-            this.Name = this.xmlSchemaDocument.Name;
+            this.Name = "collection";
+            this.tableElement = tableElement;
 
             //        /// <summary>
-            //        /// Gets the DataModel.
+            //        /// The collection of records.
             //        /// </summary>
-            //        public DataModel DataModel { get; private set; }
-            this.Syntax = SyntaxFactory.PropertyDeclaration(
-                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name),
-                    SyntaxFactory.Identifier(this.Name))
-                .WithAccessorList(this.AccessorList)
+            //        private SortedList<object, Buyer> collection = new SortedList<object, Buyer>();
+            this.Syntax = SyntaxFactory.FieldDeclaration(
+                SyntaxFactory.VariableDeclaration(
+                    SyntaxFactory.GenericName(
+                        SyntaxFactory.Identifier("SortedList"))
+                    .WithTypeArgumentList(
+                        SyntaxFactory.TypeArgumentList(
+                            SyntaxFactory.SeparatedList<TypeSyntax>(
+                                new SyntaxNodeOrToken[]
+                                {
+                                    SyntaxFactory.PredefinedType(
+                                        SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
+                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name)
+                                }))))
+                .WithVariables(
+                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                        SyntaxFactory.VariableDeclarator(
+                            SyntaxFactory.Identifier("collection"))
+                            .WithInitializer(this.Initializer))))
                 .WithModifiers(this.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the list of accessors.
-        /// </summary>
-        private AccessorListSyntax AccessorList
-        {
-            get
-            {
-                return SyntaxFactory.AccessorList(
-                    SyntaxFactory.List(
-                        new AccessorDeclarationSyntax[]
-                        {
-                            this.GetAccessor,
-                            this.SetAccessor
-                        }));
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Get' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax GetAccessor
-        {
-            get
-            {
-                // get;
-                return SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                    .WithSemicolonToken(
-                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
-            }
         }
 
         /// <summary>
@@ -85,7 +69,7 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Gets the DataModel.
+                //        /// The collection of records.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -109,7 +93,7 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Gets the data model.",
+                                                " The collection of records.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -135,35 +119,45 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
         }
 
         /// <summary>
+        /// Gets the initializer.
+        /// </summary>
+        private EqualsValueClauseSyntax Initializer
+        {
+            get
+            {
+                // = new object();
+                return SyntaxFactory.EqualsValueClause(
+                    SyntaxFactory.ObjectCreationExpression(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("SortedList"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SeparatedList<TypeSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.PredefinedType(
+                                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.IdentifierName("Buyer")
+                                    }))))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList()));
+            }
+        }
+
+        /// <summary>
         /// Gets the modifiers.
         /// </summary>
         private SyntaxTokenList Modifiers
         {
             get
             {
-                // internal
+                // private
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
                     });
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Set' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax SetAccessor
-        {
-            get
-            {
-                //            private set;
-                return SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                    .WithSemicolonToken(
-                        SyntaxFactory.Token(SyntaxKind.SemicolonToken))
-                    .WithModifiers(
-                        SyntaxFactory.TokenList(
-                            SyntaxFactory.Token(SyntaxKind.PrivateKeyword)));
             }
         }
     }

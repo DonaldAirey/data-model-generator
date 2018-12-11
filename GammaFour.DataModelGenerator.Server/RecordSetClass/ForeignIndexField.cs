@@ -1,8 +1,8 @@
-// <copyright file="AddReaderLockMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="UniqueIndexField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.TableClass
+namespace GammaFour.DataModelGenerator.Server.RecordSetClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,85 +12,48 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to start editing.
+    /// Creates a field to hold the current contents of the record.
     /// </summary>
-    public class AddReaderLockMethod : SyntaxElement
+    public class ForeignIndexField : SyntaxElement
     {
         /// <summary>
-        /// The XML Schema document.
+        /// The unique key.
         /// </summary>
-        private XmlSchemaDocument xmlSchemaDocument;
+        private ForeignKeyElement foreignKeyElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AddReaderLockMethod"/> class.
+        /// Initializes a new instance of the <see cref="ForeignIndexField"/> class.
         /// </summary>
-        /// <param name="xmlSchemaDocument">The XML Schema document.</param>
-        public AddReaderLockMethod(XmlSchemaDocument xmlSchemaDocument)
+        /// <param name="foreignKeyElement">The description of the unique key.</param>
+        public ForeignIndexField(ForeignKeyElement foreignKeyElement)
         {
             // Initialize the object.
-            this.xmlSchemaDocument = xmlSchemaDocument;
-            this.Name = "AddReaderLock";
+            this.foreignKeyElement = foreignKeyElement;
+            this.Name = this.foreignKeyElement.Name;
 
             //        /// <summary>
-            //        /// Acquires a reader lock for this resource and queues a corresponding release lock.
+            //        /// The CountryBuyerCountryIdKey foreign index.
             //        /// </summary>
-            //        public void AddReaderLock()
-            //        {
-            //            <Body>
-            //        }
-            this.Syntax = SyntaxFactory.MethodDeclaration(
-                    SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
-                    SyntaxFactory.Identifier(this.Name))
+            //        private ForeignKeyIndex<Buyer, Country> countryBuyerCountryIdKey;
+            this.Syntax = SyntaxFactory.FieldDeclaration(
+                SyntaxFactory.VariableDeclaration(
+                    SyntaxFactory.GenericName(
+                        SyntaxFactory.Identifier("ForeignKeyIndex"))
+                    .WithTypeArgumentList(
+                        SyntaxFactory.TypeArgumentList(
+                            SyntaxFactory.SeparatedList<TypeSyntax>(
+                                new SyntaxNodeOrToken[]
+                                {
+                                        SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Table.Name)
+                                }))))
+                .WithVariables(
+                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                        SyntaxFactory.VariableDeclarator(
+                            SyntaxFactory.Identifier(this.foreignKeyElement.Name.ToCamelCase())))))
                 .WithModifiers(this.Modifiers)
-                .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the body.
-        /// </summary>
-        private BlockSyntax Body
-        {
-            get
-            {
-                // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            this.AcquireReaderLock();
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("AcquireReaderLock")))));
-
-                //            this.DataModel.Transaction.AddFinally(this.ReleaseReaderLock);
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name)),
-                                    SyntaxFactory.IdentifierName("Transaction")),
-                                SyntaxFactory.IdentifierName("AddFinally")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("ReleaseReaderLock"))))))));
-
-                // This is the syntax for the body of the method.
-                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
-            }
         }
 
         /// <summary>
@@ -104,7 +67,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Acquires a reader lock for this resource and queues a corresponding release lock.
+                //        /// The CountryBuyerCountryIdKey foreign index.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -128,7 +91,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Acquires a reader lock for this resource and queues a corresponding release lock.",
+                                                $" The {this.foreignKeyElement.Name} foreign index.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -164,8 +127,8 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
-                   });
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
+                    });
             }
         }
     }

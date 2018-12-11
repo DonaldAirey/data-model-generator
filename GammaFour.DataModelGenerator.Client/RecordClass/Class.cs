@@ -283,7 +283,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
             properties.Add(new RowStateProperty(this.tableElement));
-            properties.Add(new RecordCollectionProperty(this.tableElement));
+            properties.Add(new RecordSetProperty(this.tableElement));
 
             // Create a property for each column.
             foreach (ColumnElement columnElement in this.tableElement.Columns)

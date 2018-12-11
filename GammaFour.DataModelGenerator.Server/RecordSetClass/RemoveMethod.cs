@@ -2,7 +2,7 @@
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.TableClass
+namespace GammaFour.DataModelGenerator.Server.RecordSetClass
 {
     using System;
     using System.Collections.Generic;
@@ -14,7 +14,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
     /// <summary>
     /// Creates a method to start editing.
     /// </summary>
-    public class RemoveRowMethod : SyntaxElement
+    public class RemoveMethod : SyntaxElement
     {
         /// <summary>
         /// The type of the primary key.
@@ -32,10 +32,10 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         private TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RemoveRowMethod"/> class.
+        /// Initializes a new instance of the <see cref="RemoveMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public RemoveRowMethod(TableElement tableElement)
+        public RemoveMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;

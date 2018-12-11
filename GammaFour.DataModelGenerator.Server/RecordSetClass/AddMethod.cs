@@ -1,8 +1,8 @@
-// <copyright file="AddMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="AddRowMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
+namespace GammaFour.DataModelGenerator.Server.RecordSetClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,31 +12,49 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method add an record to a unique index.
+    /// Creates a method to start editing.
     /// </summary>
     public class AddMethod : SyntaxElement
     {
         /// <summary>
+        /// The type of the primary key.
+        /// </summary>
+        private string keyType;
+
+        /// <summary>
+        /// The name of the row.
+        /// </summary>
+        private string rowName;
+
+        /// <summary>
+        /// The type of the row.
+        /// </summary>
+        private string rowType;
+
+        /// <summary>
         /// The table schema.
         /// </summary>
-        private UniqueKeyElement uniqueKeyElement;
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AddMethod"/> class.
         /// </summary>
-        /// <param name="uniqueKeyElement">The unique constraint schema.</param>
-        public AddMethod(UniqueKeyElement uniqueKeyElement)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public AddMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.uniqueKeyElement = uniqueKeyElement;
-            this.Name = "Add";
+            this.tableElement = tableElement;
+            this.Name = "AddRow";
+            this.keyType = this.tableElement.PrimaryKey.Name;
+            this.rowName = this.tableElement.Name.ToCamelCase();
+            this.rowType = this.tableElement.Name;
 
             //        /// <summary>
-            //        /// Adds a record to the index.
+            //        /// Add a row to the table.
             //        /// </summary>
-            //        /// <param name="configurationKey">The <see cref="ConfigurationKey"/> that uniquely identifies the row.</param>
-            //        /// <param name="configuration">The <see cref="Configuration"/> to be added.</param>
-            //        internal void Add(Guid customerIdKey, CustomerRow customerRow)
+            //        /// <param name="configurationKey">The unique key of the row.</param>
+            //        /// <param name="configuration">The row to be added.</param>
+            //        internal void AddRow(ConfigurationKey configurationKey, ConfigurationRow configurationRow)
             //        {
             //            <Body>
             //        }
@@ -83,7 +101,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                             SyntaxFactory.AttributeArgument(
                                                 SyntaxFactory.LiteralExpression(
                                                     SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal(this.uniqueKeyElement.Name)))
+                                                    SyntaxFactory.Literal(this.tableElement.Name)))
                                             .WithNameEquals(SyntaxFactory.NameEquals(SyntaxFactory.IdentifierName("MessageId"))),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.AttributeArgument(
@@ -108,10 +126,34 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                if (!this.IsWriterLockHeld)
-                //                {
-                //                      <ThrowLockException>
-                //                }
+                //            if (configurationRow == null)
+                //            {
+                //                throw new ArgumentNullException("configuration");
+                //            }
+                statements.Add(
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.EqualsExpression,
+                            SyntaxFactory.IdentifierName(this.rowName),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression)),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ThrowStatement(
+                                    SyntaxFactory.ObjectCreationExpression(SyntaxFactory.IdentifierName("ArgumentNullException"))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        SyntaxKind.StringLiteralExpression,
+                                                        SyntaxFactory.Literal(this.rowName)))))))))));
+
+                //            if (!this.IsWriterLockHeld)
+                //            {
+                //                throw new LockException("Configuration table is not locked.");
+                //            }
+                string message = this.tableElement.Name + " table is not locked.";
                 statements.Add(
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.PrefixUnaryExpression(
@@ -120,129 +162,75 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName("IsWriterLockHeld"))),
-                        SyntaxFactory.Block(
-                            ThrowLockException.GetSyntax(this.uniqueKeyElement.Name + " index is not locked."))));
+                        SyntaxFactory.Block(ThrowLockException.GetSyntax(message))));
 
-                // Keys with a single element are optimized so they don't need to use a compound key to access the dictionary.
-                if (this.uniqueKeyElement.Columns.Count == 1)
+                // This creates the list of arguments used to create a key.
+                List<ArgumentSyntax> arguments = new List<ArgumentSyntax>();
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
-                    //            if (this.dictionary.ContainsKey(configurationKey))
-                    //            {
-                    //                <ThrowDuplicateKeyException>
-                    //            }
-                    statements.Add(
-                        SyntaxFactory.IfStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("dictionary")),
-                                    SyntaxFactory.IdentifierName("ContainsKey")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Columns[0].Column.Name.ToCamelCase()))))),
-                            SyntaxFactory.Block(
-                                ThrowDuplicateKeyException.GetSyntax(this.uniqueKeyElement, this.uniqueKeyElement.Columns))));
-
-                    //            this.dictionary.Add(keyExternalId0, configurationRow);
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("dictionary")),
-                                    SyntaxFactory.IdentifierName("Add")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                        new SyntaxNodeOrToken[]
-                                        {
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Columns[0].Column.Name.ToCamelCase())),
-                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase()))
-                                        })))));
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    arguments.Add(
+                        SyntaxFactory.Argument(
+                            SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase())));
                 }
-                else
-                {
-                    // Constructing a compound key requires the key elements.
-                    List<ArgumentSyntax> arguments = new List<ArgumentSyntax>();
-                    foreach (ColumnReferenceElement columnReferenceElement in this.uniqueKeyElement.Columns)
-                    {
-                        ColumnElement columnElement = columnReferenceElement.Column;
-                        arguments.Add(SyntaxFactory.Argument(SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase())));
-                    }
 
-                    //            ConfigurationKeySet configurationKeySet = new ConfigurationKeySet(configurationIdKey, sourceKey);
-                    statements.Add(
-                        SyntaxFactory.LocalDeclarationStatement(
+                //            int index = this.BinarySearch(configurationKey);
+                statements.Add(
+                       SyntaxFactory.LocalDeclarationStatement(
                             SyntaxFactory.VariableDeclaration(
-                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name + "Set"))
+                                SyntaxFactory.PredefinedType(
+                                    SyntaxFactory.Token(SyntaxKind.IntKeyword)))
                             .WithVariables(
                                 SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                     SyntaxFactory.VariableDeclarator(
-                                        SyntaxFactory.Identifier(this.uniqueKeyElement.Name.ToCamelCase() + "Set"))
+                                        SyntaxFactory.Identifier("index"))
                                     .WithInitializer(
                                         SyntaxFactory.EqualsValueClause(
-                                            SyntaxFactory.ObjectCreationExpression(
-                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name + "Set"))
+                                            SyntaxFactory.InvocationExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName("BinarySearch")))
                                             .WithArgumentList(
                                                 SyntaxFactory.ArgumentList(
                                                     SyntaxFactory.SeparatedList<ArgumentSyntax>(arguments)))))))));
 
-                    //            if (this.dictionary.ContainsKey(configurationKeySet))
-                    //            {
-                    //                throw new DuplicateKeyException("ConfigurationKey", new object[] { configurationIdKey, sourceKey });
-                    //            }
-                    statements.Add(
-                        SyntaxFactory.IfStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("dictionary")),
-                                    SyntaxFactory.IdentifierName("ContainsKey")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name.ToCamelCase() + "Set"))))),
-                            SyntaxFactory.Block(
-                                ThrowDuplicateKeyException.GetSyntax(this.uniqueKeyElement, this.uniqueKeyElement.Columns))));
+                //            if (index >= 0)
+                //            {
+                //                <ThrowDuplicateKeyExceptionBlock>
+                //            }
+                statements.Add(
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.GreaterThanOrEqualExpression,
+                            SyntaxFactory.IdentifierName("index"),
+                            SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(0))),
+                        SyntaxFactory.Block(ThrowDuplicateKeyException.GetSyntax(this.tableElement.PrimaryKey, this.tableElement.PrimaryKey.Columns))));
 
-                    //            this.dictionary.Add(configurationKey, configurationRow);
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
+                //            this.rows.Insert(~index, countryRow);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("dictionary")),
-                                    SyntaxFactory.IdentifierName("Add")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                        new SyntaxNodeOrToken[]
-                                        {
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name.ToCamelCase() + "Set")),
-                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase()))
-                                        })))));
-                }
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("rows")),
+                                SyntaxFactory.IdentifierName("Insert")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.PrefixUnaryExpression(
+                                                SyntaxKind.BitwiseNotExpression,
+                                                SyntaxFactory.IdentifierName("index"))),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName(this.rowName))
+                                    })))));
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -260,7 +248,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Adds a record to the index.
+                //        /// Add a row to the table.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -284,7 +272,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Adds a record to the index.",
+                                                " Add a row to the table.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -304,12 +292,11 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                                 SyntaxFactory.TriviaList())
                                         }))))));
 
-                // Add a comment for each of the key parameters.
-                foreach (ColumnReferenceElement columnReferenceElement in this.uniqueKeyElement.Columns)
+                // Add a parameter for each element of the key.
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
-                    //        /// <param name="configurationId">The ConfigurationId key element.</param>
+                    //        /// <param name="keyConfigurationId">The ConfigurationId key element.</param>
                     ColumnElement columnElement = columnReferenceElement.Column;
-                    string description = "The " + columnElement.Name + " key element.";
                     comments.Add(
                         SyntaxFactory.Trivia(
                             SyntaxFactory.DocumentationCommentTrivia(
@@ -322,7 +309,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                                 {
                                                     SyntaxFactory.XmlTextLiteral(
                                                         SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                        " <param name=\"" + columnElement.Name.ToCamelCase() + "\">" + description + "</param>",
+                                                        " <param name=\"" + columnElement.Name.ToCamelCase() + "\">The " + columnElement.Name + " key element.</param>",
                                                         string.Empty,
                                                         SyntaxFactory.TriviaList()),
                                                     SyntaxFactory.XmlTextNewLine(
@@ -333,7 +320,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                                 }))))));
                 }
 
-                //        /// <param name="configuration">The <see cref="Configuration"/> to be added.</param>
+                //        /// <param name="configuration">The row to be added.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -346,7 +333,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    " <param name=\"" + this.uniqueKeyElement.Table.Name.ToCamelCase() + "\">The <see cref=\"" + this.uniqueKeyElement.Table.Name + "\"/> to be added to the index.</param>",
+                                                    " <param name=\"" + this.tableElement.Name.ToCamelCase() + "\">The row to be added.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -384,27 +371,82 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
         {
             get
             {
-                // string keyConfigurationId, string keySource
+                // Create a list of parameters.
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-                foreach (ColumnReferenceElement columnReferenceElement in this.uniqueKeyElement.Columns)
+
+                // Add a parameter for each element of the key.
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
-                    // Add the next element of the primary key.
                     ColumnElement columnElement = columnReferenceElement.Column;
                     parameters.Add(
-                            SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier(columnElement.Name.ToCamelCase()))
+                    SyntaxFactory.Parameter(
+                        SyntaxFactory.Identifier(columnElement.Name.ToCamelCase()))
                         .WithType(Conversions.FromType(columnElement.Type)));
                 }
 
-                // , CountryRow countryRow
+                // The row parameter comes after the key elements.
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(this.uniqueKeyElement.Table.Name.ToCamelCase()))
-                        .WithType(SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name)));
+                        SyntaxFactory.Identifier(this.rowName))
+                        .WithType(SyntaxFactory.IdentifierName(this.rowType)));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
             }
+        }
+
+        /// <summary>
+        /// Gets a block of code.
+        /// </summary>
+        /// <param name="uniqueKeyElement">The unique constraint schema.</param>
+        /// <returns>A block of code to add the row to the index.</returns>
+        private SyntaxList<StatementSyntax> AddRowToIndexBlock(UniqueKeyElement uniqueKeyElement)
+        {
+            // This list collects the statements.
+            List<StatementSyntax> statements = new List<StatementSyntax>();
+
+            // This creates the comma-separated list of parameters that are used to create a key.
+            List<ArgumentSyntax> arguments = new List<ArgumentSyntax>();
+            foreach (ColumnReferenceElement columnReferenceElement in uniqueKeyElement.Columns)
+            {
+                ColumnElement columnElement = columnReferenceElement.Column;
+                arguments.Add(
+                    SyntaxFactory.Argument(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName(this.rowName),
+                            SyntaxFactory.IdentifierName(columnElement.Name))));
+            }
+
+            //            this.CountryKeyIndex.Add(new CountryKey(countryRow.CountryId), countryRow);
+            string indexProperty = uniqueKeyElement.Name;
+            statements.Add(
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName(indexProperty)),
+                            SyntaxFactory.IdentifierName("Add")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                new SyntaxNodeOrToken[]
+                                {
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.IdentifierName(uniqueKeyElement.Name))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                arguments)))),
+                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                    SyntaxFactory.Argument(SyntaxFactory.IdentifierName(this.rowName))
+                                })))));
+
+            // This is the complete block.
+            return SyntaxFactory.List(statements);
         }
     }
 }

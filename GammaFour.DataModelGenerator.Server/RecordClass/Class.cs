@@ -54,11 +54,27 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         {
             get
             {
-                // IEnlistmentNotification
-                return SyntaxFactory.BaseList(
-                SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(
+                // A list of base classes or interfaces.
+                List<SyntaxNodeOrToken> baseList = new List<SyntaxNodeOrToken>();
+
+                // IIEnlistmentNotification
+                baseList.Add(
                     SyntaxFactory.SimpleBaseType(
-                        SyntaxFactory.IdentifierName("IEnlistmentNotification"))));
+                        SyntaxFactory.IdentifierName("IEnlistmentNotification")));
+
+                // , IVersionable<Buyer>
+                baseList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                baseList.Add(
+                    SyntaxFactory.SimpleBaseType(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("IVersionable"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name))))));
+
+                return SyntaxFactory.BaseList(
+                      SyntaxFactory.SeparatedList<BaseTypeSyntax>(baseList.ToArray()));
             }
         }
 
@@ -174,7 +190,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new CloneMethod(this.tableElement));
+            methods.Add(new GetVersionMethod(this.tableElement));
             methods.Add(new MarkMethod());
 
             // Alphabetize and add the methods as members of the class.
@@ -267,7 +283,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new RecordCollectionProperty(this.tableElement));
+            properties.Add(new RecordSetProperty(this.tableElement));
             properties.Add(new LockProperty());
 
             // Create a navigation property to each of the parent collections.

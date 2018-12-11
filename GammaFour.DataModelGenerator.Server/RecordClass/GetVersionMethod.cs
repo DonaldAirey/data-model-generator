@@ -1,58 +1,52 @@
-// <copyright file="ConstructorDataModel.cs" company="Gamma Four, Inc.">
+// <copyright file="GetVersionMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
+namespace GammaFour.DataModelGenerator.Server.RecordClass
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a constructor.
+    /// Creates a method to acquire a reader lock.
     /// </summary>
-    public class ConstructorDataModel : SyntaxElement
+    public class GetVersionMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
         /// </summary>
-        private ForeignKeyElement foreignKeyElement;
+        private TableElement tableElement;
 
         /// <summary>
-        /// The XML Schema document.
+        /// Initializes a new instance of the <see cref="GetVersionMethod"/> class.
         /// </summary>
-        private XmlSchemaDocument xmlSchemaDocument;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConstructorDataModel"/> class.
-        /// </summary>
-        /// <param name="foreignKeyElement">The table schema.</param>
-        public ConstructorDataModel(ForeignKeyElement foreignKeyElement)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public GetVersionMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.foreignKeyElement = foreignKeyElement;
-            this.xmlSchemaDocument = this.foreignKeyElement.XmlSchemaDocument;
-
-            // This is the name of the constructor.
-            this.Name = this.foreignKeyElement.Name;
+            this.tableElement = tableElement;
+            this.Name = "GetVersion";
 
             //        /// <summary>
-            //        /// Initializes a new instance of the <see cref="ConfigurationTable"/> class.
+            //        /// Creates a copy of the record.
             //        /// </summary>
-            //        internal CountryExternalId0Index(DataModel dataModel)
+            //        /// <param name="recordVersion">The version to be produced.</param>
+            //        /// <returns>A copy of the record from the selected version.</returns>
+            //        internal Buyer Clone(RecordVersion recordVersion = RecordVersion.Current)
             //        {
             //            <Body>
             //        }
-            this.Syntax = SyntaxFactory.ConstructorDeclaration(
-                    SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(this.Modifiers)
-                .WithParameterList(this.Parameters)
-                .WithBody(this.Body)
-                .WithLeadingTrivia(this.DocumentationComment);
+            this.Syntax = SyntaxFactory.MethodDeclaration(
+                SyntaxFactory.IdentifierName(this.tableElement.Name),
+                SyntaxFactory.Identifier(this.Name))
+            .WithModifiers(this.Modifiers)
+            .WithParameterList(this.Parameters)
+            .WithBody(this.Body)
+            .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
@@ -62,21 +56,36 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
         {
             get
             {
-                // The elements of the body are added to this collection as they are assembled.
+                // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            this.DataModel = dataModel;
+                //            return new Buyer(Buyer.cloneVersions[recordVersion](this));
                 statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name)),
-                            SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToCamelCase()))));
+                    SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.ObjectCreationExpression(
+                            SyntaxFactory.IdentifierName(this.tableElement.Name))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.ElementAccessExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Name),
+                                                    SyntaxFactory.IdentifierName("cloneVersions")))
+                                            .WithArgumentList(
+                                                SyntaxFactory.BracketedArgumentList(
+                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.IdentifierName("recordVersion"))))))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.ThisExpression()))))))))));
 
-                // This is the syntax for the body of the constructor.
+                // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
             }
         }
@@ -88,11 +97,11 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
         {
             get
             {
-                // The document comment trivia is collected in this list.
+                // This is used to collect the trivia.
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Initializes a new instance of the <see cref="ConfigurationTable"/> class.
+                //        /// Creates a copy of the record.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -116,7 +125,7 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Initializes a new instance of the <see cref=\"" + this.foreignKeyElement.Name + "\"/> class.",
+                                                " Creates a copy of the record.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -136,7 +145,7 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
                                                 SyntaxFactory.TriviaList())
                                         }))))));
 
-                //        /// <param name="dataModel">The data model.</param>
+                //        /// <param name="recordVersion">The version to be produced.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -149,7 +158,30 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    $" <param name=\"{this.xmlSchemaDocument.Name.ToCamelCase()}\">The data model.</param>",
+                                                    " <param name=\"recordVersion\">The version to be produced.</param>",
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                                SyntaxFactory.XmlTextNewLine(
+                                                    SyntaxFactory.TriviaList(),
+                                                    Environment.NewLine,
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList())
+                                            }))))));
+
+                //        /// <returns>A copy of the record from the selected version.</returns>
+                comments.Add(
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                    SyntaxFactory.XmlText()
+                                    .WithTextTokens(
+                                        SyntaxFactory.TokenList(
+                                            new[]
+                                            {
+                                                SyntaxFactory.XmlTextLiteral(
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                    " <returns>A copy of the record from the selected version.</returns>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -175,8 +207,8 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.InternalKeyword)
-                    });
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                   });
             }
         }
 
@@ -190,10 +222,18 @@ namespace GammaFour.DataModelGenerator.Server.ForeignKeyIndexClass
                 // Create a list of parameters from the columns in the unique constraint.
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
 
-                // DataModel dataModel;
+                // RecordVersion recordVersion = RecordVersion.Current
                 parameters.Add(
-                    SyntaxFactory.Parameter(SyntaxFactory.Identifier(this.xmlSchemaDocument.Name.ToCamelCase()))
-                    .WithType(SyntaxFactory.IdentifierName(this.foreignKeyElement.XmlSchemaDocument.Name)));
+                    SyntaxFactory.Parameter(
+                        SyntaxFactory.Identifier("recordVersion"))
+                    .WithType(
+                        SyntaxFactory.IdentifierName("RecordVersion"))
+                    .WithDefault(
+                        SyntaxFactory.EqualsValueClause(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("RecordVersion"),
+                                SyntaxFactory.IdentifierName("Current")))));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

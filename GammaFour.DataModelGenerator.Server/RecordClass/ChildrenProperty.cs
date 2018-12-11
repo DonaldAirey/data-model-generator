@@ -135,7 +135,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 // This list collects the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                return this.Countries.DataModel.CountryBuyerCountryIdKeyIndex.GetChildren(this.CountryId);
+                //                return this.Countries.Domain.Buyers.CountryBuyerCountryIdKey.GetChildren(this);
                 statements.Add(
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
@@ -147,19 +147,19 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.foreignKeyElement.UniqueKey.Table.Name))),
-                                        SyntaxFactory.IdentifierName(this.foreignKeyElement.XmlSchemaDocument.Name)),
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.foreignKeyElement.UniqueKey.Table.Name))),
+                                            SyntaxFactory.IdentifierName(this.foreignKeyElement.XmlSchemaDocument.Name)),
+                                        SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.foreignKeyElement.Table.Name))),
                                     SyntaxFactory.IdentifierName(this.foreignKeyElement.Name)),
                                 SyntaxFactory.IdentifierName("GetChildren")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(this.foreignKeyElement.Columns[0].Column.Name))))))));
+                                        SyntaxFactory.ThisExpression()))))));
 
                 //            get
                 //            {

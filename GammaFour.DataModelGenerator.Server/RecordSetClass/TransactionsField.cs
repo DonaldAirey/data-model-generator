@@ -1,8 +1,8 @@
-// <copyright file="RowsField.cs" company="Gamma Four, Inc.">
+// <copyright file="TransactionsField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.TableClass
+namespace GammaFour.DataModelGenerator.Server.RecordSetClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,46 +12,32 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates the field used to hold the rows of the table.
+    /// Creates a field to hold the transactions on this record.
     /// </summary>
-    public class RowsField : SyntaxElement
+    public class TransactionsField : SyntaxElement
     {
         /// <summary>
-        /// The type of row.
+        /// Initializes a new instance of the <see cref="TransactionsField"/> class.
         /// </summary>
-        private string rowType;
-
-        /// <summary>
-        /// The table schema.
-        /// </summary>
-        private TableElement tableElement;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RowsField"/> class.
-        /// </summary>
-        /// <param name="tableElement">The table schema.</param>
-        public RowsField(TableElement tableElement)
+        public TransactionsField()
         {
             // Initialize the object.
-            this.tableElement = tableElement;
-            this.Name = "rows";
-            this.rowType = this.tableElement.Name;
+            this.Name = "transactions";
 
             //        /// <summary>
-            //        /// The rows of the Configuration table.
+            //        /// A table of transactions in which this object is enlisted.
             //        /// </summary>
-            //        private ObservableCollection<ConfigurationRow> rows = new ObservableCollection<ConfigurationRow>();
+            //        private HashSet<string> transactions = new HashSet<string>();
             this.Syntax = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
                     SyntaxFactory.GenericName(
-                        SyntaxFactory.Identifier("ObservableCollection"))
+                        SyntaxFactory.Identifier("HashSet"))
                     .WithTypeArgumentList(
                         SyntaxFactory.TypeArgumentList(
                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                SyntaxFactory.IdentifierName(this.rowType)))))
-                .WithVariables(
-                    SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(this.Name))
-                    .WithInitializer(this.Initializer))))
+                                SyntaxFactory.PredefinedType(
+                                    SyntaxFactory.Token(SyntaxKind.StringKeyword))))))
+                                    .WithVariables(this.Variables))
                 .WithModifiers(this.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -67,7 +53,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// The rows of the Configuration table.
+                //        /// The previous contents of the record.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -91,7 +77,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " The rows of the " + this.tableElement.Name + " table.",
+                                                " A table of transactions in which this object is enlisted.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -117,27 +103,6 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         }
 
         /// <summary>
-        /// Gets the initializer.
-        /// </summary>
-        private EqualsValueClauseSyntax Initializer
-        {
-            get
-            {
-                // new ObservableCollection<ConfigurationRow>()
-                return SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.ObjectCreationExpression(
-                        SyntaxFactory.GenericName(
-                            SyntaxFactory.Identifier("ObservableCollection"))
-                        .WithTypeArgumentList(
-                            SyntaxFactory.TypeArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName(this.rowType)))))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList()));
-            }
-        }
-
-        /// <summary>
         /// Gets the modifiers.
         /// </summary>
         private SyntaxTokenList Modifiers
@@ -150,6 +115,31 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                     {
                         SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
                     });
+            }
+        }
+
+        /// <summary>
+        /// Gets the list of generic types.
+        /// </summary>
+        private SeparatedSyntaxList<VariableDeclaratorSyntax> Variables
+        {
+            get
+            {
+                return SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                    SyntaxFactory.VariableDeclarator(
+                        SyntaxFactory.Identifier("transactions"))
+                    .WithInitializer(
+                        SyntaxFactory.EqualsValueClause(
+                            SyntaxFactory.ObjectCreationExpression(
+                                SyntaxFactory.GenericName(
+                                    SyntaxFactory.Identifier("HashSet"))
+                                .WithTypeArgumentList(
+                                    SyntaxFactory.TypeArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                            SyntaxFactory.PredefinedType(
+                                                SyntaxFactory.Token(SyntaxKind.StringKeyword))))))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList()))));
             }
         }
     }

@@ -1,4 +1,4 @@
-// <copyright file="ParentCollectionProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="ParentProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -130,7 +130,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 // This list collects the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                return this.Buyers.DataModel.CountryBuyerCountryIdKeyIndex.GetParent(this.CountryId);
+                //                return this.Buyers.DataModel.CountryBuyerCountryIdKeyIndex.GetParent(this);
                 statements.Add(
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
@@ -140,21 +140,15 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.foreignKeyElement.Table.Name))),
-                                        SyntaxFactory.IdentifierName(this.foreignKeyElement.XmlSchemaDocument.Name)),
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.foreignKeyElement.Table.Name))),
                                     SyntaxFactory.IdentifierName(this.foreignKeyElement.Name)),
                                 SyntaxFactory.IdentifierName("GetParent")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(this.foreignKeyElement.Columns[0].Column.Name))))))));
+                                        SyntaxFactory.ThisExpression()))))));
 
                 //            get
                 //            {

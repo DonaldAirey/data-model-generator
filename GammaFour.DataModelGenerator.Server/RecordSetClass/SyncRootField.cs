@@ -1,8 +1,8 @@
-// <copyright file="AddReaderLockMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="SyncRootField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
+namespace GammaFour.DataModelGenerator.Server.RecordSetClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,85 +12,33 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to start editing.
+    /// Creates a field to hold the current contents of the record.
     /// </summary>
-    public class AddReaderLockMethod : SyntaxElement
+    public class SyncRootField : SyntaxElement
     {
         /// <summary>
-        /// The XML Schema document.
+        /// Initializes a new instance of the <see cref="SyncRootField"/> class.
         /// </summary>
-        private XmlSchemaDocument xmlSchemaDocument;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AddReaderLockMethod"/> class.
-        /// </summary>
-        /// <param name="xmlSchemaDocument">The XML Schema document.</param>
-        public AddReaderLockMethod(XmlSchemaDocument xmlSchemaDocument)
+        public SyncRootField()
         {
             // Initialize the object.
-            this.xmlSchemaDocument = xmlSchemaDocument;
-            this.Name = "AddReaderLock";
+            this.Name = "syncRoot";
 
             //        /// <summary>
-            //        /// Acquires a reader lock for this resource and queues a corresponding release lock.
+            //        /// Private object used for locking.
             //        /// </summary>
-            //        public void AddReaderLock()
-            //        {
-            //            <Body>
-            //        }
-            this.Syntax = SyntaxFactory.MethodDeclaration(
-                    SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
-                    SyntaxFactory.Identifier(this.Name))
+            //        private object syncRoot = new object();
+            this.Syntax = SyntaxFactory.FieldDeclaration(
+                SyntaxFactory.VariableDeclaration(
+                    SyntaxFactory.PredefinedType(
+                        SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
+                    .WithVariables(
+                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                            SyntaxFactory.VariableDeclarator(
+                                SyntaxFactory.Identifier("syncRoot"))
+                            .WithInitializer(this.Initializer))))
                 .WithModifiers(this.Modifiers)
-                .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the body.
-        /// </summary>
-        private BlockSyntax Body
-        {
-            get
-            {
-                // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            this.AcquireReaderLock();
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("AcquireReaderLock")))));
-
-                //            this.DataModel.Transaction.AddFinally(this.ReleaseReaderLock);
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name)),
-                                    SyntaxFactory.IdentifierName("Transaction")),
-                                SyntaxFactory.IdentifierName("AddFinally")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("ReleaseReaderLock"))))))));
-
-                // This is the syntax for the body of the method.
-                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
-            }
         }
 
         /// <summary>
@@ -104,7 +52,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Acquires a reader lock for this resource and queues a corresponding release lock.
+                //        /// The current contents of the record.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -128,7 +76,7 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Acquires a reader lock for this resource and queues a corresponding release lock.",
+                                                " Private object used for locking.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -154,6 +102,23 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
         }
 
         /// <summary>
+        /// Gets the initializer.
+        /// </summary>
+        private EqualsValueClauseSyntax Initializer
+        {
+            get
+            {
+                // = new object();
+                return SyntaxFactory.EqualsValueClause(
+                    SyntaxFactory.ObjectCreationExpression(
+                        SyntaxFactory.PredefinedType(
+                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList()));
+            }
+        }
+
+        /// <summary>
         /// Gets the modifiers.
         /// </summary>
         private SyntaxTokenList Modifiers
@@ -164,8 +129,8 @@ namespace GammaFour.DataModelGenerator.Server.UniqueKeyIndexClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
-                   });
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
+                    });
             }
         }
     }

@@ -1,8 +1,8 @@
-// <copyright file="AddWriterLockMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="DataModelProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.TableClass
+namespace GammaFour.DataModelGenerator.Server.RecordSetClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,84 +12,65 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to start editing.
+    /// Creates a field that holds the column.
     /// </summary>
-    public class AddWriterLockMethod : SyntaxElement
+    public class DataModelProperty : SyntaxElement
     {
         /// <summary>
-        /// The XML Schema document.
+        /// The data model schema.
         /// </summary>
         private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AddWriterLockMethod"/> class.
+        /// Initializes a new instance of the <see cref="DataModelProperty"/> class.
         /// </summary>
-        /// <param name="xmlSchemaDocument">The XML Schema document.</param>
-        public AddWriterLockMethod(XmlSchemaDocument xmlSchemaDocument)
+        /// <param name="xmlSchemaDocument">The column schema.</param>
+        public DataModelProperty(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
             this.xmlSchemaDocument = xmlSchemaDocument;
-            this.Name = "AddWriterLock";
+            this.Name = this.xmlSchemaDocument.Name;
 
             //        /// <summary>
-            //        /// Acquires a reader lock for this resource and queues a corresponding release lock.
+            //        /// Gets the DataModel.
             //        /// </summary>
-            //        public void AddWriterLock()
-            //        {
-            //            <Body>
-            //        }
-            this.Syntax = SyntaxFactory.MethodDeclaration(
-                    SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
+            //        public DataModel DataModel { get; private set; }
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
+                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name),
                     SyntaxFactory.Identifier(this.Name))
+                .WithAccessorList(this.AccessorList)
                 .WithModifiers(this.Modifiers)
-                .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
-        /// Gets the body.
+        /// Gets the list of accessors.
         /// </summary>
-        private BlockSyntax Body
+        private AccessorListSyntax AccessorList
         {
             get
             {
-                // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                return SyntaxFactory.AccessorList(
+                    SyntaxFactory.List(
+                        new AccessorDeclarationSyntax[]
+                        {
+                            this.GetAccessor,
+                            this.SetAccessor
+                        }));
+            }
+        }
 
-                //            this.AcquireWriterLock();
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("AcquireWriterLock")))));
-
-                //            this.Table.DataModel.Transaction.AddFinally(this.ReleaseWriterLock);
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name)),
-                                    SyntaxFactory.IdentifierName("Transaction")),
-                                SyntaxFactory.IdentifierName("AddFinally")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("ReleaseWriterLock"))))))));
-
-                // This is the syntax for the body of the method.
-                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
+        /// <summary>
+        /// Gets the 'Get' accessor.
+        /// </summary>
+        private AccessorDeclarationSyntax GetAccessor
+        {
+            get
+            {
+                // get;
+                return SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                    .WithSemicolonToken(
+                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
             }
         }
 
@@ -104,7 +85,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Acquires a reader lock for this resource and queues a corresponding release lock.
+                //        /// Gets the DataModel.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -128,7 +109,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Acquires a reader lock for this resource and queues a corresponding release lock.",
+                                                " Gets the data model.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -160,12 +141,29 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         {
             get
             {
-                // private
+                // internal
                 return SyntaxFactory.TokenList(
                     new[]
                     {
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword)
-                   });
+                    });
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'Set' accessor.
+        /// </summary>
+        private AccessorDeclarationSyntax SetAccessor
+        {
+            get
+            {
+                //            private set;
+                return SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                    .WithSemicolonToken(
+                        SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+                    .WithModifiers(
+                        SyntaxFactory.TokenList(
+                            SyntaxFactory.Token(SyntaxKind.PrivateKeyword)));
             }
         }
     }
