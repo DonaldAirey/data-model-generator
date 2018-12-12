@@ -1,4 +1,4 @@
-// <copyright file="ConstructorDataModel.cs" company="Gamma Four, Inc.">
+// <copyright file="ConstructorDataModelName.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -15,7 +15,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
     /// <summary>
     /// Creates a constructor.
     /// </summary>
-    public class ConstructorDataModel : SyntaxElement
+    public class ConstructorDataModelName : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -23,27 +23,21 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         private TableElement tableElement;
 
         /// <summary>
-        /// The data model schema.
-        /// </summary>
-        private XmlSchemaDocument xmlSchemaDocument;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConstructorDataModel"/> class.
+        /// Initializes a new instance of the <see cref="ConstructorDataModelName"/> class.
         /// </summary>
         /// <param name="tableElement">The table schema.</param>
-        public ConstructorDataModel(TableElement tableElement)
+        public ConstructorDataModelName(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.xmlSchemaDocument = this.tableElement.XmlSchemaDocument;
 
             // This is the name of the constructor.
-            this.Name = string.Format(CultureInfo.InvariantCulture, "{0}Table", this.tableElement.Name);
+            this.Name = $"{this.tableElement.Name}Set";
 
             //        /// <summary>
-            //        /// Initializes a new instance of the <see cref="ConfigurationTable"/> class.
+            //        /// Initializes a new instance of the <see cref="ConfigurationSet"/> class.
             //        /// </summary>
-            //        internal ConfigurationTable(TenantDataModel tenantDataModel)
+            //        internal ConfigurationSet(TenantDataModel tenantDataModel)
             //        {
             //            <Body>
             //        }
@@ -76,28 +70,16 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                 SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
                             SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToCamelCase()))));
 
-                //            this.mergeFunctions[RecordState.Added] = this.MergeAddition;
+                //            this.Name = name;
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.ElementAccessExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("mergeFunctions")))
-                            .WithArgumentList(
-                                SyntaxFactory.BracketedArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("RecordState"),
-                                                SyntaxFactory.IdentifierName("Added")))))),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("MergeAdd")))));
+                                SyntaxFactory.IdentifierName("Name")),
+                            SyntaxFactory.IdentifierName("name"))));
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -115,7 +97,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Initializes a new instance of the <see cref="ConfigurationTable"/> class.
+                //        /// Initializes a new instance of the <see cref="ConfigurationSet"/> class.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -141,7 +123,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
                                                 string.Format(
                                                     CultureInfo.InvariantCulture,
-                                                    " Initializes a new instance of the <see cref=\"{0}Table\"/> class.",
+                                                    " Initializes a new instance of the <see cref=\"{0}Set\"/> class.",
                                                     this.tableElement.Name),
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -175,7 +157,30 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    $" <param name=\"{this.xmlSchemaDocument.Name.ToCamelCase()}\">The data model.</param>",
+                                                    $" <param name=\"{this.tableElement.XmlSchemaDocument.Name.ToCamelCase()}\">The data model.</param>",
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                                SyntaxFactory.XmlTextNewLine(
+                                                    SyntaxFactory.TriviaList(),
+                                                    Environment.NewLine,
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList())
+                                            }))))));
+
+                //        /// <param name="name">The name of the set.</param>
+                comments.Add(
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                    SyntaxFactory.XmlText()
+                                    .WithTextTokens(
+                                        SyntaxFactory.TokenList(
+                                            new[]
+                                            {
+                                                SyntaxFactory.XmlTextLiteral(
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                    $" <param name=\"name\">The name of the set.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -201,7 +206,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.InternalKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
                     });
             }
         }
@@ -214,12 +219,23 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             get
             {
                 // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
+                List<SyntaxNodeOrToken> parameters = new List<SyntaxNodeOrToken>();
 
                 // DataModel dataModel;
                 parameters.Add(
                     SyntaxFactory.Parameter(SyntaxFactory.Identifier(this.tableElement.XmlSchemaDocument.Name.ToCamelCase()))
                     .WithType(SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)));
+
+                // ,
+                parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+
+                // string Name
+                parameters.Add(
+                    SyntaxFactory.Parameter(
+                        SyntaxFactory.Identifier("name"))
+                    .WithType(
+                        SyntaxFactory.PredefinedType(
+                            SyntaxFactory.Token(SyntaxKind.StringKeyword))));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

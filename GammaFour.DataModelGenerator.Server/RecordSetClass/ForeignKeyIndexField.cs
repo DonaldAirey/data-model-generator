@@ -1,4 +1,4 @@
-// <copyright file="DataModelProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="ForeignKeyIndexField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,65 +12,48 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field that holds the column.
+    /// Creates a field to hold the current contents of the record.
     /// </summary>
-    public class DataModelProperty : SyntaxElement
+    public class ForeignKeyIndexField : SyntaxElement
     {
         /// <summary>
-        /// The data model schema.
+        /// The unique key.
         /// </summary>
-        private XmlSchemaDocument xmlSchemaDocument;
+        private ForeignKeyElement foreignKeyElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DataModelProperty"/> class.
+        /// Initializes a new instance of the <see cref="ForeignKeyIndexField"/> class.
         /// </summary>
-        /// <param name="xmlSchemaDocument">The column schema.</param>
-        public DataModelProperty(XmlSchemaDocument xmlSchemaDocument)
+        /// <param name="foreignKeyElement">The description of the unique key.</param>
+        public ForeignKeyIndexField(ForeignKeyElement foreignKeyElement)
         {
             // Initialize the object.
-            this.xmlSchemaDocument = xmlSchemaDocument;
-            this.Name = this.xmlSchemaDocument.Name;
+            this.foreignKeyElement = foreignKeyElement;
+            this.Name = this.foreignKeyElement.Name;
 
             //        /// <summary>
-            //        /// Gets the DataModel.
+            //        /// The CountryBuyerCountryIdKey foreign index.
             //        /// </summary>
-            //        public DataModel DataModel { get; private set; }
-            this.Syntax = SyntaxFactory.PropertyDeclaration(
-                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name),
-                    SyntaxFactory.Identifier(this.Name))
-                .WithAccessorList(this.AccessorList)
+            //        private ForeignKeyIndex<Buyer, Country> countryBuyerCountryIdKey;
+            this.Syntax = SyntaxFactory.FieldDeclaration(
+                SyntaxFactory.VariableDeclaration(
+                    SyntaxFactory.GenericName(
+                        SyntaxFactory.Identifier("ForeignKeyIndex"))
+                    .WithTypeArgumentList(
+                        SyntaxFactory.TypeArgumentList(
+                            SyntaxFactory.SeparatedList<TypeSyntax>(
+                                new SyntaxNodeOrToken[]
+                                {
+                                        SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Table.Name)
+                                }))))
+                .WithVariables(
+                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                        SyntaxFactory.VariableDeclarator(
+                            SyntaxFactory.Identifier(this.foreignKeyElement.Name.ToCamelCase())))))
                 .WithModifiers(this.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the list of accessors.
-        /// </summary>
-        private AccessorListSyntax AccessorList
-        {
-            get
-            {
-                return SyntaxFactory.AccessorList(
-                    SyntaxFactory.List(
-                        new AccessorDeclarationSyntax[]
-                        {
-                            this.GetAccessor
-                        }));
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Get' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax GetAccessor
-        {
-            get
-            {
-                // get;
-                return SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                    .WithSemicolonToken(
-                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
-            }
         }
 
         /// <summary>
@@ -84,7 +67,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Gets the DataModel.
+                //        /// The CountryBuyerCountryIdKey foreign index.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -108,7 +91,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Gets the data model.",
+                                                $" The {this.foreignKeyElement.Name} foreign index.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -140,11 +123,11 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         {
             get
             {
-                // internal
+                // private
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
                     });
             }
         }

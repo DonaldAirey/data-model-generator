@@ -1,59 +1,62 @@
-// <copyright file="UniqueIndexField.cs" company="Gamma Four, Inc.">
+// <copyright file="RowChangedEvent.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.RecordSetClass
+namespace GammaFour.DataModelGenerator.Common.RecordSet
 {
     using System;
     using System.Collections.Generic;
-    using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field to hold the current contents of the record.
+    /// Creates a field that holds the column.
     /// </summary>
-    public class ForeignIndexField : SyntaxElement
+    public class RowChangedEvent : SyntaxElement
     {
         /// <summary>
-        /// The unique key.
+        /// The event type.
         /// </summary>
-        private ForeignKeyElement foreignKeyElement;
+        private SimpleNameSyntax eventType;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ForeignIndexField"/> class.
+        /// The unique constraint schema.
         /// </summary>
-        /// <param name="foreignKeyElement">The description of the unique key.</param>
-        public ForeignIndexField(ForeignKeyElement foreignKeyElement)
+        private TableElement tableElement;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RowChangedEvent"/> class.
+        /// </summary>
+        /// <param name="tableElement">The column schema.</param>
+        public RowChangedEvent(TableElement tableElement)
         {
             // Initialize the object.
-            this.foreignKeyElement = foreignKeyElement;
-            this.Name = this.foreignKeyElement.Name;
+            this.tableElement = tableElement;
+            this.Name = "RowChanged";
+
+            // The type of event.
+            this.eventType = SyntaxFactory.GenericName(
+                SyntaxFactory.Identifier("EventHandler"))
+            .WithTypeArgumentList(
+                SyntaxFactory.TypeArgumentList(
+                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                        SyntaxFactory.IdentifierName(this.tableElement.Name + "RowChangeEventArgs")))
+                .WithLessThanToken(SyntaxFactory.Token(SyntaxKind.LessThanToken))
+                .WithGreaterThanToken(SyntaxFactory.Token(SyntaxKind.GreaterThanToken)));
 
             //        /// <summary>
-            //        /// The CountryBuyerCountryIdKey foreign index.
+            //        /// Occurs when a row has changed.
             //        /// </summary>
-            //        private ForeignKeyIndex<Buyer, Country> countryBuyerCountryIdKey;
-            this.Syntax = SyntaxFactory.FieldDeclaration(
-                SyntaxFactory.VariableDeclaration(
-                    SyntaxFactory.GenericName(
-                        SyntaxFactory.Identifier("ForeignKeyIndex"))
-                    .WithTypeArgumentList(
-                        SyntaxFactory.TypeArgumentList(
-                            SyntaxFactory.SeparatedList<TypeSyntax>(
-                                new SyntaxNodeOrToken[]
-                                {
-                                        SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name),
-                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                        SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Table.Name)
-                                }))))
+            //        public event EventHandler<ConfigurationRowChangeEventArgs> RowChanged;
+            this.Syntax = SyntaxFactory.EventFieldDeclaration(
+                SyntaxFactory.VariableDeclaration(this.eventType)
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                        SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier(this.foreignKeyElement.Name.ToCamelCase())))))
-                .WithModifiers(this.Modifiers)
-                .WithLeadingTrivia(this.DocumentationComment);
+                        SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(this.Name)))))
+            .WithModifiers(this.Modifiers)
+            .WithEventKeyword(SyntaxFactory.Token(SyntaxKind.EventKeyword))
+            .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
@@ -67,7 +70,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// The CountryBuyerCountryIdKey foreign index.
+                //        /// Occurs when a row has changed.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -91,7 +94,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                $" The {this.foreignKeyElement.Name} foreign index.",
+                                                " Occurs when a row has changed.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -123,11 +126,11 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         {
             get
             {
-                // private
+                // internal
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
                     });
             }
         }

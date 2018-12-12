@@ -125,42 +125,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         {
             get
             {
-                // Used as a variable when constructing the lambda expression.
-                string abbreviation = this.uniqueKeyElement.Name[0].ToString().ToLower();
-
-                // This will create an expression for extracting the key from record.
-                CSharpSyntaxNode syntaxNode = null;
-                if (this.uniqueKeyElement.Columns.Count == 1)
-                {
-                    // A simple key can be used like a value type.
-                    syntaxNode = SyntaxFactory.MemberAccessExpression(
-                        SyntaxKind.SimpleMemberAccessExpression,
-                        SyntaxFactory.IdentifierName(abbreviation),
-                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.Columns[0].Column.Name));
-                }
-                else
-                {
-                    // A Compound key must be constructed from an anomymous type.
-                    List<SyntaxNodeOrToken> keyElements = new List<SyntaxNodeOrToken>();
-                    foreach (ColumnReferenceElement columnReferenceElement in this.uniqueKeyElement.Columns)
-                    {
-                        if (keyElements.Count != 0)
-                        {
-                            SyntaxFactory.Token(SyntaxKind.CommaToken);
-                        }
-
-                        keyElements.Add(
-                            SyntaxFactory.AnonymousObjectMemberDeclarator(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(abbreviation),
-                                    SyntaxFactory.IdentifierName(columnReferenceElement.Column.Name))));
-                    }
-
-                    syntaxNode = SyntaxFactory.AnonymousObjectCreationExpression(
-                            SyntaxFactory.SeparatedList<AnonymousObjectMemberDeclaratorSyntax>(keyElements.ToArray()));
-                }
-
                 // = ((Expression<Func<Buyer, object>>)(b => b.BuyerId)).Compile();
                 return SyntaxFactory.EqualsValueClause(
                     SyntaxFactory.InvocationExpression(
@@ -186,8 +150,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                                     SyntaxFactory.Token(SyntaxKind.ObjectKeyword))
                                                             })))))),
                                     SyntaxFactory.ParenthesizedExpression(
-                                        SyntaxFactory.SimpleLambdaExpression(
-                                            SyntaxFactory.Parameter(SyntaxFactory.Identifier("b")), syntaxNode)))),
+                                        UniqueKeyExpression.GetUniqueKey(this.uniqueKeyElement)))),
                             SyntaxFactory.IdentifierName("Compile"))));
                 }
         }

@@ -1,4 +1,4 @@
-// <copyright file="AddMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="UpdateMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -15,7 +15,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
     /// <summary>
     /// Creates a method to add a record to the set.
     /// </summary>
-    public class AddMethod : SyntaxElement
+    public class UpdateMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -23,20 +23,20 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         private TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AddMethod"/> class.
+        /// Initializes a new instance of the <see cref="UpdateMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public AddMethod(TableElement tableElement)
+        public UpdateMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = "Add";
+            this.Name = "Update";
 
             //        /// <summary>
-            //        /// Adds a <see cref="Buyer"/> to the set.
+            //        /// Removes a <see cref="Buyer"/> to the set.
             //        /// </summary>
             //        /// <param name="buyer">The buyer to be added.</param>
-            //        public void Add(Buyer buyer)
+            //        public void Remove(Buyer buyer)
             //        {
             //            <Body>
             //        }
@@ -94,18 +94,19 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.Argument(
                                                     SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))))))));
 
-                //            buyer.Buyers = this;
+                //            buyer.Buyers = null;
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
-                                SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.tableElement.Name))),
-                            SyntaxFactory.ThisExpression())));
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                    SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.tableElement.Name))),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression))));
 
-                //            this.collection.Add(key, buyer);
+                //            this.collection.Remove(key, buyer);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.InvocationExpression(
@@ -115,7 +116,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName("collection")),
-                            SyntaxFactory.IdentifierName("Add")))
+                            SyntaxFactory.IdentifierName("Remove")))
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList(
                             SyntaxFactory.SeparatedList<ArgumentSyntax>(
@@ -128,7 +129,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                         SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()))
                                 })))));
 
-                //            this.undoStack.Push(() => { buyer.Buyers = null; this.collection.Remove(key); });
+                //            this.undoStack.Push(() => { buyer.Buyers = this; this.collection.Add(key); });
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -152,8 +153,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
                                                             SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.tableElement.Name))),
-                                                        SyntaxFactory.LiteralExpression(
-                                                            SyntaxKind.NullLiteralExpression))),
+                                                        SyntaxFactory.ThisExpression())),
                                                 SyntaxFactory.ExpressionStatement(
                                                     SyntaxFactory.InvocationExpression(
                                                         SyntaxFactory.MemberAccessExpression(
@@ -162,17 +162,23 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.ThisExpression(),
                                                                 SyntaxFactory.IdentifierName("collection")),
-                                                            SyntaxFactory.IdentifierName("Remove")))
+                                                            SyntaxFactory.IdentifierName("Add")))
                                                     .WithArgumentList(
                                                         SyntaxFactory.ArgumentList(
-                                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.IdentifierName("key"))))))))))))));
+                                                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                                new SyntaxNodeOrToken[]
+                                                                {
+                                                                    SyntaxFactory.Argument(
+                                                                        SyntaxFactory.IdentifierName("key")),
+                                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                                    SyntaxFactory.Argument(
+                                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()))
+                                                                }))))))))))));
 
-                // Add the record to each of the unique key indices on this set.
+                // Remove the record to each of the unique key indices on this set.
                 foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
                 {
-                    //            this.BuyerKey.Add(buyer);
+                    //            this.BuyerKey.Remove(buyer);
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -182,7 +188,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
-                                SyntaxFactory.IdentifierName("Add")))
+                                SyntaxFactory.IdentifierName("Remove")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
@@ -190,10 +196,10 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                         SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))));
                 }
 
-                // Add the record to each of the foreign key indices on this set.
+                // Remove the record to each of the foreign key indices on this set.
                 foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
                 {
-                    //            this.CountryBuyerCountryIdKey.Add(buyer);
+                    //            this.CountryBuyerCountryIdKey.Remove(buyer);
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -203,7 +209,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
-                                SyntaxFactory.IdentifierName("Add")))
+                                SyntaxFactory.IdentifierName("Remove")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
@@ -227,7 +233,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Adds a <see cref="Buyer"/> to the set.
+                //        /// Removes a <see cref="Buyer"/> to the set.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -251,7 +257,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                $" Adds a <see cref=\"{this.tableElement.Name}\"/> to the set.",
+                                                $" Removes a <see cref=\"{this.tableElement.Name}\"/> to the set.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

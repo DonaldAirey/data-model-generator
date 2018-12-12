@@ -1,62 +1,70 @@
-// <copyright file="RowChangedEvent.cs" company="Gamma Four, Inc.">
+// <copyright file="NameProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Common.TableClass
+namespace GammaFour.DataModelGenerator.Server.RecordSetClass
 {
     using System;
     using System.Collections.Generic;
+    using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field that holds the column.
+    /// Creates a field that holds the name.
     /// </summary>
-    public class RowChangedEvent : SyntaxElement
+    public class NameProperty : SyntaxElement
     {
         /// <summary>
-        /// The event type.
+        /// Initializes a new instance of the <see cref="NameProperty"/> class.
         /// </summary>
-        private SimpleNameSyntax eventType;
-
-        /// <summary>
-        /// The unique constraint schema.
-        /// </summary>
-        private TableElement tableElement;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RowChangedEvent"/> class.
-        /// </summary>
-        /// <param name="tableElement">The column schema.</param>
-        public RowChangedEvent(TableElement tableElement)
+        public NameProperty()
         {
             // Initialize the object.
-            this.tableElement = tableElement;
-            this.Name = "RowChanged";
-
-            // The type of event.
-            this.eventType = SyntaxFactory.GenericName(
-                SyntaxFactory.Identifier("EventHandler"))
-            .WithTypeArgumentList(
-                SyntaxFactory.TypeArgumentList(
-                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                        SyntaxFactory.IdentifierName(this.tableElement.Name + "RowChangeEventArgs")))
-                .WithLessThanToken(SyntaxFactory.Token(SyntaxKind.LessThanToken))
-                .WithGreaterThanToken(SyntaxFactory.Token(SyntaxKind.GreaterThanToken)));
+            this.Name = "Name";
 
             //        /// <summary>
-            //        /// Occurs when a row has changed.
+            //        /// Gets the Name.
             //        /// </summary>
-            //        public event EventHandler<ConfigurationRowChangeEventArgs> RowChanged;
-            this.Syntax = SyntaxFactory.EventFieldDeclaration(
-                SyntaxFactory.VariableDeclaration(this.eventType)
-                .WithVariables(
-                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                        SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(this.Name)))))
-            .WithModifiers(this.Modifiers)
-            .WithEventKeyword(SyntaxFactory.Token(SyntaxKind.EventKeyword))
-            .WithLeadingTrivia(this.DocumentationComment);
+            //        public string Name { get; }
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
+                    SyntaxFactory.PredefinedType(
+                        SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                    SyntaxFactory.Identifier("Name"))
+                .WithModifiers(this.Modifiers)
+                .WithAccessorList(this.AccessorList)
+                .WithLeadingTrivia(this.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the list of accessors.
+        /// </summary>
+        private AccessorListSyntax AccessorList
+        {
+            get
+            {
+                return SyntaxFactory.AccessorList(
+                    SyntaxFactory.List(
+                        new AccessorDeclarationSyntax[]
+                        {
+                            this.GetAccessor
+                        }));
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'Get' accessor.
+        /// </summary>
+        private AccessorDeclarationSyntax GetAccessor
+        {
+            get
+            {
+                // get;
+                return SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                    .WithSemicolonToken(
+                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            }
         }
 
         /// <summary>
@@ -70,7 +78,7 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Occurs when a row has changed.
+                //        /// Gets the Name.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -94,7 +102,7 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Occurs when a row has changed.",
+                                                " Gets the Name.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -132,6 +140,23 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                     {
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword)
                     });
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'Set' accessor.
+        /// </summary>
+        private AccessorDeclarationSyntax SetAccessor
+        {
+            get
+            {
+                //            private set;
+                return SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                    .WithSemicolonToken(
+                        SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+                    .WithModifiers(
+                        SyntaxFactory.TokenList(
+                            SyntaxFactory.Token(SyntaxKind.PrivateKeyword)));
             }
         }
     }

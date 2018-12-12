@@ -9,7 +9,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
     using System.Globalization;
     using System.Linq;
     using GammaFour.DataModelGenerator.Common;
-    using GammaFour.DataModelGenerator.Common.TableClass;
+    using GammaFour.DataModelGenerator.Common.RecordSet;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -70,10 +70,23 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 // A list of base classes or interfaces.
                 List<SyntaxNodeOrToken> baseList = new List<SyntaxNodeOrToken>();
 
-                // IIEnlistmentNotification
+                // IEnlistmentNotification
                 baseList.Add(
                     SyntaxFactory.SimpleBaseType(
                         SyntaxFactory.IdentifierName("IEnlistmentNotification")));
+
+                // ,
+                baseList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+
+                // IEnumerable<Buyer>
+                baseList.Add(
+                    SyntaxFactory.SimpleBaseType(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("IEnumerable"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name))))));
 
                 return SyntaxFactory.BaseList(
                       SyntaxFactory.SeparatedList<BaseTypeSyntax>(baseList.ToArray()));
@@ -180,7 +193,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // Add the constructors.
-            members = members.Add(new ConstructorDataModel(this.tableElement).Syntax);
+            members = members.Add(new ConstructorDataModelName(this.tableElement).Syntax);
 
             // Return the new collection of members.
             return members;
@@ -204,7 +217,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             // Add a field for each of the foreign indices.
             foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
             {
-                fields.Add(new ForeignIndexField(foreignKeyElement));
+                fields.Add(new ForeignKeyIndexField(foreignKeyElement));
             }
 
             // Alphabetize and add the fields as members of the class.
@@ -228,6 +241,19 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             List<SyntaxElement> properties = new List<SyntaxElement>();
             properties.Add(new DataModelProperty(this.tableElement.XmlSchemaDocument));
             properties.Add(new LockProperty());
+            properties.Add(new NameProperty());
+
+            // Add a property for each of the unique keys indices.
+            foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
+            {
+                properties.Add(new UniqueKeyIndexProperty(uniqueKeyElement));
+            }
+
+            // Add a property for each of the foreign key indices.
+            foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
+            {
+                properties.Add(new ForeignKeyIndexProperty(foreignKeyElement));
+            }
 
             // Alphabetize and add the properties as members of the class.
             foreach (SyntaxElement syntaxElement in properties.OrderBy(m => m.Name))
@@ -250,7 +276,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             List<SyntaxElement> methods = new List<SyntaxElement>();
             methods.Add(new OnRowChangedMethod(this.tableElement));
             methods.Add(new OnRowChangingMethod(this.tableElement));
- 
+
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
             {
@@ -315,12 +341,14 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             List<SyntaxElement> methods = new List<SyntaxElement>();
             methods.Add(new AddMethod(this.tableElement));
             methods.Add(new CommitMethod());
+            methods.Add(new DisplayLocksMethod(this.tableElement));
             methods.Add(new InDoubtMethod());
+            methods.Add(new GetEnumeratorMethod(this.tableElement));
             methods.Add(new GenericGetEnumeratorMethod(this.tableElement));
-            methods.Add(new NonGenericGetEnumeratorMethod(this.tableElement));
             methods.Add(new PrepareMethod());
             methods.Add(new RemoveMethod(this.tableElement));
             methods.Add(new RollbackMethod());
+            methods.Add(new UpdateMethod(this.tableElement));
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))

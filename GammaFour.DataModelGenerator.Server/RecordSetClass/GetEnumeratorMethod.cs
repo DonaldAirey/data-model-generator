@@ -1,4 +1,4 @@
-﻿// <copyright file="GenericGetEnumeratorMethod.cs" company="Gamma Four, Inc.">
+﻿// <copyright file="GetEnumeratorMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,7 +14,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
     /// <summary>
     /// Creates a method to start editing.
     /// </summary>
-    public class GenericGetEnumeratorMethod : SyntaxElement
+    public class GetEnumeratorMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -22,29 +22,25 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         private TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GenericGetEnumeratorMethod"/> class.
+        /// Initializes a new instance of the <see cref="GetEnumeratorMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public GenericGetEnumeratorMethod(TableElement tableElement)
+        public GetEnumeratorMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
             this.Name = "GetEnumerator";
 
-            //        /// <inheritdoc/>
-            //        public IEnumerator<Buyer> GetEnumerator()
+            //        IEnumerator IEnumerable.GetEnumerator()
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
-                SyntaxFactory.GenericName(
-                    SyntaxFactory.Identifier("IEnumerator"))
-                .WithTypeArgumentList(
-                    SyntaxFactory.TypeArgumentList(
-                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                            SyntaxFactory.IdentifierName(this.tableElement.Name)))),
+                SyntaxFactory.IdentifierName("IEnumerator"),
                 SyntaxFactory.Identifier("GetEnumerator"))
-                .WithModifiers(this.Modifiers)
+            .WithExplicitInterfaceSpecifier(
+                SyntaxFactory.ExplicitInterfaceSpecifier(
+                    SyntaxFactory.IdentifierName("IEnumerable")))
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
         }

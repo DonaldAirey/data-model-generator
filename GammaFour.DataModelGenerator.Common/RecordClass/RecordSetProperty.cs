@@ -1,4 +1,4 @@
-﻿// <copyright file="RecordCollectionProperty.cs" company="Gamma Four, Inc.">
+﻿// <copyright file="RecordSetProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>

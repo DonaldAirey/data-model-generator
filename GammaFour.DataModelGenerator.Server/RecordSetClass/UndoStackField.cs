@@ -19,7 +19,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Initializes a new instance of the <see cref="UndoStackField"/> class.
         /// </summary>
-        /// <param name="tableElement">The table element.</param>
         public UndoStackField()
         {
             // Initialize the object.

@@ -1,69 +1,53 @@
-// <copyright file="RowsProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="UniqueKeyIndexProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Common.TableClass
+namespace GammaFour.DataModelGenerator.Server.RecordSetClass
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
+    using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field that holds the column.
+    /// Creates a unique key for the set.
     /// </summary>
-    public class RowsProperty : SyntaxElement
+    public class UniqueKeyIndexProperty : SyntaxElement
     {
         /// <summary>
-        /// The type of the row.
+        /// The unique key element.
         /// </summary>
-        private SimpleNameSyntax collectionTypeSyntax;
+        private UniqueKeyElement uniqueKeyElement;
 
         /// <summary>
-        /// The type of the row.
+        /// Initializes a new instance of the <see cref="UniqueKeyIndexProperty"/> class.
         /// </summary>
-        private string rowType;
-
-        /// <summary>
-        /// The unique constraint schema.
-        /// </summary>
-        private TableElement tableElement;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RowsProperty"/> class.
-        /// </summary>
-        /// <param name="tableElement">The column schema.</param>
-        public RowsProperty(TableElement tableElement)
+        /// <param name="uniqueKeyElement">The unique key element.</param>
+        public UniqueKeyIndexProperty(UniqueKeyElement uniqueKeyElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement;
-            this.Name = "Rows";
-            this.rowType = this.tableElement.Name;
-
-            // The row collection type.
-            this.collectionTypeSyntax = SyntaxFactory.GenericName(
-                SyntaxFactory.Identifier("ObservableCollection"))
-            .WithTypeArgumentList(
-                SyntaxFactory.TypeArgumentList(
-                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(SyntaxFactory.IdentifierName(this.rowType)))
-                .WithLessThanToken(SyntaxFactory.Token(SyntaxKind.LessThanToken))
-                .WithGreaterThanToken(SyntaxFactory.Token(SyntaxKind.GreaterThanToken)));
+            this.uniqueKeyElement = uniqueKeyElement;
+            this.Name = this.uniqueKeyElement.Name;
 
             //        /// <summary>
-            //        /// Gets the rows of the Configuration table.
+            //        /// Gets the BuyerExternalId0Key unique index.
             //        /// </summary>
-            //        public ObservableCollection<ConfigurationRow> Rows
-            //        {
-            //            <Body>
-            //        }
+            //        public UniqueKeyIndex<Buyer> BuyerExternalId0Key { get; } = new UniqueKeyIndex<Buyer>("BuyerExternalId0Key").HasIndex(b => b.ExternalId0);
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                this.collectionTypeSyntax,
-                SyntaxFactory.Identifier(this.Name))
-                .WithAccessorList(this.AccessorList)
+                    SyntaxFactory.GenericName(
+                        SyntaxFactory.Identifier("UniqueKeyIndex"))
+                    .WithTypeArgumentList(
+                        SyntaxFactory.TypeArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name)))),
+                    SyntaxFactory.Identifier(this.uniqueKeyElement.Name))
                 .WithModifiers(this.Modifiers)
-                .WithLeadingTrivia(this.DocumentationComment);
+                .WithAccessorList(this.AccessorList)
+                .WithInitializer(this.Initializer)
+                .WithLeadingTrivia(this.DocumentationComment)
+                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
         }
 
         /// <summary>
@@ -74,27 +58,11 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
             get
             {
                 return SyntaxFactory.AccessorList(
-                    SyntaxFactory.List(
-                        new AccessorDeclarationSyntax[]
-                        {
-                            this.GetAccessor,
-                            this.SetAccessor
-                        }));
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Get' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax GetAccessor
-        {
-            get
-            {
-                //            get;
-                return SyntaxFactory.AccessorDeclaration(
-                    SyntaxKind.GetAccessorDeclaration)
-                    .WithSemicolonToken(
-                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
+                        SyntaxFactory.AccessorDeclaration(
+                            SyntaxKind.GetAccessorDeclaration)
+                        .WithSemicolonToken(
+                            SyntaxFactory.Token(SyntaxKind.SemicolonToken))));
             }
         }
 
@@ -109,7 +77,7 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Gets the rows of the Configuration table.
+                //        /// Gets the BuyerExternalId0Key unique index.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -133,10 +101,7 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                string.Format(
-                                                    CultureInfo.InvariantCulture,
-                                                    " Gets the rows of the {0} table.",
-                                                    this.tableElement.Name),
+                                                $" Gets the {this.uniqueKeyElement.Name} unique index.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -162,36 +127,52 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
         }
 
         /// <summary>
+        /// Gets the initializer.
+        /// </summary>
+        private EqualsValueClauseSyntax Initializer
+        {
+            get
+            {
+                // = new UniqueKeyIndex<Buyer>("BuyerExternalId0Key").HasIndex(b => b.ExternalId0);
+                return SyntaxFactory.EqualsValueClause(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.ObjectCreationExpression(
+                                SyntaxFactory.GenericName(
+                                    SyntaxFactory.Identifier("UniqueKeyIndex"))
+                                .WithTypeArgumentList(
+                                    SyntaxFactory.TypeArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name)))))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                SyntaxFactory.Literal(this.uniqueKeyElement.Name)))))),
+                            SyntaxFactory.IdentifierName("HasIndex")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(UniqueKeyExpression.GetUniqueKey(this.uniqueKeyElement))))));
+            }
+        }
+
+        /// <summary>
         /// Gets the modifiers.
         /// </summary>
         private SyntaxTokenList Modifiers
         {
             get
             {
-                // internal
+                // public
                 return SyntaxFactory.TokenList(
                     new[]
                     {
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword)
                     });
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Set' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax SetAccessor
-        {
-            get
-            {
-                //            private set;
-                return SyntaxFactory.AccessorDeclaration(
-                    SyntaxKind.SetAccessorDeclaration)
-                    .WithModifiers(
-                        SyntaxFactory.TokenList(
-                            SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
-                    .WithSemicolonToken(
-                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
             }
         }
     }

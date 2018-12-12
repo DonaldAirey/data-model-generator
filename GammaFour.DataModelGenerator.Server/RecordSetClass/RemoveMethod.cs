@@ -1,4 +1,4 @@
-// <copyright file="RemoveRowMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="RemoveMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -10,22 +10,13 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Pluralize.NET;
 
     /// <summary>
-    /// Creates a method to start editing.
+    /// Creates a method to add a record to the set.
     /// </summary>
     public class RemoveMethod : SyntaxElement
     {
-        /// <summary>
-        /// The type of the primary key.
-        /// </summary>
-        private string keyType;
-
-        /// <summary>
-        /// The name of the row.
-        /// </summary>
-        private string keyVariable;
-
         /// <summary>
         /// The table schema.
         /// </summary>
@@ -39,75 +30,23 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = "RemoveRow";
-            this.keyVariable = this.tableElement.PrimaryKey.Name.ToCamelCase();
-            this.keyType = this.tableElement.PrimaryKey.Name;
+            this.Name = "Remove";
 
             //        /// <summary>
-            //        /// Removes a row from the table.
+            //        /// Removes a <see cref="Buyer"/> to the set.
             //        /// </summary>
-            //        /// <param name="configuration">The row to be removed.</param>
-            //        internal void RemoveRow(ConfigurationRow configurationRow)
+            //        /// <param name="buyer">The buyer to be added.</param>
+            //        public void Remove(Buyer buyer)
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
-                    SyntaxFactory.PredefinedType(
-                        SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
+                    SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                     SyntaxFactory.Identifier(this.Name))
-                .WithAttributeLists(this.Attributes)
                 .WithModifiers(this.Modifiers)
                 .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the data contract attribute syntax.
-        /// </summary>
-        private SyntaxList<AttributeListSyntax> Attributes
-        {
-            get
-            {
-                // This collects all the attributes.
-                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
-
-                //        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "ConfigurationKey")]
-                attributes.Add(
-                    SyntaxFactory.AttributeList(
-                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
-                            SyntaxFactory.Attribute(SyntaxFactory.IdentifierName("SuppressMessage"))
-                            .WithArgumentList(
-                                SyntaxFactory.AttributeArgumentList(
-                                    SyntaxFactory.SeparatedList<AttributeArgumentSyntax>(
-                                        new SyntaxNodeOrToken[]
-                                        {
-                                            SyntaxFactory.AttributeArgument(
-                                                SyntaxFactory.LiteralExpression(
-                                                    SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal("Microsoft.Naming"))),
-                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                            SyntaxFactory.AttributeArgument(
-                                                SyntaxFactory.LiteralExpression(
-                                                    SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal("CA2204:Literals should be spelled correctly"))),
-                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                            SyntaxFactory.AttributeArgument(
-                                                SyntaxFactory.LiteralExpression(
-                                                    SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal(this.tableElement.Name)))
-                                            .WithNameEquals(SyntaxFactory.NameEquals(SyntaxFactory.IdentifierName("MessageId"))),
-                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                            SyntaxFactory.AttributeArgument(
-                                                SyntaxFactory.LiteralExpression(
-                                                    SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal("Diagnostic message.")))
-                                            .WithNameEquals(SyntaxFactory.NameEquals(SyntaxFactory.IdentifierName("Justification")))
-                                        }))))));
-
-                // The collection of attributes.
-                return SyntaxFactory.List<AttributeListSyntax>(attributes);
-            }
         }
 
         /// <summary>
@@ -120,63 +59,157 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                if (!this.IsWriterLockHeld)
+                //                if (Transaction.Current != null)
                 //                {
-                //                      <LockWriterLockNotHeld>
+                //                    <Enroll in Transaction>
                 //                }
-                string message = this.tableElement.Name + " table is not locked.";
+                statements.Add(EnlistInTransactionExpression.Statement);
+
+                //                if (!this.Lock.IsWriteLockHeld)
+                //                {
+                //                    <Acquire Write Lock>
+                //                }
+                statements.Add(AcquireWriteLockExpression.Statement);
+
+                //            object key = this.primaryKeyFunction(buyer);
                 statements.Add(
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.PrefixUnaryExpression(
-                            SyntaxKind.LogicalNotExpression,
+                    SyntaxFactory.LocalDeclarationStatement(
+                    SyntaxFactory.VariableDeclaration(
+                        SyntaxFactory.PredefinedType(
+                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
+                    .WithVariables(
+                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                            SyntaxFactory.VariableDeclarator(
+                                SyntaxFactory.Identifier("key"))
+                            .WithInitializer(
+                                SyntaxFactory.EqualsValueClause(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName("primaryKeyFunction")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))))))));
+
+                //            buyer.Buyers = null;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("IsWriterLockHeld"))),
-                        SyntaxFactory.Block(ThrowLockException.GetSyntax(message))));
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                    SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.tableElement.Name))),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression))));
 
-                // This creates the list of arguments that are used to create a key.
-                List<ArgumentSyntax> arguments = new List<ArgumentSyntax>();
-                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
+                //            this.collection.Remove(key);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("collection")),
+                                SyntaxFactory.IdentifierName("Remove")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("key")))))));
+
+                //            this.undoStack.Push(() => { buyer.Buyers = this; this.collection.Add(key); });
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("undoStack")),
+                                SyntaxFactory.IdentifierName("Push")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.ParenthesizedLambdaExpression(
+                                            SyntaxFactory.Block(
+                                                SyntaxFactory.ExpressionStatement(
+                                                    SyntaxFactory.AssignmentExpression(
+                                                        SyntaxKind.SimpleAssignmentExpression,
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                                            SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.tableElement.Name))),
+                                                        SyntaxFactory.ThisExpression())),
+                                                SyntaxFactory.ExpressionStatement(
+                                                    SyntaxFactory.InvocationExpression(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.ThisExpression(),
+                                                                SyntaxFactory.IdentifierName("collection")),
+                                                            SyntaxFactory.IdentifierName("Add")))
+                                                    .WithArgumentList(
+                                                        SyntaxFactory.ArgumentList(
+                                                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                                new SyntaxNodeOrToken[]
+                                                                {
+                                                                    SyntaxFactory.Argument(
+                                                                        SyntaxFactory.IdentifierName("key")),
+                                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                                    SyntaxFactory.Argument(
+                                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()))
+                                                                }))))))))))));
+
+                // Remove the record to each of the unique key indices on this set.
+                foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
                 {
-                    ColumnElement columnElement = columnReferenceElement.Column;
-                    arguments.Add(
-                        SyntaxFactory.Argument(
-                            SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase())));
+                    //            this.BuyerKey.Remove(buyer);
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
+                                SyntaxFactory.IdentifierName("Remove")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))));
                 }
 
-                //            int index = this.BinarySearch(configurationKey);
-                statements.Add(
-                       SyntaxFactory.LocalDeclarationStatement(
-                            SyntaxFactory.VariableDeclaration(
-                                SyntaxFactory.PredefinedType(
-                                    SyntaxFactory.Token(SyntaxKind.IntKeyword)))
-                            .WithVariables(
-                                SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                    SyntaxFactory.VariableDeclarator(
-                                        SyntaxFactory.Identifier("index"))
-                                    .WithInitializer(
-                                        SyntaxFactory.EqualsValueClause(
-                                            SyntaxFactory.InvocationExpression(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName("BinarySearch")))
-                                            .WithArgumentList(
-                                                SyntaxFactory.ArgumentList(
-                                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(arguments)))))))));
-
-                //                if (index >= 0)
-                //                {
-                //                    <RemoveRowBlock>
-                //                }
-                statements.Add(
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.GreaterThanOrEqualExpression,
-                            SyntaxFactory.IdentifierName("index"),
-                            SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(0))),
-                        SyntaxFactory.Block(this.RemoveRowBlock)));
+                // Remove the record to each of the foreign key indices on this set.
+                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
+                {
+                    //            this.CountryBuyerCountryIdKey.Remove(buyer);
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
+                                SyntaxFactory.IdentifierName("Remove")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))));
+                }
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -194,7 +227,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Removes a row from the table.
+                //        /// Removes a <see cref="Buyer"/> to the set.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -218,7 +251,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Removes a row from the table.",
+                                                $" Removes a <see cref=\"{this.tableElement.Name}\"/> to the set.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -238,33 +271,28 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.TriviaList())
                                         }))))));
 
-                // Add a (comma separated) parameter for each element of the key.
-                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
-                {
-                    //        /// <param name="keyConfigurationKey">The unique key of the row.</param>
-                    ColumnElement columnElement = columnReferenceElement.Column;
-                    comments.Add(
-                        SyntaxFactory.Trivia(
-                            SyntaxFactory.DocumentationCommentTrivia(
-                                SyntaxKind.SingleLineDocumentationCommentTrivia,
-                                    SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                        SyntaxFactory.XmlText()
-                                        .WithTextTokens(
-                                            SyntaxFactory.TokenList(
-                                                new[]
-                                                {
-                                                    SyntaxFactory.XmlTextLiteral(
-                                                        SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                        " <param name=\"" + columnElement.Name.ToCamelCase() + "\">The " + columnElement.Name + " key element.</param>",
-                                                        string.Empty,
-                                                        SyntaxFactory.TriviaList()),
-                                                    SyntaxFactory.XmlTextNewLine(
-                                                        SyntaxFactory.TriviaList(),
-                                                        Environment.NewLine,
-                                                        string.Empty,
-                                                        SyntaxFactory.TriviaList())
-                                                }))))));
-                }
+                //        /// <param name="buyer">The buyer to be added.</param>
+                comments.Add(
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                    SyntaxFactory.XmlText()
+                                    .WithTextTokens(
+                                        SyntaxFactory.TokenList(
+                                            new[]
+                                            {
+                                                SyntaxFactory.XmlTextLiteral(
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                    $" <param name=\"{this.tableElement.Name.ToCamelCase()}\">The {this.tableElement.Name.ToCamelCase()} to be added.</param>",
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                                SyntaxFactory.XmlTextNewLine(
+                                                    SyntaxFactory.TriviaList(),
+                                                    Environment.NewLine,
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList())
+                                            }))))));
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -278,11 +306,11 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         {
             get
             {
-                // internal
+                // private
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.InternalKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
                    });
             }
         }
@@ -297,49 +325,15 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 // Create a list of parameters.
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
 
-                // Add a (comma separated) parameter for each element of the key.
-                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
-                {
-                    ColumnElement columnElement = columnReferenceElement.Column;
-                    parameters.Add(
+                // The row parameter comes after the key elements.
+                parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(columnElement.Name.ToCamelCase()))
-                        .WithType(Conversions.FromType(columnElement.Type)));
-                }
+                        SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase()))
+                    .WithType(
+                        SyntaxFactory.IdentifierName(this.tableElement.Name)));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
-            }
-        }
-
-        /// <summary>
-        /// Gets a block of code.
-        /// </summary>
-        private SyntaxList<StatementSyntax> RemoveRowBlock
-        {
-            get
-            {
-                // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                this.Rows.RemoveAt(index);
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("rows")),
-                                SyntaxFactory.IdentifierName("RemoveAt")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(SyntaxFactory.IdentifierName("index")))))));
-
-                // This is the complete block.
-                return SyntaxFactory.List(statements);
             }
         }
     }

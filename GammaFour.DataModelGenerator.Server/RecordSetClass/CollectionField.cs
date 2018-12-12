@@ -138,7 +138,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                         SyntaxFactory.PredefinedType(
                                             SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                        SyntaxFactory.IdentifierName("Buyer")
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name)
                                     }))))
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList()));

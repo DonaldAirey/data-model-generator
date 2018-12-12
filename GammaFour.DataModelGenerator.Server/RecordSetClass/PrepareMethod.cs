@@ -49,10 +49,10 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            if (this.originalData == null)
+                //            if (this.undoStack.Count == 0)
                 //            {
                 //                <Enlistment is Done>
-                //            {
+                //            }
                 //            else
                 //            {
                 //                <Enlistment is Prepared>
@@ -63,10 +63,14 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                             SyntaxKind.EqualsExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("originalData")),
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("undoStack")),
+                                SyntaxFactory.IdentifierName("Count")),
                             SyntaxFactory.LiteralExpression(
-                                SyntaxKind.NullLiteralExpression)),
+                                SyntaxKind.NumericLiteralExpression,
+                                SyntaxFactory.Literal(0))),
                         SyntaxFactory.Block(this.EnlistmentDone))
                     .WithElse(
                         SyntaxFactory.ElseClause(
