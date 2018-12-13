@@ -211,6 +211,33 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                         SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))));
                 }
 
+                //            this.OnRecordChanging(DataAction.Add, null, buyer);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("OnRecordChanging")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("DataAction"),
+                                                SyntaxFactory.IdentifierName("Add"))),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.NullLiteralExpression)),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()))
+                                    })))));
+
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
             }

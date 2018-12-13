@@ -13,7 +13,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
     using Pluralize.NET;
 
     /// <summary>
-    /// Creates a method to add a record to the set.
+    /// Creates a method to remove a record from the set.
     /// </summary>
     public class RemoveMethod : SyntaxElement
     {
@@ -33,7 +33,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             this.Name = "Remove";
 
             //        /// <summary>
-            //        /// Removes a <see cref="Buyer"/> to the set.
+            //        /// Removes a <see cref="Buyer"/> from the set.
             //        /// </summary>
             //        /// <param name="buyer">The buyer to be added.</param>
             //        public void Remove(Buyer buyer)
@@ -211,6 +211,33 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                         SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))));
                 }
 
+                //            this.OnRecordChanging(DataAction.Delete, buyer, null);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("OnRecordChanging")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("DataAction"),
+                                                SyntaxFactory.IdentifierName("Delete"))),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.NullLiteralExpression))
+                                    })))));
+
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
             }
@@ -227,7 +254,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Removes a <see cref="Buyer"/> to the set.
+                //        /// Removes a <see cref="Buyer"/> from the set.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -251,7 +278,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                $" Removes a <see cref=\"{this.tableElement.Name}\"/> to the set.",
+                                                $" Removes a <see cref=\"{this.tableElement.Name}\"/> from the set.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

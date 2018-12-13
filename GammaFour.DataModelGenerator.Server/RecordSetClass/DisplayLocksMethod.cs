@@ -32,7 +32,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             this.Name = "DisplayLocks";
 
             //        /// <summary>
-            //        /// Display the locks on any records in the set.
+            //        /// Display the locks on any resource in the set.
             //        /// </summary>
             //        public void DisplayLocks()
             //        {
@@ -530,17 +530,218 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName("collection")),
                             SyntaxFactory.IdentifierName("Values")),
+                        SyntaxFactory.Block(this.DisplayRecordLocks)));
+
+                // This is the syntax for the body of the method.
+                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
+            }
+        }
+
+        /// <summary>
+        /// Gets the statements that initializes the transaction.
+        /// </summary>
+        private List<StatementSyntax> DisplayRecordLocks
+        {
+            get
+            {
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //                if (buyer.Lock.IsReadLockHeld)
+                //                {
+                //                    Debug.WriteLine($"ReadLock held on {this.Name}: {this.primaryKeyFunction(buyer)}");
+                //                }
+                statements.Add(
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                SyntaxFactory.IdentifierName("Lock")),
+                            SyntaxFactory.IdentifierName("IsReadLockHeld")),
                         SyntaxFactory.Block(
                             SyntaxFactory.SingletonList<StatementSyntax>(
                                 SyntaxFactory.ExpressionStatement(
                                     SyntaxFactory.InvocationExpression(
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
-                                            SyntaxFactory.IdentifierName("DisplayLocks"))))))));
+                                            SyntaxFactory.IdentifierName("Debug"),
+                                            SyntaxFactory.IdentifierName("WriteLine")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.InterpolatedStringExpression(
+                                                        SyntaxFactory.Token(SyntaxKind.InterpolatedStringStartToken))
+                                                    .WithContents(
+                                                        SyntaxFactory.List<InterpolatedStringContentSyntax>(
+                                                            new InterpolatedStringContentSyntax[]
+                                                            {
+                                                                SyntaxFactory.InterpolatedStringText()
+                                                                .WithTextToken(
+                                                                    SyntaxFactory.Token(
+                                                                        SyntaxFactory.TriviaList(),
+                                                                        SyntaxKind.InterpolatedStringTextToken,
+                                                                        "ReadLock held on ",
+                                                                        "ReadLock held on ",
+                                                                        SyntaxFactory.TriviaList())),
+                                                                SyntaxFactory.Interpolation(
+                                                                    SyntaxFactory.MemberAccessExpression(
+                                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                                        SyntaxFactory.ThisExpression(),
+                                                                        SyntaxFactory.IdentifierName("Name"))),
+                                                                SyntaxFactory.InterpolatedStringText()
+                                                                .WithTextToken(
+                                                                    SyntaxFactory.Token(
+                                                                        SyntaxFactory.TriviaList(),
+                                                                        SyntaxKind.InterpolatedStringTextToken,
+                                                                        ": ",
+                                                                        ": ",
+                                                                        SyntaxFactory.TriviaList())),
+                                                                SyntaxFactory.Interpolation(
+                                                                    SyntaxFactory.InvocationExpression(
+                                                                        SyntaxFactory.MemberAccessExpression(
+                                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                                            SyntaxFactory.ThisExpression(),
+                                                                            SyntaxFactory.IdentifierName("primaryKeyFunction")))
+                                                                    .WithArgumentList(
+                                                                        SyntaxFactory.ArgumentList(
+                                                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                                                SyntaxFactory.Argument(
+                                                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()))))))
+                                                            })))))))))));
 
-                // This is the syntax for the body of the method.
-                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
+                //                if (buyer.Lock.IsUpgradeableReadLockHeld)
+                //                {
+                //                    Debug.WriteLine($"UpgradeableReadLock held on {this.Name}: {this.primaryKeyFunction(buyer)}");
+                //                }
+                statements.Add(
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                SyntaxFactory.IdentifierName("Lock")),
+                            SyntaxFactory.IdentifierName("IsUpgradeableReadLockHeld")),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ExpressionStatement(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.IdentifierName("Debug"),
+                                            SyntaxFactory.IdentifierName("WriteLine")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.InterpolatedStringExpression(
+                                                        SyntaxFactory.Token(SyntaxKind.InterpolatedStringStartToken))
+                                                    .WithContents(
+                                                        SyntaxFactory.List<InterpolatedStringContentSyntax>(
+                                                            new InterpolatedStringContentSyntax[]
+                                                            {
+                                                                SyntaxFactory.InterpolatedStringText()
+                                                                .WithTextToken(
+                                                                    SyntaxFactory.Token(
+                                                                        SyntaxFactory.TriviaList(),
+                                                                        SyntaxKind.InterpolatedStringTextToken,
+                                                                        "UpgradeableReadLock held on ",
+                                                                        "UpgradeableReadLock held on ",
+                                                                        SyntaxFactory.TriviaList())),
+                                                                SyntaxFactory.Interpolation(
+                                                                    SyntaxFactory.MemberAccessExpression(
+                                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                                        SyntaxFactory.ThisExpression(),
+                                                                        SyntaxFactory.IdentifierName("Name"))),
+                                                                SyntaxFactory.InterpolatedStringText()
+                                                                .WithTextToken(
+                                                                    SyntaxFactory.Token(
+                                                                        SyntaxFactory.TriviaList(),
+                                                                        SyntaxKind.InterpolatedStringTextToken,
+                                                                        ": ",
+                                                                        ": ",
+                                                                        SyntaxFactory.TriviaList())),
+                                                                SyntaxFactory.Interpolation(
+                                                                    SyntaxFactory.InvocationExpression(
+                                                                        SyntaxFactory.MemberAccessExpression(
+                                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                                            SyntaxFactory.ThisExpression(),
+                                                                            SyntaxFactory.IdentifierName("primaryKeyFunction")))
+                                                                    .WithArgumentList(
+                                                                        SyntaxFactory.ArgumentList(
+                                                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                                                SyntaxFactory.Argument(
+                                                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()))))))
+                                                            })))))))))));
+
+                //                if (buyer.Lock.IsWriteLockHeld)
+                //                {
+                //                    Debug.WriteLine($"WriteLock held on {this.Name}: {this.primaryKeyFunction(buyer)}");
+                //                }
+                statements.Add(
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                SyntaxFactory.IdentifierName("Lock")),
+                            SyntaxFactory.IdentifierName("IsWriteLockHeld")),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ExpressionStatement(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.IdentifierName("Debug"),
+                                            SyntaxFactory.IdentifierName("WriteLine")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.InterpolatedStringExpression(
+                                                        SyntaxFactory.Token(SyntaxKind.InterpolatedStringStartToken))
+                                                    .WithContents(
+                                                        SyntaxFactory.List<InterpolatedStringContentSyntax>(
+                                                            new InterpolatedStringContentSyntax[]
+                                                            {
+                                                                SyntaxFactory.InterpolatedStringText()
+                                                                .WithTextToken(
+                                                                    SyntaxFactory.Token(
+                                                                        SyntaxFactory.TriviaList(),
+                                                                        SyntaxKind.InterpolatedStringTextToken,
+                                                                        "WriteLock held on ",
+                                                                        "WriteLock held on ",
+                                                                        SyntaxFactory.TriviaList())),
+                                                                SyntaxFactory.Interpolation(
+                                                                    SyntaxFactory.MemberAccessExpression(
+                                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                                        SyntaxFactory.ThisExpression(),
+                                                                        SyntaxFactory.IdentifierName("Name"))),
+                                                                SyntaxFactory.InterpolatedStringText()
+                                                                .WithTextToken(
+                                                                    SyntaxFactory.Token(
+                                                                        SyntaxFactory.TriviaList(),
+                                                                        SyntaxKind.InterpolatedStringTextToken,
+                                                                        ": ",
+                                                                        ": ",
+                                                                        SyntaxFactory.TriviaList())),
+                                                                SyntaxFactory.Interpolation(
+                                                                    SyntaxFactory.InvocationExpression(
+                                                                        SyntaxFactory.MemberAccessExpression(
+                                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                                            SyntaxFactory.ThisExpression(),
+                                                                            SyntaxFactory.IdentifierName("primaryKeyFunction")))
+                                                                    .WithArgumentList(
+                                                                        SyntaxFactory.ArgumentList(
+                                                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                                                SyntaxFactory.Argument(
+                                                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()))))))
+                                                            })))))))))));
+
+                return statements;
             }
         }
 
@@ -555,7 +756,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Display the locks on any records in the set.
+                //        /// Display the locks on any resource in the set.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -579,7 +780,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                $" Display the locks on any records in the set.",
+                                                $" Display the locks on any resource in the set.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

@@ -1,4 +1,4 @@
-// <copyright file="LogCompressionIntervalField.cs" company="Gamma Four, Inc.">
+// <copyright file="RecordSetProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -10,29 +10,54 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Pluralize.NET;
 
     /// <summary>
     /// Creates a collection of readers (transactions) waiting for a read lock.
     /// </summary>
-    public class LogCompressionIntervalField : SyntaxElement
+    public class RecordSetProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="LogCompressionIntervalField"/> class.
+        /// The table schema.
         /// </summary>
-        public LogCompressionIntervalField()
+        private TableElement tableElement;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RecordSetProperty"/> class.
+        /// </summary>
+        /// <param name="tableElement">The table schema.</param>
+        public RecordSetProperty(TableElement tableElement)
         {
             // Initialize the object.
-            this.Name = "logCompressionInterval";
+            this.tableElement = tableElement;
+            this.Name = this.tableElement.Name;
 
             //        /// <summary>
-            //        /// The time between log compression jobs.
+            //        /// Gets the set of Buyer records.
             //        /// </summary>
-            //        private TimeSpan logCompressionInterval;
-            this.Syntax = SyntaxFactory.FieldDeclaration(
-                SyntaxFactory.VariableDeclaration(SyntaxFactory.IdentifierName("TimeSpan"))
-                .WithVariables(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(this.Name)))))
+            //        public BuyerSet Buyers { get; }
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
+                    SyntaxFactory.IdentifierName($"{tableElement.Name}Set"),
+                    SyntaxFactory.Identifier(new Pluralizer().Pluralize(this.Name)))
+                .WithAccessorList(this.AccessorList)
                 .WithModifiers(this.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the list of accessors.
+        /// </summary>
+        private AccessorListSyntax AccessorList
+        {
+            get
+            {
+                return SyntaxFactory.AccessorList(
+                    SyntaxFactory.List(
+                        new AccessorDeclarationSyntax[]
+                        {
+                            this.GetAccessor
+                        }));
+            }
         }
 
         /// <summary>
@@ -46,7 +71,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// The time between log compression jobs.
+                //        /// Gets the set of Buyer records.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -70,7 +95,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " The time between log compression jobs.",
+                                                $" Gets the set of {this.tableElement.Name} records.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -96,17 +121,32 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         }
 
         /// <summary>
+        /// Gets the 'Get' accessor.
+        /// </summary>
+        private AccessorDeclarationSyntax GetAccessor
+        {
+            get
+            {
+                // get;
+                return SyntaxFactory.AccessorDeclaration(
+                        SyntaxKind.GetAccessorDeclaration)
+                    .WithSemicolonToken(
+                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            }
+        }
+
+        /// <summary>
         /// Gets the modifiers.
         /// </summary>
         private SyntaxTokenList Modifiers
         {
             get
             {
-                // private
+                // public
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
                     });
             }
         }

@@ -35,7 +35,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             //    /// <summary>
             //    /// A thread-safe DataSet able to handle transactions.
             //    /// </summary>
-            //    public partial class TenantDataModel : IDisposable
+            //    public partial class DataModel : IDisposable
             //    {
             //        <Members>
             //    }
@@ -59,13 +59,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                             new SyntaxNodeOrToken[]
                             {
                                 SyntaxFactory.SimpleBaseType(
-                                    SyntaxFactory.QualifiedName(
-                                        SyntaxFactory.QualifiedName(
-                                            SyntaxFactory.IdentifierName("GammaFour"),
-                                            SyntaxFactory.IdentifierName("ServiceModel")),
-                                        SyntaxFactory.IdentifierName("ReaderWriterLock"))),
-                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                SyntaxFactory.SimpleBaseType(
                                     SyntaxFactory.IdentifierName("IDisposable"))
                             }));
             }
@@ -79,7 +72,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             get
             {
                 //    /// <summary>
-                //    /// A thread-safe DataSet able to handle transactions.
+                //    /// A thread-safe, transaction-oriented data domain.
                 //    /// </summary>
                 return SyntaxFactory.TriviaList(
                     SyntaxFactory.Trivia(
@@ -103,7 +96,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " A thread-safe DataSet able to handle transactions.",
+                                                " A thread-safe, transaction-oriented data domain.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -169,7 +162,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // These are the constructors.
-            members = members.Add(new ConstructorIPersistentStore(this.xmlSchemaDocument).Syntax);
+            members = members.Add(new ConstructorDbContext(this.xmlSchemaDocument).Syntax);
 
             // Return the new collection of members.
             return members;
@@ -184,26 +177,11 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             // This will create the internal instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new TransactionProperty());
 
             // Create a field for each of the tables.
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                // This insures that we only have one relation to the parent table when there are multiple relations.
-                foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys)
-                {
-                    // Create a field to hold each of the parent relations.
-                    properties.Add(new ParentRelationProperty(foreignKeyElement));
-                }
-
-                // Add a field for each of the unique constraints.
-                foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
-                {
-                    properties.Add(new UniqueIndexProperty(uniqueKeyElement));
-                }
-
-                // And the tables.
-                properties.Add(new TableProperty(tableElement));
+                properties.Add(new RecordSetProperty(tableElement));
             }
 
             // Alphabetize and add the fields as members of the class.
@@ -225,14 +203,10 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new IdentifierField());
-            fields.Add(new PersistentStoreField());
-            fields.Add(new RowVersionField());
-            fields.Add(new SequenceField());
+
+            // fields.Add(new IdentifierField());
+            // fields.Add(new RowVersionField());
             fields.Add(new SyncRootField());
-            fields.Add(new TransactionHandlersField(this.xmlSchemaDocument));
-            fields.Add(new TransactionLogField());
-            fields.Add(new TransactionTableField());
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(f => f.Name))
@@ -253,7 +227,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new RowVersionIndexField(this.xmlSchemaDocument));
+            // fields.Add(new RowVersionIndexField(this.xmlSchemaDocument));
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
@@ -275,17 +249,16 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
             methods.Add(new DisposeMethod());
-            methods.Add(new CreateLockReportMethod(this.xmlSchemaDocument));
-            methods.Add(new IncrementRowVersionMethod());
-            methods.Add(new ReadMethod());
+            methods.Add(new DisplayLocksMethod(this.xmlSchemaDocument));
+            // methods.Add(new IncrementRowVersionMethod());
 
             // Add the CRUD operations for each of the tables.
-            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
-            {
-                methods.Add(new CreateMethod(tableElement));
-                methods.Add(new DeleteMethod(tableElement));
-                methods.Add(new UpdateMethod(tableElement));
-            }
+            // foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
+            // {
+            //     methods.Add(new CreateMethod(tableElement));
+            //     methods.Add(new DeleteMethod(tableElement));
+            //     methods.Add(new UpdateMethod(tableElement));
+            // }
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
@@ -306,7 +279,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new AddTransactionMethod());
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
@@ -327,9 +299,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new OnTransactionCompletedMethod(this.xmlSchemaDocument));
-            methods.Add(new ReadCompletedMethod(this.xmlSchemaDocument));
-            methods.Add(new ReadStartingMethod(this.xmlSchemaDocument));
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))

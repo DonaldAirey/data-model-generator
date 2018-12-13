@@ -1,4 +1,4 @@
-// <copyright file="OnRowChangingMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="OnRecordChangingMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,42 +12,32 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to start editing.
+    /// Creates a method invoke the event handlers for a changing row.
     /// </summary>
-    public class OnRowChangingMethod : SyntaxElement
+    public class OnRecordChangingMethod : SyntaxElement
     {
-        /// <summary>
-        /// The name of the row.
-        /// </summary>
-        private string rowName;
-
-        /// <summary>
-        /// The type of the row.
-        /// </summary>
-        private string rowType;
-
         /// <summary>
         /// The table schema.
         /// </summary>
         private TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OnRowChangingMethod"/> class.
+        /// Initializes a new instance of the <see cref="OnRecordChangingMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public OnRowChangingMethod(TableElement tableElement)
+        public OnRecordChangingMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = "OnRowChanging";
-            this.rowName = this.tableElement.Name.ToCamelCase();
-            this.rowType = this.tableElement.Name;
+            this.Name = "OnRecordChanging";
 
             //        /// <summary>
-            //        /// Handles a change to the Configuration row.
+            //        /// Handles a proposed change to the Buyer row.
             //        /// </summary>
-            //        /// <param name="configuration">The Configuration row.</param>
-            //        internal void OnRowChanging(DataAction dataAction, ConfigurationRow configurationRow)
+            //        /// <param name="dataAction">The action taken.</param>
+            //        /// <param name="previous">The previous state of the record.</param>
+            //        /// <param name="current">The current state of the record.</param>
+            //        internal void OnRecordChanging(DataAction dataAction, Buyer previous, Buyer current)
             //        {
             //            <Body>
             //        }
@@ -70,7 +60,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            this.RowChanging?.Invoke(this, new ConfigurationRowChangeEventArgs(dataAction, configurationRow));
+                //            this.RowChanging?.Invoke(this, new RecordChangeEventArgs<Buyer> { DataAction = dataAction, Previous = previous, Current = current });
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.ConditionalAccessExpression(
@@ -91,19 +81,32 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.ObjectCreationExpression(
-                                                    SyntaxFactory.IdentifierName(
-                                                        this.tableElement.Name + "RowChangeEventArgs"))
-                                                .WithArgumentList(
-                                                    SyntaxFactory.ArgumentList(
-                                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.GenericName(
+                                                        SyntaxFactory.Identifier("RecordChangeEventArgs"))
+                                                    .WithTypeArgumentList(
+                                                        SyntaxFactory.TypeArgumentList(
+                                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                                SyntaxFactory.IdentifierName(this.tableElement.Name)))))
+                                                .WithInitializer(
+                                                    SyntaxFactory.InitializerExpression(
+                                                        SyntaxKind.ObjectInitializerExpression,
+                                                        SyntaxFactory.SeparatedList<ExpressionSyntax>(
                                                             new SyntaxNodeOrToken[]
                                                             {
-                                                                SyntaxFactory.Argument(
+                                                                SyntaxFactory.AssignmentExpression(
+                                                                    SyntaxKind.SimpleAssignmentExpression,
+                                                                    SyntaxFactory.IdentifierName("DataAction"),
                                                                     SyntaxFactory.IdentifierName("dataAction")),
                                                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.IdentifierName(
-                                                                        this.tableElement.Name.ToCamelCase()))
+                                                                SyntaxFactory.AssignmentExpression(
+                                                                    SyntaxKind.SimpleAssignmentExpression,
+                                                                    SyntaxFactory.IdentifierName("Previous"),
+                                                                    SyntaxFactory.IdentifierName("previous")),
+                                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                                SyntaxFactory.AssignmentExpression(
+                                                                    SyntaxKind.SimpleAssignmentExpression,
+                                                                    SyntaxFactory.IdentifierName("Current"),
+                                                                    SyntaxFactory.IdentifierName("current"))
                                                             }))))
                                         }))))));
 
@@ -123,7 +126,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Handles a proposed change to the Configuration row.
+                //        /// Handles a proposed change to the Buyer row.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -147,10 +150,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                string.Format(
-                                                    CultureInfo.InvariantCulture,
-                                                    " Handles a proposed change to the {0} row.",
-                                                    this.tableElement.Name),
+                                                $" Handles a proposed change to the <see cref=\"{this.tableElement.Name}\"> record.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -193,7 +193,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                                                     SyntaxFactory.TriviaList())
                                             }))))));
 
-                //        /// <param name="configuration">The row on which the action was taken.</param>
+                //        /// <param name="previous">The previous state of the record.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -206,10 +206,30 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    string.Format(
-                                                        CultureInfo.InvariantCulture,
-                                                        " <param name=\"{0}\">The row on which the action was taken.</param>",
-                                                        this.rowName),
+                                                    " <param name=\"previous\">The previous state of the record.</param>",
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                                SyntaxFactory.XmlTextNewLine(
+                                                    SyntaxFactory.TriviaList(),
+                                                    Environment.NewLine,
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList())
+                                            }))))));
+
+                //        /// <param name="current">The current state of the record.</param>
+                comments.Add(
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                    SyntaxFactory.XmlText()
+                                    .WithTextTokens(
+                                        SyntaxFactory.TokenList(
+                                            new[]
+                                            {
+                                                SyntaxFactory.XmlTextLiteral(
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                    " <param name=\"current\">The current state of the record.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -235,7 +255,8 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.InternalKeyword)
+                        SyntaxFactory.Token(SyntaxKind.ProtectedKeyword),
+                        SyntaxFactory.Token(SyntaxKind.VirtualKeyword)
                    });
             }
         }
@@ -248,19 +269,34 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
             get
             {
                 // Create a list of parameters.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
+                List<SyntaxNodeOrToken> parameters = new List<SyntaxNodeOrToken>();
 
-                // DataAction dataAction,
+                // DataAction dataAction
                 parameters.Add(
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("dataAction"))
-                        .WithType(SyntaxFactory.IdentifierName("DataAction")));
+                    .WithType(
+                        SyntaxFactory.IdentifierName("DataAction")));
 
-                // ConfigurationRow configurationRow
+                // ,
+                parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+
+                // Buyer previousBuyer
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(this.rowName))
-                        .WithType(SyntaxFactory.IdentifierName(this.rowType)));
+                         SyntaxFactory.Identifier("previous"))
+                     .WithType(
+                        SyntaxFactory.IdentifierName(this.tableElement.Name)));
+
+                // ,
+                parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+
+                // Buyer currentBuyer
+                parameters.Add(
+                    SyntaxFactory.Parameter(
+                         SyntaxFactory.Identifier("current"))
+                    .WithType(
+                        SyntaxFactory.IdentifierName(this.tableElement.Name)));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

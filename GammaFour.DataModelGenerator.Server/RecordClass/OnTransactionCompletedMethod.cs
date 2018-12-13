@@ -32,7 +32,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
             this.Name = "OnTransactionCompleted";
 
             //        /// <summary>
-            //        /// Handles the conclusion of a transaction.
+            //        /// Handles the completion of a transaction.
             //        /// </summary>
             //        /// <param name="sender">The object that originated the event.</param>
             //        /// <param name="transactionEventArgs">The event data.</param>
@@ -133,7 +133,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Handles the conclusion of a transaction.
+                //        /// Handles the completion of a transaction.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -157,7 +157,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Handles the conclusion of a transaction.",
+                                                " Handles the completion of a transaction.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

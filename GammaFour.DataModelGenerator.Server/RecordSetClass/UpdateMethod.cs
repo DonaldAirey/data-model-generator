@@ -33,9 +33,9 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             this.Name = "Update";
 
             //        /// <summary>
-            //        /// Removes a <see cref="Buyer"/> to the set.
+            //        /// Updates a <see cref="Buyer"/> in the set.
             //        /// </summary>
-            //        /// <param name="buyer">The buyer to be added.</param>
+            //        /// <param name="buyer">The buyer to be updated.</param>
             //        public void Remove(Buyer buyer)
             //        {
             //            <Body>
@@ -71,109 +71,103 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 //                }
                 statements.Add(AcquireWriteLockExpression.Statement);
 
-                //            object key = this.primaryKeyFunction(buyer);
+                //            Buyer previousBuyer = buyer.GetVersion(RecordVersion.Previous);
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
-                    SyntaxFactory.VariableDeclaration(
-                        SyntaxFactory.PredefinedType(
-                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
-                    .WithVariables(
-                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                            SyntaxFactory.VariableDeclarator(
-                                SyntaxFactory.Identifier("key"))
-                            .WithInitializer(
-                                SyntaxFactory.EqualsValueClause(
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("primaryKeyFunction")))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))))))));
-
-                //            buyer.Buyers = null;
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
-                                    SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.tableElement.Name))),
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.NullLiteralExpression))));
-
-                //            this.collection.Remove(key, buyer);
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("collection")),
-                            SyntaxFactory.IdentifierName("Remove")))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList(
-                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                new SyntaxNodeOrToken[]
-                                {
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("key")),
-                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()))
-                                })))));
-
-                //            this.undoStack.Push(() => { buyer.Buyers = this; this.collection.Add(key); });
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("undoStack")),
-                                SyntaxFactory.IdentifierName("Push")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.ParenthesizedLambdaExpression(
-                                            SyntaxFactory.Block(
-                                                SyntaxFactory.ExpressionStatement(
-                                                    SyntaxFactory.AssignmentExpression(
-                                                        SyntaxKind.SimpleAssignmentExpression,
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(this.tableElement.Name))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier($"previous{this.tableElement.Name}"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                                SyntaxFactory.IdentifierName("GetVersion")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
-                                                            SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.tableElement.Name))),
-                                                        SyntaxFactory.ThisExpression())),
-                                                SyntaxFactory.ExpressionStatement(
-                                                    SyntaxFactory.InvocationExpression(
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.MemberAccessExpression(
-                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.ThisExpression(),
-                                                                SyntaxFactory.IdentifierName("collection")),
-                                                            SyntaxFactory.IdentifierName("Add")))
-                                                    .WithArgumentList(
-                                                        SyntaxFactory.ArgumentList(
-                                                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                                new SyntaxNodeOrToken[]
-                                                                {
-                                                                    SyntaxFactory.Argument(
-                                                                        SyntaxFactory.IdentifierName("key")),
-                                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                                    SyntaxFactory.Argument(
-                                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()))
-                                                                }))))))))))));
+                                                            SyntaxFactory.IdentifierName("RecordVersion"),
+                                                            SyntaxFactory.IdentifierName("Previous"))))))))))));
+
+                //            object oldKey = this.primaryKeyFunction(previousBuyer);
+                statements.Add(
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.PredefinedType(
+                                SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("oldKey"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName("primaryKeyFunction")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName($"previous{this.tableElement.Name}")))))))))));
+
+                //            object newKey = this.primaryKeyFunction(buyer);
+                statements.Add(
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.PredefinedType(
+                                SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("newKey"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName("primaryKeyFunction")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))))))));
+
+                //            if (oldKey != null && oldKey.Equals(newKey))
+                //            {
+                //                <UpdatePrimaryKey>
+                //            }
+                statements.Add(
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.LogicalAndExpression,
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.NotEqualsExpression,
+                                SyntaxFactory.IdentifierName("oldKey"),
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.NullLiteralExpression)),
+                            SyntaxFactory.PrefixUnaryExpression(
+                                SyntaxKind.LogicalNotExpression,
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName("oldKey"),
+                                        SyntaxFactory.IdentifierName("Equals")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.IdentifierName("newKey"))))))),
+                        SyntaxFactory.Block(this.UpdatePrimaryKey)));
 
                 // Remove the record to each of the unique key indices on this set.
                 foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
@@ -188,7 +182,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
-                                SyntaxFactory.IdentifierName("Remove")))
+                                SyntaxFactory.IdentifierName("Update")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
@@ -209,13 +203,48 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
-                                SyntaxFactory.IdentifierName("Remove")))
+                                SyntaxFactory.IdentifierName("Update")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))));
                 }
+
+                //            this.OnRecordChanging(DataAction.Delete, previousBuyer, buyer);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("OnRecordChanging")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("DataAction"),
+                                                SyntaxFactory.IdentifierName("Delete"))),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName($"previous{this.tableElement.Name}")),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()))
+                                    })))));
+
+                //            buyer.Mark();
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                SyntaxFactory.IdentifierName("Mark")))));
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -233,8 +262,9 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Removes a <see cref="Buyer"/> to the set.
+                //        /// Updates a <see cref="Buyer"/> in the set.
                 //        /// </summary>
+                //        /// <param name="buyer">The buyer to be updated.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -257,7 +287,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                $" Removes a <see cref=\"{this.tableElement.Name}\"/> to the set.",
+                                                $" Updates a <see cref=\"{this.tableElement.Name}\"/> in the set.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -277,7 +307,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.TriviaList())
                                         }))))));
 
-                //        /// <param name="buyer">The buyer to be added.</param>
+                //        /// <param name="buyer">The buyer to be updated.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -290,7 +320,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    $" <param name=\"{this.tableElement.Name.ToCamelCase()}\">The {this.tableElement.Name.ToCamelCase()} to be added.</param>",
+                                                    $" <param name=\"{this.tableElement.Name.ToCamelCase()}\">The {this.tableElement.Name.ToCamelCase()} to be updated.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -340,6 +370,138 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
+            }
+        }
+
+        /// <summary>
+        /// Gets a block of code that exits from a read lock.
+        /// </summary>
+        private IEnumerable<StatementSyntax> PushUndoAction
+        {
+            get
+            {
+                //                this.Lock.ExitReadLock();
+                return SyntaxFactory.SingletonList<StatementSyntax>(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("undoStack")),
+                                SyntaxFactory.IdentifierName("Push")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.ParenthesizedLambdaExpression(
+                                            SyntaxFactory.InvocationExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName("collection")),
+                                                    SyntaxFactory.IdentifierName("Add")))
+                                            .WithArgumentList(
+                                                SyntaxFactory.ArgumentList(
+                                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                        new SyntaxNodeOrToken[]
+                                                        {
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.IdentifierName("oldKey")),
+                                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()))
+                                                        }))))))))));
+            }
+        }
+
+        /// <summary>
+        /// Gets the statements that initializes the transaction.
+        /// </summary>
+        private List<StatementSyntax> UpdatePrimaryKey
+        {
+            get
+            {
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //                if (this.collection.Remove(oldKey))
+                //                {
+                //                    <PushUndoAction>
+                //                }
+                statements.Add(
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("collection")),
+                                SyntaxFactory.IdentifierName("Remove")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("oldKey"))))),
+                        SyntaxFactory.Block(this.PushUndoAction)));
+
+                //                this.collection.Add(newKey, buyer);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("collection")),
+                                SyntaxFactory.IdentifierName("Add")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName("newKey")),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()))
+                                    })))));
+
+                //                this.undoStack.Push(() => this.collection.Remove(newKey));
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("undoStack")),
+                                SyntaxFactory.IdentifierName("Push")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.ParenthesizedLambdaExpression(
+                                            SyntaxFactory.InvocationExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName("collection")),
+                                                    SyntaxFactory.IdentifierName("Remove")))
+                                            .WithArgumentList(
+                                                SyntaxFactory.ArgumentList(
+                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.IdentifierName("newKey"))))))))))));
+
+                return statements;
             }
         }
     }

@@ -1,4 +1,4 @@
-// <copyright file="ParentRelationProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="DisplayLocksMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -10,53 +10,72 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Pluralize.NET;
 
     /// <summary>
-    /// Creates a field to hold the parent table.
+    /// Creates a method to prepare a resource for a transaction completion.
     /// </summary>
-    public class ParentRelationProperty : SyntaxElement
+    public class DisplayLocksMethod : SyntaxElement
     {
         /// <summary>
-        /// The table schema.
+        /// The XML schema document.
         /// </summary>
-        private ForeignKeyElement foreignKeyElement;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ParentRelationProperty"/> class.
+        /// Initializes a new instance of the <see cref="DisplayLocksMethod"/> class.
         /// </summary>
-        /// <param name="foreignKeyElement">The table schema.</param>
-        public ParentRelationProperty(ForeignKeyElement foreignKeyElement)
+        /// <param name="xmlSchemaDocument">The XML schema document.</param>
+        public DisplayLocksMethod(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.foreignKeyElement = foreignKeyElement;
-            this.Name = foreignKeyElement.Name;
+            this.xmlSchemaDocument = xmlSchemaDocument;
+            this.Name = "DisplayLocks";
 
             //        /// <summary>
-            //        /// Gets or sets the foreign index for the child Customer table.
+            //        /// Displays the locks on the data model.
             //        /// </summary>
-            //        public CountryCustomerCountryIdIndex countryCustomerCountryIdIndex { get; private set; }
-            this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.IdentifierName(foreignKeyElement.Name),
+            //        public void DisplayLocks()
+            //        {
+            //            <Body>
+            //        }
+            this.Syntax = SyntaxFactory.MethodDeclaration(
+                SyntaxFactory.PredefinedType(
+                    SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                 SyntaxFactory.Identifier(this.Name))
-                .WithAccessorList(this.AccessorList)
-                .WithModifiers(this.Modifiers)
-                .WithLeadingTrivia(this.DocumentationComment);
+            .WithModifiers(this.Modifiers)
+            .WithBody(this.Body)
+            .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
-        /// Gets the list of accessors (get, set).
+        /// Gets the body.
         /// </summary>
-        private AccessorListSyntax AccessorList
+        private BlockSyntax Body
         {
             get
             {
-                return SyntaxFactory.AccessorList(
-                    SyntaxFactory.List(
-                        new AccessorDeclarationSyntax[]
-                        {
-                            this.GetAccessor,
-                            this.SetAccessor
-                        }));
+                // This is used to collect the statements.
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                // Display the locks on each of the tables in the domain.
+                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
+                {
+                    //            this.Buyers.DisplayLocks();
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(tableElement.Name))),
+                                    SyntaxFactory.IdentifierName("DisplayLocks")))));
+                }
+
+                // This is the syntax for the body of the method.
+                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
             }
         }
 
@@ -71,7 +90,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Gets or sets the unique index for the parent Country table.
+                //        /// Displays the locks on the data domain.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -95,7 +114,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Gets or sets the unique index for the parent " + this.foreignKeyElement.UniqueKey.Table.Name + " table.",
+                                                $" Displays the locks on the data domain.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -121,50 +140,18 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         }
 
         /// <summary>
-        /// Gets the 'Get' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax GetAccessor
-        {
-            get
-            {
-                // get;
-                return SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                    .WithSemicolonToken(
-                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
-            }
-        }
-
-        /// <summary>
         /// Gets the modifiers.
         /// </summary>
         private SyntaxTokenList Modifiers
         {
             get
             {
-                // internal
+                // private
                 return SyntaxFactory.TokenList(
                     new[]
                     {
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword)
-                    });
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Set' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax SetAccessor
-        {
-            get
-            {
-                //            private set;
-                return SyntaxFactory.AccessorDeclaration(
-                        SyntaxKind.SetAccessorDeclaration)
-                    .WithModifiers(
-                        SyntaxFactory.TokenList(
-                            SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
-                    .WithSemicolonToken(
-                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+                   });
             }
         }
     }

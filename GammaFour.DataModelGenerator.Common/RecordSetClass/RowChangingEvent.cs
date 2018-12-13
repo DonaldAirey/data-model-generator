@@ -6,7 +6,6 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -17,50 +16,36 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
     public class RowChangingEvent : SyntaxElement
     {
         /// <summary>
-        /// The event type.
-        /// </summary>
-        private SimpleNameSyntax eventType;
-
-        /// <summary>
-        /// The unique constraint schema.
-        /// </summary>
-        private TableElement tableElement;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="RowChangingEvent"/> class.
         /// </summary>
         /// <param name="tableElement">The column schema.</param>
         public RowChangingEvent(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement;
             this.Name = "RowChanging";
-
-            // The type of event.
-            this.eventType = SyntaxFactory.GenericName(
-                SyntaxFactory.Identifier("EventHandler"))
-            .WithTypeArgumentList(
-                SyntaxFactory.TypeArgumentList(
-                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                        SyntaxFactory.IdentifierName(
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "{0}RowChangeEventArgs",
-                                this.tableElement.Name))))
-                .WithLessThanToken(SyntaxFactory.Token(SyntaxKind.LessThanToken))
-                .WithGreaterThanToken(SyntaxFactory.Token(SyntaxKind.GreaterThanToken)));
 
             //        /// <summary>
             //        /// Occurs when a row has changed.
             //        /// </summary>
-            //        public event EventHandler<ConfigurationRowChangeEventArgs> RowChanging;
+            //        public event EventHandler<RecordChangeEventArgs<Buyer>> RowChanging;
             this.Syntax = SyntaxFactory.EventFieldDeclaration(
-                SyntaxFactory.VariableDeclaration(this.eventType)
-                .WithVariables(
-                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                        SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(this.Name)))))
+                    SyntaxFactory.VariableDeclaration(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("EventHandler"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                    SyntaxFactory.GenericName(
+                                        SyntaxFactory.Identifier("RecordChangeEventArgs"))
+                                    .WithTypeArgumentList(
+                                        SyntaxFactory.TypeArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                SyntaxFactory.IdentifierName(tableElement.Name))))))))
+                    .WithVariables(
+                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                            SyntaxFactory.VariableDeclarator(
+                                SyntaxFactory.Identifier("RowChanging")))))
             .WithModifiers(this.Modifiers)
-            .WithEventKeyword(SyntaxFactory.Token(SyntaxKind.EventKeyword))
             .WithLeadingTrivia(this.DocumentationComment);
         }
 

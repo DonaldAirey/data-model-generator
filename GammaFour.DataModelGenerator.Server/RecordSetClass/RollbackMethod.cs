@@ -49,37 +49,36 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            this.currentData = this.originalData;
+                //            while (this.undoStack.Count != 0)
+                //            {
+                //                this.undoStack.Pop()();
+                //            }
                 statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
+                    SyntaxFactory.WhileStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("currentData")),
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("originalData")))));
-
-                //            this.originalData = this.previousData = null;
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("originalData")),
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("previousData")),
-                                SyntaxFactory.LiteralExpression(
-                                    SyntaxKind.NullLiteralExpression)))));
+                                    SyntaxFactory.IdentifierName("undoStack")),
+                                SyntaxFactory.IdentifierName("Count")),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NumericLiteralExpression,
+                                SyntaxFactory.Literal(0))),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ExpressionStatement(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName("undoStack")),
+                                                SyntaxFactory.IdentifierName("Pop")))))))));
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -121,42 +120,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the block of code that says the transaction is done.
-        /// </summary>
-        private IEnumerable<StatementSyntax> EnlistmentDoneBlock
-        {
-            get
-            {
-                //                preparingEnlistment.Done();
-                return SyntaxFactory.SingletonList<StatementSyntax>(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("preparingEnlistment"),
-                                SyntaxFactory.IdentifierName("Done")))));
-            }
-        }
-
-        /// <summary>
-        /// Gets the block of code that says the transaction is prepared
-        /// </summary>
-        private IEnumerable<StatementSyntax> EnlistmentRollbackdBlock
-        {
-            get
-            {
-                //                preparingEnlistment.Rollbackd();
-                return SyntaxFactory.SingletonList<StatementSyntax>(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("preparingEnlistment"),
-                                SyntaxFactory.IdentifierName("Rollbackd")))));
             }
         }
 

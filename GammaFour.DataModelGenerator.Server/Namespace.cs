@@ -97,7 +97,6 @@ namespace GammaFour.DataModelGenerator.Server
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = this.CreatePublicInterfaces(members);
                 members = this.CreatePublicClasses(members);
                 return members;
             }
@@ -196,24 +195,7 @@ namespace GammaFour.DataModelGenerator.Server
             }
 
             // The actual data model class.
-            // members = members.Add(new DataModelClass.Class(this.xmlSchemaDocument).Syntax);
-
-            // Holds the individual transactions used to reconcile the client data models.
-            // members = members.Add(new TransactionLogItemClass.Class(this.xmlSchemaDocument).Syntax);
-
-            // This is the collection of alphabetized fields.
-            return members;
-        }
-
-        /// <summary>
-        /// Creates the classes.
-        /// </summary>
-        /// <param name="members">The collection of members.</param>
-        /// <returns>The collection of members augmented with the classes.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicInterfaces(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // The interface for implementing a persistent store.
-            members = members.Add(new PersistentStoreageInterface.Interface(this.xmlSchemaDocument).Syntax);
+            members = members.Add(new DataModelClass.Class(this.xmlSchemaDocument).Syntax);
 
             // This is the collection of alphabetized fields.
             return members;

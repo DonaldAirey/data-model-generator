@@ -125,42 +125,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         }
 
         /// <summary>
-        /// Gets the block of code that says the transaction is done.
-        /// </summary>
-        private IEnumerable<StatementSyntax> EnlistmentDoneBlock
-        {
-            get
-            {
-                //                preparingEnlistment.Done();
-                return SyntaxFactory.SingletonList<StatementSyntax>(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("preparingEnlistment"),
-                                SyntaxFactory.IdentifierName("Done")))));
-            }
-        }
-
-        /// <summary>
-        /// Gets the block of code that says the transaction is prepared
-        /// </summary>
-        private IEnumerable<StatementSyntax> EnlistmentRollbackdBlock
-        {
-            get
-            {
-                //                preparingEnlistment.Rollbackd();
-                return SyntaxFactory.SingletonList<StatementSyntax>(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("preparingEnlistment"),
-                                SyntaxFactory.IdentifierName("Rollbackd")))));
-            }
-        }
-
-        /// <summary>
         /// Gets the modifiers.
         /// </summary>
         private SyntaxTokenList Modifiers

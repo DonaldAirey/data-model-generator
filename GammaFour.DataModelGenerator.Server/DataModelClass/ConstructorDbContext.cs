@@ -1,4 +1,4 @@
-// <copyright file="AddTransactionMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="ConstructorDbContext.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -10,30 +10,36 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Pluralize.NET;
 
     /// <summary>
-    /// Creates a method to start editing.
+    /// Creates a constructor.
     /// </summary>
-    public class AddTransactionMethod : SyntaxElement
+    public class ConstructorDbContext : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AddTransactionMethod"/> class.
+        /// The table schema.
         /// </summary>
-        public AddTransactionMethod()
+        private XmlSchemaDocument xmlSchemaDocument;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConstructorDbContext"/> class.
+        /// </summary>
+        /// <param name="xmlSchemaDocument">The table schema.</param>
+        public ConstructorDbContext(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.Name = "AddTransaction";
+            this.xmlSchemaDocument = xmlSchemaDocument;
+            this.Name = this.xmlSchemaDocument.Name;
 
             //        /// <summary>
-            //        /// Adds a transaction item to the log.
+            //        /// Initializes a new instance of the <see cref="DataModel"/> class.
             //        /// </summary>
-            //        /// <param name="data">An array of updated fields.</param>
-            //        internal void AddTransaction(object[] data)
+            //        public DataModel(DbContext dbContext)
             //        {
             //            <Body>
             //        }
-            this.Syntax = SyntaxFactory.MethodDeclaration(
-                    SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
+            this.Syntax = SyntaxFactory.ConstructorDeclaration(
                     SyntaxFactory.Identifier(this.Name))
                 .WithModifiers(this.Modifiers)
                 .WithParameterList(this.Parameters)
@@ -51,47 +57,36 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            this.transactionLog.AddLast(new TransactionLogItem(data, this.sequenceField++, DateTime.Now));
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
+                // Initialize each of the record sets.
+                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
+                {
+                    //            this.Buyers = new BuyerSet(this, "Buyers");
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("transactionLog")),
-                                SyntaxFactory.IdentifierName("AddLast")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName("TransactionLogItem"))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                    new SyntaxNodeOrToken[]
-                                                    {
-                                                        SyntaxFactory.Argument(
-                                                            SyntaxFactory.IdentifierName("data")),
-                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                        SyntaxFactory.Argument(
-                                                            SyntaxFactory.PostfixUnaryExpression(
-                                                                SyntaxKind.PostIncrementExpression,
-                                                                SyntaxFactory.MemberAccessExpression(
-                                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                                    SyntaxFactory.ThisExpression(),
-                                                                    SyntaxFactory.IdentifierName("sequenceField")))),
-                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                        SyntaxFactory.Argument(
-                                                            SyntaxFactory.MemberAccessExpression(
-                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.IdentifierName("DateTime"),
-                                                                SyntaxFactory.IdentifierName("Now")))
-                                                    })))))))));
+                                    SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(tableElement.Name))),
+                                SyntaxFactory.ObjectCreationExpression(
+                                    SyntaxFactory.IdentifierName($"{tableElement.Name}Set"))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                            new SyntaxNodeOrToken[]
+                                            {
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.ThisExpression()),
+                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        SyntaxKind.StringLiteralExpression,
+                                                        SyntaxFactory.Literal(new Pluralizer().Pluralize(tableElement.Name))))
+                                            }))))));
+                }
 
-                // This is the syntax for the body of the method.
+                // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
             }
         }
@@ -107,7 +102,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Adds a transaction item to the log.
+                //        /// Initializes a new instance of the <see cref="DataModel"/> class.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -131,7 +126,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Adds a transaction item to the log.",
+                                                $" Initializes a new instance of the <see cref=\"{this.xmlSchemaDocument.Name}\"/> class.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -151,7 +146,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 SyntaxFactory.TriviaList())
                                         }))))));
 
-                //        /// <param name="data">An array of updated fields.</param>
+                //                /// <param name="dbContext">The Entity Framework context.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -164,7 +159,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    " <param name=\"data\">An array of updated fields.</param>",
+                                                    " <param name=\"dbContext\">The Entity Framework context.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -186,12 +181,12 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             get
             {
-                // private
+                // public
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.InternalKeyword)
-                   });
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                    });
             }
         }
 
@@ -202,20 +197,16 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             get
             {
-                // The list of parameters to the destroy method.
+                // Create a list of parameters from the columns in the unique constraint.
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
 
-                // object[] data
-                parameters.Add(
-                    SyntaxFactory.Parameter(SyntaxFactory.Identifier("data"))
-                    .WithType(
-                        SyntaxFactory.ArrayType(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
-                        .WithRankSpecifiers(
-                            SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
-                                SyntaxFactory.ArrayRankSpecifier(
-                                    SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(SyntaxFactory.OmittedArraySizeExpression()))))));
+                // ConfigurationTable table, ConfigurationData data
+                // parameters.Add(SyntaxFactory.Parameter(
+                //        SyntaxFactory.Identifier("dbContext"))
+                //    .WithType(
+                //        SyntaxFactory.IdentifierName("DbContext")));
 
-                // This is the complete set of comma separated parameters for the method.
+                // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
             }
         }
