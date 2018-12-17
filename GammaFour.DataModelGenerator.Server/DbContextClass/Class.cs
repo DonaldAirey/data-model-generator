@@ -2,7 +2,7 @@
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.DataModelClass
+namespace GammaFour.DataModelGenerator.Server.DbContextClass
 {
     using System;
     using System.Collections.Generic;
@@ -30,12 +30,12 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             // Initialize the object.
             this.xmlSchemaDocument = xmlSchemaDocument;
-            this.Name = xmlSchemaDocument.Name;
+            this.Name = $"{xmlSchemaDocument.Name}Context";
 
             //    /// <summary>
-            //    /// A thread-safe DataSet able to handle transactions.
+            //    /// The DbContext for the Domain domain.
             //    /// </summary>
-            //    public partial class DataModel : IDisposable
+            //    public class DomainContext : DbContext
             //    {
             //        <Members>
             //    }
@@ -53,13 +53,13 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             get
             {
-                // This is the list of base classes.
+                // DbContext
                 return SyntaxFactory.BaseList(
                         SyntaxFactory.SeparatedList<BaseTypeSyntax>(
                             new SyntaxNodeOrToken[]
                             {
                                 SyntaxFactory.SimpleBaseType(
-                                    SyntaxFactory.IdentifierName("IDisposable"))
+                                    SyntaxFactory.IdentifierName("DbContext"))
                             }));
             }
         }
@@ -72,7 +72,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             get
             {
                 //    /// <summary>
-                //    /// A thread-safe, transaction-oriented data domain.
+                //    /// The DbContext for the Domain domain.
                 //    /// </summary>
                 return SyntaxFactory.TriviaList(
                     SyntaxFactory.Trivia(
@@ -96,7 +96,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " A thread-safe, transaction-oriented data domain.",
+                                                $" The DbContext used to access the persistent store for the {this.xmlSchemaDocument.Name} domain.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -127,13 +127,9 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = this.CreatePrivateInstanceFields(members);
                 members = this.CreateConstructors(members);
                 members = this.CreatePublicInstanceProperties(members);
-                members = this.CreatePublicInstanceMethods(members);
-                members = this.CreateInternalInstanceMethods(members);
                 members = this.CreateProtectedInstanceMethods(members);
-                members = this.CreatePrivateInstanceMethods(members);
                 return members;
             }
         }
@@ -161,7 +157,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // These are the constructors.
-            members = members.Add(new ConstructorDbContext(this.xmlSchemaDocument).Syntax);
+            members = members.Add(new ConstructorDbContextOptions(this.xmlSchemaDocument).Syntax);
 
             // Return the new collection of members.
             return members;
@@ -180,95 +176,11 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             // Create a field for each of the tables.
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                properties.Add(new RecordSetProperty(tableElement));
+                properties.Add(new DbSetProperty(tableElement));
             }
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in properties.OrderBy(m => m.Name))
-            {
-                members = members.Add(syntaxElement.Syntax);
-            }
-
-            // Return the new collection of members.
-            return members;
-        }
-
-        /// <summary>
-        /// Create the private instance fields.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The structure members with the fields added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // This will create the private instance fields.
-            List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new DbContextField(this.xmlSchemaDocument));
-            fields.Add(new SyncRootField());
-
-            // Alphabetize and add the fields as members of the class.
-            foreach (SyntaxElement syntaxElement in fields.OrderBy(f => f.Name))
-            {
-                members = members.Add(syntaxElement.Syntax);
-            }
-
-            // Return the new collection of members.
-            return members;
-        }
-
-        /// <summary>
-        /// Create the public instance methods.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The structure members with the methods added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // This will create the public instance properties.
-            List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new DisposeMethod());
-            methods.Add(new DisplayLocksMethod(this.xmlSchemaDocument));
-
-            // Alphabetize and add the methods as members of the class.
-            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
-            {
-                members = members.Add(syntaxElement.Syntax);
-            }
-
-            // Return the new collection of members.
-            return members;
-        }
-
-        /// <summary>
-        /// Create the public instance methods.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The structure members with the methods added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreateInternalInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // This will create the public instance properties.
-            List<SyntaxElement> methods = new List<SyntaxElement>();
-
-            // Alphabetize and add the methods as members of the class.
-            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
-            {
-                members = members.Add(syntaxElement.Syntax);
-            }
-
-            // Return the new collection of members.
-            return members;
-        }
-
-        /// <summary>
-        /// Create the public instance methods.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The structure members with the methods added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // This will create the public instance properties.
-            List<SyntaxElement> methods = new List<SyntaxElement>();
-
-            // Alphabetize and add the methods as members of the class.
-            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -286,9 +198,9 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new DisposeBooleanMethod());
+            methods.Add(new OnModelCreatingMethod(this.xmlSchemaDocument));
 
-            // Alphabetize and add the methods as members of the class.
+            // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);

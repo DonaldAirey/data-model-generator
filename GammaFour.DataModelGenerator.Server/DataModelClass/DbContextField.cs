@@ -1,4 +1,4 @@
-// <copyright file="RowVersionField.cs" company="Gamma Four, Inc.">
+// <copyright file="DbContextField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,33 +12,32 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a collection of readers (transactions) waiting for a read lock.
+    /// Creates an field used to synchronize access to the housekeeping fields.
     /// </summary>
-    public class RowVersionField : SyntaxElement
+    public class DbContextField : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RowVersionField"/> class.
+        /// Initializes a new instance of the <see cref="DbContextField"/> class.
         /// </summary>
-        public RowVersionField()
+        /// <param name="xmlSchemaDocument">The Xml Schema Document.</param>
+        public DbContextField(XmlSchemaDocument xmlSchemaDocument)
         {
-            // Initialize the object.
-            this.Name = "rowVersionField";
+            // This is the name of the field.
+            this.Name = $"{xmlSchemaDocument.Name}Context";
 
             //        /// <summary>
-            //        /// The most recent row version for the data set.
+            //        /// The DbContext used for the persistent store.
             //        /// </summary>
-            //        internal long rowVersion = -1;
+            //        private DomainContext domainContext;
             this.Syntax = SyntaxFactory.FieldDeclaration(
-                    SyntaxFactory.VariableDeclaration(
-                        SyntaxFactory.PredefinedType(
-                            SyntaxFactory.Token(SyntaxKind.LongKeyword)))
-                    .WithVariables(
-                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                            SyntaxFactory.VariableDeclarator(
-                                SyntaxFactory.Identifier(this.Name))
-                            .WithInitializer(this.Initializer))))
-                .WithModifiers(this.Modifiers)
-                .WithLeadingTrivia(this.DocumentationComment);
+                SyntaxFactory.VariableDeclaration(
+                    SyntaxFactory.IdentifierName(this.Name))
+                .WithVariables(
+                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                        SyntaxFactory.VariableDeclarator(
+                            SyntaxFactory.Identifier(this.Name.ToCamelCase())))))
+            .WithModifiers(this.Modifiers)
+            .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
@@ -52,7 +51,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// The most recent row version for the data set.
+                //        /// The DbContext used for the persistent store.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -76,7 +75,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " The most recent row version for the data set.",
+                                                " The DbContext used for the persistent store.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -98,23 +97,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the initializer.
-        /// </summary>
-        private EqualsValueClauseSyntax Initializer
-        {
-            get
-            {
-                // = -1
-                return SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.PrefixUnaryExpression(
-                        SyntaxKind.UnaryMinusExpression,
-                        SyntaxFactory.LiteralExpression(
-                            SyntaxKind.NumericLiteralExpression,
-                            SyntaxFactory.Literal(1))));
             }
         }
 

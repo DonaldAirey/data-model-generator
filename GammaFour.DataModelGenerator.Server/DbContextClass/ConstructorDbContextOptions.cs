@@ -1,8 +1,8 @@
-// <copyright file="ConstructorDbContext.cs" company="Gamma Four, Inc.">
+// <copyright file="ConstructorDbContextOptions.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.DataModelClass
+namespace GammaFour.DataModelGenerator.Server.DbContextClass
 {
     using System;
     using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
     /// <summary>
     /// Creates a constructor.
     /// </summary>
-    public class ConstructorDbContext : SyntaxElement
+    public class ConstructorDbContextOptions : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -23,27 +23,29 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConstructorDbContext"/> class.
+        /// Initializes a new instance of the <see cref="ConstructorDbContextOptions"/> class.
         /// </summary>
         /// <param name="xmlSchemaDocument">The table schema.</param>
-        public ConstructorDbContext(XmlSchemaDocument xmlSchemaDocument)
+        public ConstructorDbContextOptions(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
             this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = this.xmlSchemaDocument.Name;
 
             //        /// <summary>
-            //        /// Initializes a new instance of the <see cref="DataModel"/> class.
+            //        /// Initializes a new instance of the <see cref="DomainContext"/> class.
             //        /// </summary>
-            //        /// <param name="domainContext">The domain dabase context.</param>
-            //        public Domain(DomainContext domainContext)
+            //        /// <param name="contextOptions">The options for bulding the DbContext.</param>
+            //        public DomainContext(DbContextOptions<DomainContext> contextOptions)
+            //            : base(contextOptions)
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
-                    SyntaxFactory.Identifier(this.Name))
+                    SyntaxFactory.Identifier("DomainContext"))
                 .WithModifiers(this.Modifiers)
                 .WithParameterList(this.Parameters)
+                .WithInitializer(this.Initializer)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -57,67 +59,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             {
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            this.domainContext = domainContext;
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context")),
-                            SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context"))));
-
-                // Initialize each of the record sets.
-                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
-                {
-                    //            this.Buyers = new BuyerSet(this, "Buyers");
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(tableElement.Name))),
-                                SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.IdentifierName($"{tableElement.Name}Set"))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                            new SyntaxNodeOrToken[]
-                                            {
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.ThisExpression()),
-                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.LiteralExpression(
-                                                        SyntaxKind.StringLiteralExpression,
-                                                        SyntaxFactory.Literal(new Pluralizer().Pluralize(tableElement.Name))))
-                                            }))))));
-                }
-
-                //            using (TransactionScope transactionScope = new TransactionScope())
-                //            {
-                //                <LoadDomain>
-                //            }
-                statements.Add(
-                    SyntaxFactory.UsingStatement(
-                        SyntaxFactory.Block(this.LoadDomain))
-                    .WithDeclaration(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName("TransactionScope"))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("transactionScope"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName("TransactionScope"))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList())))))));
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -135,7 +76,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Initializes a new instance of the <see cref="DataModel"/> class.
+                //        /// Initializes a new instance of the <see cref="DomainContext"/> class.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -179,7 +120,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 SyntaxFactory.TriviaList())
                                         }))))));
 
-                //        /// <param name="domainContext">The domain dabase context.</param>
+                //        /// <param name="contextOptions">The options for bulding the DbContext.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -192,7 +133,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    $" <param name=\"{this.xmlSchemaDocument.Name.ToCamelCase()}Context\">The Entity Framework context.</param>",
+                                                    $" <param name=\"contextOptions\">The options for bulding the DbContext.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -204,6 +145,23 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
+            }
+        }
+
+        /// <summary>
+        /// Gets the initializer for the constructor.
+        /// </summary>
+        private ConstructorInitializerSyntax Initializer
+        {
+            get
+            {
+                //            : base(contextOptions)
+                return SyntaxFactory.ConstructorInitializer(
+                    SyntaxKind.BaseConstructorInitializer,
+                    SyntaxFactory.ArgumentList(
+                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                            SyntaxFactory.Argument(
+                                SyntaxFactory.IdentifierName("contextOptions")))));
             }
         }
 
@@ -500,9 +458,14 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 // DomainContext domainContext
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context"))
+                        SyntaxFactory.Identifier("contextOptions"))
                     .WithType(
-                        SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name}Context")));
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("DbContextOptions"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                    SyntaxFactory.IdentifierName("DomainContext"))))));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

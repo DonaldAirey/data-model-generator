@@ -152,11 +152,12 @@ namespace GammaFour.DataModelGenerator.Server
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Diagnostics")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Diagnostics.CodeAnalysis")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq.Expressions")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.Common")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")));
                 return usingStatements;
             }
         }
@@ -196,6 +197,9 @@ namespace GammaFour.DataModelGenerator.Server
 
             // The actual data model class.
             members = members.Add(new DataModelClass.Class(this.xmlSchemaDocument).Syntax);
+
+            // The DbContext class that provides access to the persistent store.
+            members = members.Add(new DbContextClass.Class(this.xmlSchemaDocument).Syntax);
 
             // This is the collection of alphabetized fields.
             return members;

@@ -30,7 +30,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = this.tableElement.Name;
+            this.Name = new Pluralizer().Pluralize(this.tableElement.Name);
 
             //        /// <summary>
             //        /// Gets the set of Buyer records.
@@ -38,7 +38,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             //        public BuyerSet Buyers { get; }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
                     SyntaxFactory.IdentifierName($"{tableElement.Name}Set"),
-                    SyntaxFactory.Identifier(new Pluralizer().Pluralize(this.Name)))
+                    SyntaxFactory.Identifier(this.Name))
                 .WithAccessorList(this.AccessorList)
                 .WithModifiers(this.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);

@@ -18,19 +18,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
     public class GetAllMethod : SyntaxElement
     {
         /// <summary>
-        /// The name of the set.
-        /// </summary>
-        private string setName;
-
-        /// <summary>
         /// The table schema.
         /// </summary>
         private TableElement tableElement;
-
-        /// <summary>
-        /// The table schema.
-        /// </summary>
-        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetAllMethod"/> class.
@@ -40,9 +30,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.xmlSchemaDocument = this.tableElement.XmlSchemaDocument;
-            this.setName = new Pluralizer().Pluralize(this.tableElement.Name);
-            this.Name = "Get" + this.setName;
+            this.Name = $"Get{new Pluralizer().Pluralize(this.tableElement.Name)}";
 
             //        /// <summary>
             //        /// Gets a list of <see cref="AccountGroup"/> records.
@@ -126,54 +114,29 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxFactory.ThisExpression(),
                                                         SyntaxFactory.IdentifierName("ModelState")))))))))));
 
-                //            try
+                //            using (TransactionScope transactionScope = new TransactionScope())
                 //            {
-                //                <TryBlock1>
-                //            }
-                //            finally
-                //            {
-                //                <FinallyBlock1>
+                //                <Transaction>
                 //            }
                 statements.Add(
-                    SyntaxFactory.TryStatement()
-                    .WithBlock(
-                        SyntaxFactory.Block(this.TryBlock1))
-                    .WithFinally(
-                        SyntaxFactory.FinallyClause(
-                            SyntaxFactory.Block(this.FinallyBlock1))));
+                    SyntaxFactory.UsingStatement(
+                        SyntaxFactory.Block(this.Transaction))
+                    .WithDeclaration(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName("TransactionScope"))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("transactionScope"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.IdentifierName("TransactionScope"))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList())))))));
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
-            }
-        }
-
-        /// <summary>
-        /// Gets a block of code.
-        /// </summary>
-        private List<StatementSyntax> FinallyBlock1
-        {
-            get
-            {
-                // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                this.dataModel.Buyer.ReleaseReaderLock();
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("dataModel")),
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name)),
-                                SyntaxFactory.IdentifierName("ReleaseReaderLock")))));
-
-                // This is the complete block.
-                return statements;
             }
         }
 
@@ -279,27 +242,12 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        private List<StatementSyntax> TryBlock1
+        private List<StatementSyntax> Transaction
         {
             get
             {
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                this.dataModel.Buyer.AcquireReaderLock();
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("dataModel")),
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name)),
-                                SyntaxFactory.IdentifierName("AcquireReaderLock")))));
 
                 //                var buyers = from buyer in this.dataModel.Buyer
                 //                             select new
@@ -335,7 +283,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier(this.setName.ToCamelCase()))
+                                    SyntaxFactory.Identifier(new Pluralizer().Pluralize(this.tableElement.Name).ToCamelCase()))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
                                         SyntaxFactory.QueryExpression(
@@ -346,8 +294,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.ThisExpression(),
-                                                        SyntaxFactory.IdentifierName("dataModel")),
-                                                    SyntaxFactory.IdentifierName(this.tableElement.Name))),
+                                                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToCamelCase())),
+                                                    SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.tableElement.Name)))),
                                             SyntaxFactory.QueryBody(
                                                 SyntaxFactory.SelectClause(
                                                     SyntaxFactory.AnonymousObjectCreationExpression(
@@ -366,7 +314,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(this.setName.ToCamelCase())))))));
+                                        SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.tableElement.Name).ToCamelCase())))))));
 
                 // This is the complete block.
                 return statements;

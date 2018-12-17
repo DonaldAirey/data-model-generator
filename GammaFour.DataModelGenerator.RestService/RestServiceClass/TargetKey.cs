@@ -87,21 +87,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                    this.dataModel.Configuration.ReleaseReaderLock();
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToCamelCase())),
-                                    SyntaxFactory.IdentifierName("ConfigurationKey")),
-                                SyntaxFactory.IdentifierName("ReleaseReaderLock")))));
-
                 // This is the complete block.
                 return SyntaxFactory.List(statements);
             }
@@ -117,15 +102,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                    configurationRow.ReleaseReaderLock();
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("configurationRow"),
-                                SyntaxFactory.IdentifierName("ReleaseReaderLock")))));
-
                 // This is the complete block.
                 return SyntaxFactory.List(statements);
             }
@@ -140,21 +116,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             {
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                    this.dataModel.Configuration.AcquireReaderLock();
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToCamelCase())),
-                                    SyntaxFactory.IdentifierName("ConfigurationKey")),
-                                SyntaxFactory.IdentifierName("AcquireReaderLock")))));
 
                 //                    ConfigurationRow configurationRow = this.dataModel.Configuration.Find(configurationId, "Country");
                 statements.Add(
@@ -234,15 +195,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             {
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                        configurationRow.AcquireReaderLock();
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("configurationRow"),
-                                SyntaxFactory.IdentifierName("AcquireReaderLock")))));
 
                 //                        countryTargetKey = configurationRow.TargetKey;
                 statements.Add(

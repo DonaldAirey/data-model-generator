@@ -90,8 +90,7 @@ namespace GammaFour.DataModelGenerator.RestService
                 // namespaces from the types found therein.
                 List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>();
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.UnderWriter.ServerDataModel")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.AspNetCore.Mvc")));
                 return usingStatements;
             }

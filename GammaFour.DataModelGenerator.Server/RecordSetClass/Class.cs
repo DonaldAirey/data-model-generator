@@ -88,6 +88,14 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                 SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                                     SyntaxFactory.IdentifierName(this.tableElement.Name))))));
 
+                // ,
+                baseList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+
+                // IMergable
+                baseList.Add(
+                    SyntaxFactory.SimpleBaseType(
+                        SyntaxFactory.IdentifierName("IMergable")));
+
                 return SyntaxFactory.BaseList(
                       SyntaxFactory.SeparatedList<BaseTypeSyntax>(baseList.ToArray()));
             }
@@ -338,11 +346,13 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
             methods.Add(new AddMethod(this.tableElement));
+            methods.Add(new AddRangeMethod(this.tableElement));
             methods.Add(new CommitMethod());
             methods.Add(new DisplayLocksMethod(this.tableElement));
             methods.Add(new InDoubtMethod());
             methods.Add(new GetEnumeratorMethod(this.tableElement));
             methods.Add(new GenericGetEnumeratorMethod(this.tableElement));
+            methods.Add(new MergeMethod(this.tableElement));
             methods.Add(new PrepareMethod());
             methods.Add(new RemoveMethod(this.tableElement));
             methods.Add(new RollbackMethod());

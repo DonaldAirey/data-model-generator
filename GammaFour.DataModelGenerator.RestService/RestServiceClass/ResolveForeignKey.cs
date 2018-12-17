@@ -125,15 +125,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                    countryRow.ReleaseReaderLock();
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Name.ToCamelCase()),
-                                SyntaxFactory.IdentifierName("ReleaseReaderLock")))));
-
                 // This is the complete block.
                 return SyntaxFactory.List(statements);
             }
@@ -182,15 +173,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                    countryRow.AcquireReaderLock();
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Name.ToCamelCase()),
-                                SyntaxFactory.IdentifierName("AcquireReaderLock")))));
-
                 // At this point we've figured out what key we're using to reference the parent table and locked it.  Now it's time to extract from
                 // the parent table each column that is used in the target table for this operation.
                 List<ColumnReferenceElement> parentColumns = this.foreignKeyElement.ParentColumns;
@@ -225,21 +207,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
-
-            //                            this.dataModel.CountryExternalId0KeyIndex.ReleaseReaderLock();
-            statements.Add(
-                SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToCamelCase())),
-                                SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
-                            SyntaxFactory.IdentifierName("ReleaseReaderLock")))));
 
             // This is the complete block.
             return SyntaxFactory.List(statements);
@@ -287,21 +254,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
-
-            //                            this.dataModel.CountryExternalId0KeyIndex.AcquireReaderLock();
-            statements.Add(
-                SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToCamelCase())),
-                                SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
-                            SyntaxFactory.IdentifierName("AcquireReaderLock")))));
 
             // This creates the list of arguments that are used to find a record using a unique index.  The values coming into the import library are
             // all strings so the values are parsed when another datatype is needed to create a key.

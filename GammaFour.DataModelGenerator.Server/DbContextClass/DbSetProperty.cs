@@ -1,8 +1,8 @@
-// <copyright file="IdentifierField.cs" company="Gamma Four, Inc.">
+// <copyright file="DbSetProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.DataModelClass
+namespace GammaFour.DataModelGenerator.Server.DbContextClass
 {
     using System;
     using System.Collections.Generic;
@@ -10,29 +10,60 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Pluralize.NET;
 
     /// <summary>
     /// Creates a collection of readers (transactions) waiting for a read lock.
     /// </summary>
-    public class IdentifierField : SyntaxElement
+    public class DbSetProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="IdentifierField"/> class.
+        /// The table schema.
         /// </summary>
-        public IdentifierField()
+        private TableElement tableElement;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DbSetProperty"/> class.
+        /// </summary>
+        /// <param name="tableElement">The table schema.</param>
+        public DbSetProperty(TableElement tableElement)
         {
             // Initialize the object.
-            this.Name = "identifierField";
+            this.tableElement = tableElement;
+            this.Name = new Pluralizer().Pluralize(this.tableElement.Name);
 
             //        /// <summary>
-            //        /// The unique identifier of this instance.
+            //        /// Gets or sets the <see cref="Buyer"/> set.
             //        /// </summary>
-            //        private Guid identifier;
-            this.Syntax = SyntaxFactory.FieldDeclaration(
-                SyntaxFactory.VariableDeclaration(SyntaxFactory.IdentifierName(typeof(Guid).Name))
-                .WithVariables(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(this.Name)))))
+            //        public DbSet<Buyer> Buyers { get; set; }
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
+                    SyntaxFactory.GenericName(
+                        SyntaxFactory.Identifier("DbSet"))
+                    .WithTypeArgumentList(
+                        SyntaxFactory.TypeArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                SyntaxFactory.IdentifierName(this.tableElement.Name)))),
+                    SyntaxFactory.Identifier(new Pluralizer().Pluralize(this.tableElement.Name)))
+                .WithAccessorList(this.AccessorList)
                 .WithModifiers(this.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the list of accessors.
+        /// </summary>
+        private AccessorListSyntax AccessorList
+        {
+            get
+            {
+                return SyntaxFactory.AccessorList(
+                    SyntaxFactory.List(
+                        new AccessorDeclarationSyntax[]
+                        {
+                            this.GetAccessor,
+                            this.SetAccessor
+                        }));
+            }
         }
 
         /// <summary>
@@ -46,7 +77,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// The unique identifier of this instance.
+                //        /// Gets or sets the <see cref="Buyer"/> set.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -70,7 +101,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " The unique identifier of this instance.",
+                                                $" Gets or sets the <see cref=\"{this.tableElement.Name}\"/> set.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -96,18 +127,47 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         }
 
         /// <summary>
+        /// Gets the 'Get' accessor.
+        /// </summary>
+        private AccessorDeclarationSyntax GetAccessor
+        {
+            get
+            {
+                // get;
+                return SyntaxFactory.AccessorDeclaration(
+                        SyntaxKind.GetAccessorDeclaration)
+                    .WithSemicolonToken(
+                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            }
+        }
+
+        /// <summary>
         /// Gets the modifiers.
         /// </summary>
         private SyntaxTokenList Modifiers
         {
             get
             {
-                // private
+                // public
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
                     });
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'Set' accessor.
+        /// </summary>
+        private AccessorDeclarationSyntax SetAccessor
+        {
+            get
+            {
+                //            set;
+                return SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                    .WithSemicolonToken(
+                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
             }
         }
     }

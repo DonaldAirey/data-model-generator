@@ -32,7 +32,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
             this.Name = "OnRecordChanging";
 
             //        /// <summary>
-            //        /// Handles a proposed change to the Buyer row.
+            //        /// Handles a proposed change to the <see cref="Buyer"/> record.
             //        /// </summary>
             //        /// <param name="dataAction">The action taken.</param>
             //        /// <param name="previous">The previous state of the record.</param>
@@ -126,7 +126,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Handles a proposed change to the Buyer row.
+                //        /// Handles a proposed change to the <see cref="Buyer"/> record.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -150,7 +150,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                $" Handles a proposed change to the <see cref=\"{this.tableElement.Name}\"> record.",
+                                                $" Handles a proposed change to the <see cref=\"{this.tableElement.Name}\"/> record.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
