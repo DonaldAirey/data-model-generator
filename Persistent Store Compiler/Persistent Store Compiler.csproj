@@ -81,10 +81,6 @@
       <Project>{0539c55d-e64e-4e09-8703-ba39dfeb23dd}</Project>
       <Name>GammaFour.DataModelGenerator.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GammaFour.DataModelGenerator.PersistentStore\GammaFour.DataModelGenerator.PersistentStore.csproj">
-      <Project>{1cccdc82-e9f4-4b05-828a-fdd8b8087339}</Project>
-      <Name>GammaFour.DataModelGenerator.PersistentStore</Name>
-    </ProjectReference>
     <ProjectReference Include="..\GammaFour.VisualStudio\GammaFour.VisualStudio.csproj">
       <Project>{d53bfe07-dd87-4992-a808-c3e94958fabb}</Project>
       <Name>GammaFour.VisualStudio</Name>

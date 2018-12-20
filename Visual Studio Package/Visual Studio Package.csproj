@@ -197,18 +197,6 @@
       <Project>{0539c55d-e64e-4e09-8703-ba39dfeb23dd}</Project>
       <Name>GammaFour.DataModelGenerator.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GammaFour.DataModelGenerator.Database\GammaFour.DataModelGenerator.Database.csproj">
-      <Project>{021762ed-efda-4190-b545-20b6c5d0bf82}</Project>
-      <Name>GammaFour.DataModelGenerator.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GammaFour.DataModelGenerator.DataService\GammaFour.DataModelGenerator.DataService.csproj">
-      <Project>{ced1908a-6cbf-4065-9616-f959db2736cf}</Project>
-      <Name>GammaFour.DataModelGenerator.DataService</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GammaFour.DataModelGenerator.PersistentStore\GammaFour.DataModelGenerator.PersistentStore.csproj">
-      <Project>{1cccdc82-e9f4-4b05-828a-fdd8b8087339}</Project>
-      <Name>GammaFour.DataModelGenerator.PersistentStore</Name>
-    </ProjectReference>
     <ProjectReference Include="..\GammaFour.DataModelGenerator.RestService\GammaFour.DataModelGenerator.RestService.csproj">
       <Project>{2923cc9d-7c5b-4167-94e4-d6922a4bf3a0}</Project>
       <Name>GammaFour.DataModelGenerator.RestService</Name>

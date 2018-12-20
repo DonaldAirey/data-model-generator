@@ -69,7 +69,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 //                {
                 //                    <Acquire Write Lock>
                 //                }
-                statements.Add(AcquireWriteLockExpression.Statement);
+                statements.Add(LockExpressions.AcquireWriteLockStatement);
 
                 //            Buyer previousBuyer = buyer.GetVersion(RecordVersion.Previous);
                 statements.Add(

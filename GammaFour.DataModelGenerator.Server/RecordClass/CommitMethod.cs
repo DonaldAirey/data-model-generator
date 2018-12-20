@@ -67,6 +67,24 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                 SyntaxFactory.LiteralExpression(
                                     SyntaxKind.NullLiteralExpression)))));
 
+                //            if (this.Lock.IsReadLockHeld)
+                //            {
+                //                <ExitReadLock>
+                //            }
+                statements.Add(LockExpressions.ReleaseReadLockStatement);
+
+                //            if (this.Lock.IsUpgradeableReadLockHeld)
+                //            {
+                //                <ExitUpgradeableReadLock>
+                //            }
+                statements.Add(LockExpressions.ReleaseUpgradeableReadLockStatement);
+
+                //            if (this.Lock.IsWriteLockHeld)
+                //            {
+                //                <ExitWriteLock>
+                //            }
+                statements.Add(LockExpressions.ReleaseWriteLockStatement);
+
                 //            enlistment.Done();
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(

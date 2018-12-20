@@ -63,7 +63,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 //                {
                 //                    <Acquire Read Lock>
                 //                }
-                statements.Add(AcquireReadLockExpression.Statement);
+                statements.Add(LockExpressions.AcquireReadLockStatement);
 
                 //            return this.Rows.GetEnumerator();
                 statements.Add(

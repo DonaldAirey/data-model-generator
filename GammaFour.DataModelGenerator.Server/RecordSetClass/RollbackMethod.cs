@@ -80,6 +80,24 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                     SyntaxFactory.IdentifierName("undoStack")),
                                                 SyntaxFactory.IdentifierName("Pop")))))))));
 
+                //            if (this.Lock.IsReadLockHeld)
+                //            {
+                //                <ExitReadLock>
+                //            }
+                statements.Add(LockExpressions.ReleaseReadLockStatement);
+
+                //            if (this.Lock.IsUpgradeableReadLockHeld)
+                //            {
+                //                <ExitUpgradeableReadLock>
+                //            }
+                statements.Add(LockExpressions.ReleaseUpgradeableReadLockStatement);
+
+                //            if (this.Lock.IsWriteLockHeld)
+                //            {
+                //                <ExitWriteLock>
+                //            }
+                statements.Add(LockExpressions.ReleaseWriteLockStatement);
+
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
             }

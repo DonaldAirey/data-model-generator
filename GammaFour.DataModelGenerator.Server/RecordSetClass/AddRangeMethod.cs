@@ -249,7 +249,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 //                {
                 //                    <Acquire Write Lock>
                 //                }
-                statements.Add(AcquireWriteLockExpression.Statement);
+                statements.Add(LockExpressions.AcquireWriteLockStatement);
 
                 //            foreach (Buyer buyer in buyers)
                 //            {

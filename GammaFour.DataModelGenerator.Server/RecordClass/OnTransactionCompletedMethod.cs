@@ -72,51 +72,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                             SyntaxFactory.IdentifierName("syncRoot")),
                         SyntaxFactory.Block(this.RemoveTransaction)));
 
-                //            if (this.Lock.IsReadLockHeld)
-                //            {
-                //                <ExitReadLock>
-                //            }
-                statements.Add(
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("Lock")),
-                            SyntaxFactory.IdentifierName("IsReadLockHeld")),
-                        SyntaxFactory.Block(this.ExitReadLock)));
-
-                //            if (this.Lock.IsUpgradeableReadLockHeld)
-                //            {
-                //                <ExitUpgradeableReadLock>
-                //            }
-                statements.Add(
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("Lock")),
-                            SyntaxFactory.IdentifierName("IsUpgradeableReadLockHeld")),
-                        SyntaxFactory.Block(this.ExitUpgradeableReadLock)));
-
-                //            if (this.Lock.IsWriteLockHeld)
-                //            {
-                //                <ExitWriteLock>
-                //            }
-                statements.Add(
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("Lock")),
-                            SyntaxFactory.IdentifierName("IsWriteLockHeld")),
-                        SyntaxFactory.Block(this.ExitWriteLock)));
-
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
             }
@@ -225,69 +180,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets a block of code that exits from a read lock.
-        /// </summary>
-        private IEnumerable<StatementSyntax> ExitReadLock
-        {
-            get
-            {
-                //                this.Lock.ExitReadLock();
-                return SyntaxFactory.SingletonList<StatementSyntax>(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("Lock")),
-                                SyntaxFactory.IdentifierName("ExitReadLock")))));
-            }
-        }
-
-        /// <summary>
-        /// Gets a block of code that exits from an upgradable read lock.
-        /// </summary>
-        private IEnumerable<StatementSyntax> ExitUpgradeableReadLock
-        {
-            get
-            {
-                //                this.Lock.ExitReadLock();
-                return SyntaxFactory.SingletonList<StatementSyntax>(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("Lock")),
-                                SyntaxFactory.IdentifierName("ExitUpgradeableReadLock")))));
-            }
-        }
-
-        /// <summary>
-        /// Gets a block of code exits from a write lock.
-        /// </summary>
-        private IEnumerable<StatementSyntax> ExitWriteLock
-        {
-            get
-            {
-                //                this.Lock.ExitReadLock();
-                return SyntaxFactory.SingletonList<StatementSyntax>(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("Lock")),
-                                SyntaxFactory.IdentifierName("ExitWriteLock")))));
             }
         }
 

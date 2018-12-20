@@ -83,7 +83,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 //                {
                 //                    <Acquire Read Lock>
                 //                }
-                statements.Add(AcquireReadLockExpression.Statement);
+                statements.Add(LockExpressions.AcquireReadLockStatement);
 
                 //                return this.currentData[0] as string;
                 if (this.columnElement.Type.IsValueType)
@@ -301,7 +301,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 //                {
                 //                    <Acquire Write Lock>
                 //                }
-                statements.Add(AcquireWriteLockExpression.Statement);
+                statements.Add(LockExpressions.AcquireWriteLockStatement);
 
                 //                if (this.originalData == null)
                 //                {

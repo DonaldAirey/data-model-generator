@@ -126,14 +126,24 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         {
             get
             {
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //            if (this.Lock.IsReadLockHeld)
+                //            {
+                //                <ExitReadLock>
+                //            }
+                statements.Add(LockExpressions.ReleaseReadLockStatement);
+
                 //                preparingEnlistment.Done();
-                return SyntaxFactory.SingletonList<StatementSyntax>(
+                statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("preparingEnlistment"),
                                 SyntaxFactory.IdentifierName("Done")))));
+
+                return statements;
             }
         }
 
