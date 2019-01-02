@@ -55,12 +55,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                if (!this.Lock.IsReadLockHeld && !this.Lock.IsUpgradeableReadLockHeld && !this.Lock.IsWriteLockHeld)
-                //                {
-                //                    <Acquire Read Lock>
-                //                }
-                statements.Add(LockExpressions.AcquireReadLockStatement);
-
                 //            return this.Rows.GetEnumerator();
                 statements.Add(
                     SyntaxFactory.ReturnStatement(

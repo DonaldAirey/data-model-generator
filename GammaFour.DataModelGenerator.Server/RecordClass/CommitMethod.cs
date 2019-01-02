@@ -49,6 +49,20 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
+                //            this.State = RecordState.Unchanged;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("RecordState")),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("RecordState"),
+                                SyntaxFactory.IdentifierName("Unchanged")))));
+
                 //            this.previousData = this.originalData = null;
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
@@ -66,24 +80,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                     SyntaxFactory.IdentifierName("originalData")),
                                 SyntaxFactory.LiteralExpression(
                                     SyntaxKind.NullLiteralExpression)))));
-
-                //            if (this.Lock.IsReadLockHeld)
-                //            {
-                //                <ExitReadLock>
-                //            }
-                statements.Add(LockExpressions.ReleaseReadLockStatement);
-
-                //            if (this.Lock.IsUpgradeableReadLockHeld)
-                //            {
-                //                <ExitUpgradeableReadLock>
-                //            }
-                statements.Add(LockExpressions.ReleaseUpgradeableReadLockStatement);
-
-                //            if (this.Lock.IsWriteLockHeld)
-                //            {
-                //                <ExitWriteLock>
-                //            }
-                statements.Add(LockExpressions.ReleaseWriteLockStatement);
 
                 //            enlistment.Done();
                 statements.Add(

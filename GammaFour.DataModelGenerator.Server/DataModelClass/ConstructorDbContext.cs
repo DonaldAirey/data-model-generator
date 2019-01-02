@@ -58,17 +58,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            this.domainContext = domainContext;
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context")),
-                            SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context"))));
-
                 // Initialize each of the record sets.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
@@ -216,6 +205,60 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             {
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
+                // Enlist each of the tables and it's indices into the curren transaction.
+                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
+                {
+                    //                this.Buyers.Enlist();
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(tableElement.Name))),
+                                    SyntaxFactory.IdentifierName("Enlist")))));
+
+                    // Lock each of the unique key indices
+                    foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
+                    {
+                        //                this.Buyers.BuyerKey.Enlist();
+                        statements.Add(
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(tableElement.Name))),
+                                            SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
+                                        SyntaxFactory.IdentifierName("Enlist")))));
+                    }
+
+                    // Lock each of the foreign key indices.
+                    foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys)
+                    {
+                        //                this.Buyers.CountryBuyerCountryIdKey.Lock.EnterWriteLock();
+                        statements.Add(
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(tableElement.Name))),
+                                            SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
+                                        SyntaxFactory.IdentifierName("Enlist")))));
+                    }
+                }
+
                 // Create a write lock for each of the tables and it's indices.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
@@ -330,7 +373,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 // Merge each of the tables.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
-                    //                bucket.Add(this.Buyers, this.Buyers.Merge(this.domainContext.Buyers));
+                    //                bucket.Add(this.Buyers, this.Buyers.Merge(domainContext.Buyers));
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.InvocationExpression(
@@ -364,10 +407,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                             SyntaxFactory.Argument(
                                                                 SyntaxFactory.MemberAccessExpression(
                                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                                    SyntaxFactory.MemberAccessExpression(
-                                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                                        SyntaxFactory.ThisExpression(),
-                                                                        SyntaxFactory.IdentifierName("domainContext")),
+                                                                    SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context"),
                                                                     SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(tableElement.Name))))))))
                                         })))));
                 }

@@ -54,11 +54,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
             {
                 return SyntaxFactory.AccessorList(
                     SyntaxFactory.List(
-                        new AccessorDeclarationSyntax[]
-                        {
-                            this.GetAccessor,
-                            this.SetAccessor
-                        }));
+                        new AccessorDeclarationSyntax[] { this.GetAccessor, this.SetAccessor }));
             }
         }
 
@@ -72,18 +68,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 // This list collects the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
                 string property = this.columnElement.Name;
-
-                //                if (Transaction.Current != null)
-                //                {
-                //                    <Enroll in Transaction>
-                //                }
-                statements.Add(EnlistInTransactionExpression.Statement);
-
-                //                if (!this.Lock.IsReadLockHeld && !this.Lock.IsUpgradeableReadLockHeld && !this.Lock.IsWriteLockHeld)
-                //                {
-                //                    <Acquire Read Lock>
-                //                }
-                statements.Add(LockExpressions.AcquireReadLockStatement);
 
                 //                return this.currentData[0] as string;
                 if (this.columnElement.Type.IsValueType)
@@ -198,15 +182,44 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         }
 
         /// <summary>
-        /// Gets the statements that initializes the transaction.
+        /// Gets the statements that sets the underlying field to the new value.
         /// </summary>
-        private List<StatementSyntax> InitializeTransaction
+        private List<StatementSyntax> InitializeState
         {
             get
             {
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                    this.Lock.EnterReadLock();
+                //                    this.RecordState = this.RecordState == RecordState.Added ? RecordState.Added : RecordState.Modified;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("RecordState")),
+                            SyntaxFactory.ConditionalExpression(
+                                SyntaxFactory.BinaryExpression(
+                                    SyntaxKind.EqualsExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("RecordState")),
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName("RecordState"),
+                                        SyntaxFactory.IdentifierName("Added"))),
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("RecordState"),
+                                    SyntaxFactory.IdentifierName("Added")),
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("RecordState"),
+                                    SyntaxFactory.IdentifierName("Modified"))))));
+
+                //                    this.originalData = (object[])this.currentData.Clone();
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
@@ -291,33 +304,23 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
                 string property = this.columnElement.Name;
 
-                //                if (Transaction.Current != null)
+                //                if (this.State == RecordState.Unchanged)
                 //                {
-                //                    <Enroll in Transaction>
-                //                }
-                statements.Add(EnlistInTransactionExpression.Statement);
-
-                //                if (!this.Lock.IsWriteLockHeld)
-                //                {
-                //                    <Acquire Write Lock>
-                //                }
-                statements.Add(LockExpressions.AcquireWriteLockStatement);
-
-                //                if (this.originalData == null)
-                //                {
-                //                    <Initialize Transaction>
+                //                    <InitializeState>
                 //                }
                 statements.Add(
-                SyntaxFactory.IfStatement(
-                    SyntaxFactory.BinaryExpression(
-                        SyntaxKind.EqualsExpression,
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.ThisExpression(),
-                            SyntaxFactory.IdentifierName("originalData")),
-                        SyntaxFactory.LiteralExpression(
-                            SyntaxKind.NullLiteralExpression)),
-                    SyntaxFactory.Block(this.InitializeTransaction)));
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.EqualsExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("RecordState")),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("RecordState"),
+                                SyntaxFactory.IdentifierName("Unchanged"))),
+                                    SyntaxFactory.Block(this.InitializeState)));
 
                 //                    this.currentData[1] = value;
                 statements.Add(

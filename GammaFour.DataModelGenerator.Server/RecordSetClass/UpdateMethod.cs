@@ -59,18 +59,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                if (Transaction.Current != null)
-                //                {
-                //                    <Enroll in Transaction>
-                //                }
-                statements.Add(EnlistInTransactionExpression.Statement);
-
-                //                if (!this.Lock.IsWriteLockHeld)
-                //                {
-                //                    <Acquire Write Lock>
-                //                }
-                statements.Add(LockExpressions.AcquireWriteLockStatement);
-
                 //            Buyer previousBuyer = buyer.GetVersion(RecordVersion.Previous);
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
@@ -380,7 +368,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         {
             get
             {
-                //                this.Lock.ExitReadLock();
+                //                    this.undoStack.Push(() => this.collection.Add(oldKey, buyer));
                 return SyntaxFactory.SingletonList<StatementSyntax>(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(

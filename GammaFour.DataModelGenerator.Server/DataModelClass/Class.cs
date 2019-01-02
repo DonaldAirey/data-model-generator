@@ -41,27 +41,8 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             //    }
             this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
                 .WithModifiers(this.Modifiers)
-                .WithBaseList(this.BaseList)
                 .WithMembers(this.Members)
                 .WithLeadingTrivia(this.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the base class syntax.
-        /// </summary>
-        private BaseListSyntax BaseList
-        {
-            get
-            {
-                // This is the list of base classes.
-                return SyntaxFactory.BaseList(
-                        SyntaxFactory.SeparatedList<BaseTypeSyntax>(
-                            new SyntaxNodeOrToken[]
-                            {
-                                SyntaxFactory.SimpleBaseType(
-                                    SyntaxFactory.IdentifierName("IDisposable"))
-                            }));
-            }
         }
 
         /// <summary>
@@ -202,7 +183,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new DbContextField(this.xmlSchemaDocument));
             fields.Add(new SyncRootField());
 
             // Alphabetize and add the fields as members of the class.
@@ -224,8 +204,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new DisposeMethod());
-            methods.Add(new DisplayLocksMethod(this.xmlSchemaDocument));
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
@@ -286,7 +264,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new DisposeBooleanMethod());
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))

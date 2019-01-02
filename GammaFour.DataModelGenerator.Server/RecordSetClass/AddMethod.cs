@@ -59,18 +59,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                if (Transaction.Current != null)
-                //                {
-                //                    <Enroll in Transaction>
-                //                }
-                statements.Add(EnlistInTransactionExpression.Statement);
-
-                //                if (!this.Lock.IsWriteLockHeld)
-                //                {
-                //                    <Acquire Write Lock>
-                //                }
-                statements.Add(LockExpressions.AcquireWriteLockStatement);
-
                 //            object key = this.primaryKeyFunction(buyer);
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(

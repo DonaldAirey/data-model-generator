@@ -2,10 +2,11 @@
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Common.RowClass
+namespace GammaFour.DataModelGenerator.Common.RecordClass
 {
     using System;
     using System.Collections.Generic;
+    using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -32,19 +33,19 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
             this.Name = new Pluralizer().Pluralize(this.tableElement.Name);
 
             //        /// <summary>
-            //        /// Gets the parent table.
+            //        /// Gets or sets the set of <see cref="Country"/> records.
             //        /// </summary>
-            //        public ConfigurationTable Table { get; }
+            //        public CountrySet Countries
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.IdentifierName($"{this.tableElement.Name}Set"),
-                SyntaxFactory.Identifier(this.Name))
+                    SyntaxFactory.IdentifierName($"{this.tableElement.Name}Set"),
+                    SyntaxFactory.Identifier(this.Name))
                 .WithAccessorList(this.AccessorList)
                 .WithModifiers(this.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
-        /// Gets the list of accessors.
+        /// Gets the list of accessors (get, set).
         /// </summary>
         private AccessorListSyntax AccessorList
         {
@@ -61,6 +62,35 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
         }
 
         /// <summary>
+        /// Gets the 'Get' accessor.
+        /// </summary>
+        private AccessorDeclarationSyntax GetAccessor
+        {
+            get
+            {
+                // This list collects the statements.
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //                return this.countries;
+                statements.Add(
+                    SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.ThisExpression(),
+                            SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.tableElement.Name.ToCamelCase())))));
+
+                //            get
+                //            {
+                //            }
+                return SyntaxFactory.AccessorDeclaration(
+                    SyntaxKind.GetAccessorDeclaration,
+                    SyntaxFactory.Block(
+                        SyntaxFactory.List(statements)))
+                    .WithKeyword(SyntaxFactory.Token(SyntaxKind.GetKeyword));
+            }
+        }
+
+        /// <summary>
         /// Gets the documentation comment.
         /// </summary>
         private SyntaxTriviaList DocumentationComment
@@ -71,7 +101,7 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Gets the parent table.
+                //        /// Gets or sets the set of <see cref="Country"/> records.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -121,21 +151,6 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
         }
 
         /// <summary>
-        /// Gets the 'Get' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax GetAccessor
-        {
-            get
-            {
-                //            get;
-                return SyntaxFactory.AccessorDeclaration(
-                    SyntaxKind.GetAccessorDeclaration)
-                .WithSemicolonToken(
-                    SyntaxFactory.Token(SyntaxKind.SemicolonToken));
-            }
-        }
-
-        /// <summary>
         /// Gets the modifiers.
         /// </summary>
         private SyntaxTokenList Modifiers
@@ -158,11 +173,54 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
         {
             get
             {
-                //            private set;
+                // This list collects the statements.
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //                this.countries = value;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.tableElement.Name.ToCamelCase()))),
+                            SyntaxFactory.IdentifierName("value"))));
+
+                //                this.RecordState = this.countries == null ? RecordState.Deleted : RecordState.Added;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("RecordState")),
+                            SyntaxFactory.ConditionalExpression(
+                                SyntaxFactory.BinaryExpression(
+                                    SyntaxKind.EqualsExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.tableElement.Name.ToCamelCase()))),
+                                    SyntaxFactory.LiteralExpression(
+                                        SyntaxKind.NullLiteralExpression)),
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("RecordState"),
+                                    SyntaxFactory.IdentifierName("Deleted")),
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("RecordState"),
+                                    SyntaxFactory.IdentifierName("Added"))))));
+
+                //            set
+                //            {
+                //            }
                 return SyntaxFactory.AccessorDeclaration(
-                    SyntaxKind.SetAccessorDeclaration)
-                .WithSemicolonToken(
-                    SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+                    SyntaxKind.SetAccessorDeclaration,
+                    SyntaxFactory.Block(
+                        SyntaxFactory.List<StatementSyntax>(statements)));
             }
         }
     }

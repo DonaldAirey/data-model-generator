@@ -96,86 +96,19 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                     SyntaxKind.ArrayInitializerExpression,
                                         SyntaxFactory.SeparatedList<ExpressionSyntax>(arrayElementList.ToArray()))))));
 
-                //            this.transactions.Add(Transaction.Current.TransactionInformation.LocalIdentifier);
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("transactions")),
-                                SyntaxFactory.IdentifierName("Add")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.IdentifierName("Transaction"),
-                                                    SyntaxFactory.IdentifierName("Current")),
-                                                SyntaxFactory.IdentifierName("TransactionInformation")),
-                                            SyntaxFactory.IdentifierName("LocalIdentifier"))))))));
-
-                //            Transaction.Current.EnlistVolatile(this, EnlistmentOptions.None);
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("Transaction"),
-                                    SyntaxFactory.IdentifierName("Current")),
-                                SyntaxFactory.IdentifierName("EnlistVolatile")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]
-                                    {
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.ThisExpression()),
-                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("EnlistmentOptions"),
-                                                SyntaxFactory.IdentifierName("None")))
-                                    })))));
-
-                //            Transaction.Current.TransactionCompleted += this.OnTransactionCompleted;
+                //            this.State = RecordState.Detached;
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.AddAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("Transaction"),
-                                    SyntaxFactory.IdentifierName("Current")),
-                                SyntaxFactory.IdentifierName("TransactionCompleted")),
+                            SyntaxKind.SimpleAssignmentExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("OnTransactionCompleted")))));
-
-                //            this.Lock.EnterWriteLock();
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.IdentifierName("RecordState")),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("Lock")),
-                                SyntaxFactory.IdentifierName("EnterWriteLock")))));
+                                SyntaxFactory.IdentifierName("RecordState"),
+                                SyntaxFactory.IdentifierName("Detached")))));
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));

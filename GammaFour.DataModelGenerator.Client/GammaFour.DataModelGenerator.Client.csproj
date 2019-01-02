@@ -29,7 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GammaFour.ClientModel\GammaFour.ClientModel.csproj" />
     <ProjectReference Include="..\GammaFour.DataModelGenerator.Common\GammaFour.DataModelGenerator.Common.csproj" />
   </ItemGroup>
 

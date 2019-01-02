@@ -34,7 +34,7 @@ namespace GammaFour.DataModelGenerator.Common
                     XmlSchema.Element,
                     new XAttribute("name", "RowVersion"),
                     new XAttribute(XName.Get("IsRowVersion", "urn:schemas-gamma-four-com:xml-gfdata"), "true"),
-                    new XAttribute("type", "xs:long")));
+                    new XAttribute("type", "xs:base64Binary")));
 
             // This will replace each of the undecorated elements with decorated ones.
             List<XElement> columnElements = sequence.Elements(XmlSchema.Element).ToList();

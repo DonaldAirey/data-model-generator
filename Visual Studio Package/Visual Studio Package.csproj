@@ -185,10 +185,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GammaFour.ClientModel\GammaFour.ClientModel.csproj">
-      <Project>{e4bc1263-cc34-4e2b-bee5-4306d1392648}</Project>
-      <Name>GammaFour.ClientModel</Name>
-    </ProjectReference>
     <ProjectReference Include="..\GammaFour.DataModelGenerator.Client\GammaFour.DataModelGenerator.Client.csproj">
       <Project>{f73e29a5-7e5f-4ec9-8452-53f4e9b75923}</Project>
       <Name>GammaFour.DataModelGenerator.Client</Name>

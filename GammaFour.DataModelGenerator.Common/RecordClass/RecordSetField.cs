@@ -1,8 +1,8 @@
-// <copyright file="DbContextField.cs" company="Gamma Four, Inc.">
+// <copyright file="RecordSetField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.DataModelClass
+namespace GammaFour.DataModelGenerator.Common.RecordClass
 {
     using System;
     using System.Collections.Generic;
@@ -10,34 +10,44 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Pluralize.NET;
 
     /// <summary>
-    /// Creates an field used to synchronize access to the housekeeping fields.
+    /// Creates a field to hold the current contents of the record.
     /// </summary>
-    public class DbContextField : SyntaxElement
+    public class RecordSetField : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DbContextField"/> class.
+        /// The unique constraint schema.
         /// </summary>
-        /// <param name="xmlSchemaDocument">The Xml Schema Document.</param>
-        public DbContextField(XmlSchemaDocument xmlSchemaDocument)
+        private TableElement tableElement;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RecordSetField"/> class.
+        /// </summary>
+        /// <param name="tableElement">The column schema.</param>
+        public RecordSetField(TableElement tableElement)
         {
-            // This is the name of the field.
-            this.Name = $"{xmlSchemaDocument.Name}Context";
+            // Initialize the object.
+            this.tableElement = tableElement;
+            this.Name = new Pluralizer().Pluralize(this.tableElement.Name.ToCamelCase());
 
             //        /// <summary>
-            //        /// The DbContext used for the persistent store.
+            //        /// The set to which this record belongs.
             //        /// </summary>
-            //        private DomainContext domainContext;
+            //        private CountrySet countries;
             this.Syntax = SyntaxFactory.FieldDeclaration(
-                SyntaxFactory.VariableDeclaration(
-                    SyntaxFactory.IdentifierName(this.Name))
-                .WithVariables(
-                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                        SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier(this.Name.ToCamelCase())))))
-            .WithModifiers(this.Modifiers)
-            .WithLeadingTrivia(this.DocumentationComment);
+                    SyntaxFactory.VariableDeclaration(
+                        SyntaxFactory.IdentifierName($"{this.tableElement}Set"))
+                    .WithVariables(
+                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                            SyntaxFactory.VariableDeclarator(
+                                SyntaxFactory.Identifier(this.Name)))))
+                .WithModifiers(
+                    SyntaxFactory.TokenList(
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
+                .WithModifiers(this.Modifiers)
+                .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
@@ -51,7 +61,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// The DbContext used for the persistent store.
+                //        /// The current contents of the record.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -75,7 +85,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " The DbContext used for the persistent store.",
+                                                " The set to which this record belongs.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

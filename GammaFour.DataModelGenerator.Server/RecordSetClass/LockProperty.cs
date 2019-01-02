@@ -10,7 +10,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Pluralize.NET;
 
     /// <summary>
     /// Creates a field that holds the column.
@@ -28,9 +27,9 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             //        /// <summary>
             //        /// Gets the lock used to manage multithreaded access to this record.
             //        /// </summary>
-            //        public ReaderWriterLockSlim Lock { get; } = new ReaderWriterLockSlim();
+            //        public AsyncReaderWriterLock Lock { get; } = new AsyncReaderWriterLock();
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.IdentifierName("ReaderWriterLockSlim"),
+                SyntaxFactory.IdentifierName("AsyncReaderWriterLock"),
                 SyntaxFactory.Identifier(this.Name))
                 .WithModifiers(this.Modifiers)
                 .WithAccessorList(this.AccessorList)
@@ -124,7 +123,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             {
                 return SyntaxFactory.EqualsValueClause(
                     SyntaxFactory.ObjectCreationExpression(
-                        SyntaxFactory.IdentifierName("ReaderWriterLockSlim"))
+                        SyntaxFactory.IdentifierName("AsyncReaderWriterLock"))
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList()));
             }

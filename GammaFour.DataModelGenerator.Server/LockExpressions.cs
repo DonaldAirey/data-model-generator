@@ -112,30 +112,6 @@ namespace GammaFour.DataModelGenerator.Server
         }
 
         /// <summary>
-        /// Gets the statement that checks for and releases an upgradeable read lock.
-        /// </summary>
-        /// <returns>A statement that acquires a read lock.</returns>
-        public static StatementSyntax ReleaseUpgradeableReadLockStatement
-        {
-            get
-            {
-                //            if (this.Lock.IsReadLockHeld)
-                //            {
-                //                <ExitReadLock>
-                //            }
-                return SyntaxFactory.IfStatement(
-                    SyntaxFactory.MemberAccessExpression(
-                        SyntaxKind.SimpleMemberAccessExpression,
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.ThisExpression(),
-                            SyntaxFactory.IdentifierName("Lock")),
-                        SyntaxFactory.IdentifierName("IsUpgradeableReadLockHeld")),
-                    SyntaxFactory.Block(LockExpressions.ExitUpgradeableReadLock));
-            }
-        }
-
-        /// <summary>
         /// Gets the statement that checks for and releases an write lock.
         /// </summary>
         /// <returns>A statement that acquires a read lock.</returns>

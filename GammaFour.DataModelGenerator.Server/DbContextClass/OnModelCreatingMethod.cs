@@ -148,6 +148,24 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                             SyntaxFactory.IdentifierName(abbreviation),
                                             SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(tableElement.Name))))))));
 
+                    // .Ignore(b => b.State)
+                    ignoredProperties = SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            ignoredProperties,
+                            SyntaxFactory.IdentifierName("Ignore")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.SimpleLambdaExpression(
+                                        SyntaxFactory.Parameter(
+                                            SyntaxFactory.Identifier(abbreviation)),
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.IdentifierName(abbreviation),
+                                            SyntaxFactory.IdentifierName("RecordState")))))));
+
                     // Add an Ignore invocation for each of the parent set navigation properties.
                     // .Ignore(b => b.Country)
                     foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys)

@@ -8,7 +8,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
     using System.Collections.Generic;
     using System.Linq;
     using GammaFour.DataModelGenerator.Common;
-    using GammaFour.DataModelGenerator.Common.RowClass;
+    using GammaFour.DataModelGenerator.Common.RecordClass;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -212,7 +212,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new OnTransactionCompletedMethod(this.tableElement));
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
@@ -237,6 +236,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
             fields.Add(new CurrentDataField());
             fields.Add(new PreviousDataField());
             fields.Add(new OriginalDataField());
+            fields.Add(new RecordSetField(this.tableElement));
             fields.Add(new SyncRootField());
             fields.Add(new TransactionsField());
 
@@ -283,8 +283,9 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new RecordSetProperty(this.tableElement));
             properties.Add(new LockProperty());
+            properties.Add(new RecordSetProperty(this.tableElement));
+            properties.Add(new RecordStateProperty());
 
             // Create a navigation property to each of the parent collections.
             foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)

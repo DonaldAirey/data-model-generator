@@ -1,8 +1,8 @@
-// <copyright file="DisplayLocksMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="RecordStateProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.DataModelClass
+namespace GammaFour.DataModelGenerator.Server.RecordClass
 {
     using System;
     using System.Collections.Generic;
@@ -10,72 +10,56 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Pluralize.NET;
 
     /// <summary>
-    /// Creates a method to prepare a resource for a transaction completion.
+    /// Creates a property that describes the state.
     /// </summary>
-    public class DisplayLocksMethod : SyntaxElement
+    public class RecordStateProperty : SyntaxElement
     {
         /// <summary>
-        /// The XML schema document.
+        /// Initializes a new instance of the <see cref="RecordStateProperty"/> class.
         /// </summary>
-        private XmlSchemaDocument xmlSchemaDocument;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DisplayLocksMethod"/> class.
-        /// </summary>
-        /// <param name="xmlSchemaDocument">The XML schema document.</param>
-        public DisplayLocksMethod(XmlSchemaDocument xmlSchemaDocument)
+        public RecordStateProperty()
         {
             // Initialize the object.
-            this.xmlSchemaDocument = xmlSchemaDocument;
-            this.Name = "DisplayLocks";
+            this.Name = "RecordState";
 
             //        /// <summary>
-            //        /// Displays the locks on the data model.
+            //        /// Gets the state of the record.
             //        /// </summary>
-            //        public void DisplayLocks()
-            //        {
-            //            <Body>
-            //        }
-            this.Syntax = SyntaxFactory.MethodDeclaration(
-                SyntaxFactory.PredefinedType(
-                    SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
+            //        public RecordState State { get; private set; }
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
+                SyntaxFactory.IdentifierName("RecordState"),
                 SyntaxFactory.Identifier(this.Name))
-            .WithModifiers(this.Modifiers)
-            .WithBody(this.Body)
-            .WithLeadingTrivia(this.DocumentationComment);
+                .WithModifiers(this.Modifiers)
+                .WithAccessorList(this.AccessorList)
+                .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
-        /// Gets the body.
+        /// Gets the list of accessors.
         /// </summary>
-        private BlockSyntax Body
+        private AccessorListSyntax AccessorList
         {
             get
             {
-                // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                // Display the locks on each of the tables in the domain.
-                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
-                {
-                    //            this.Buyers.DisplayLocks();
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(tableElement.Name))),
-                                    SyntaxFactory.IdentifierName("DisplayLocks")))));
-                }
-
-                // This is the syntax for the body of the method.
-                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
+                // { get; private set; }
+                return SyntaxFactory.AccessorList(
+                        SyntaxFactory.List<AccessorDeclarationSyntax>(
+                            new AccessorDeclarationSyntax[]
+                            {
+                                SyntaxFactory.AccessorDeclaration(
+                                    SyntaxKind.GetAccessorDeclaration)
+                                .WithSemicolonToken(
+                                    SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                                SyntaxFactory.AccessorDeclaration(
+                                    SyntaxKind.SetAccessorDeclaration)
+                                .WithModifiers(
+                                    SyntaxFactory.TokenList(
+                                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
+                                .WithSemicolonToken(
+                                    SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+                            }));
             }
         }
 
@@ -90,7 +74,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Displays the locks on the data domain.
+                //        /// Gets the state of the record.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -114,7 +98,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                $" Displays the locks on the data domain.",
+                                                $" Gets the state of the record.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -146,12 +130,12 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             get
             {
-                // private
+                // public
                 return SyntaxFactory.TokenList(
                     new[]
                     {
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword)
-                   });
+                    });
             }
         }
     }

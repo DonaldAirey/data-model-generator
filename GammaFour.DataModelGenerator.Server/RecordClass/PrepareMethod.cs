@@ -49,13 +49,13 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            if (this.originalData == null)
+                //            if (this.State == RecordState.Unchanged)
                 //            {
-                //                <Enlistment is Done>
-                //            {
+                //                <EnlistmentDone>
+                //            }
                 //            else
                 //            {
-                //                <Enlistment is Prepared>
+                //                <EnlistmentPrepared>
                 //            }
                 statements.Add(
                     SyntaxFactory.IfStatement(
@@ -64,9 +64,11 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("originalData")),
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.NullLiteralExpression)),
+                                SyntaxFactory.IdentifierName("RecordState")),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("RecordState"),
+                                SyntaxFactory.IdentifierName("Unchanged"))),
                         SyntaxFactory.Block(this.EnlistmentDone))
                     .WithElse(
                         SyntaxFactory.ElseClause(
@@ -123,12 +125,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
             get
             {
                 List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            if (this.Lock.IsReadLockHeld)
-                //            {
-                //                <ExitReadLock>
-                //            }
-                statements.Add(LockExpressions.ReleaseReadLockStatement);
 
                 //                preparingEnlistment.Done();
                 statements.Add(

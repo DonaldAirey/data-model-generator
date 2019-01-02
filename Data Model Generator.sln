@@ -14,8 +14,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client Compiler", "Client C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.Common", "GammaFour.Common\GammaFour.Common.csproj", "{B84E9198-4D4A-4001-92F3-E53EB99D6498}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.ClientModel", "GammaFour.ClientModel\GammaFour.ClientModel.csproj", "{E4BC1263-CC34-4E2B-BEE5-4306D1392648}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visual Studio Package", "Visual Studio Package\Visual Studio Package.csproj", "{AFCB57EE-9BA5-4420-AF72-B7A3ABB7F9EB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GammaFour.VisualStudio", "GammaFour.VisualStudio\GammaFour.VisualStudio.csproj", "{D53BFE07-DD87-4992-A808-C3E94958FABB}"
@@ -55,12 +53,6 @@ Global
 		{B84E9198-4D4A-4001-92F3-E53EB99D6498}.Production|Any CPU.Build.0 = Production|Any CPU
 		{B84E9198-4D4A-4001-92F3-E53EB99D6498}.Staging|Any CPU.ActiveCfg = Staging|Any CPU
 		{B84E9198-4D4A-4001-92F3-E53EB99D6498}.Staging|Any CPU.Build.0 = Staging|Any CPU
-		{E4BC1263-CC34-4E2B-BEE5-4306D1392648}.Development|Any CPU.ActiveCfg = Development|Any CPU
-		{E4BC1263-CC34-4E2B-BEE5-4306D1392648}.Development|Any CPU.Build.0 = Development|Any CPU
-		{E4BC1263-CC34-4E2B-BEE5-4306D1392648}.Production|Any CPU.ActiveCfg = Production|Any CPU
-		{E4BC1263-CC34-4E2B-BEE5-4306D1392648}.Production|Any CPU.Build.0 = Production|Any CPU
-		{E4BC1263-CC34-4E2B-BEE5-4306D1392648}.Staging|Any CPU.ActiveCfg = Staging|Any CPU
-		{E4BC1263-CC34-4E2B-BEE5-4306D1392648}.Staging|Any CPU.Build.0 = Staging|Any CPU
 		{AFCB57EE-9BA5-4420-AF72-B7A3ABB7F9EB}.Development|Any CPU.ActiveCfg = Development|Any CPU
 		{AFCB57EE-9BA5-4420-AF72-B7A3ABB7F9EB}.Production|Any CPU.ActiveCfg = Production|Any CPU
 		{AFCB57EE-9BA5-4420-AF72-B7A3ABB7F9EB}.Production|Any CPU.Build.0 = Production|Any CPU

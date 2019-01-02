@@ -128,12 +128,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             {
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            if (this.Lock.IsReadLockHeld)
-                //            {
-                //                <ExitReadLock>
-                //            }
-                statements.Add(LockExpressions.ReleaseReadLockStatement);
-
                 //                preparingEnlistment.Done();
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(

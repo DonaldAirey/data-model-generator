@@ -34,8 +34,8 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
             //        /// <summary>
             //        /// Initializes a new instance of the <see cref="Buyer"/> class.
             //        /// </summary>
-            //        /// <param name="currentData">The data behind the properties.</param>
-            //        private Buyer(object[] currentData)
+            //        /// <param name="data">The data behind the properties.</param>
+            //        private Buyer(object[] data)
             //        {
             //             <Body>
             //        }
@@ -57,7 +57,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            this.currentData = currentData;
+                //            this.data = data;
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
@@ -66,7 +66,21 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName("currentData")),
-                            SyntaxFactory.IdentifierName("currentData"))));
+                            SyntaxFactory.IdentifierName("data"))));
+
+                //            this.State = RecordState.Detached;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("RecordState")),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("RecordState"),
+                                SyntaxFactory.IdentifierName("Detached")))));
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -128,7 +142,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 SyntaxFactory.TriviaList())
                                         }))))));
 
-                //        /// <param name="currentData">The data behind the properties.</param>
+                //        /// <param name="data">The data behind the properties.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -141,7 +155,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    " <param name=\"currentData\">The data behind the properties.</param>",
+                                                    " <param name=\"data\">The data behind the properties.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -182,10 +196,10 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 // Create a list of parameters from the columns in the unique constraint.
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
 
-                // ConfigurationTable configurationTable
+                // object[] data
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier("currentData"))
+                        SyntaxFactory.Identifier("data"))
                     .WithType(
                         SyntaxFactory.ArrayType(
                             SyntaxFactory.PredefinedType(
