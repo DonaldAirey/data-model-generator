@@ -30,7 +30,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = new Pluralizer().Pluralize(this.tableElement.Name);
+            this.Name = this.tableElement.Name.ToPlural();
 
             //        /// <summary>
             //        /// Gets the set of Buyer records.

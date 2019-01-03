@@ -30,7 +30,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = new Pluralizer().Pluralize(this.tableElement.Name.ToCamelCase());
+            this.Name = this.tableElement.Name.ToPlural().ToCamelCase();
 
             //        /// <summary>
             //        /// The set to which this record belongs.

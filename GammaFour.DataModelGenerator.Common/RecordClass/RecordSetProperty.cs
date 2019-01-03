@@ -30,7 +30,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = new Pluralizer().Pluralize(this.tableElement.Name);
+            this.Name = this.tableElement.Name.ToPlural();
 
             //        /// <summary>
             //        /// Gets or sets the set of <see cref="Country"/> records.
@@ -77,7 +77,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.ThisExpression(),
-                            SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.tableElement.Name.ToCamelCase())))));
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToCamelCase()))));
 
                 //            get
                 //            {
@@ -184,7 +184,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.tableElement.Name.ToCamelCase()))),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToCamelCase())),
                             SyntaxFactory.IdentifierName("value"))));
 
                 //                this.RecordState = this.countries == null ? RecordState.Deleted : RecordState.Added;
@@ -202,7 +202,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.tableElement.Name.ToCamelCase()))),
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToCamelCase())),
                                     SyntaxFactory.LiteralExpression(
                                         SyntaxKind.NullLiteralExpression)),
                                 SyntaxFactory.MemberAccessExpression(

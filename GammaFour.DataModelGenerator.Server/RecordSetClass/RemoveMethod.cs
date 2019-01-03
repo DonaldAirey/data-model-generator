@@ -90,7 +90,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
-                                    SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.tableElement.Name))),
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.NullLiteralExpression))));
 
@@ -134,7 +134,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
-                                                            SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.tableElement.Name))),
+                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                                                         SyntaxFactory.ThisExpression())),
                                                 SyntaxFactory.ExpressionStatement(
                                                     SyntaxFactory.InvocationExpression(

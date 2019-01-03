@@ -178,6 +178,27 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                             SyntaxFactory.Block(this.AddRecordToResiduals)));
                 }
 
+                //                buyer.Enlist();
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                SyntaxFactory.IdentifierName("Enlist")))));
+
+                //                buyer.Lock.EnterWriteLock();
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                    SyntaxFactory.IdentifierName("Lock")),
+                                SyntaxFactory.IdentifierName("EnterWriteLock")))));
+
                 //                this.Add(buyer);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(

@@ -30,7 +30,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = new Pluralizer().Pluralize(this.tableElement.Name);
+            this.Name = this.tableElement.Name.ToPlural();
 
             //        /// <summary>
             //        /// Gets or sets the <see cref="Buyer"/> set.
@@ -43,7 +43,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                         SyntaxFactory.TypeArgumentList(
                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                                 SyntaxFactory.IdentifierName(this.tableElement.Name)))),
-                    SyntaxFactory.Identifier(new Pluralizer().Pluralize(this.tableElement.Name)))
+                    SyntaxFactory.Identifier(this.tableElement.Name.ToPlural()))
                 .WithAccessorList(this.AccessorList)
                 .WithModifiers(this.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);

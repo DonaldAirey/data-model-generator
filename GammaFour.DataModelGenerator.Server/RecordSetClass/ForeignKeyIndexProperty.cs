@@ -184,7 +184,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                                     SyntaxFactory.ThisExpression(),
                                                                     SyntaxFactory.IdentifierName(this.foreignKeyElement.XmlSchemaDocument.Name)),
                                                                 SyntaxFactory.IdentifierName(
-                                                                    new Pluralizer().Pluralize(this.foreignKeyElement.UniqueKey.Table.Name))),
+                                                                    this.foreignKeyElement.UniqueKey.Table.Name.ToPlural())),
                                                             SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Name)))
                                                 }))),
                                     SyntaxFactory.IdentifierName("HasIndex")))

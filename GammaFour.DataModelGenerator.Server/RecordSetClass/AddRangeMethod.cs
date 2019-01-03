@@ -89,7 +89,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
-                                SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.tableElement.Name))),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                             SyntaxFactory.ThisExpression())));
 
                 //            this.collection.Add(key, buyer);
@@ -138,7 +138,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
-                                                            SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.tableElement.Name))),
+                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                                                         SyntaxFactory.LiteralExpression(
                                                             SyntaxKind.NullLiteralExpression))),
                                                 SyntaxFactory.ExpressionStatement(
@@ -245,7 +245,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                     SyntaxFactory.ForEachStatement(
                         SyntaxFactory.IdentifierName(this.tableElement.Name),
                         SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase()),
-                        SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.tableElement.Name).ToCamelCase()),
+                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToCamelCase()),
                         SyntaxFactory.Block(this.AddRecord)));
 
                 // This is the syntax for the body of the method.
@@ -321,7 +321,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    $" <param name=\"{new Pluralizer().Pluralize(this.tableElement.Name).ToCamelCase()}\">The collection of {this.tableElement.Name.ToCamelCase()} records to be added.</param>",
+                                                    $" <param name=\"{this.tableElement.Name.ToPlural().ToCamelCase()}\">The collection of {this.tableElement.Name.ToCamelCase()} records to be added.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -365,7 +365,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 // The row parameter comes after the key elements.
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(new Pluralizer().Pluralize(this.tableElement.Name).ToCamelCase()))
+                        SyntaxFactory.Identifier(this.tableElement.Name.ToPlural().ToCamelCase()))
                     .WithType(
                         SyntaxFactory.GenericName(
                             SyntaxFactory.Identifier("IEnumerable"))

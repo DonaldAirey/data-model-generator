@@ -202,26 +202,12 @@ namespace GammaFour.DataModelGenerator.Client
             // The actual data model class.
             members = members.Add(new DataModelClass.Class(this.xmlSchemaDocument).Syntax);
 
-            // Create the compound key sets.
-            List<Common.CompoundKeyStruct.Struct> compoundKeys = new List<Common.CompoundKeyStruct.Struct>();
-
             // Create a compound key when there are more than one columns.
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
                 foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
                 {
-                    // If a key has more than one column, then we need a compound key structure to use it.
-                    if (uniqueKeyElement.Columns.Count > 1)
-                    {
-                        compoundKeys.Add(new Common.CompoundKeyStruct.Struct(uniqueKeyElement));
-                    }
                 }
-            }
-
-            // Alphabetize the list of compound keys and add them to the namespace.
-            foreach (Common.CompoundKeyStruct.Struct @struct in compoundKeys.OrderBy(c => c.Name))
-            {
-                members = members.Add(@struct.Syntax);
             }
 
             // Create the unique index classes.

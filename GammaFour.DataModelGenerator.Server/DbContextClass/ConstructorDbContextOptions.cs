@@ -188,7 +188,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(tableElement.Name))),
+                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                                         SyntaxFactory.IdentifierName("Lock")),
                                     SyntaxFactory.IdentifierName("EnterWriteLock")))));
 
@@ -208,7 +208,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(tableElement.Name))),
+                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                                                 SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
                                             SyntaxFactory.IdentifierName("Lock")),
                                         SyntaxFactory.IdentifierName("EnterWriteLock")))));
@@ -230,7 +230,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(tableElement.Name))),
+                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                                                 SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
                                             SyntaxFactory.IdentifierName("Lock")),
                                         SyntaxFactory.IdentifierName("EnterWriteLock")))));
@@ -305,7 +305,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(tableElement.Name)))),
+                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural()))),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.InvocationExpression(
@@ -314,7 +314,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(tableElement.Name))),
+                                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                                                         SyntaxFactory.IdentifierName("Merge")))
                                                 .WithArgumentList(
                                                     SyntaxFactory.ArgumentList(
@@ -326,7 +326,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                                         SyntaxFactory.ThisExpression(),
                                                                         SyntaxFactory.IdentifierName("domainContext")),
-                                                                    SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(tableElement.Name))))))))
+                                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))))
                                         })))));
                 }
 
@@ -400,14 +400,14 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(tableElement.Name))))))),
+                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))),
                                 SyntaxFactory.InvocationExpression(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(tableElement.Name))),
+                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                                         SyntaxFactory.IdentifierName("Merge")))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
@@ -422,7 +422,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                                 SyntaxFactory.MemberAccessExpression(
                                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                                     SyntaxFactory.ThisExpression(),
-                                                                    SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(tableElement.Name))))))))))))));
+                                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))))))))));
                 }
 
                 return statements;

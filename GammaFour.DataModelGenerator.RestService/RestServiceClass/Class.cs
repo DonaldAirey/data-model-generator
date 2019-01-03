@@ -33,7 +33,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             this.tableElement = tableElement;
 
             // The name of this structure.
-            this.Name = new Pluralizer().Pluralize(tableElement.Name) + "Controller";
+            this.Name = tableElement.Name.ToPlural() + "Controller";
 
             //    /// <summary>
             //    /// Controller for <see cref="AccountGroup"/> records.
@@ -200,7 +200,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new DataModelField(this.tableElement.XmlSchemaDocument));
+            fields.Add(new DbContextField(this.tableElement.XmlSchemaDocument));
+            fields.Add(new DomainField(this.tableElement.XmlSchemaDocument));
+            fields.Add(new LockTimeoutField());
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
@@ -220,7 +222,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // Add the constructors.
-            members = members.Add(new ConstructorTableElement(this.tableElement).Syntax);
+            members = members.Add(new ConstructorDbContextEtc(this.tableElement).Syntax);
 
             // Return the new collection of members.
             return members;
@@ -236,6 +238,14 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
             members = members.Add(new GetAllMethod(this.tableElement).Syntax);
+
+            foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
+            {
+                if (uniqueKeyElement.Columns.Count == 1 && !uniqueKeyElement.Columns[0].Column.IsAutoIncrement)
+                {
+                    members = members.Add(new PutMethod(uniqueKeyElement).Syntax);
+                }
+            }
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))

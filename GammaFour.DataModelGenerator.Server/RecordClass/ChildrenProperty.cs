@@ -43,7 +43,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                         SyntaxFactory.TypeArgumentList(
                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                                 SyntaxFactory.IdentifierName(this.Name)))),
-                    SyntaxFactory.Identifier(new Pluralizer().Pluralize(this.Name)))
+                    SyntaxFactory.Identifier(this.Name.ToPlural()))
                 .WithAccessorList(this.AccessorList)
                 .WithModifiers(this.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
@@ -150,9 +150,9 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.foreignKeyElement.UniqueKey.Table.Name))),
+                                                SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Table.Name.ToPlural())),
                                             SyntaxFactory.IdentifierName(this.foreignKeyElement.XmlSchemaDocument.Name)),
-                                        SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.foreignKeyElement.Table.Name))),
+                                        SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name.ToPlural())),
                                     SyntaxFactory.IdentifierName(this.foreignKeyElement.Name)),
                                 SyntaxFactory.IdentifierName("GetChildren")))
                         .WithArgumentList(

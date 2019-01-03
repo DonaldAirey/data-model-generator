@@ -160,7 +160,6 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceInterface
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new ReadAsyncMethod(this.xmlSchemaDocument));
 
             // Each of the tables has a method to create, update and delete the records.
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)

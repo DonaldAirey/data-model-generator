@@ -1,110 +1,126 @@
-// <copyright file="ReadAsyncMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="ConstructorDbContextEtc.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Client.DataServiceInterface
+namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 {
     using System;
     using System.Collections.Generic;
-    using GammaFour.ClientModel;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Pluralize.NET;
 
     /// <summary>
-    /// Reads a method to start editing.
+    /// Creates a constructor.
     /// </summary>
-    public class ReadAsyncMethod : SyntaxElement
+    public class ConstructorDbContextEtc : SyntaxElement
     {
         /// <summary>
-        /// The data model schema.
+        /// The table schema.
         /// </summary>
-        private XmlSchemaDocument xmlSchemaDocument;
+        private TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ReadAsyncMethod"/> class.
+        /// Initializes a new instance of the <see cref="ConstructorDbContextEtc"/> class.
         /// </summary>
-        /// <param name="xmlSchemaDocument">The data model schema.</param>
-        public ReadAsyncMethod(XmlSchemaDocument xmlSchemaDocument)
+        /// <param name="tableElement">The table schema.</param>
+        public ConstructorDbContextEtc(TableElement tableElement)
         {
             // Initialize the object.
-            this.xmlSchemaDocument = xmlSchemaDocument;
-            this.Name = "ReadAsync";
+            this.tableElement = tableElement;
+            this.Name = tableElement.Name.ToPlural() + "Controller";
 
             //        /// <summary>
-            //        /// Reads the latest data from the service.
+            //        /// Initializes a new instance of the <see cref="CountriesController"/> class.
             //        /// </summary>
-            //        [OperationContract(Action = "http://tempuri.org/IDataModel/ReadAsync", ReplyAction = "http://tempuri.org/IDataModel/ReadAsyncResponse")]
-            //        Task<object[]> ReadAsync(Guid dataSetId, long sequence);
-            this.Syntax = SyntaxFactory.MethodDeclaration(
-                   SyntaxFactory.GenericName(
-                        SyntaxFactory.Identifier("Task"))
-                    .WithTypeArgumentList(
-                        SyntaxFactory.TypeArgumentList(
-                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                SyntaxFactory.IdentifierName("DataHeader")))),
-                    SyntaxFactory.Identifier(this.Name))
-                .WithAttributeLists(this.Attributes)
+            //        /// <param name="configuration">Configuration settings.</param>
+            //        /// <param name="domain">The data model.</param>
+            //        /// <param name="domainContext">The data model.</param>
+            //        public CountriesController(IConfiguration configuration, Domain domain, DomainContext domainContext)
+            //        {
+            //            <Body>
+            //        }
+            this.Syntax = SyntaxFactory.ConstructorDeclaration(
+                SyntaxFactory.Identifier(this.Name))
+                .WithModifiers(this.Modifiers)
                 .WithParameterList(this.Parameters)
-                .WithLeadingTrivia(this.DocumentationComment)
-                .WithSemicolonToken(
-                    SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+                .WithBody(this.Body)
+                .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
-        /// Gets the data contract attribute syntax.
+        /// Gets the body.
         /// </summary>
-        private SyntaxList<AttributeListSyntax> Attributes
+        private BlockSyntax Body
         {
             get
             {
-                // This collects all the attributes.
-                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
+                // The elements of the body are added to this collection as they are assembled.
+                List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //        [OperationContract(Action = "http://tempuri.org/IDataModel/ReadAsync", ReplyAction = "http://tempuri.org/IDataModel/ReadAsyncResponse")]
-                string callUrl = "http://tempuri.org/IDataModel/Read";
-                string responseUrl = "http://tempuri.org/IDataModel/ReadResponse";
-                attributes.Add(
-                    SyntaxFactory.AttributeList(
-                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
-                            SyntaxFactory.Attribute(SyntaxFactory.IdentifierName("OperationContract"))
+                //            this.domain = domain;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToCamelCase())),
+                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToCamelCase()))));
+
+                //            this.domainContext = domainContext;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.Name.ToCamelCase()}Context")),
+                            SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.Name.ToCamelCase()}Context"))));
+
+                //            this.lockTimeout = configuration.GetValue<int>("LockTimeout", Timeout.Infinite);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("lockTimeout")),
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("configuration"),
+                                    SyntaxFactory.GenericName(
+                                        SyntaxFactory.Identifier("GetValue"))
+                                    .WithTypeArgumentList(
+                                        SyntaxFactory.TypeArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                SyntaxFactory.PredefinedType(
+                                                    SyntaxFactory.Token(SyntaxKind.IntKeyword)))))))
                             .WithArgumentList(
-                                SyntaxFactory.AttributeArgumentList(
-                                    SyntaxFactory.SeparatedList<AttributeArgumentSyntax>(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
                                         new SyntaxNodeOrToken[]
                                         {
-                                            SyntaxFactory.AttributeArgument(
-                                                SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(callUrl)))
-                                            .WithNameEquals(
-                                                SyntaxFactory.NameEquals(SyntaxFactory.IdentifierName("Action"))),
-                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                            SyntaxFactory.AttributeArgument(
+                                            SyntaxFactory.Argument(
                                                 SyntaxFactory.LiteralExpression(
                                                     SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal(responseUrl)))
-                                            .WithNameEquals(
-                                                SyntaxFactory.NameEquals(SyntaxFactory.IdentifierName("ReplyAction")))
+                                                    SyntaxFactory.Literal("LockTimeout"))),
+                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName("Timeout"),
+                                                    SyntaxFactory.IdentifierName("Infinite")))
                                         }))))));
 
-                //        [ServiceKnownType(typeof(LicenseTypeCode))]
-                attributes.AddRange(KnownTypes.Emit(this.xmlSchemaDocument));
-
-                //        [FaultContract(typeof(SecurityFault))]
-                attributes.Add(
-                SyntaxFactory.AttributeList(
-                    SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
-                        SyntaxFactory.Attribute(
-                            SyntaxFactory.IdentifierName("FaultContract"))
-                        .WithArgumentList(
-                            SyntaxFactory.AttributeArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
-                                    SyntaxFactory.AttributeArgument(
-                                        SyntaxFactory.TypeOfExpression(
-                                            SyntaxFactory.IdentifierName(nameof(SecurityFault))))))))));
-
-                // The collection of attributes.
-                return SyntaxFactory.List<AttributeListSyntax>(attributes);
+                // This is the syntax for the body of the constructor.
+                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
             }
         }
 
@@ -119,7 +135,7 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceInterface
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Reads the latest data from the service.
+                //        /// Initializes a new instance of the <see cref="RestService"/> class.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -143,7 +159,7 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceInterface
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Reads the latest data from the service.",
+                                                $" Initializes a new instance of the <see cref=\"{this.Name}\"/> class.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -163,7 +179,7 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceInterface
                                                 SyntaxFactory.TriviaList())
                                         }))))));
 
-                //        /// <param name="identifier">A unique identifier of an instance of the data.</param>
+                //        /// <param name="configuration">Configuration settings.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -176,7 +192,7 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceInterface
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    " <param name=\"identifier\">A unique identifier of an instance of the data.</param>",
+                                                    $" <param name=\"configuration\">Configuration settings.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -186,7 +202,7 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceInterface
                                                     SyntaxFactory.TriviaList())
                                             }))))));
 
-                //        /// <param name="sequence">The sequence of the client data model.</param>
+                //        /// <param name="domain">The data model.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -199,7 +215,7 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceInterface
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    " <param name=\"sequence\">The sequence of the client data model.</param>",
+                                                    $" <param name=\"domain\">The data model.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -209,7 +225,7 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceInterface
                                                     SyntaxFactory.TriviaList())
                                             }))))));
 
-                //        /// <returns>An array of records that will reconcile the client data model to the server.</returns>
+                //        /// <param name="domainContext">The DbContext for the domain.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -222,7 +238,7 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceInterface
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    " <returns>An array of records that will reconcile the client data model to the server.</returns>",
+                                                    $" <param name=\"domainContext\">The DbContext for the domain.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -238,23 +254,55 @@ namespace GammaFour.DataModelGenerator.Client.DataServiceInterface
         }
 
         /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // public
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                    });
+            }
+        }
+
+        /// <summary>
         /// Gets the list of parameters.
         /// </summary>
         private ParameterListSyntax Parameters
         {
             get
             {
-                // The list of parameters to the destroy method.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
+                // Create a list of parameters from the columns in the unique constraint.
+                List<SyntaxNodeOrToken> parameters = new List<SyntaxNodeOrToken>();
 
-                // Guid identifier, long sequence
-                parameters.Add(
-                    SyntaxFactory.Parameter(SyntaxFactory.Identifier("identifier")).WithType(SyntaxFactory.IdentifierName(typeof(Guid).Name)));
+                // IConfiguration configuration
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier("sequence")).WithType(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.LongKeyword))));
+                        SyntaxFactory.Identifier("configuration"))
+                    .WithType(
+                        SyntaxFactory.IdentifierName("IConfiguration")));
 
-                // This is the complete set of comma separated parameters for the method.
+                // , Domain domain
+                parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                parameters.Add(
+                    SyntaxFactory.Parameter(
+                        SyntaxFactory.Identifier(this.tableElement.XmlSchemaDocument.Name.ToCamelCase()))
+                    .WithType(
+                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)));
+
+                // , DomainContext domainContext
+                parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                parameters.Add(
+                    SyntaxFactory.Parameter(
+                        SyntaxFactory.Identifier($"{this.tableElement.XmlSchemaDocument.Name.ToCamelCase()}Context"))
+                    .WithType(
+                        SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.Name}Context")));
+
+                // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
             }
         }

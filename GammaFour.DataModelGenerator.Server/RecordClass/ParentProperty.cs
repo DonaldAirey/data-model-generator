@@ -141,7 +141,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(new Pluralizer().Pluralize(this.foreignKeyElement.Table.Name))),
+                                        SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name.ToPlural())),
                                     SyntaxFactory.IdentifierName(this.foreignKeyElement.Name)),
                                 SyntaxFactory.IdentifierName("GetParent")))
                         .WithArgumentList(
