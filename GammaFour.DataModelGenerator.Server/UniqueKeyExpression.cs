@@ -19,8 +19,9 @@ namespace GammaFour.DataModelGenerator.Server
         /// Creates an argument that creates a lambda expression for extracting the key from a class.
         /// </summary>
         /// <param name="uniqueKeyElement">The unique key element.</param>
+        /// <param name="isAnonymous">Indicates we should create an anonymous key for Entity Framework.</param>
         /// <returns>An argument that extracts a key from an object.</returns>
-        public static ExpressionSyntax GetUniqueKey(UniqueKeyElement uniqueKeyElement)
+        public static ExpressionSyntax GetUniqueKey(UniqueKeyElement uniqueKeyElement, bool isAnonymous = false)
         {
             // Used as a variable when constructing the lambda expression.
             string abbreviation = uniqueKeyElement.Table.Name[0].ToString().ToLower();
@@ -46,17 +47,44 @@ namespace GammaFour.DataModelGenerator.Server
                         keyElements.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
                     }
 
-                    keyElements.Add(
-                        SyntaxFactory.AnonymousObjectMemberDeclarator(
+                    if (isAnonymous)
+                    {
+                        keyElements.Add(
+                            SyntaxFactory.AnonymousObjectMemberDeclarator(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName(abbreviation),
+                                    SyntaxFactory.IdentifierName(columnReferenceElement.Column.Name))));
+                    }
+                    else
+                    {
+                        keyElements.Add(
+                        SyntaxFactory.Argument(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName(abbreviation),
                                 SyntaxFactory.IdentifierName(columnReferenceElement.Column.Name))));
+                    }
                 }
 
-                // b => b.BuyerId or b => new { b.BuyerId, b.ExternalId0 }
-                syntaxNode = SyntaxFactory.AnonymousObjectCreationExpression(
+                if (isAnonymous)
+                {
+                    // b => b.BuyerId or b => new { b.BuyerId, b.ExternalId0 }
+                    syntaxNode = SyntaxFactory.AnonymousObjectCreationExpression(
                         SyntaxFactory.SeparatedList<AnonymousObjectMemberDeclaratorSyntax>(keyElements.ToArray()));
+                }
+                else
+                {
+                    // b => b.BuyerId or p => ValueTuple.Create(p.Name, p.CountryCode)
+                    syntaxNode = SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName("ValueTuple"),
+                            SyntaxFactory.IdentifierName("Create")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SeparatedList<ArgumentSyntax>(keyElements.ToArray())));
+                }
             }
 
             //            this.BuyerKey = new UniqueKeyIndex<Buyer>("BuyerKey").HasIndex(b => b.BuyerId);

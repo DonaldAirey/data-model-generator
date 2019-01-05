@@ -4,6 +4,7 @@
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Common
 {
+    using System;
     using System.Linq;
     using System.Text.RegularExpressions;
     using System.Xml.Linq;
@@ -43,9 +44,15 @@ namespace GammaFour.DataModelGenerator.Common
             get
             {
                 ConstraintElement parentConstraint = this.Parent as ConstraintElement;
-                return (from ce in parentConstraint.Table.Columns
-                        where ce.Name == this.name
-                        select ce).Single();
+                ColumnElement columnElement = (from ce in parentConstraint.Table.Columns
+                                               where ce.Name == this.name
+                                               select ce).SingleOrDefault();
+                if (columnElement == default(ColumnElement))
+                {
+                    throw new InvalidOperationException($"XSD Parsing error: Unable to find match the columns in foreign key index {parentConstraint.Name} to {this.name}");
+                }
+
+                return columnElement;
             }
         }
     }

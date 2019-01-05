@@ -134,6 +134,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             get
             {
                 // = new UniqueKeyIndex<Buyer>("BuyerExternalId0Key").HasIndex(b => b.ExternalId0);
+                // = new UniqueKeyIndex<Province>("ProvinceExternalKey").HasIndex(p => ValueTuple.Create(p.Name, p.CountryCode));
                 return SyntaxFactory.EqualsValueClause(
                     SyntaxFactory.InvocationExpression(
                         SyntaxFactory.MemberAccessExpression(

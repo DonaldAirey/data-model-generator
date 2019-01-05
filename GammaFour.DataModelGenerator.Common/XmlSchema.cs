@@ -202,6 +202,7 @@ namespace GammaFour.DataModelGenerator.Common
             { XName.Get("int", XmlSchemaNamespace), typeof(int?) },
             { XName.Get("long", XmlSchemaNamespace), typeof(long?) },
             { XName.Get("short", XmlSchemaNamespace), typeof(short?) },
+            { XName.Get("string", XmlSchemaNamespace), typeof(string) },
             { XName.Get("unsignedByte", XmlSchemaNamespace), typeof(byte?) },
             { XName.Get("unsignedInt", XmlSchemaNamespace), typeof(uint?) },
             { XName.Get("unsignedLong", XmlSchemaNamespace), typeof(ulong?) },

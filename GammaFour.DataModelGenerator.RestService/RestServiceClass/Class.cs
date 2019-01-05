@@ -239,9 +239,10 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             List<SyntaxElement> methods = new List<SyntaxElement>();
             members = members.Add(new GetAllMethod(this.tableElement).Syntax);
 
+            // Create a PUT method for each of the unique keys.
             foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
             {
-                if (uniqueKeyElement.Columns.Count == 1 && !uniqueKeyElement.Columns[0].Column.IsAutoIncrement)
+                if (!uniqueKeyElement.IsPrimaryKey)
                 {
                     members = members.Add(new PutMethod(uniqueKeyElement).Syntax);
                 }

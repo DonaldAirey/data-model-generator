@@ -87,7 +87,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                     .WithArgumentList(
                                         SyntaxFactory.ArgumentList(
                                             SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                SyntaxFactory.Argument(UniqueKeyExpression.GetUniqueKey(uniqueKeyElement)))))));
+                                                SyntaxFactory.Argument(UniqueKeyExpression.GetUniqueKey(uniqueKeyElement, true)))))));
                         }
                         else
                         {
@@ -114,7 +114,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                             .WithArgumentList(
                                                 SyntaxFactory.ArgumentList(
                                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                SyntaxFactory.Argument(UniqueKeyExpression.GetUniqueKey(uniqueKeyElement))))),
+                                                SyntaxFactory.Argument(UniqueKeyExpression.GetUniqueKey(uniqueKeyElement, true))))),
                             SyntaxFactory.IdentifierName("IsUnique")))));
                         }
                     }

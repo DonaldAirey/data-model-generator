@@ -219,7 +219,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             fields.Add(new PrimaryKeyFunctionField(this.tableElement.PrimaryKey));
             fields.Add(new CollectionField(this.tableElement));
             fields.Add(new SyncRootField());
-            fields.Add(new TransactionsField());
             fields.Add(new UndoStackField());
 
             // Add a field for each of the foreign indices.
