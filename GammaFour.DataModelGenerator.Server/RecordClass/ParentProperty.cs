@@ -10,7 +10,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Pluralize.NET;
 
     /// <summary>
     /// Creates a property that navigates to the parent record.

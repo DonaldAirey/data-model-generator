@@ -10,7 +10,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Pluralize.NET;
 
     /// <summary>
     /// A method to create a record.
@@ -114,8 +113,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.AnonymousObjectCreationExpression(
-                                            SyntaxFactory.SeparatedList<AnonymousObjectMemberDeclaratorSyntax>(properties))))))));
+                                        AnonymousRecordExpression.GetSyntax(this.tableElement)))))));
 
                 // This is the complete block.
                 return statements;
@@ -190,11 +188,11 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 
                 //            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 //            {
-                //                <Transaction>
+                //                <ReadTransaction>
                 //            }
                 statements.Add(
                     SyntaxFactory.UsingStatement(
-                        SyntaxFactory.Block(this.Transaction))
+                        SyntaxFactory.Block(this.ReadTransaction))
                     .WithDeclaration(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName("TransactionScope"))
@@ -323,7 +321,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        private List<StatementSyntax> Transaction
+        private List<StatementSyntax> ReadTransaction
         {
             get
             {

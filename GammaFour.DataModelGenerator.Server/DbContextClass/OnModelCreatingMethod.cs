@@ -10,7 +10,6 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Pluralize.NET;
 
     /// <summary>
     /// Creates a method to prepare a resource for a transaction completion.

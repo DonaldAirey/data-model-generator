@@ -10,7 +10,6 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Pluralize.NET;
 
     /// <summary>
     /// Creates a field to hold the current contents of the record.
