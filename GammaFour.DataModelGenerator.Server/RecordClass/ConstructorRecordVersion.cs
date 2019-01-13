@@ -76,11 +76,31 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("RecordState")),
+                                SyntaxFactory.IdentifierName("State")),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("RecordState"),
                                 SyntaxFactory.IdentifierName("Detached")))));
+
+                //            this.getBuyers = () => Country.defaultBuyers;
+                //            this.getProvinces = () => Country.defaultProvinces;
+                //            this.getRegions = () => Country.defaultRegions;
+                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ChildKeys)
+                {
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName($"get{foreignKeyElement.Table.Name.ToPlural()}")),
+                                SyntaxFactory.ParenthesizedLambdaExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name),
+                                        SyntaxFactory.IdentifierName($"default{foreignKeyElement.Table.Name.ToPlural()}"))))));
+                }
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));

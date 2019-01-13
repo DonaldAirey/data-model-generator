@@ -344,7 +344,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
             methods.Add(new AddMethod(this.tableElement));
-            methods.Add(new AddRangeMethod(this.tableElement));
             methods.Add(new CommitMethod());
             methods.Add(new InDoubtMethod());
             methods.Add(new GetEnumeratorMethod(this.tableElement));

@@ -18,28 +18,28 @@ namespace GammaFour.DataModelGenerator.Server
         /// <summary>
         /// Creates an argument that creates a lambda expression for extracting the key from a class.
         /// </summary>
-        /// <param name="uniqueKeyElement">The unique key element.</param>
+        /// <param name="foreignKeyElement">The unique key element.</param>
         /// <returns>An argument that extracts a key from an object.</returns>
-        public static ExpressionSyntax GetForeignKey(ForeignKeyElement uniqueKeyElement)
+        public static ExpressionSyntax GetForeignKey(ForeignKeyElement foreignKeyElement)
         {
             // Used as a variable when constructing the lambda expression.
-            string abbreviation = uniqueKeyElement.Table.Name[0].ToString().ToLower();
+            string abbreviation = foreignKeyElement.Table.Name[0].ToString().ToLower();
 
             // This will create an expression for extracting the key from record.
             CSharpSyntaxNode syntaxNode = null;
-            if (uniqueKeyElement.Columns.Count == 1)
+            if (foreignKeyElement.Columns.Count == 1)
             {
                 // A simple key can be used like a value type.
                 syntaxNode = SyntaxFactory.MemberAccessExpression(
                     SyntaxKind.SimpleMemberAccessExpression,
                     SyntaxFactory.IdentifierName(abbreviation),
-                    SyntaxFactory.IdentifierName(uniqueKeyElement.Columns[0].Column.Name));
+                    SyntaxFactory.IdentifierName(foreignKeyElement.Columns[0].Column.Name));
             }
             else
             {
                 // A Compound key must be constructed from an anomymous type.
                 List<SyntaxNodeOrToken> keyElements = new List<SyntaxNodeOrToken>();
-                foreach (ColumnReferenceElement columnReferenceElement in uniqueKeyElement.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in foreignKeyElement.Columns)
                 {
                     if (keyElements.Count != 0)
                     {

@@ -57,7 +57,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("RecordState")),
+                                SyntaxFactory.IdentifierName("State")),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("RecordState"),

@@ -59,7 +59,8 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                     SyntaxFactory.List(
                         new AccessorDeclarationSyntax[]
                         {
-                            this.GetAccessor
+                            this.GetAccessor,
+                            this.SetAccessor
                         }));
             }
         }
@@ -134,39 +135,22 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 // This list collects the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                return this.Countries.Domain.Buyers.CountryBuyerCountryIdKey.GetChildren(this);
+                //                return this.getRegions();
                 statements.Add(
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Table.Name.ToPlural())),
-                                            SyntaxFactory.IdentifierName(this.foreignKeyElement.XmlSchemaDocument.Name)),
-                                        SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name.ToPlural())),
-                                    SyntaxFactory.IdentifierName(this.foreignKeyElement.Name)),
-                                SyntaxFactory.IdentifierName("GetChildren")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.ThisExpression()))))));
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName($"get{this.foreignKeyElement.Table.Name.ToPlural()}")))));
 
                 //            get
                 //            {
                 //            }
                 return SyntaxFactory.AccessorDeclaration(
-                    SyntaxKind.GetAccessorDeclaration,
-                    SyntaxFactory.Block(
-                        SyntaxFactory.List(statements)))
+                        SyntaxKind.GetAccessorDeclaration,
+                        SyntaxFactory.Block(
+                            SyntaxFactory.List(statements)))
                     .WithKeyword(SyntaxFactory.Token(SyntaxKind.GetKeyword));
             }
         }
@@ -184,6 +168,27 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                     {
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword)
                     });
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'Set' accessor.
+        /// </summary>
+        private AccessorDeclarationSyntax SetAccessor
+        {
+            get
+            {
+                // This list collects the statements.
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //            set
+                //            {
+                //            }
+                return SyntaxFactory.AccessorDeclaration(
+                        SyntaxKind.SetAccessorDeclaration,
+                        SyntaxFactory.Block(
+                            SyntaxFactory.List(statements)))
+                    .WithKeyword(SyntaxFactory.Token(SyntaxKind.SetKeyword));
             }
         }
     }

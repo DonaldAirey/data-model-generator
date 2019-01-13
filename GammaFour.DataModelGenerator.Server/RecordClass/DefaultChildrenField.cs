@@ -1,4 +1,4 @@
-// <copyright file="ParentProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="DefaultChildrenField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,51 +12,74 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a property that navigates to the parent record.
+    /// Creates a field to hold the current contents of the row.
     /// </summary>
-    public class ParentProperty : SyntaxElement
+    public class DefaultChildrenField : SyntaxElement
     {
         /// <summary>
-        /// The foreign key description.
+        /// The table schema.
         /// </summary>
         private ForeignKeyElement foreignKeyElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ParentProperty"/> class.
+        /// Initializes a new instance of the <see cref="DefaultChildrenField"/> class.
         /// </summary>
-        /// <param name="foreignKeyElement">The column schema.</param>
-        public ParentProperty(ForeignKeyElement foreignKeyElement)
+        /// <param name="foreignKeyElement">A description of a foreign key.</param>
+        public DefaultChildrenField(ForeignKeyElement foreignKeyElement)
         {
             // Initialize the object.
             this.foreignKeyElement = foreignKeyElement;
-            this.Name = this.foreignKeyElement.UniqueKey.Table.Name;
+            this.Name = $"default{this.foreignKeyElement.Table.Name.ToPlural()}";
 
             //        /// <summary>
-            //        /// Gets the parent <see cref="Country"/> record.
+            //        /// Default Buyers.
             //        /// </summary>
-            //        public Country Country < Get >
-            this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Table.Name),
-                SyntaxFactory.Identifier(this.Name))
-                .WithAccessorList(this.AccessorList)
+            //        private static readonly List<Buyer> defaultBuyers = new List<Buyer>();
+            this.Syntax = SyntaxFactory.FieldDeclaration(
+                    SyntaxFactory.VariableDeclaration(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("List"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                    SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name)))))
+                    .WithVariables(this.Variables))
                 .WithModifiers(this.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
-        /// Gets the list of accessors.
+        /// Gets the generic type declaration.
         /// </summary>
-        private AccessorListSyntax AccessorList
+        private TypeArgumentListSyntax ArgumentListSyntax
         {
             get
             {
-                return SyntaxFactory.AccessorList(
-                    SyntaxFactory.List(
-                        new AccessorDeclarationSyntax[]
-                        {
-                            this.GetAccessor,
-                            this.SetAccessor
-                        }));
+                return SyntaxFactory.TypeArgumentList(
+                        SyntaxFactory.SeparatedList<TypeSyntax>(
+                            new SyntaxNodeOrToken[]
+                            {
+                                SyntaxFactory.IdentifierName("RecordVersion"),
+                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                SyntaxFactory.GenericName(
+                                    SyntaxFactory.Identifier("Func"))
+                                .WithTypeArgumentList(
+                                    SyntaxFactory.TypeArgumentList(
+                                        SyntaxFactory.SeparatedList<TypeSyntax>(
+                                            new SyntaxNodeOrToken[]
+                                            {
+                                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Name),
+                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                SyntaxFactory.ArrayType(
+                                                    SyntaxFactory.PredefinedType(
+                                                        SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
+                                                .WithRankSpecifiers(
+                                                    SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
+                                                        SyntaxFactory.ArrayRankSpecifier(
+                                                            SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
+                                                                SyntaxFactory.OmittedArraySizeExpression()))))
+                                            })))
+                            }));
             }
         }
 
@@ -71,7 +94,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Gets the current state of the row.
+                //        /// Default Buyers.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -95,7 +118,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                $" Gets the parent <see cref=\"{this.Name}\"/> record.",
+                                                $" Default {this.foreignKeyElement.Table.Name}.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -121,80 +144,45 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         }
 
         /// <summary>
-        /// Gets the 'Get' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax GetAccessor
-        {
-            get
-            {
-                // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                return this.Provinces?.CountryProvinceKey.GetParent(this);
-                statements.Add(
-                    SyntaxFactory.ReturnStatement(
-                        SyntaxFactory.ConditionalAccessExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name.ToPlural())),
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberBindingExpression(
-                                    SyntaxFactory.IdentifierName(this.foreignKeyElement.Name)),
-                                    SyntaxFactory.IdentifierName("GetParent")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.ThisExpression())))))));
-
-                //            get
-                //            {
-                //            }
-                return SyntaxFactory.AccessorDeclaration(
-                    SyntaxKind.GetAccessorDeclaration,
-                    SyntaxFactory.Block(
-                        SyntaxFactory.List(statements)))
-                    .WithKeyword(SyntaxFactory.Token(SyntaxKind.GetKeyword));
-            }
-        }
-
-        /// <summary>
         /// Gets the modifiers.
         /// </summary>
         private SyntaxTokenList Modifiers
         {
             get
             {
-                // public
+                // private
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                        SyntaxFactory.Token(SyntaxKind.StaticKeyword),
+                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)
                     });
             }
         }
 
         /// <summary>
-        /// Gets the 'Set' accessor.
+        /// Gets the initialization list.
         /// </summary>
-        private AccessorDeclarationSyntax SetAccessor
+        private SeparatedSyntaxList<VariableDeclaratorSyntax> Variables
         {
             get
             {
-                // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            set
-                //            {
-                //            }
-                return SyntaxFactory.AccessorDeclaration(
-                        SyntaxKind.SetAccessorDeclaration,
-                        SyntaxFactory.Block(
-                            SyntaxFactory.List(statements)))
-                    .WithKeyword(SyntaxFactory.Token(SyntaxKind.SetKeyword));
+                // defaultBuyers = new List<Buyer>()
+                return SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                    SyntaxFactory.VariableDeclarator(
+                        SyntaxFactory.Identifier(this.Name))
+                    .WithInitializer(
+                        SyntaxFactory.EqualsValueClause(
+                            SyntaxFactory.ObjectCreationExpression(
+                                SyntaxFactory.GenericName(
+                                    SyntaxFactory.Identifier("List"))
+                                .WithTypeArgumentList(
+                                    SyntaxFactory.TypeArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                            SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name)))))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList()))));
             }
         }
     }

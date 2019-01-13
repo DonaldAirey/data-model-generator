@@ -81,17 +81,20 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.Argument(
                                                     SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))))))));
 
-                //            buyer.Buyers = null;
+                //            country.SetOwner(null);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
+                        SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.NullLiteralExpression))));
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                SyntaxFactory.IdentifierName("SetOwner")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.NullLiteralExpression)))))));
 
                 //            this.collection.Remove(key);
                 statements.Add(
@@ -110,7 +113,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.IdentifierName("key")))))));
 
-                //            this.undoStack.Push(() => { buyer.Buyers = this; this.collection.Add(key); });
+                //            this.undoStack.Push(() => this.collection.Add(key, country));
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -126,35 +129,25 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.ParenthesizedLambdaExpression(
-                                            SyntaxFactory.Block(
-                                                SyntaxFactory.ExpressionStatement(
-                                                    SyntaxFactory.AssignmentExpression(
-                                                        SyntaxKind.SimpleAssignmentExpression,
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
-                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                                        SyntaxFactory.ThisExpression())),
-                                                SyntaxFactory.ExpressionStatement(
-                                                    SyntaxFactory.InvocationExpression(
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.MemberAccessExpression(
-                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.ThisExpression(),
-                                                                SyntaxFactory.IdentifierName("collection")),
-                                                            SyntaxFactory.IdentifierName("Add")))
-                                                    .WithArgumentList(
-                                                        SyntaxFactory.ArgumentList(
-                                                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                                new SyntaxNodeOrToken[]
-                                                                {
-                                                                    SyntaxFactory.Argument(
-                                                                        SyntaxFactory.IdentifierName("key")),
-                                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                                    SyntaxFactory.Argument(
-                                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()))
-                                                                }))))))))))));
+                                            SyntaxFactory.InvocationExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName("collection")),
+                                                    SyntaxFactory.IdentifierName("Add")))
+                                            .WithArgumentList(
+                                                SyntaxFactory.ArgumentList(
+                                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                        new SyntaxNodeOrToken[]
+                                                        {
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.IdentifierName("key")),
+                                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()))
+                                                        }))))))))));
 
                 // Remove the record to each of the unique key indices on this set.
                 foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)

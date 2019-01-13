@@ -24,7 +24,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         /// <summary>
         /// Initializes a new instance of the <see cref="GetVersionMethod"/> class.
         /// </summary>
-        /// <param name="tableElement">The unique constraint schema.</param>
+        /// <param name="tableElement">A description of the table.</param>
         public GetVersionMethod(TableElement tableElement)
         {
             // Initialize the object.

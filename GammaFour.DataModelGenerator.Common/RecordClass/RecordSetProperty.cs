@@ -54,8 +54,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
                     SyntaxFactory.List(
                         new AccessorDeclarationSyntax[]
                         {
-                            this.GetAccessor,
-                            this.SetAccessor
+                            this.GetAccessor
                         }));
             }
         }
@@ -162,64 +161,6 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
                     {
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword)
                     });
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Set' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax SetAccessor
-        {
-            get
-            {
-                // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                this.countries = value;
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToCamelCase())),
-                            SyntaxFactory.IdentifierName("value"))));
-
-                //                this.RecordState = this.countries == null ? RecordState.Deleted : RecordState.Added;
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("RecordState")),
-                            SyntaxFactory.ConditionalExpression(
-                                SyntaxFactory.BinaryExpression(
-                                    SyntaxKind.EqualsExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToCamelCase())),
-                                    SyntaxFactory.LiteralExpression(
-                                        SyntaxKind.NullLiteralExpression)),
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("RecordState"),
-                                    SyntaxFactory.IdentifierName("Deleted")),
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("RecordState"),
-                                    SyntaxFactory.IdentifierName("Added"))))));
-
-                //            set
-                //            {
-                //            }
-                return SyntaxFactory.AccessorDeclaration(
-                    SyntaxKind.SetAccessorDeclaration,
-                    SyntaxFactory.Block(
-                        SyntaxFactory.List<StatementSyntax>(statements)));
             }
         }
     }

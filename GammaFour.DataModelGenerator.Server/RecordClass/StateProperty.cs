@@ -1,4 +1,4 @@
-// <copyright file="RecordStateProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="StateProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,15 +14,15 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
     /// <summary>
     /// Creates a property that describes the state.
     /// </summary>
-    public class RecordStateProperty : SyntaxElement
+    public class StateProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RecordStateProperty"/> class.
+        /// Initializes a new instance of the <see cref="StateProperty"/> class.
         /// </summary>
-        public RecordStateProperty()
+        public StateProperty()
         {
             // Initialize the object.
-            this.Name = "RecordState";
+            this.Name = "State";
 
             //        /// <summary>
             //        /// Gets the state of the record.

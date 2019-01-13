@@ -30,13 +30,13 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
-                SyntaxFactory.PredefinedType(
-                    SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
-                SyntaxFactory.Identifier(this.Name))
-            .WithModifiers(this.Modifiers)
-            .WithParameterList(this.Parameters)
-            .WithBody(this.Body)
-            .WithLeadingTrivia(this.DocumentationComment);
+                    SyntaxFactory.PredefinedType(
+                            SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
+                        SyntaxFactory.Identifier(this.Name))
+                .WithModifiers(this.Modifiers)
+                .WithParameterList(this.Parameters)
+                .WithBody(this.Body)
+                .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("RecordState")),
+                                SyntaxFactory.IdentifierName("State")),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("RecordState"),
