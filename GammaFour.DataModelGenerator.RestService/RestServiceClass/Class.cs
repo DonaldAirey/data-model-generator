@@ -238,6 +238,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             List<SyntaxElement> methods = new List<SyntaxElement>();
             methods.Add(new DeleteAllMethod(this.tableElement));
             methods.Add(new GetAllMethod(this.tableElement));
+            methods.Add(new PostMethod(this.tableElement));
 
             // Create a PUT method for each of the unique keys.
             foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
