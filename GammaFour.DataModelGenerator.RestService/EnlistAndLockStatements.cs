@@ -25,7 +25,7 @@ namespace GammaFour.DataModelGenerator.RestService
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 
-            //                    this.domain.Countries.Enlist();
+            //                    this.domain.Provinces.Enlist();
             statements.Add(
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.InvocationExpression(
@@ -40,7 +40,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                 SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                             SyntaxFactory.IdentifierName("Enlist")))));
 
-            //                    this.domain.Countries.CountryKey.Enlist();
+            //                    this.domain.Provinces.ProvinceExternalKey.Enlist();
+            //                    this.domain.Provinces.ProvinceKey.Enlist();
             foreach (UniqueKeyElement innerUniqueKeyElement in tableElement.UniqueKeys)
             {
                 statements.Add(
@@ -58,6 +59,28 @@ namespace GammaFour.DataModelGenerator.RestService
                                             SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.Name.ToCamelCase())),
                                         SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                                     SyntaxFactory.IdentifierName(innerUniqueKeyElement.Name)),
+                                SyntaxFactory.IdentifierName("Enlist")))));
+            }
+
+            //                    this.domain.Provinces.CountryProvinceKey.Enlist();
+            //                    this.domain.Provinces.RegionProvinceRegionIdKey.Enlist();
+            foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys)
+            {
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.Name.ToCamelCase())),
+                                        SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
+                                    SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
                                 SyntaxFactory.IdentifierName("Enlist")))));
             }
 
@@ -88,7 +111,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                             SyntaxFactory.ThisExpression(),
                                             SyntaxFactory.IdentifierName("lockTimeout")))))))));
 
-            //                    await this.domain.Provinces.Lock.EnterWriteLockAsync(this.lockTimeout);
+            //                    await this.domain.Provinces.ProvinceExternalKey.Lock.EnterWriteLockAsync(this.lockTimeout);
+            //                    await this.domain.Provinces.ProvinceKey.Lock.EnterWriteLockAsync(this.lockTimeout);
             foreach (UniqueKeyElement innerUniqueKeyElement in tableElement.UniqueKeys)
             {
                 statements.Add(
@@ -121,7 +145,42 @@ namespace GammaFour.DataModelGenerator.RestService
                                                 SyntaxFactory.IdentifierName("lockTimeout")))))))));
             }
 
-            //                    await this.domain.Provinces.ProvinceKey.Lock.EnterWriteLockAsync(this.lockTimeout);
+            //                    await this.domain.Provinces.CountryProvinceKey.Lock.EnterWriteLockAsync(this.lockTimeout);
+            //                    await this.domain.Provinces.RegionProvinceRegionIdKey.Lock.EnterWriteLockAsync(this.lockTimeout);
+            foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys)
+            {
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AwaitExpression(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName(foreignKeyElement.XmlSchemaDocument.Name.ToCamelCase())),
+                                                SyntaxFactory.IdentifierName(foreignKeyElement.Table.Name.ToPlural())),
+                                            SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
+                                        SyntaxFactory.IdentifierName("Lock")),
+                                    SyntaxFactory.IdentifierName("EnterWriteLockAsync")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName("lockTimeout")))))))));
+            }
+
+            //                    await this.domain.Countries.CountryKey.Lock.EnterReadLockAsync(this.lockTimeout);
+            //                    await this.domain.Regions.RegionKey.Lock.EnterReadLockAsync(this.lockTimeout);
             foreach (ForeignKeyElement parentKeyElement in tableElement.ParentKeys)
             {
                 statements.Add(

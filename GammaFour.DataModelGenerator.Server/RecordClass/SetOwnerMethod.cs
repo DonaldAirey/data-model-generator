@@ -61,7 +61,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
 
                 //            if (this.RecordState == RecordState.Unchanged)
                 //            {
-                //                <InitializeState>
+                //                <UnchangedStateChange>
                 //            }
                 statements.Add(
                     SyntaxFactory.IfStatement(
@@ -75,7 +75,25 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("RecordState"),
                                 SyntaxFactory.IdentifierName("Unchanged"))),
-                        SyntaxFactory.Block(this.InitializeState)));
+                        SyntaxFactory.Block(this.UnchangedStateChange)));
+
+                //            if (this.RecordState == RecordState.Detached)
+                //            {
+                //                <DetachedStateChange>
+                //            }
+                statements.Add(
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.EqualsExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("State")),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("RecordState"),
+                                SyntaxFactory.IdentifierName("Detached"))),
+                        SyntaxFactory.Block(this.DetachedStateChange)));
 
                 //            if (countries == null)
                 //            {
@@ -110,6 +128,43 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
+            }
+        }
+
+        /// <summary>
+        /// Gets the statements that sets the underlying field to the new value.
+        /// </summary>
+        private List<StatementSyntax> DetachedStateChange
+        {
+            get
+            {
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //                this.State = provinces == null ? RecordState.Detached : RecordState.Added;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("State")),
+                            SyntaxFactory.ConditionalExpression(
+                                SyntaxFactory.BinaryExpression(
+                                    SyntaxKind.EqualsExpression,
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase().ToPlural()),
+                                    SyntaxFactory.LiteralExpression(
+                                        SyntaxKind.NullLiteralExpression)),
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("RecordState"),
+                                    SyntaxFactory.IdentifierName("Detached")),
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("RecordState"),
+                                    SyntaxFactory.IdentifierName("Added"))))));
+
+                return statements;
             }
         }
 
@@ -237,7 +292,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         /// <summary>
         /// Gets the statements that sets the underlying field to the new value.
         /// </summary>
-        private List<StatementSyntax> InitializeState
+        private List<StatementSyntax> UnchangedStateChange
         {
             get
             {

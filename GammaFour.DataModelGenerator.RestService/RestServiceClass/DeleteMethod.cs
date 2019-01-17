@@ -279,6 +279,26 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxFactory.ThisExpression(),
                                                 SyntaxFactory.IdentifierName("lockTimeout")))))))));
 
+                //            this.domain.Provinces.Remove(province);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.Name.ToCamelCase())),
+                                    SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
+                                SyntaxFactory.IdentifierName("Remove")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase())))))));
+
                 //            try
                 //            {
                 //                <TryBlock2>
@@ -595,26 +615,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             {
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                this.domain.Provinces.Remove(province);
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.Name.ToCamelCase())),
-                                    SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
-                                SyntaxFactory.IdentifierName("Remove")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase())))))));
 
                 //                this.domainContext.Provinces.Remove(province);
                 statements.Add(

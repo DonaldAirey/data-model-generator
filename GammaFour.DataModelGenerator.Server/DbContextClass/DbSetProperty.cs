@@ -151,6 +151,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
+                        SyntaxFactory.Token(SyntaxKind.VirtualKeyword),
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword)
                     });
             }

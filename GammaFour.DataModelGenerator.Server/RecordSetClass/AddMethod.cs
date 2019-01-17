@@ -135,6 +135,45 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.ThisExpression()))))));
 
+                //            if (this.collection.ContainsKey(key))
+                //            {
+                //                throw new DuplicateKeyException(this.Name, key);
+                //            }
+                statements.Add(
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("collection")),
+                                SyntaxFactory.IdentifierName("ContainsKey")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("key"))))),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ThrowStatement(
+                                    SyntaxFactory.ObjectCreationExpression(
+                                        SyntaxFactory.IdentifierName("DuplicateKeyException"))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                new SyntaxNodeOrToken[]
+                                                {
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.ThisExpression(),
+                                                            SyntaxFactory.IdentifierName("Name"))),
+                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName("key"))
+                                                }))))))));
+
                 //            this.collection.Add(key, buyer);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
