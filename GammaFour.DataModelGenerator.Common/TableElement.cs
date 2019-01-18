@@ -24,6 +24,20 @@ namespace GammaFour.DataModelGenerator.Common
             // Extract the name from the schema.
             this.Name = this.Attribute(XmlSchema.Name).Value;
 
+            // The verbs tell us what actions to support in the controller when it's built.
+            List<Verb> verbs = new List<Verb>();
+            XAttribute verbAttribute = this.Attribute(XmlSchema.Verbs);
+            string verbStrings = verbAttribute == null ? string.Empty : verbAttribute.Value;
+            foreach (string verbString in verbStrings.Split(','))
+            {
+                if (Enum.TryParse<Verb>(verbString, out Verb verb))
+                {
+                    verbs.Add(verb);
+                }
+            }
+
+            this.Verbs = verbs.ToArray();
+
             // This will navigate to the sequence of columns.
             XElement complexType = this.Element(XmlSchema.ComplexType);
             XElement sequence = complexType.Element(XmlSchema.Sequence);
@@ -157,6 +171,11 @@ namespace GammaFour.DataModelGenerator.Common
                 return this.Document as XmlSchemaDocument;
             }
         }
+
+        /// <summary>
+        /// Gets or sets the verbs supported by the controller.
+        /// </summary>
+        public Verb[] Verbs { get; set; }
 
         /// <summary>
         /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance

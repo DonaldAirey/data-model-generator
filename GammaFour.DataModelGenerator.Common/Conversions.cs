@@ -407,6 +407,11 @@ namespace GammaFour.DataModelGenerator.Common
                         return SyntaxFactory.NullableType(
                             SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.BoolKeyword)));
 
+                    case "System.Double":
+
+                        return SyntaxFactory.NullableType(
+                            SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.DoubleKeyword)));
+
                     case "System.Decimal":
 
                         return SyntaxFactory.NullableType(
@@ -444,6 +449,10 @@ namespace GammaFour.DataModelGenerator.Common
                 case "System.Boolean":
 
                     return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.BoolKeyword));
+
+                case "System.Double":
+
+                    return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.DoubleKeyword));
 
                 case "System.Decimal":
 

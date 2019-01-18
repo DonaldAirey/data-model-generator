@@ -209,26 +209,36 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                 SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase()),
                                 SyntaxFactory.IdentifierName("Enlist")))));
 
-                //                        await province.Lock.EnterWriteLockAsync(this.lockTimeout);
+                //                        await province.Lock.EnterWriteLockAsync(this.lockTimeout).ConfigureAwait(false);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase()),
-                                        SyntaxFactory.IdentifierName("Lock")),
-                                    SyntaxFactory.IdentifierName("EnterWriteLockAsync")))
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase()),
+                                                SyntaxFactory.IdentifierName("Lock")),
+                                            SyntaxFactory.IdentifierName("EnterWriteLockAsync")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName("lockTimeout")))))),
+                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName("lockTimeout")))))))));
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.FalseLiteralExpression))))))));
 
                 //                        using (TransactionScope additionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 //                        {
@@ -760,7 +770,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 
                     foreach (UniqueKeyElement additionalUniqueKeyElement in parentRelations[tableElement])
                     {
-                        //                var countryCountryCodeKey = jObject.GetValue("countryCountryCodeKey");
+                        //                var countryCountryCodeKey = jObject.GetValue("countryCountryCodeKey", StringComparison.InvariantCulture);
                         statements.Add(
                             SyntaxFactory.LocalDeclarationStatement(
                                 SyntaxFactory.VariableDeclaration(
@@ -778,11 +788,20 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxFactory.IdentifierName("GetValue")))
                                                 .WithArgumentList(
                                                     SyntaxFactory.ArgumentList(
-                                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                            SyntaxFactory.Argument(
-                                                                SyntaxFactory.LiteralExpression(
-                                                                    SyntaxKind.StringLiteralExpression,
-                                                                    SyntaxFactory.Literal(additionalUniqueKeyElement.Name.ToCamelCase()))))))))))));
+                                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                            new SyntaxNodeOrToken[]
+                                                            {
+                                                                SyntaxFactory.Argument(
+                                                                    SyntaxFactory.LiteralExpression(
+                                                                        SyntaxKind.StringLiteralExpression,
+                                                                        SyntaxFactory.Literal(additionalUniqueKeyElement.Name.ToCamelCase()))),
+                                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                                SyntaxFactory.Argument(
+                                                                    SyntaxFactory.MemberAccessExpression(
+                                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                                        SyntaxFactory.IdentifierName("StringComparison"),
+                                                                        SyntaxFactory.IdentifierName("InvariantCulture")))
+                                                            })))))))));
 
                         //                if (countryCountryCodeKey != null)
                         //                {
@@ -827,35 +846,45 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                    await this.domain.Countries.CountryCountryCodeKey.Lock.EnterReadLockAsync(this.lockTimeout);
+                //                    await this.domain.Countries.CountryCountryCodeKey.Lock.EnterReadLockAsync(this.lockTimeout).ConfigureAwait(false);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.InvocationExpression(
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.Name.ToCamelCase())),
-                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
-                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name)),
-                                        SyntaxFactory.IdentifierName("Lock")),
-                                    SyntaxFactory.IdentifierName("EnterReadLockAsync")))
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.ThisExpression(),
+                                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.Name.ToCamelCase())),
+                                                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
+                                                    SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name)),
+                                                SyntaxFactory.IdentifierName("Lock")),
+                                            SyntaxFactory.IdentifierName("EnterReadLockAsync")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName("lockTimeout")))))),
+                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName("lockTimeout")))))))));
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.FalseLiteralExpression))))))));
 
                 //                    country = this.domain.Countries.CountryCountryCodeKey.Find(countryCode);
                 statements.Add(
@@ -972,26 +1001,36 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                 SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase()),
                                 SyntaxFactory.IdentifierName("Enlist")))));
 
-                //                        await province.Lock.EnterWriteLockAsync(this.lockTimeout);
+                //                        await province.Lock.EnterWriteLockAsync(this.lockTimeout).ConfigureAwait(false);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase()),
-                                        SyntaxFactory.IdentifierName("Lock")),
-                                    SyntaxFactory.IdentifierName("EnterWriteLockAsync")))
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase()),
+                                                SyntaxFactory.IdentifierName("Lock")),
+                                            SyntaxFactory.IdentifierName("EnterWriteLockAsync")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName("lockTimeout")))))),
+                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName("lockTimeout")))))))));
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.FalseLiteralExpression))))))));
 
                 //                country.CountryCode = jObject.Value<string>("countryCode");
                 //                country.Name = jObject.Value<string>("name");
@@ -1253,35 +1292,45 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                             SyntaxFactory.Literal(columnElement.Name.ToCamelCase()))))))))))));
             }
 
-            //                    await this.domain.Countries.CountryKey.Lock.EnterReadLockAsync(this.lockTimeout);
+            //                    await this.domain.Countries.CountryKey.Lock.EnterReadLockAsync(this.lockTimeout).ConfigureAwait(false);
             statements.Add(
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AwaitExpression(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.InvocationExpression(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName(uniqueKeyElement.XmlSchemaDocument.Name.ToCamelCase())),
-                                            SyntaxFactory.IdentifierName(uniqueKeyElement.Table.Name.ToPlural())),
-                                        SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
-                                    SyntaxFactory.IdentifierName("Lock")),
-                                SyntaxFactory.IdentifierName("EnterReadLockAsync")))
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName(uniqueKeyElement.XmlSchemaDocument.Name.ToCamelCase())),
+                                                    SyntaxFactory.IdentifierName(uniqueKeyElement.Table.Name.ToPlural())),
+                                                SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
+                                            SyntaxFactory.IdentifierName("Lock")),
+                                        SyntaxFactory.IdentifierName("EnterReadLockAsync")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName("lockTimeout")))))),
+                                SyntaxFactory.IdentifierName("ConfigureAwait")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("lockTimeout")))))))));
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.FalseLiteralExpression))))))));
 
             //                    country = this.domain.Countries.CountryCountryCodeKey.Find(countryCountryCodeKeyCountryCode);
             //                    region = this.domain.Regions.RegionExternalKey.Find((regionExternalKeyName, regionExternalKeyCountryCode));
@@ -1321,26 +1370,36 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 
-            //                    await country.Lock.EnterReadLockAsync(this.lockTimeout);
+            //                    await country.Lock.EnterReadLockAsync(this.lockTimeout).ConfigureAwait(false);
             statements.Add(
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AwaitExpression(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(tableElement.Name.ToCamelCase()),
-                                    SyntaxFactory.IdentifierName("Lock")),
-                                SyntaxFactory.IdentifierName("EnterReadLockAsync")))
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.IdentifierName(tableElement.Name.ToCamelCase()),
+                                            SyntaxFactory.IdentifierName("Lock")),
+                                        SyntaxFactory.IdentifierName("EnterReadLockAsync")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName("lockTimeout")))))),
+                                SyntaxFactory.IdentifierName("ConfigureAwait")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("lockTimeout")))))))));
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.FalseLiteralExpression))))))));
 
             //                    jObject.Add("countryId", new JValue(country.CountryId));
             foreach (ColumnReferenceElement columnReferenceElement in tableElement.PrimaryKey.Columns)

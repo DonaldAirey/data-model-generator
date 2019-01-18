@@ -84,35 +84,45 @@ namespace GammaFour.DataModelGenerator.RestService
                                 SyntaxFactory.IdentifierName("Enlist")))));
             }
 
-            //                    await this.domain.Provinces.Lock.EnterWriteLockAsync(this.lockTimeout);
+            //                    await this.domain.Provinces.Lock.EnterWriteLockAsync(this.lockTimeout).ConfigureAwait(false);
             statements.Add(
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AwaitExpression(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.InvocationExpression(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.Name.ToCamelCase())),
-                                        SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                    SyntaxFactory.IdentifierName("Lock")),
-                                SyntaxFactory.IdentifierName("EnterWriteLockAsync")))
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.Name.ToCamelCase())),
+                                                SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
+                                            SyntaxFactory.IdentifierName("Lock")),
+                                        SyntaxFactory.IdentifierName("EnterWriteLockAsync")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName("lockTimeout")))))),
+                                SyntaxFactory.IdentifierName("ConfigureAwait")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("lockTimeout")))))))));
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.FalseLiteralExpression))))))));
 
-            //                    await this.domain.Provinces.ProvinceExternalKey.Lock.EnterWriteLockAsync(this.lockTimeout);
-            //                    await this.domain.Provinces.ProvinceKey.Lock.EnterWriteLockAsync(this.lockTimeout);
+            //                    await this.domain.Provinces.ProvinceExternalKey.Lock.EnterWriteLockAsync(this.lockTimeout).ConfigureAwait(false);
+            //                    await this.domain.Provinces.ProvinceKey.Lock.EnterWriteLockAsync(this.lockTimeout).ConfigureAwait(false);
             foreach (UniqueKeyElement innerUniqueKeyElement in tableElement.UniqueKeys)
             {
                 statements.Add(
@@ -121,32 +131,42 @@ namespace GammaFour.DataModelGenerator.RestService
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.InvocationExpression(
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(innerUniqueKeyElement.XmlSchemaDocument.Name.ToCamelCase())),
-                                                SyntaxFactory.IdentifierName(innerUniqueKeyElement.Table.Name.ToPlural())),
-                                            SyntaxFactory.IdentifierName(innerUniqueKeyElement.Name)),
-                                        SyntaxFactory.IdentifierName("Lock")),
-                                    SyntaxFactory.IdentifierName("EnterWriteLockAsync")))
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.ThisExpression(),
+                                                            SyntaxFactory.IdentifierName(innerUniqueKeyElement.XmlSchemaDocument.Name.ToCamelCase())),
+                                                        SyntaxFactory.IdentifierName(innerUniqueKeyElement.Table.Name.ToPlural())),
+                                                    SyntaxFactory.IdentifierName(innerUniqueKeyElement.Name)),
+                                                SyntaxFactory.IdentifierName("Lock")),
+                                            SyntaxFactory.IdentifierName("EnterWriteLockAsync")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName("lockTimeout")))))),
+                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName("lockTimeout")))))))));
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.FalseLiteralExpression))))))));
             }
 
-            //                    await this.domain.Provinces.CountryProvinceKey.Lock.EnterWriteLockAsync(this.lockTimeout);
-            //                    await this.domain.Provinces.RegionProvinceRegionIdKey.Lock.EnterWriteLockAsync(this.lockTimeout);
+            //                    await this.domain.Provinces.CountryProvinceKey.Lock.EnterWriteLockAsync(this.lockTimeout).ConfigureAwait(false);
+            //                    await this.domain.Provinces.RegionProvinceRegionIdKey.Lock.EnterWriteLockAsync(this.lockTimeout).ConfigureAwait(false);
             foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys)
             {
                 statements.Add(
@@ -155,32 +175,42 @@ namespace GammaFour.DataModelGenerator.RestService
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.InvocationExpression(
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(foreignKeyElement.XmlSchemaDocument.Name.ToCamelCase())),
-                                                SyntaxFactory.IdentifierName(foreignKeyElement.Table.Name.ToPlural())),
-                                            SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
-                                        SyntaxFactory.IdentifierName("Lock")),
-                                    SyntaxFactory.IdentifierName("EnterWriteLockAsync")))
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.ThisExpression(),
+                                                            SyntaxFactory.IdentifierName(foreignKeyElement.XmlSchemaDocument.Name.ToCamelCase())),
+                                                        SyntaxFactory.IdentifierName(foreignKeyElement.Table.Name.ToPlural())),
+                                                    SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
+                                                SyntaxFactory.IdentifierName("Lock")),
+                                            SyntaxFactory.IdentifierName("EnterWriteLockAsync")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName("lockTimeout")))))),
+                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName("lockTimeout")))))))));
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.FalseLiteralExpression))))))));
             }
 
-            //                    await this.domain.Countries.CountryKey.Lock.EnterReadLockAsync(this.lockTimeout);
-            //                    await this.domain.Regions.RegionKey.Lock.EnterReadLockAsync(this.lockTimeout);
+            //                    await this.domain.Countries.CountryKey.Lock.EnterReadLockAsync(this.lockTimeout).ConfigureAwait(false);
+            //                    await this.domain.Regions.RegionKey.Lock.EnterReadLockAsync(this.lockTimeout).ConfigureAwait(false);
             foreach (ForeignKeyElement parentKeyElement in tableElement.ParentKeys)
             {
                 statements.Add(
@@ -189,28 +219,38 @@ namespace GammaFour.DataModelGenerator.RestService
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.InvocationExpression(
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(parentKeyElement.UniqueKey.XmlSchemaDocument.Name.ToCamelCase())),
-                                                SyntaxFactory.IdentifierName(parentKeyElement.UniqueKey.Table.Name.ToPlural())),
-                                            SyntaxFactory.IdentifierName(parentKeyElement.UniqueKey.Name)),
-                                        SyntaxFactory.IdentifierName("Lock")),
-                                    SyntaxFactory.IdentifierName("EnterReadLockAsync")))
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.ThisExpression(),
+                                                            SyntaxFactory.IdentifierName(parentKeyElement.UniqueKey.XmlSchemaDocument.Name.ToCamelCase())),
+                                                        SyntaxFactory.IdentifierName(parentKeyElement.UniqueKey.Table.Name.ToPlural())),
+                                                    SyntaxFactory.IdentifierName(parentKeyElement.UniqueKey.Name)),
+                                                SyntaxFactory.IdentifierName("Lock")),
+                                            SyntaxFactory.IdentifierName("EnterReadLockAsync")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName("lockTimeout")))))),
+                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName("lockTimeout")))))))));
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.FalseLiteralExpression))))))));
             }
 
             // This set of statement will enlist the indices and tables in the current transaction and acquire an exclusive lock.
