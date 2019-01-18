@@ -70,12 +70,8 @@
     <StartArguments>/rootsuffix Exp</StartArguments>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="DatabaseGenerator.cs" />
-    <Compile Include="DataServiceGenerator.cs" />
-    <Compile Include="RestServiceGenerator.cs" />
+    <Compile Include="RestApiGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PersistentStoreGenerator.cs" />
-    <Compile Include="ClientDataModelGenerator.cs" />
     <Compile Include="ServerDataModelGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -185,17 +181,13 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GammaFour.DataModelGenerator.Client\GammaFour.DataModelGenerator.Client.csproj">
-      <Project>{f73e29a5-7e5f-4ec9-8452-53f4e9b75923}</Project>
-      <Name>GammaFour.DataModelGenerator.Client</Name>
-    </ProjectReference>
     <ProjectReference Include="..\GammaFour.DataModelGenerator.Common\GammaFour.DataModelGenerator.Common.csproj">
       <Project>{0539c55d-e64e-4e09-8703-ba39dfeb23dd}</Project>
       <Name>GammaFour.DataModelGenerator.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GammaFour.DataModelGenerator.RestService\GammaFour.DataModelGenerator.RestService.csproj">
-      <Project>{2923cc9d-7c5b-4167-94e4-d6922a4bf3a0}</Project>
-      <Name>GammaFour.DataModelGenerator.RestService</Name>
+    <ProjectReference Include="..\GammaFour.DataModelGenerator.Rest\GammaFour.DataModelGenerator.Rest.csproj">
+      <Project>{5882c75c-97d9-4943-b403-49e37486a403}</Project>
+      <Name>GammaFour.DataModelGenerator.Rest</Name>
     </ProjectReference>
     <ProjectReference Include="..\GammaFour.DataModelGenerator.Server\GammaFour.DataModelGenerator.Server.csproj">
       <Project>{12eb72ba-3516-4bbf-8512-ce9bb16e2ef7}</Project>
