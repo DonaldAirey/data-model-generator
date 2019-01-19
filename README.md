@@ -6,8 +6,7 @@ both.  A write-through, in-memory cache solves this problem.  In just minutes, y
 data.
 
 Creating and maintaining a complex data model is a snap with **Data Model Generator**.  You describe your tables and relations with an XSD Schema file (very similar to how **Visual Studio** *DataSets*
-are managed).  The tools will automatically generate a multi-user, in-memory database for you backed by an Entity Framework store.  The **REST Generator** automatically creates a full-featured RESTful API
-for .NET Core MVC or MVC6 to access your data model from the web.
+are managed).  The tools will automatically generate a multi-user, in-memory database for you backed by an Entity Framework store and a full-featured RESTful API for .NET Core MVC or MVC6.
  
 Advanced engineers will find a full-featured set of primitives for building *smart transactions* which can significantly reduce the stress on your database applications.  The in-memory data model will act like a
 traffic cop to your relational database back-end and allows you to program around scenarios that would deadlock an ordinary ORM.  With the proper design, you can expect to reach the maximum TPS rating on
