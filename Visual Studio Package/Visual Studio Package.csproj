@@ -75,16 +75,13 @@
     <Compile Include="ServerDataModelGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Data Model Generator.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="Resources\Data Model Generator.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Resources\Data Model Generator.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Resources\license.rtf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
