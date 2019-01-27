@@ -32,7 +32,7 @@ namespace GammaFour.DataModelGenerator.Common
             : base(xElement)
         {
             // Pull the column name out of the XPath.
-            Match match = ColumnReferenceElement.xPath.Match(this.Attribute(XmlSchema.XPath).Value);
+            Match match = ColumnReferenceElement.xPath.Match(this.Attribute(XmlSchemaDocument.XPath).Value);
             this.name = match.Groups[match.Groups.Count - 1].Value;
         }
 
@@ -49,7 +49,7 @@ namespace GammaFour.DataModelGenerator.Common
                                                select ce).SingleOrDefault();
                 if (columnElement == default(ColumnElement))
                 {
-                    throw new InvalidOperationException($"XSD Parsing error: Unable to find match the columns in foreign key index {parentConstraint.Name} to {this.name}");
+                    throw new InvalidOperationException($"The column {this.name} in constraint {parentConstraint.Name} doesn't exist in table {parentConstraint.Table.Name}.");
                 }
 
                 return columnElement;

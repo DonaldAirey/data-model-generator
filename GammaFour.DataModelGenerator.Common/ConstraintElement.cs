@@ -28,10 +28,10 @@ namespace GammaFour.DataModelGenerator.Common
             : base(xElement)
         {
             // Parse out the name of the constraint.
-            this.Name = this.Attribute(XmlSchema.Name).Value;
+            this.Name = this.Attribute(XmlSchemaDocument.ObjectName).Value;
 
             // Replace the undecorated columns with decorated ones.
-            List<XElement> columns = this.Elements(XmlSchema.Field).ToList();
+            List<XElement> columns = this.Elements(XmlSchemaDocument.Field).ToList();
             foreach (XElement column in columns)
             {
                 this.Add(new ColumnReferenceElement(column));
@@ -46,7 +46,7 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                return this.Elements(XmlSchema.Field).Cast<ColumnReferenceElement>().ToList();
+                return this.Elements(XmlSchemaDocument.Field).Cast<ColumnReferenceElement>().ToList();
             }
         }
 
@@ -90,18 +90,24 @@ namespace GammaFour.DataModelGenerator.Common
                 // The location of the table is kept in an XPath specification which addresses the target document.  Since we're not actually parsing
                 // a document with this schema, then the interpetation gets a little fuzzy.  We can't actually scan the source document with this
                 // specification, but we can pull it apart to get the table name for which this constraint is intended.
-                XElement selectorElement = this.Element(XmlSchema.Selector);
-                XAttribute xPathAttribute = selectorElement.Attribute(XmlSchema.XPath);
+                XElement selectorElement = this.Element(XmlSchemaDocument.Selector);
+                XAttribute xPathAttribute = selectorElement.Attribute(XmlSchemaDocument.XPath);
                 Match match = ConstraintElement.xPath.Match(xPathAttribute.Value);
                 if (!match.Success)
                 {
-                    throw new InvalidOperationException("Unique Constraint references a non-existing table ${match[0]}");
+                    throw new InvalidOperationException($"Unique Constraint {this.Name} can't parse expression '{xPathAttribute.Value}'");
                 }
 
                 // Select the table from the name in the XPath specification.
-                return (from te in this.XmlSchemaDocument.Tables
-                        where te.Name == match.Groups[match.Groups.Count - 1].Value
-                        select te).Single();
+                var tableElement = (from te in this.XmlSchemaDocument.Tables
+                                    where te.Name == match.Groups[match.Groups.Count - 1].Value
+                                    select te).FirstOrDefault();
+                if (tableElement == null)
+                {
+                    throw new InvalidOperationException($"Constraint {this.Name} can't find referenced table {match.Groups[match.Groups.Count - 1]}");
+                }
+
+                return tableElement;
             }
         }
 

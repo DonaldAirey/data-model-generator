@@ -40,33 +40,43 @@ namespace GammaFour.VisualStudioPackage
         /// <returns>The generated code file as a byte-array</returns>
         protected override byte[] GenerateCode(string inputFileContent)
         {
-            // Extract the name of the target class from the input file name.
-            string className = Path.GetFileNameWithoutExtension(this.InputFilePath);
-
-            // This creates the compilation unit from the schema.
-            // This schema describes the data model that is to be generated.
-            XmlSchemaDocument xmlSchemaDocument = new XmlSchemaDocument(inputFileContent, this.TargetNamespace);
-
-            // This creates the compilation unit from the schema.
-            CompilationUnit compilationUnit = new CompilationUnit(xmlSchemaDocument);
-
-            // A workspace is needed in order to turn the compilation unit into code.
-            AdhocWorkspace adhocWorkspace = new AdhocWorkspace();
-            OptionSet options = adhocWorkspace.Options;
-            options = options.WithChangedOption(CSharpFormattingOptions.WrappingKeepStatementsOnSingleLine, false);
-            adhocWorkspace.Options = options;
-
-            // Format the compilation unit.
-            SyntaxNode syntaxNode = Formatter.Format(compilationUnit.Syntax, adhocWorkspace);
-
-            // This performs the work of outputting the formatted code to a file.
             byte[] buffer = null;
-            using (StringWriter stringWriter = new StringWriter(new StringBuilder()))
+
+            try
             {
-                syntaxNode.WriteTo(stringWriter);
-                buffer = Encoding.UTF8.GetBytes(stringWriter.ToString());
+                // Extract the name of the target class from the input file name.
+                string className = Path.GetFileNameWithoutExtension(this.InputFilePath);
+
+                // This creates the compilation unit from the schema.
+                // This schema describes the data model that is to be generated.
+                XmlSchemaDocument xmlSchemaDocument = new XmlSchemaDocument(inputFileContent, this.TargetNamespace);
+
+                // This creates the compilation unit from the schema.
+                CompilationUnit compilationUnit = new CompilationUnit(xmlSchemaDocument);
+
+                // A workspace is needed in order to turn the compilation unit into code.
+                AdhocWorkspace adhocWorkspace = new AdhocWorkspace();
+                OptionSet options = adhocWorkspace.Options;
+                options = options.WithChangedOption(CSharpFormattingOptions.WrappingKeepStatementsOnSingleLine, false);
+                adhocWorkspace.Options = options;
+
+                // Format the compilation unit.
+                SyntaxNode syntaxNode = Formatter.Format(compilationUnit.Syntax, adhocWorkspace);
+
+                // This performs the work of outputting the formatted code to a file.
+                using (StringWriter stringWriter = new StringWriter(new StringBuilder()))
+                {
+                    syntaxNode.WriteTo(stringWriter);
+                    buffer = Encoding.UTF8.GetBytes(stringWriter.ToString());
+                }
+            }
+            catch (Exception exception)
+            {
+                // This will catch any generic errors and dump them to the console.
+                this.ErrorMessage(exception.Message);
             }
 
+            // If successful, buffer holds the text of the output file.
             return buffer;
         }
     }

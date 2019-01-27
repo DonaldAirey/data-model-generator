@@ -22,15 +22,15 @@ namespace GammaFour.DataModelGenerator.Common
             : base(xElement)
         {
             // Initialize the object.
-            this.Refer = this.Attribute(XmlSchema.Refer).Value;
+            this.Refer = this.Attribute(XmlSchemaDocument.Refer).Value;
 
             // Parse the cascading delete rule out of the specification.
-            XAttribute deleteRuleAttribute = xElement.Attribute(XmlSchema.DeleteRule);
+            XAttribute deleteRuleAttribute = xElement.Attribute(XmlSchemaDocument.DeleteRule);
             this.DeleteRule = deleteRuleAttribute == null ?
                 CascadeRules.Cascade : (CascadeRules)Enum.Parse(typeof(CascadeRules), deleteRuleAttribute.Value);
 
             // Parse the cascading update rule out of the specification.
-            XAttribute updateRuleAttribute = xElement.Attribute(XmlSchema.UpdateRule);
+            XAttribute updateRuleAttribute = xElement.Attribute(XmlSchemaDocument.UpdateRule);
             this.UpdateRule = updateRuleAttribute == null ?
                 CascadeRules.None : (CascadeRules)Enum.Parse(typeof(CascadeRules), updateRuleAttribute.Value);
         }
@@ -91,9 +91,15 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                return (from uk in this.XmlSchemaDocument.UniqueKeys
-                        where uk.Name == this.Refer
-                        select uk).Single();
+                var uniqueKeyElement = (from uk in this.XmlSchemaDocument.UniqueKeys
+                                        where uk.Name == this.Refer
+                                        select uk).SingleOrDefault();
+                if (uniqueKeyElement == default(UniqueKeyElement))
+                {
+                    throw new InvalidOperationException($"Foreign key constraint {this.Name} can't find referenced unique key constraint {this.Refer}");
+                }
+
+                return uniqueKeyElement;
             }
         }
 

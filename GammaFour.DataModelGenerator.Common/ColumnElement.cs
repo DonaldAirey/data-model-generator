@@ -75,26 +75,26 @@ namespace GammaFour.DataModelGenerator.Common
             : base(xElement)
         {
             // Parse the name out of the XML.
-            this.Name = this.Attribute(XmlSchema.Name).Value;
+            this.Name = this.Attribute(XmlSchemaDocument.ObjectName).Value;
 
             // This determines if the column allows nulls.
-            XAttribute isRowVersionAttribute = this.Attribute(XmlSchema.IsRowVersion);
+            XAttribute isRowVersionAttribute = this.Attribute(XmlSchemaDocument.IsRowVersion);
             this.IsRowVersion = isRowVersionAttribute == null ? false : Convert.ToBoolean(isRowVersionAttribute.Value);
 
             // This determines if the column allows nulls.
-            XAttribute minOccursAttribute = this.Attribute(XmlSchema.MinOccurs);
+            XAttribute minOccursAttribute = this.Attribute(XmlSchemaDocument.MinOccurs);
             this.IsNullable = minOccursAttribute == null ? false : Convert.ToInt32(minOccursAttribute.Value) == 0;
 
             // Determine the IsIdentityColumn property.
-            XAttribute autoIncrementAttribute = this.Attribute(XmlSchema.AutoIncrement);
+            XAttribute autoIncrementAttribute = this.Attribute(XmlSchemaDocument.AutoIncrement);
             this.IsAutoIncrement = autoIncrementAttribute == null ? false : Convert.ToBoolean(autoIncrementAttribute.Value);
 
             // Determine the AutoIncrementSeed property.
-            XAttribute autoIncrementSeedAttribute = this.Attribute(XmlSchema.AutoIncrementSeed);
+            XAttribute autoIncrementSeedAttribute = this.Attribute(XmlSchemaDocument.AutoIncrementSeed);
             this.AutoIncrementSeed = autoIncrementSeedAttribute == null ? 0 : Convert.ToInt32(autoIncrementSeedAttribute.Value);
 
             // Determine the AutoIncrementStop property
-            XAttribute autoIncrementStepAttribute = this.Attribute(XmlSchema.AutoIncrementStep);
+            XAttribute autoIncrementStepAttribute = this.Attribute(XmlSchemaDocument.AutoIncrementStep);
             this.AutoIncrementStep = autoIncrementStepAttribute == null ? 1 : Convert.ToInt32(autoIncrementStepAttribute.Value);
         }
 
@@ -300,24 +300,24 @@ namespace GammaFour.DataModelGenerator.Common
             // This section will determine the datatype of the column.  There are three basic flavors.  The first is a simple type which is extracted
             // from the 'type' attribute in the column description element.  The second is through a 'anyType' specification which is an instruction
             // to reference a literal expression for the type.  The third method restricts one of the basic types by setting a maximum length for it.
-            XAttribute typeAttribute = this.Attribute(XmlSchema.Type);
+            XAttribute typeAttribute = this.Attribute(XmlSchemaDocument.Type);
             if (typeAttribute == null)
             {
                 // This section will parse a predefined datatype with a restriction.  The 'base' attribute of the 'restriction' element contains the
                 // predefined datatype specification.
-                XElement simpleElement = this.Element(XmlSchema.SimpleType);
-                XElement restrictionElement = simpleElement.Element(XmlSchema.Restriction);
-                XAttribute baseAttribute = restrictionElement.Attribute(XmlSchema.Base);
+                XElement simpleElement = this.Element(XmlSchemaDocument.SimpleType);
+                XElement restrictionElement = simpleElement.Element(XmlSchemaDocument.Restriction);
+                XAttribute baseAttribute = restrictionElement.Attribute(XmlSchemaDocument.Base);
 
                 // Translate the predefined datatype into a CLR type.
                 string[] xNameParts = baseAttribute.Value.Split(':');
                 XNamespace xNamespace = this.Document.Root.GetNamespaceOfPrefix(xNameParts[0]);
                 XName typeXName = XName.Get(xNameParts[1], xNamespace.NamespaceName);
-                this.type = XmlSchema.TypeMap[typeXName];
+                this.type = XmlSchemaDocument.TypeMap[typeXName];
 
                 // Finally, extract the maximum length for this datatype.
-                XElement maxLengthElement = restrictionElement.Element(XmlSchema.MaxLength);
-                this.maximumLength = Convert.ToInt32(maxLengthElement.Attribute(XmlSchema.Value).Value);
+                XElement maxLengthElement = restrictionElement.Element(XmlSchemaDocument.MaxLength);
+                this.maximumLength = Convert.ToInt32(maxLengthElement.Attribute(XmlSchemaDocument.Value).Value);
             }
             else
             {
@@ -326,8 +326,8 @@ namespace GammaFour.DataModelGenerator.Common
                 string[] xNameParts = typeAttribute.Value.Split(':');
                 XNamespace xNamespace = this.Document.Root.GetNamespaceOfPrefix(xNameParts[0]);
                 XName typeXName = XName.Get(xNameParts[1], xNamespace.NamespaceName);
-                XAttribute dataTypeAttribute = this.Attribute(XmlSchema.DataType);
-                if (typeXName == XmlSchema.AnyType || dataTypeAttribute != null)
+                XAttribute dataTypeAttribute = this.Attribute(XmlSchemaDocument.DataType);
+                if (typeXName == XmlSchemaDocument.AnyType || dataTypeAttribute != null)
                 {
                     // An 'anyType' datatype is an instruction to load an explicit type from a specification found in the 'DataType' attribute.
                     string dataTypeText = dataTypeAttribute.Value;
@@ -363,12 +363,12 @@ namespace GammaFour.DataModelGenerator.Common
                 else
                 {
                     // This is the simplest method of specifying a datatype: a direct mapping to a CLR type.
-                    this.type = this.IsNullable ? XmlSchema.NullableTypeMap[typeXName] : XmlSchema.TypeMap[typeXName];
+                    this.type = this.IsNullable ? XmlSchemaDocument.NullableTypeMap[typeXName] : XmlSchemaDocument.TypeMap[typeXName];
                 }
             }
 
             // This evaluates whether the column has a default value and, if it does, converts the text of the default to the native version.
-            XAttribute defaultAttribute = this.Attribute(XmlSchema.Default);
+            XAttribute defaultAttribute = this.Attribute(XmlSchemaDocument.Default);
             this.hasDefault = defaultAttribute != null;
             Func<string, object> defaultFunction = null;
             if (defaultAttribute != null && ColumnElement.conversionFunctions.TryGetValue(this.type, out defaultFunction))

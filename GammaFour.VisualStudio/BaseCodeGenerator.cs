@@ -16,6 +16,11 @@ namespace GammaFour.VisualStudio
     public abstract class BaseCodeGenerator : IVsSingleFileGenerator
     {
         /// <summary>
+        /// Used to display the progress of the tool.
+        /// </summary>
+        private IVsGeneratorProgress generateProgress;
+
+        /// <summary>
         /// Gets the input file path.
         /// </summary>
         protected string InputFilePath { get; private set; }
@@ -64,6 +69,7 @@ namespace GammaFour.VisualStudio
             // Initialize the object.
             this.InputFilePath = wszInputFilePath ?? throw new ArgumentNullException(nameof(wszInputFilePath));
             this.TargetNamespace = wszDefaultNamespace ?? throw new ArgumentNullException(nameof(wszDefaultNamespace));
+            this.generateProgress = pGenerateProgress;
 
             // Generate the file using the input contents.
             byte[] bytes = this.GenerateCode(bstrInputFileContents);
@@ -84,6 +90,24 @@ namespace GammaFour.VisualStudio
 
             // This indicates that we're done generating code and it was successful.
             return VSConstants.S_OK;
+        }
+
+        /// <summary>
+        /// Display an error message in the IDE.
+        /// </summary>
+        /// <param name="message">The error message.</param>
+        protected void ErrorMessage(string message)
+        {
+            this.generateProgress.GeneratorError(0, 0, message, 0xFFFFFFFF, 0xFFFFFFFF);
+        }
+
+        /// <summary>
+        /// Display an error message in the IDE.
+        /// </summary>
+        /// <param name="message">The error message.</param>
+        protected void WarningMessage(string message)
+        {
+            this.generateProgress.GeneratorError(1, 0, message, 0xFFFFFFFF, 0xFFFFFFFF);
         }
 
         /// <summary>

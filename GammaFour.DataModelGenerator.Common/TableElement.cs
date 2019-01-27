@@ -22,11 +22,11 @@ namespace GammaFour.DataModelGenerator.Common
             : base(xElement)
         {
             // Extract the name from the schema.
-            this.Name = this.Attribute(XmlSchema.Name).Value;
+            this.Name = this.Attribute(XmlSchemaDocument.ObjectName).Value;
 
             // The verbs tell us what actions to support in the controller when it's built.
             List<Verb> verbs = new List<Verb>();
-            XAttribute verbAttribute = this.Attribute(XmlSchema.Verbs);
+            XAttribute verbAttribute = this.Attribute(XmlSchemaDocument.Verbs);
             string verbStrings = verbAttribute == null ? string.Empty : verbAttribute.Value;
             foreach (string verbString in verbStrings.Split(','))
             {
@@ -39,19 +39,19 @@ namespace GammaFour.DataModelGenerator.Common
             this.Verbs = verbs.ToArray();
 
             // This will navigate to the sequence of columns.
-            XElement complexType = this.Element(XmlSchema.ComplexType);
-            XElement sequence = complexType.Element(XmlSchema.Sequence);
+            XElement complexType = this.Element(XmlSchemaDocument.ComplexType);
+            XElement sequence = complexType.Element(XmlSchemaDocument.Sequence);
 
             // Every table has an implicit row version column to track changes.
             sequence.Add(
                 new XElement(
-                    XmlSchema.Element,
+                    XmlSchemaDocument.Element,
                     new XAttribute("name", "RowVersion"),
                     new XAttribute(XName.Get("IsRowVersion", "urn:schemas-gamma-four-com:xml-gfdata"), "true"),
                     new XAttribute("type", "xs:base64Binary")));
 
             // This will replace each of the undecorated elements with decorated ones.
-            List<XElement> columnElements = sequence.Elements(XmlSchema.Element).ToList();
+            List<XElement> columnElements = sequence.Elements(XmlSchemaDocument.Element).ToList();
             foreach (XElement columnElement in columnElements)
             {
                 sequence.Add(new ColumnElement(columnElement));
@@ -66,9 +66,9 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                XElement complexType = this.Element(XmlSchema.ComplexType);
-                XElement sequence = complexType.Element(XmlSchema.Sequence);
-                return sequence.Elements(XmlSchema.Element).Cast<ColumnElement>().ToList();
+                XElement complexType = this.Element(XmlSchemaDocument.ComplexType);
+                XElement sequence = complexType.Element(XmlSchemaDocument.Sequence);
+                return sequence.Elements(XmlSchemaDocument.Element).Cast<ColumnElement>().ToList();
             }
         }
 
@@ -143,7 +143,7 @@ namespace GammaFour.DataModelGenerator.Common
             {
                 return (from uk in this.UniqueKeys
                         where uk.IsPrimaryKey
-                        select uk).Single();
+                        select uk).FirstOrDefault();
             }
         }
 
