@@ -40,15 +40,15 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
             //        <Members>
             //    }
             this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
-                .WithModifiers(this.Modifiers)
-                .WithMembers(this.Members)
-                .WithLeadingTrivia(this.DocumentationComment);
+                .WithModifiers(Class.Modifiers)
+                .WithMembers(Class.Members)
+                .WithLeadingTrivia(Class.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -102,14 +102,14 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
         /// <summary>
         /// Gets the members syntax.
         /// </summary>
-        private SyntaxList<MemberDeclarationSyntax> Members
+        private static SyntaxList<MemberDeclarationSyntax> Members
         {
             get
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = this.CreateConstructors(members);
-                members = this.CreateInternalInstanceProperties(members);
+                members = Class.CreateConstructors(members);
+                members = Class.CreateInternalInstanceProperties(members);
                 return members;
             }
         }
@@ -117,7 +117,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
         /// <summary>
         /// Gets the modifiers.
         /// </summary>
-        private SyntaxTokenList Modifiers
+        private static SyntaxTokenList Modifiers
         {
             get
             {
@@ -134,7 +134,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The structure members with the fields added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
+        private static SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // Add the constructors.
             members = members.Add(new Constructor().Syntax);
@@ -148,7 +148,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The structure members with the fields added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreateInternalInstanceProperties(SyntaxList<MemberDeclarationSyntax> members)
+        private static SyntaxList<MemberDeclarationSyntax> CreateInternalInstanceProperties(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the internal instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();

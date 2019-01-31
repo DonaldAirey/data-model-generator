@@ -41,10 +41,26 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             //        }
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
                     SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(this.Modifiers)
+                .WithModifiers(ConstructorDbContext.Modifiers)
                 .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // public
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                    });
+            }
         }
 
         /// <summary>
@@ -507,22 +523,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 }
 
                 return statements;
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
-                    });
             }
         }
 

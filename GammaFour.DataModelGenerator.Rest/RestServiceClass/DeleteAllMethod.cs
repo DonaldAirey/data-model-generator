@@ -48,8 +48,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                             SyntaxFactory.IdentifierName("IActionResult")))),
                 SyntaxFactory.Identifier(this.Name))
-            .WithAttributeLists(this.Attributes)
-            .WithModifiers(this.Modifiers)
+            .WithAttributeLists(DeleteAllMethod.Attributes)
+            .WithModifiers(DeleteAllMethod.Modifiers)
             .WithBody(this.Body)
             .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -57,7 +57,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <summary>
         /// Gets the data contract attribute syntax.
         /// </summary>
-        private SyntaxList<AttributeListSyntax> Attributes
+        private static SyntaxList<AttributeListSyntax> Attributes
         {
             get
             {
@@ -73,6 +73,57 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 
                 // The collection of attributes.
                 return SyntaxFactory.List<AttributeListSyntax>(attributes);
+            }
+        }
+
+        /// <summary>
+        /// Gets a block of code.
+        /// </summary>
+        private static SyntaxList<CatchClauseSyntax> CatchClauses
+        {
+            get
+            {
+                // The catch clauses are collected in this list.
+                List<CatchClauseSyntax> clauses = new List<CatchClauseSyntax>();
+
+                //            catch (DbUpdateException)
+                //            {
+                //                <HandleException>
+                //            }
+                clauses.Add(
+                    SyntaxFactory.CatchClause()
+                    .WithDeclaration(
+                        SyntaxFactory.CatchDeclaration(
+                            SyntaxFactory.IdentifierName("DbUpdateException")))
+                    .WithBlock(
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ReturnStatement(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName("BadRequest"))))))));
+
+                // This is the collection of catch clauses.
+                return SyntaxFactory.List<CatchClauseSyntax>(clauses);
+            }
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // public async
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                        SyntaxFactory.Token(SyntaxKind.AsyncKeyword)
+                   });
             }
         }
 
@@ -121,40 +172,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
-            }
-        }
-
-        /// <summary>
-        /// Gets a block of code.
-        /// </summary>
-        private SyntaxList<CatchClauseSyntax> CatchClauses
-        {
-            get
-            {
-                // The catch clauses are collected in this list.
-                List<CatchClauseSyntax> clauses = new List<CatchClauseSyntax>();
-
-                //            catch (DbUpdateException)
-                //            {
-                //                <HandleException>
-                //            }
-                clauses.Add(
-                    SyntaxFactory.CatchClause()
-                    .WithDeclaration(
-                        SyntaxFactory.CatchDeclaration(
-                            SyntaxFactory.IdentifierName("DbUpdateException")))
-                    .WithBlock(
-                        SyntaxFactory.Block(
-                            SyntaxFactory.SingletonList<StatementSyntax>(
-                                SyntaxFactory.ReturnStatement(
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("BadRequest"))))))));
-
-                // This is the collection of catch clauses.
-                return SyntaxFactory.List<CatchClauseSyntax>(clauses);
             }
         }
 
@@ -275,7 +292,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 //                <CatchClauses>
                 //            }
                 statements.Add(
-                    SyntaxFactory.TryStatement(this.CatchClauses)
+                    SyntaxFactory.TryStatement(DeleteAllMethod.CatchClauses)
                     .WithBlock(
                         SyntaxFactory.Block(this.TryBlock1)));
 
@@ -382,23 +399,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public async
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                        SyntaxFactory.Token(SyntaxKind.AsyncKeyword)
-                   });
             }
         }
 

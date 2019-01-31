@@ -41,49 +41,14 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                         SyntaxFactory.Identifier("Dictionary"))
                         .WithTypeArgumentList(this.ArgumentListSyntax))
                 .WithVariables(this.Variables))
-                .WithModifiers(this.Modifiers)
-                .WithLeadingTrivia(this.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the generic type declaration.
-        /// </summary>
-        private TypeArgumentListSyntax ArgumentListSyntax
-        {
-            get
-            {
-                return SyntaxFactory.TypeArgumentList(
-                        SyntaxFactory.SeparatedList<TypeSyntax>(
-                            new SyntaxNodeOrToken[]
-                            {
-                                SyntaxFactory.IdentifierName("RecordVersion"),
-                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                SyntaxFactory.GenericName(
-                                    SyntaxFactory.Identifier("Func"))
-                                .WithTypeArgumentList(
-                                    SyntaxFactory.TypeArgumentList(
-                                        SyntaxFactory.SeparatedList<TypeSyntax>(
-                                            new SyntaxNodeOrToken[]
-                                            {
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name),
-                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                SyntaxFactory.ArrayType(
-                                                    SyntaxFactory.PredefinedType(
-                                                        SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
-                                                .WithRankSpecifiers(
-                                                    SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
-                                                        SyntaxFactory.ArrayRankSpecifier(
-                                                            SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
-                                                                SyntaxFactory.OmittedArraySizeExpression()))))
-                                            })))
-                            }));
-            }
+                .WithModifiers(CloneVersionField.Modifiers)
+                .WithLeadingTrivia(CloneVersionField.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -143,7 +108,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         /// <summary>
         /// Gets the modifiers.
         /// </summary>
-        private SyntaxTokenList Modifiers
+        private static SyntaxTokenList Modifiers
         {
             get
             {
@@ -154,6 +119,41 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                         SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
                         SyntaxFactory.Token(SyntaxKind.StaticKeyword)
                     });
+            }
+        }
+
+        /// <summary>
+        /// Gets the generic type declaration.
+        /// </summary>
+        private TypeArgumentListSyntax ArgumentListSyntax
+        {
+            get
+            {
+                return SyntaxFactory.TypeArgumentList(
+                        SyntaxFactory.SeparatedList<TypeSyntax>(
+                            new SyntaxNodeOrToken[]
+                            {
+                                SyntaxFactory.IdentifierName("RecordVersion"),
+                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                SyntaxFactory.GenericName(
+                                    SyntaxFactory.Identifier("Func"))
+                                .WithTypeArgumentList(
+                                    SyntaxFactory.TypeArgumentList(
+                                        SyntaxFactory.SeparatedList<TypeSyntax>(
+                                            new SyntaxNodeOrToken[]
+                                            {
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name),
+                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                SyntaxFactory.ArrayType(
+                                                    SyntaxFactory.PredefinedType(
+                                                        SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
+                                                .WithRankSpecifiers(
+                                                    SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
+                                                        SyntaxFactory.ArrayRankSpecifier(
+                                                            SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
+                                                                SyntaxFactory.OmittedArraySizeExpression()))))
+                                            })))
+                            }));
             }
         }
 

@@ -42,14 +42,14 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                         SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                             SyntaxFactory.VariableDeclarator(
                                 SyntaxFactory.Identifier("currentData")))))
-                .WithModifiers(this.Modifiers)
-                .WithLeadingTrivia(this.DocumentationComment);
+                .WithModifiers(CurrentDataField.Modifiers)
+                .WithLeadingTrivia(CurrentDataField.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -109,7 +109,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         /// <summary>
         /// Gets the modifiers.
         /// </summary>
-        private SyntaxTokenList Modifiers
+        private static SyntaxTokenList Modifiers
         {
             get
             {

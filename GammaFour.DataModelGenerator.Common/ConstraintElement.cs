@@ -6,6 +6,7 @@ namespace GammaFour.DataModelGenerator.Common
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Text.RegularExpressions;
     using System.Xml.Linq;
@@ -62,6 +63,20 @@ namespace GammaFour.DataModelGenerator.Common
         }
 
         /// <summary>
+        /// Gets a value indicating whether the key has any autoincrementing components.
+        /// </summary>
+        public bool IsAutoIncrementing
+        {
+            get
+            {
+                // This determines if any of the columns in the index are autoincrementing.
+                return (from cre in this.Columns
+                        where cre.Column.IsAutoIncrement
+                        select cre).Any();
+            }
+        }
+
+        /// <summary>
         /// Gets a value indicating whether the constraint can contain null.
         /// </summary>
         public bool IsNullable
@@ -112,6 +127,123 @@ namespace GammaFour.DataModelGenerator.Common
         }
 
         /// <summary>
+        /// Equals operation.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>true if the two operands are equal, false otherwise.</returns>
+        public static bool operator ==(ConstraintElement left, ConstraintElement right)
+        {
+            // Compare the left to the right.  Don't use operators or you'll recurse.
+            if (object.ReferenceEquals(left, null))
+            {
+                return object.ReferenceEquals(right, null);
+            }
+
+            return left.Equals(right);
+        }
+
+        /// <summary>
+        /// Not Equals operation.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>true if the two operands are not equal, false otherwise.</returns>
+        public static bool operator !=(ConstraintElement left, ConstraintElement right)
+        {
+            return !(left == right);
+        }
+
+        /// <summary>
+        /// Less Than operation.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>true if the left operand is less than the right operand, false otherwise.</returns>
+        public static bool operator <(ConstraintElement left, ConstraintElement right)
+        {
+            return Compare(left, right) < 0;
+        }
+
+        /// <summary>
+        /// Less Than or Equal To operation.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>true if the left operand is less than the right operand, false otherwise.</returns>
+        public static bool operator <=(ConstraintElement left, ConstraintElement right)
+        {
+            return Compare(left, right) <= 0;
+        }
+
+        /// <summary>
+        /// Greater Than operation.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>true if the left operand is greater than the right operand, false otherwise.</returns>
+        public static bool operator >(ConstraintElement left, ConstraintElement right)
+        {
+            return Compare(left, right) > 0;
+        }
+
+        /// <summary>
+        /// Greater Than or Equal To operation.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>true if the left operand is greater than the right operand, false otherwise.</returns>
+        public static bool operator >=(ConstraintElement left, ConstraintElement right)
+        {
+            return Compare(left, right) >= 0;
+        }
+
+        /// <summary>
+        /// Compares two <see cref="ConstraintElement"/> records.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>-1 if left &lt; right, 0 if left == right, 1 if left &gt; right</returns>
+        public static int Compare(ConstraintElement left, ConstraintElement right)
+        {
+            // Don't use operators or you'll recurse.  If the left and right objects are the same object, then they're equal.
+            if (object.ReferenceEquals(left, right))
+            {
+                return 0;
+            }
+
+            // The left operand can never be equal to null.
+            if (object.ReferenceEquals(left, null))
+            {
+                return -1;
+            }
+
+            // Reference checking done.  This will compare the names to see if they're the same.
+            return left.CompareTo(right);
+        }
+
+        /// <inheritdoc/>
+        public override bool Equals(object obj)
+        {
+            // Comparing against null will always be false.
+            ConstraintElement other = obj as ConstraintElement;
+            if (object.ReferenceEquals(other, null))
+            {
+                return false;
+            }
+
+            // Call the common method to compare the names.
+            return this.CompareTo(other) == 0;
+        }
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            // The name is used to compare these objects.
+            return this.Name.GetHashCode();
+        }
+
+        /// <summary>
         /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance
         /// precedes, follows, or occurs in the same position in the sort order as the other object.
         /// </summary>
@@ -119,7 +251,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <returns>A value that indicates the relative order of the objects being compared.</returns>
         public int CompareTo(ConstraintElement other)
         {
-            return this.Name.CompareTo(other.Name);
+            return string.Compare(this.Name, other.Name, StringComparison.InvariantCulture);
         }
 
         /// <summary>

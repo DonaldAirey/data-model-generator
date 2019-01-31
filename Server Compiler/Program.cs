@@ -14,7 +14,7 @@ namespace ServerCompiler
     /// <summary>
     /// The command line version of the Custom Tool for generating code from a schema.
     /// </summary>
-    public class Program
+    public static class Program
     {
         /// <summary>
         /// Dictionary of command line parameter switches and the states they invoke in the parser.
@@ -65,7 +65,7 @@ namespace ServerCompiler
                             inputFilePath = Environment.ExpandEnvironmentVariables(argument);
 
                             // The output name defaults to the input file name with a new extension.
-                            outputFileName = string.Format("{0}.cs", Path.GetFileNameWithoutExtension(inputFilePath));
+                            outputFileName = $"{Path.GetFileNameWithoutExtension(inputFilePath)}.cs";
 
                             break;
 

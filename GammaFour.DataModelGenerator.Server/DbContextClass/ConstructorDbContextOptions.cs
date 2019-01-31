@@ -42,17 +42,17 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
             //        }
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
                     SyntaxFactory.Identifier("DomainContext"))
-                .WithModifiers(this.Modifiers)
-                .WithParameterList(this.Parameters)
-                .WithInitializer(this.Initializer)
-                .WithBody(this.Body)
+                .WithModifiers(ConstructorDbContextOptions.Modifiers)
+                .WithParameterList(ConstructorDbContextOptions.Parameters)
+                .WithInitializer(ConstructorDbContextOptions.Initializer)
+                .WithBody(ConstructorDbContextOptions.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the body.
         /// </summary>
-        private BlockSyntax Body
+        private static BlockSyntax Body
         {
             get
             {
@@ -61,6 +61,66 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
+            }
+        }
+
+        /// <summary>
+        /// Gets the initializer for the constructor.
+        /// </summary>
+        private static ConstructorInitializerSyntax Initializer
+        {
+            get
+            {
+                //            : base(contextOptions)
+                return SyntaxFactory.ConstructorInitializer(
+                    SyntaxKind.BaseConstructorInitializer,
+                    SyntaxFactory.ArgumentList(
+                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                            SyntaxFactory.Argument(
+                                SyntaxFactory.IdentifierName("contextOptions")))));
+            }
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // public
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                    });
+            }
+        }
+
+        /// <summary>
+        /// Gets the list of parameters.
+        /// </summary>
+        private static ParameterListSyntax Parameters
+        {
+            get
+            {
+                // Create a list of parameters from the columns in the unique constraint.
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
+
+                // DomainContext domainContext
+                parameters.Add(
+                    SyntaxFactory.Parameter(
+                        SyntaxFactory.Identifier("contextOptions"))
+                    .WithType(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("DbContextOptions"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                    SyntaxFactory.IdentifierName("DomainContext"))))));
+
+                // This is the complete parameter specification for this constructor.
+                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
             }
         }
 
@@ -144,23 +204,6 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the initializer for the constructor.
-        /// </summary>
-        private ConstructorInitializerSyntax Initializer
-        {
-            get
-            {
-                //            : base(contextOptions)
-                return SyntaxFactory.ConstructorInitializer(
-                    SyntaxKind.BaseConstructorInitializer,
-                    SyntaxFactory.ArgumentList(
-                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                            SyntaxFactory.Argument(
-                                SyntaxFactory.IdentifierName("contextOptions")))));
             }
         }
 
@@ -425,49 +468,6 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                 }
 
                 return statements;
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
-                    });
-            }
-        }
-
-        /// <summary>
-        /// Gets the list of parameters.
-        /// </summary>
-        private ParameterListSyntax Parameters
-        {
-            get
-            {
-                // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // DomainContext domainContext
-                parameters.Add(
-                    SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier("contextOptions"))
-                    .WithType(
-                        SyntaxFactory.GenericName(
-                            SyntaxFactory.Identifier("DbContextOptions"))
-                        .WithTypeArgumentList(
-                            SyntaxFactory.TypeArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName("DomainContext"))))));
-
-                // This is the complete parameter specification for this constructor.
-                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
             }
         }
     }

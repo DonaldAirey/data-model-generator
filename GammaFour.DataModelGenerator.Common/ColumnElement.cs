@@ -26,14 +26,14 @@ namespace GammaFour.DataModelGenerator.Common
         private static Dictionary<Type, Func<string, object>> conversionFunctions = new Dictionary<Type, Func<string, object>>
         {
             { typeof(bool), (v) => bool.Parse(v) },
-            { typeof(DateTime), (v) => DateTime.Parse(v) },
-            { typeof(decimal), (v) => decimal.Parse(v) },
-            { typeof(double), (v) => double.Parse(v) },
+            { typeof(DateTime), (v) => DateTime.Parse(v, CultureInfo.InvariantCulture) },
+            { typeof(decimal), (v) => decimal.Parse(v, CultureInfo.InvariantCulture) },
+            { typeof(double), (v) => double.Parse(v, CultureInfo.InvariantCulture) },
             { typeof(Guid), (v) => Guid.Parse(v) },
-            { typeof(int), (v) => int.Parse(v) },
-            { typeof(long), (v) => long.Parse(v) },
-            { typeof(float), (v) => float.Parse(v) },
-            { typeof(short), (v) => short.Parse(v) },
+            { typeof(int), (v) => int.Parse(v, CultureInfo.InvariantCulture) },
+            { typeof(long), (v) => long.Parse(v, CultureInfo.InvariantCulture) },
+            { typeof(float), (v) => float.Parse(v, CultureInfo.InvariantCulture) },
+            { typeof(short), (v) => short.Parse(v, CultureInfo.InvariantCulture) },
             { typeof(string), (v) => v },
         };
 
@@ -79,23 +79,23 @@ namespace GammaFour.DataModelGenerator.Common
 
             // This determines if the column allows nulls.
             XAttribute isRowVersionAttribute = this.Attribute(XmlSchemaDocument.IsRowVersion);
-            this.IsRowVersion = isRowVersionAttribute == null ? false : Convert.ToBoolean(isRowVersionAttribute.Value);
+            this.IsRowVersion = isRowVersionAttribute == null ? false : Convert.ToBoolean(isRowVersionAttribute.Value, CultureInfo.InvariantCulture);
 
             // This determines if the column allows nulls.
             XAttribute minOccursAttribute = this.Attribute(XmlSchemaDocument.MinOccurs);
-            this.IsNullable = minOccursAttribute == null ? false : Convert.ToInt32(minOccursAttribute.Value) == 0;
+            this.IsNullable = minOccursAttribute == null ? false : Convert.ToInt32(minOccursAttribute.Value, CultureInfo.InvariantCulture) == 0;
 
             // Determine the IsIdentityColumn property.
             XAttribute autoIncrementAttribute = this.Attribute(XmlSchemaDocument.AutoIncrement);
-            this.IsAutoIncrement = autoIncrementAttribute == null ? false : Convert.ToBoolean(autoIncrementAttribute.Value);
+            this.IsAutoIncrement = autoIncrementAttribute == null ? false : Convert.ToBoolean(autoIncrementAttribute.Value, CultureInfo.InvariantCulture);
 
             // Determine the AutoIncrementSeed property.
             XAttribute autoIncrementSeedAttribute = this.Attribute(XmlSchemaDocument.AutoIncrementSeed);
-            this.AutoIncrementSeed = autoIncrementSeedAttribute == null ? 0 : Convert.ToInt32(autoIncrementSeedAttribute.Value);
+            this.AutoIncrementSeed = autoIncrementSeedAttribute == null ? 0 : Convert.ToInt32(autoIncrementSeedAttribute.Value, CultureInfo.InvariantCulture);
 
             // Determine the AutoIncrementStop property
             XAttribute autoIncrementStepAttribute = this.Attribute(XmlSchemaDocument.AutoIncrementStep);
-            this.AutoIncrementStep = autoIncrementStepAttribute == null ? 1 : Convert.ToInt32(autoIncrementStepAttribute.Value);
+            this.AutoIncrementStep = autoIncrementStepAttribute == null ? 1 : Convert.ToInt32(autoIncrementStepAttribute.Value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -203,14 +203,14 @@ namespace GammaFour.DataModelGenerator.Common
             {
                 // Examine each of the parent relations to see if the column is used.
                 var list = from fke in this.Table.ParentKeys
-                        from ce in fke.Columns
-                        where ce.Column == this
-                        select ce;
+                           from ce in fke.Columns
+                           where ce.Column == this
+                           select ce;
 
                 return (from fke in this.Table.ParentKeys
-                       from ce in fke.Columns
-                       where ce.Column == this
-                       select ce).Any();
+                        from ce in fke.Columns
+                        where ce.Column == this
+                        select ce).Any();
             }
         }
 
@@ -270,6 +270,123 @@ namespace GammaFour.DataModelGenerator.Common
         }
 
         /// <summary>
+        /// Equals operation.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>true if the two operands are equal, false otherwise.</returns>
+        public static bool operator ==(ColumnElement left, ColumnElement right)
+        {
+            // Compare the left to the right.  Don't use operators or you'll recurse.
+            if (object.ReferenceEquals(left, null))
+            {
+                return object.ReferenceEquals(right, null);
+            }
+
+            return left.Equals(right);
+        }
+
+        /// <summary>
+        /// Not Equals operation.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>true if the two operands are not equal, false otherwise.</returns>
+        public static bool operator !=(ColumnElement left, ColumnElement right)
+        {
+            return !(left == right);
+        }
+
+        /// <summary>
+        /// Less Than operation.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>true if the left operand is less than the right operand, false otherwise.</returns>
+        public static bool operator <(ColumnElement left, ColumnElement right)
+        {
+            return Compare(left, right) < 0;
+        }
+
+        /// <summary>
+        /// Less Than or Equal To operation.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>true if the left operand is less than the right operand, false otherwise.</returns>
+        public static bool operator <=(ColumnElement left, ColumnElement right)
+        {
+            return Compare(left, right) <= 0;
+        }
+
+        /// <summary>
+        /// Greater Than operation.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>true if the left operand is greater than the right operand, false otherwise.</returns>
+        public static bool operator >(ColumnElement left, ColumnElement right)
+        {
+            return Compare(left, right) > 0;
+        }
+
+        /// <summary>
+        /// Greater Than or Equal To operation.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>true if the left operand is greater than the right operand, false otherwise.</returns>
+        public static bool operator >=(ColumnElement left, ColumnElement right)
+        {
+            return Compare(left, right) >= 0;
+        }
+
+        /// <summary>
+        /// Compares two <see cref="ColumnElement"/> records.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>-1 if left &lt; right, 0 if left == right, 1 if left &gt; right</returns>
+        public static int Compare(ColumnElement left, ColumnElement right)
+        {
+            // Don't use operators or you'll recurse.  If the left and right objects are the same object, then they're equal.
+            if (object.ReferenceEquals(left, right))
+            {
+                return 0;
+            }
+
+            // The left operand can never be equal to null.
+            if (object.ReferenceEquals(left, null))
+            {
+                return -1;
+            }
+
+            // Reference checking done.  This will compare the names to see if they're the same.
+            return left.CompareTo(right);
+        }
+
+        /// <inheritdoc/>
+        public override bool Equals(object obj)
+        {
+            // Comparing against null will always be false.
+            ColumnElement other = obj as ColumnElement;
+            if (object.ReferenceEquals(other, null))
+            {
+                return false;
+            }
+
+            // Call the common method to compare the names.
+            return this.CompareTo(other) == 0;
+        }
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            // The name is used to compare these objects.
+            return this.Name.GetHashCode();
+        }
+
+        /// <summary>
         /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance
         /// precedes, follows, or occurs in the same position in the sort order as the other object.
         /// </summary>
@@ -277,13 +394,10 @@ namespace GammaFour.DataModelGenerator.Common
         /// <returns>A value that indicates the relative order of the objects being compared.</returns>
         public int CompareTo(ColumnElement other)
         {
-            return this.Name.CompareTo(other.Name);
+            return string.Compare(this.Name, other.Name, StringComparison.InvariantCulture);
         }
 
-        /// <summary>
-        /// Gets a display name for the column.
-        /// </summary>
-        /// <returns>The name of the column.</returns>
+        /// <inheritdoc/>
         public override string ToString()
         {
             return this.Name;
@@ -317,7 +431,7 @@ namespace GammaFour.DataModelGenerator.Common
 
                 // Finally, extract the maximum length for this datatype.
                 XElement maxLengthElement = restrictionElement.Element(XmlSchemaDocument.MaxLength);
-                this.maximumLength = Convert.ToInt32(maxLengthElement.Attribute(XmlSchemaDocument.Value).Value);
+                this.maximumLength = Convert.ToInt32(maxLengthElement.Attribute(XmlSchemaDocument.Value).Value, CultureInfo.InvariantCulture);
             }
             else
             {
@@ -357,7 +471,7 @@ namespace GammaFour.DataModelGenerator.Common
                     // A datatype must exist for the parsing to continue.
                     if (this.type == null)
                     {
-                        throw new Exception(string.Format("Unable to load the type {0} from assembly {1}", dataTypeParts[0], assemblyFullName));
+                        throw new Exception($"Unable to load the type {dataTypeParts[0]} from assembly {assemblyFullName}");
                     }
                 }
                 else

@@ -43,15 +43,15 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                                 SyntaxFactory.IdentifierName(this.tableElement.Name)))),
                     SyntaxFactory.Identifier(this.tableElement.Name.ToPlural()))
-                .WithAccessorList(this.AccessorList)
-                .WithModifiers(this.Modifiers)
+                .WithAccessorList(DbSetProperty.AccessorList)
+                .WithModifiers(DbSetProperty.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the list of accessors.
         /// </summary>
-        private AccessorListSyntax AccessorList
+        private static AccessorListSyntax AccessorList
         {
             get
             {
@@ -59,9 +59,55 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                     SyntaxFactory.List(
                         new AccessorDeclarationSyntax[]
                         {
-                            this.GetAccessor,
-                            this.SetAccessor
+                            DbSetProperty.GetAccessor,
+                            DbSetProperty.SetAccessor
                         }));
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'Get' accessor.
+        /// </summary>
+        private static AccessorDeclarationSyntax GetAccessor
+        {
+            get
+            {
+                // get;
+                return SyntaxFactory.AccessorDeclaration(
+                        SyntaxKind.GetAccessorDeclaration)
+                    .WithSemicolonToken(
+                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            }
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // public
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.VirtualKeyword),
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                    });
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'Set' accessor.
+        /// </summary>
+        private static AccessorDeclarationSyntax SetAccessor
+        {
+            get
+            {
+                //            set;
+                return SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                    .WithSemicolonToken(
+                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
             }
         }
 
@@ -122,52 +168,6 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Get' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax GetAccessor
-        {
-            get
-            {
-                // get;
-                return SyntaxFactory.AccessorDeclaration(
-                        SyntaxKind.GetAccessorDeclaration)
-                    .WithSemicolonToken(
-                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.VirtualKeyword),
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
-                    });
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Set' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax SetAccessor
-        {
-            get
-            {
-                //            set;
-                return SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                    .WithSemicolonToken(
-                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
             }
         }
     }

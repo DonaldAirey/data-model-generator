@@ -33,16 +33,16 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 SyntaxFactory.PredefinedType(
                     SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                 SyntaxFactory.Identifier(this.Name))
-            .WithModifiers(this.Modifiers)
-            .WithParameterList(this.Parameters)
-            .WithBody(this.Body)
-            .WithLeadingTrivia(this.DocumentationComment);
+            .WithModifiers(InDoubtMethod.Modifiers)
+            .WithParameterList(InDoubtMethod.Parameters)
+            .WithBody(InDoubtMethod.Body)
+            .WithLeadingTrivia(InDoubtMethod.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the body.
         /// </summary>
-        private BlockSyntax Body
+        private static BlockSyntax Body
         {
             get
             {
@@ -65,7 +65,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -103,7 +103,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         /// <summary>
         /// Gets the modifiers.
         /// </summary>
-        private SyntaxTokenList Modifiers
+        private static SyntaxTokenList Modifiers
         {
             get
             {
@@ -119,7 +119,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private ParameterListSyntax Parameters
+        private static ParameterListSyntax Parameters
         {
             get
             {

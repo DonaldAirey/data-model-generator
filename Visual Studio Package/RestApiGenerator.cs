@@ -40,7 +40,7 @@ namespace GammaFour.VisualStudioPackage
         /// <returns>The generated code file as a byte-array</returns>
         protected override byte[] GenerateCode(string inputFileContent)
         {
-            byte[] buffer = null;
+            byte[] buffer = Array.Empty<byte>();
 
             try
             {

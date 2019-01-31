@@ -315,7 +315,7 @@ namespace GammaFour.DataModelGenerator.Common
             string sqlDataType = string.Empty;
 
             // Null-ables will resolve to the inner type.  The 'IsNullable' flag will instruct the compiler to allow nulls in these column types.
-            if (type.FullName.StartsWith("System.Nullable"))
+            if (type.FullName.StartsWith("System.Nullable", StringComparison.InvariantCulture))
             {
                 type = type.GenericTypeArguments[0];
             }
@@ -397,7 +397,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <returns>A Roslyn type syntax corresponding to the CLR type.</returns>
         public static TypeSyntax FromType(Type type)
         {
-            if (type.FullName.StartsWith("System.Nullable"))
+            if (type.FullName.StartsWith("System.Nullable", StringComparison.InvariantCulture))
             {
                 Type innerType = type.GenericTypeArguments[0];
                 switch (innerType.FullName)

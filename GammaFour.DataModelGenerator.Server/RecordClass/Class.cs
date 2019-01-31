@@ -41,10 +41,25 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
             //        <Members>
             //    }
             this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
-                .WithModifiers(this.Modifiers)
+                .WithModifiers(Class.Modifiers)
                 .WithBaseList(this.BaseList)
                 .WithMembers(this.Members)
                 .WithLeadingTrivia(this.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                    });
+            }
         }
 
         /// <summary>
@@ -145,26 +160,55 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 members = this.CreatePrivateInstanceFields(members);
                 members = this.CreateConstructors(members);
                 members = this.CreatePublicInstanceProperties(members);
-                members = this.CreatePublicInstanceMethods(members);
+                members = Class.CreatePublicInstanceMethods(members);
                 members = this.CreateInternalInstanceMethods(members);
-                members = this.CreatePrivateInstanceMethods(members);
+                members = Class.CreatePrivateInstanceMethods(members);
                 return members;
             }
         }
 
         /// <summary>
-        /// Gets the modifiers.
+        /// Create the internal instance methods.
         /// </summary>
-        private SyntaxTokenList Modifiers
+        /// <param name="members">The structure members.</param>
+        /// <returns>The syntax for creating the internal instance methods.</returns>
+        private static SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
-            get
+            // This will create the public instance properties.
+            List<SyntaxElement> methods = new List<SyntaxElement>();
+
+            // Alphabetize and add the methods as members of the class.
+            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
             {
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
-                    });
+                members = members.Add(syntaxElement.Syntax);
             }
+
+            // Return the new collection of members.
+            return members;
+        }
+
+        /// <summary>
+        /// Create the public instance methods.
+        /// </summary>
+        /// <param name="members">The structure members.</param>
+        /// <returns>The syntax for creating the public instance methods.</returns>
+        private static SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            // This will create the public instance properties.
+            List<SyntaxElement> methods = new List<SyntaxElement>();
+            methods.Add(new CommitMethod());
+            methods.Add(new InDoubtMethod());
+            methods.Add(new PrepareMethod());
+            methods.Add(new RollbackMethod());
+
+            // Alphabetize and add the methods as members of the class.
+            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
+            }
+
+            // Return the new collection of members.
+            return members;
         }
 
         /// <summary>
@@ -194,26 +238,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
             methods.Add(new GetVersionMethod(this.tableElement));
             methods.Add(new MarkMethod());
             methods.Add(new SetOwnerMethod(this.tableElement));
-
-            // Alphabetize and add the methods as members of the class.
-            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
-            {
-                members = members.Add(syntaxElement.Syntax);
-            }
-
-            // Return the new collection of members.
-            return members;
-        }
-
-        /// <summary>
-        /// Create the internal instance methods.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The syntax for creating the internal instance methods.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // This will create the public instance properties.
-            List<SyntaxElement> methods = new List<SyntaxElement>();
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
@@ -276,30 +300,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
-            {
-                members = members.Add(syntaxElement.Syntax);
-            }
-
-            // Return the new collection of members.
-            return members;
-        }
-
-        /// <summary>
-        /// Create the public instance methods.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The syntax for creating the public instance methods.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // This will create the public instance properties.
-            List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new CommitMethod());
-            methods.Add(new InDoubtMethod());
-            methods.Add(new PrepareMethod());
-            methods.Add(new RollbackMethod());
-
-            // Alphabetize and add the methods as members of the class.
-            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }

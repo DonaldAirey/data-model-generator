@@ -4,6 +4,7 @@
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Common
 {
+    using System.Globalization;
     using Pluralize.NET;
 
     /// <summary>
@@ -24,7 +25,7 @@ namespace GammaFour.DataModelGenerator.Common
         public static string ToCamelCase(this string text)
         {
             // Convert the variable to its camel case equivalent.
-            return text[0].ToString().ToLower() + text.Remove(0, 1);
+            return text[0].ToString(CultureInfo.InvariantCulture).ToLower(CultureInfo.InvariantCulture) + text.Remove(0, 1);
         }
 
         /// <summary>

@@ -6,7 +6,6 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -44,10 +43,27 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
             this.Syntax = SyntaxFactory.MethodDeclaration(
                 SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                 SyntaxFactory.Identifier(this.Name))
-            .WithModifiers(this.Modifiers)
+            .WithModifiers(OnRecordChangingMethod.Modifiers)
             .WithParameterList(this.Parameters)
             .WithBody(this.Body)
             .WithLeadingTrivia(this.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // private
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.ProtectedKeyword),
+                        SyntaxFactory.Token(SyntaxKind.VirtualKeyword)
+                   });
+            }
         }
 
         /// <summary>
@@ -241,23 +257,6 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.ProtectedKeyword),
-                        SyntaxFactory.Token(SyntaxKind.VirtualKeyword)
-                   });
             }
         }
 

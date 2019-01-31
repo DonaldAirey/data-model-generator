@@ -34,15 +34,15 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
             this.Syntax = SyntaxFactory.MethodDeclaration(
                     SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                     SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(this.Modifiers)
-                .WithBody(this.Body)
-                .WithLeadingTrivia(this.DocumentationComment);
+                .WithModifiers(MarkMethod.Modifiers)
+                .WithBody(MarkMethod.Body)
+                .WithLeadingTrivia(MarkMethod.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the body.
         /// </summary>
-        private BlockSyntax Body
+        private static BlockSyntax Body
         {
             get
             {
@@ -84,7 +84,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -144,7 +144,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         /// <summary>
         /// Gets the modifiers.
         /// </summary>
-        private SyntaxTokenList Modifiers
+        private static SyntaxTokenList Modifiers
         {
             get
             {

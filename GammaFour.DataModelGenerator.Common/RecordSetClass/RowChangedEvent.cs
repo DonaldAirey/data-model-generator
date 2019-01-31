@@ -54,15 +54,15 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                         SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(this.Name)))))
-            .WithModifiers(this.Modifiers)
+            .WithModifiers(RowChangedEvent.Modifiers)
             .WithEventKeyword(SyntaxFactory.Token(SyntaxKind.EventKeyword))
-            .WithLeadingTrivia(this.DocumentationComment);
+            .WithLeadingTrivia(RowChangedEvent.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -122,7 +122,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
         /// <summary>
         /// Gets the modifiers.
         /// </summary>
-        private SyntaxTokenList Modifiers
+        private static SyntaxTokenList Modifiers
         {
             get
             {

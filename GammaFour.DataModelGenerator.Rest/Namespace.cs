@@ -31,9 +31,9 @@ namespace GammaFour.DataModelGenerator.RestService
 
             // This is the syntax of the namespace.
             this.Syntax = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.IdentifierName(xmlSchemaDocument.TargetNamespace))
-                .WithUsings(SyntaxFactory.List<UsingDirectiveSyntax>(this.UsingStatements))
+                .WithUsings(SyntaxFactory.List<UsingDirectiveSyntax>(Namespace.UsingStatements))
                 .WithMembers(this.Members)
-                .WithLeadingTrivia(this.LeadingTrivia);
+                .WithLeadingTrivia(Namespace.LeadingTrivia);
         }
 
         /// <summary>
@@ -46,9 +46,35 @@ namespace GammaFour.DataModelGenerator.RestService
         }
 
         /// <summary>
+        /// Gets the 'using' statements.
+        /// </summary>
+        private static List<UsingDirectiveSyntax> UsingStatements
+        {
+            get
+            {
+                // Create the 'using' statements.
+                // [TODO] Make the addition of user namespaces part of the initialization.  Run through the tables and extract the
+                // namespaces from the types found therein.
+                List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>();
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.Data")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.AspNetCore.Mvc")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Configuration")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Newtonsoft.Json.Linq")));
+                return usingStatements;
+            }
+        }
+
+        /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList LeadingTrivia
+        private static SyntaxTriviaList LeadingTrivia
         {
             get
             {
@@ -75,32 +101,6 @@ namespace GammaFour.DataModelGenerator.RestService
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
                 members = this.CreatePublicClasses(members);
                 return members;
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'using' statements.
-        /// </summary>
-        private List<UsingDirectiveSyntax> UsingStatements
-        {
-            get
-            {
-                // Create the 'using' statements.
-                // [TODO] Make the addition of user namespaces part of the initialization.  Run through the tables and extract the
-                // namespaces from the types found therein.
-                List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>();
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.Data")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.AspNetCore.Mvc")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Configuration")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Newtonsoft.Json.Linq")));
-                return usingStatements;
             }
         }
 

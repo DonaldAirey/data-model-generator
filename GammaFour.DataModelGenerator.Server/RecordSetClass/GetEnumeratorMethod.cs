@@ -41,14 +41,14 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             .WithExplicitInterfaceSpecifier(
                 SyntaxFactory.ExplicitInterfaceSpecifier(
                     SyntaxFactory.IdentifierName("IEnumerable")))
-                .WithBody(this.Body)
-                .WithLeadingTrivia(this.DocumentationComment);
+                .WithBody(GetEnumeratorMethod.Body)
+                .WithLeadingTrivia(GetEnumeratorMethod.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the body.
         /// </summary>
-        private BlockSyntax Body
+        private static BlockSyntax Body
         {
             get
             {
@@ -78,7 +78,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -116,7 +116,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the modifiers.
         /// </summary>
-        private SyntaxTokenList Modifiers
+        private static SyntaxTokenList Modifiers
         {
             get
             {

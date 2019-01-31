@@ -38,15 +38,15 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             this.Syntax = SyntaxFactory.PropertyDeclaration(
                     SyntaxFactory.IdentifierName($"{tableElement.Name}Set"),
                     SyntaxFactory.Identifier(this.Name))
-                .WithAccessorList(this.AccessorList)
-                .WithModifiers(this.Modifiers)
+                .WithAccessorList(RecordSetProperty.AccessorList)
+                .WithModifiers(RecordSetProperty.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the list of accessors.
         /// </summary>
-        private AccessorListSyntax AccessorList
+        private static AccessorListSyntax AccessorList
         {
             get
             {
@@ -54,8 +54,39 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                     SyntaxFactory.List(
                         new AccessorDeclarationSyntax[]
                         {
-                            this.GetAccessor
+                            RecordSetProperty.GetAccessor
                         }));
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'Get' accessor.
+        /// </summary>
+        private static AccessorDeclarationSyntax GetAccessor
+        {
+            get
+            {
+                // get;
+                return SyntaxFactory.AccessorDeclaration(
+                        SyntaxKind.GetAccessorDeclaration)
+                    .WithSemicolonToken(
+                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            }
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // public
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                    });
             }
         }
 
@@ -116,37 +147,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Get' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax GetAccessor
-        {
-            get
-            {
-                // get;
-                return SyntaxFactory.AccessorDeclaration(
-                        SyntaxKind.GetAccessorDeclaration)
-                    .WithSemicolonToken(
-                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
-                    });
             }
         }
     }

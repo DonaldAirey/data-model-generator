@@ -5,6 +5,7 @@
 namespace GammaFour.DataModelGenerator.Server
 {
     using System.Collections.Generic;
+    using System.Globalization;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -24,7 +25,7 @@ namespace GammaFour.DataModelGenerator.Server
         public static ExpressionSyntax GetUniqueKey(UniqueKeyElement uniqueKeyElement, bool isAnonymous = false)
         {
             // Used as a variable when constructing the lambda expression.
-            string abbreviation = uniqueKeyElement.Table.Name[0].ToString().ToLower();
+            string abbreviation = uniqueKeyElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
 
             // This will create an expression for extracting the key from record.
             CSharpSyntaxNode syntaxNode = null;

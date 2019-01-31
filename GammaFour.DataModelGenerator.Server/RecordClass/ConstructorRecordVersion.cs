@@ -41,10 +41,55 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
             //        }
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
                 SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(this.Modifiers)
-                .WithParameterList(this.Parameters)
+                .WithModifiers(ConstructorRecordVersion.Modifiers)
+                .WithParameterList(ConstructorRecordVersion.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // public
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
+                    });
+            }
+        }
+
+        /// <summary>
+        /// Gets the list of parameters.
+        /// </summary>
+        private static ParameterListSyntax Parameters
+        {
+            get
+            {
+                // Create a list of parameters from the columns in the unique constraint.
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
+
+                // object[] data
+                parameters.Add(
+                    SyntaxFactory.Parameter(
+                        SyntaxFactory.Identifier("data"))
+                    .WithType(
+                        SyntaxFactory.ArrayType(
+                            SyntaxFactory.PredefinedType(
+                                SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
+                        .WithRankSpecifiers(
+                            SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
+                                SyntaxFactory.ArrayRankSpecifier(
+                                    SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
+                                        SyntaxFactory.OmittedArraySizeExpression()))))));
+
+                // This is the complete parameter specification for this constructor.
+                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
+            }
         }
 
         /// <summary>
@@ -94,12 +139,12 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName($"get{foreignKeyElement.Table.Name.ToPlural()}")),
+                                    SyntaxFactory.IdentifierName($"get{foreignKeyElement.UniqueChildName}")),
                                 SyntaxFactory.ParenthesizedLambdaExpression(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.IdentifierName(this.tableElement.Name),
-                                        SyntaxFactory.IdentifierName($"default{foreignKeyElement.Table.Name.ToPlural()}"))))));
+                                        SyntaxFactory.IdentifierName($"default{foreignKeyElement.UniqueChildName}"))))));
                 }
 
                 // This is the syntax for the body of the constructor.
@@ -187,51 +232,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
-                    });
-            }
-        }
-
-        /// <summary>
-        /// Gets the list of parameters.
-        /// </summary>
-        private ParameterListSyntax Parameters
-        {
-            get
-            {
-                // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // object[] data
-                parameters.Add(
-                    SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier("data"))
-                    .WithType(
-                        SyntaxFactory.ArrayType(
-                            SyntaxFactory.PredefinedType(
-                                SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
-                        .WithRankSpecifiers(
-                            SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
-                                SyntaxFactory.ArrayRankSpecifier(
-                                    SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
-                                        SyntaxFactory.OmittedArraySizeExpression()))))));
-
-                // This is the complete parameter specification for this constructor.
-                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
             }
         }
     }

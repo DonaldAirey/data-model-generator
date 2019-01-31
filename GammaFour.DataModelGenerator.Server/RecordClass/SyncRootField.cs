@@ -36,15 +36,15 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                         SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                             SyntaxFactory.VariableDeclarator(
                                 SyntaxFactory.Identifier("syncRoot"))
-                            .WithInitializer(this.Initializer))))
-                .WithModifiers(this.Modifiers)
-                .WithLeadingTrivia(this.DocumentationComment);
+                            .WithInitializer(SyncRootField.Initializer))))
+                .WithModifiers(SyncRootField.Modifiers)
+                .WithLeadingTrivia(SyncRootField.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -104,7 +104,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         /// <summary>
         /// Gets the initializer.
         /// </summary>
-        private EqualsValueClauseSyntax Initializer
+        private static EqualsValueClauseSyntax Initializer
         {
             get
             {
@@ -121,7 +121,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         /// <summary>
         /// Gets the modifiers.
         /// </summary>
-        private SyntaxTokenList Modifiers
+        private static SyntaxTokenList Modifiers
         {
             get
             {

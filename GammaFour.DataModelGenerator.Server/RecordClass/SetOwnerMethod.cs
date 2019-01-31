@@ -43,10 +43,26 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                     SyntaxFactory.PredefinedType(
                         SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                     SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(this.Modifiers)
+                .WithModifiers(SetOwnerMethod.Modifiers)
                 .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // private
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.InternalKeyword)
+                   });
+            }
         }
 
         /// <summary>
@@ -252,22 +268,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         }
 
         /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.InternalKeyword)
-                   });
-            }
-        }
-
-        /// <summary>
         /// Gets the list of parameters.
         /// </summary>
         private ParameterListSyntax Parameters
@@ -401,12 +401,12 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName($"get{foreignKeyElement.Table.Name.ToPlural()}")),
+                                    SyntaxFactory.IdentifierName($"get{foreignKeyElement.UniqueChildName}")),
                                 SyntaxFactory.ParenthesizedLambdaExpression(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.IdentifierName(this.tableElement.Name),
-                                        SyntaxFactory.IdentifierName($"default{foreignKeyElement.Table.Name.ToPlural()}"))))));
+                                        SyntaxFactory.IdentifierName($"default{foreignKeyElement.UniqueChildName}"))))));
                 }
 
                 return statements;
@@ -434,7 +434,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName($"get{foreignKeyElement.Table.Name.ToPlural()}")),
+                                    SyntaxFactory.IdentifierName($"get{foreignKeyElement.UniqueChildName}")),
                                 SyntaxFactory.ParenthesizedLambdaExpression(
                                     SyntaxFactory.InvocationExpression(
                                         SyntaxFactory.MemberAccessExpression(

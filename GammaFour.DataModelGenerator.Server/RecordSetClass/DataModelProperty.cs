@@ -38,15 +38,15 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             this.Syntax = SyntaxFactory.PropertyDeclaration(
                     SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name),
                     SyntaxFactory.Identifier(this.Name))
-                .WithAccessorList(this.AccessorList)
-                .WithModifiers(this.Modifiers)
-                .WithLeadingTrivia(this.DocumentationComment);
+                .WithAccessorList(DataModelProperty.AccessorList)
+                .WithModifiers(DataModelProperty.Modifiers)
+                .WithLeadingTrivia(DataModelProperty.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the list of accessors.
         /// </summary>
-        private AccessorListSyntax AccessorList
+        private static AccessorListSyntax AccessorList
         {
             get
             {
@@ -54,7 +54,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                     SyntaxFactory.List(
                         new AccessorDeclarationSyntax[]
                         {
-                            this.GetAccessor
+                            DataModelProperty.GetAccessor
                         }));
             }
         }
@@ -62,7 +62,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the 'Get' accessor.
         /// </summary>
-        private AccessorDeclarationSyntax GetAccessor
+        private static AccessorDeclarationSyntax GetAccessor
         {
             get
             {
@@ -76,7 +76,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -136,7 +136,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the modifiers.
         /// </summary>
-        private SyntaxTokenList Modifiers
+        private static SyntaxTokenList Modifiers
         {
             get
             {

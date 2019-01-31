@@ -40,8 +40,8 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
             //        <Members>
             //    }
             this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
-                .WithModifiers(this.Modifiers)
-                .WithBaseList(this.BaseList)
+                .WithModifiers(Class.Modifiers)
+                .WithBaseList(Class.BaseList)
                 .WithMembers(this.Members)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -49,7 +49,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
         /// <summary>
         /// Gets the base class syntax.
         /// </summary>
-        private BaseListSyntax BaseList
+        private static BaseListSyntax BaseList
         {
             get
             {
@@ -61,6 +61,21 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                 SyntaxFactory.SimpleBaseType(
                                     SyntaxFactory.IdentifierName("DbContext"))
                             }));
+            }
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                    });
             }
         }
 
@@ -131,21 +146,6 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                 members = this.CreatePublicInstanceProperties(members);
                 members = this.CreateProtectedInstanceMethods(members);
                 return members;
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
-                    });
             }
         }
 

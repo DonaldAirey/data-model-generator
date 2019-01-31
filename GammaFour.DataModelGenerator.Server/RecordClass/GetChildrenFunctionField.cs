@@ -29,7 +29,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         {
             // Initialize the object.
             this.foreignKeyElement = foreignKeyElement;
-            this.Name = $"get{this.foreignKeyElement.Table.Name.ToPlural()}";
+            this.Name = $"get{this.foreignKeyElement.UniqueChildName}";
 
             //        /// <summary>
             //        /// Function to get child Buyers.
@@ -52,8 +52,24 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                         SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                             SyntaxFactory.VariableDeclarator(
                                 SyntaxFactory.Identifier(this.Name)))))
-                .WithModifiers(this.Modifiers)
+                .WithModifiers(GetChildrenFunctionField.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // private
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
+                    });
+            }
         }
 
         /// <summary>
@@ -148,22 +164,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
-                    });
             }
         }
     }

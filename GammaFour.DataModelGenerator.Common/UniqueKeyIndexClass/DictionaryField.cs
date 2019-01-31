@@ -44,14 +44,30 @@ namespace GammaFour.DataModelGenerator.Common.UniqueKeyIndexClass
                             SyntaxFactory.VariableDeclarator(
                                 SyntaxFactory.Identifier(this.Name))
                             .WithInitializer(this.Initializer))))
-                .WithModifiers(this.Modifiers)
-                .WithLeadingTrivia(this.DocumentationComment);
+                .WithModifiers(DictionaryField.Modifiers)
+                .WithLeadingTrivia(DictionaryField.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // private
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
+                    });
+            }
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -120,22 +136,6 @@ namespace GammaFour.DataModelGenerator.Common.UniqueKeyIndexClass
                     SyntaxFactory.ObjectCreationExpression(this.Type)
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList()));
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
-                    });
             }
         }
 

@@ -31,16 +31,16 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
             this.Syntax = SyntaxFactory.PropertyDeclaration(
                 SyntaxFactory.IdentifierName("DateTime"),
                 SyntaxFactory.Identifier(this.Name))
-                .WithAttributeLists(this.Attributes)
-                .WithAccessorList(this.AccessorList)
-                .WithModifiers(this.Modifiers)
-                .WithLeadingTrivia(this.DocumentationComment);
+                .WithAttributeLists(TimeStampProperty.Attributes)
+                .WithAccessorList(TimeStampProperty.AccessorList)
+                .WithModifiers(TimeStampProperty.Modifiers)
+                .WithLeadingTrivia(TimeStampProperty.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the list of accessors.
         /// </summary>
-        private AccessorListSyntax AccessorList
+        private static AccessorListSyntax AccessorList
         {
             get
             {
@@ -48,8 +48,8 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
                     SyntaxFactory.List(
                         new AccessorDeclarationSyntax[]
                         {
-                            this.GetAccessor,
-                            this.SetAccessor
+                            TimeStampProperty.GetAccessor,
+                            TimeStampProperty.SetAccessor
                         }));
             }
         }
@@ -57,7 +57,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
         /// <summary>
         /// Gets the data contract attribute syntax.
         /// </summary>
-        private SyntaxList<AttributeListSyntax> Attributes
+        private static SyntaxList<AttributeListSyntax> Attributes
         {
             get
             {
@@ -101,7 +101,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
         /// <summary>
         /// Gets the 'Get' accessor.
         /// </summary>
-        private AccessorDeclarationSyntax GetAccessor
+        private static AccessorDeclarationSyntax GetAccessor
         {
             get
             {
@@ -115,7 +115,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -175,7 +175,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
         /// <summary>
         /// Gets the modifiers.
         /// </summary>
-        private SyntaxTokenList Modifiers
+        private static SyntaxTokenList Modifiers
         {
             get
             {
@@ -191,7 +191,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
         /// <summary>
         /// Gets the 'Set' accessor.
         /// </summary>
-        private AccessorDeclarationSyntax SetAccessor
+        private static AccessorDeclarationSyntax SetAccessor
         {
             get
             {

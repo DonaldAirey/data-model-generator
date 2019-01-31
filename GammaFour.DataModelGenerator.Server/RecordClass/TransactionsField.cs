@@ -37,15 +37,15 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                                 SyntaxFactory.PredefinedType(
                                     SyntaxFactory.Token(SyntaxKind.StringKeyword))))))
-                                    .WithVariables(this.Variables))
-                .WithModifiers(this.Modifiers)
-                .WithLeadingTrivia(this.DocumentationComment);
+                                    .WithVariables(TransactionsField.Variables))
+                .WithModifiers(TransactionsField.Modifiers)
+                .WithLeadingTrivia(TransactionsField.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -105,7 +105,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         /// <summary>
         /// Gets the modifiers.
         /// </summary>
-        private SyntaxTokenList Modifiers
+        private static SyntaxTokenList Modifiers
         {
             get
             {
@@ -121,7 +121,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         /// <summary>
         /// Gets the list of generic types.
         /// </summary>
-        private SeparatedSyntaxList<VariableDeclaratorSyntax> Variables
+        private static SeparatedSyntaxList<VariableDeclaratorSyntax> Variables
         {
             get
             {

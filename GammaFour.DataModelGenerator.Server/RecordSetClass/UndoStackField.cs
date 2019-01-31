@@ -40,15 +40,15 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                         SyntaxFactory.VariableDeclarator(
                             SyntaxFactory.Identifier("undoStack"))
-                        .WithInitializer(this.Initializer))))
-                .WithModifiers(this.Modifiers)
-                .WithLeadingTrivia(this.DocumentationComment);
+                        .WithInitializer(UndoStackField.Initializer))))
+                .WithModifiers(UndoStackField.Modifiers)
+                .WithLeadingTrivia(UndoStackField.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -108,7 +108,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the initializer.
         /// </summary>
-        private EqualsValueClauseSyntax Initializer
+        private static EqualsValueClauseSyntax Initializer
         {
             get
             {
@@ -129,7 +129,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the modifiers.
         /// </summary>
-        private SyntaxTokenList Modifiers
+        private static SyntaxTokenList Modifiers
         {
             get
             {

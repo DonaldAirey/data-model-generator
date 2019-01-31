@@ -32,15 +32,15 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                     SyntaxFactory.PredefinedType(
                         SyntaxFactory.Token(SyntaxKind.StringKeyword)),
                     SyntaxFactory.Identifier("Name"))
-                .WithModifiers(this.Modifiers)
-                .WithAccessorList(this.AccessorList)
-                .WithLeadingTrivia(this.DocumentationComment);
+                .WithModifiers(NameProperty.Modifiers)
+                .WithAccessorList(NameProperty.AccessorList)
+                .WithLeadingTrivia(NameProperty.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the list of accessors.
         /// </summary>
-        private AccessorListSyntax AccessorList
+        private static AccessorListSyntax AccessorList
         {
             get
             {
@@ -48,7 +48,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                     SyntaxFactory.List(
                         new AccessorDeclarationSyntax[]
                         {
-                            this.GetAccessor
+                            NameProperty.GetAccessor
                         }));
             }
         }
@@ -56,7 +56,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the 'Get' accessor.
         /// </summary>
-        private AccessorDeclarationSyntax GetAccessor
+        private static AccessorDeclarationSyntax GetAccessor
         {
             get
             {
@@ -70,7 +70,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -130,7 +130,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the modifiers.
         /// </summary>
-        private SyntaxTokenList Modifiers
+        private static SyntaxTokenList Modifiers
         {
             get
             {
@@ -146,7 +146,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the 'Set' accessor.
         /// </summary>
-        private AccessorDeclarationSyntax SetAccessor
+        private static AccessorDeclarationSyntax SetAccessor
         {
             get
             {

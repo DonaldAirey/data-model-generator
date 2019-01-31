@@ -29,7 +29,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         {
             // Initialize the object.
             this.foreignKeyElement = foreignKeyElement;
-            this.Name = this.foreignKeyElement.Table.Name;
+            this.Name = this.foreignKeyElement.UniqueChildName;
 
             //        /// <summary>
             //        /// Gets the child <see cref="Buyer"/> records.
@@ -41,11 +41,48 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                     .WithTypeArgumentList(
                         SyntaxFactory.TypeArgumentList(
                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                SyntaxFactory.IdentifierName(this.Name)))),
-                    SyntaxFactory.Identifier(this.Name.ToPlural()))
+                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name)))),
+                    SyntaxFactory.Identifier(this.Name))
                 .WithAccessorList(this.AccessorList)
-                .WithModifiers(this.Modifiers)
+                .WithModifiers(ChildrenProperty.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // public
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                    });
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'Set' accessor.
+        /// </summary>
+        private static AccessorDeclarationSyntax SetAccessor
+        {
+            get
+            {
+                // This list collects the statements.
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //            set
+                //            {
+                //            }
+                return SyntaxFactory.AccessorDeclaration(
+                        SyntaxKind.SetAccessorDeclaration,
+                        SyntaxFactory.Block(
+                            SyntaxFactory.List(statements)))
+                    .WithKeyword(SyntaxFactory.Token(SyntaxKind.SetKeyword));
+            }
         }
 
         /// <summary>
@@ -60,7 +97,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                         new AccessorDeclarationSyntax[]
                         {
                             this.GetAccessor,
-                            this.SetAccessor
+                            ChildrenProperty.SetAccessor
                         }));
             }
         }
@@ -100,7 +137,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                $" Gets the child <see cref=\"{this.Name}\"/> records.",
+                                                $" Gets the child <see cref=\"{this.foreignKeyElement.Table.Name}\"/> records.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -142,7 +179,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName($"get{this.foreignKeyElement.Table.Name.ToPlural()}")))));
+                                SyntaxFactory.IdentifierName($"get{this.foreignKeyElement.UniqueChildName}")))));
 
                 //            get
                 //            {
@@ -152,43 +189,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                         SyntaxFactory.Block(
                             SyntaxFactory.List(statements)))
                     .WithKeyword(SyntaxFactory.Token(SyntaxKind.GetKeyword));
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
-                    });
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Set' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax SetAccessor
-        {
-            get
-            {
-                // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            set
-                //            {
-                //            }
-                return SyntaxFactory.AccessorDeclaration(
-                        SyntaxKind.SetAccessorDeclaration,
-                        SyntaxFactory.Block(
-                            SyntaxFactory.List(statements)))
-                    .WithKeyword(SyntaxFactory.Token(SyntaxKind.SetKeyword));
             }
         }
     }

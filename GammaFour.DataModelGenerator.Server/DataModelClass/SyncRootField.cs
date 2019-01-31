@@ -32,15 +32,15 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 SyntaxFactory.VariableDeclaration(Conversions.FromType(typeof(object)))
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(this.Name))
-                    .WithInitializer(this.Initializer))))
-                .WithModifiers(this.Modifiers)
-                .WithLeadingTrivia(this.DocumentationComment);
+                    .WithInitializer(SyncRootField.Initializer))))
+                .WithModifiers(SyncRootField.Modifiers)
+                .WithLeadingTrivia(SyncRootField.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -100,7 +100,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// Gets the initializer.
         /// </summary>
-        private EqualsValueClauseSyntax Initializer
+        private static EqualsValueClauseSyntax Initializer
         {
             get
             {
@@ -117,7 +117,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// Gets the modifiers.
         /// </summary>
-        private SyntaxTokenList Modifiers
+        private static SyntaxTokenList Modifiers
         {
             get
             {

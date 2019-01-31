@@ -29,7 +29,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         {
             // Initialize the object.
             this.foreignKeyElement = foreignKeyElement;
-            this.Name = $"default{this.foreignKeyElement.Table.Name.ToPlural()}";
+            this.Name = $"default{this.foreignKeyElement.UniqueChildName}";
 
             //        /// <summary>
             //        /// Default Buyers.
@@ -44,8 +44,26 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                 SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                                     SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name)))))
                     .WithVariables(this.Variables))
-                .WithModifiers(this.Modifiers)
+                .WithModifiers(DefaultChildrenField.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // private
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                        SyntaxFactory.Token(SyntaxKind.StaticKeyword),
+                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)
+                    });
+            }
         }
 
         /// <summary>
@@ -140,24 +158,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
-                        SyntaxFactory.Token(SyntaxKind.StaticKeyword),
-                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)
-                    });
             }
         }
 

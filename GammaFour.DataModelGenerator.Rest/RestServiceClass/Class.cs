@@ -44,9 +44,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             //        <Members>
             //    }
             this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
-                .WithModifiers(this.Modifiers)
-                .WithBaseList(this.BaseList)
-                .WithAttributeLists(this.Attributes)
+                .WithModifiers(Class.Modifiers)
+                .WithBaseList(Class.BaseList)
+                .WithAttributeLists(Class.Attributes)
                 .WithMembers(this.Members)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -54,7 +54,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <summary>
         /// Gets the data contract attribute syntax.
         /// </summary>
-        private SyntaxList<AttributeListSyntax> Attributes
+        private static SyntaxList<AttributeListSyntax> Attributes
         {
             get
             {
@@ -90,7 +90,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <summary>
         /// Gets the base class syntax.
         /// </summary>
-        private BaseListSyntax BaseList
+        private static BaseListSyntax BaseList
         {
             get
             {
@@ -102,6 +102,22 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                 SyntaxFactory.SimpleBaseType(
                                     SyntaxFactory.IdentifierName("ControllerBase"))
                             }));
+            }
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                        SyntaxFactory.Token(SyntaxKind.PartialKeyword)
+                    });
             }
         }
 
@@ -172,22 +188,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 members = this.CreateConstructors(members);
                 members = this.CreatePublicInstanceMethods(members);
                 return members;
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                        SyntaxFactory.Token(SyntaxKind.PartialKeyword)
-                    });
             }
         }
 

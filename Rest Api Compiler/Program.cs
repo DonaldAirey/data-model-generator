@@ -38,7 +38,7 @@ namespace RestServiceCompiler
             // Validate the args parameter.
             if (args == null)
             {
-                throw new ArgumentNullException("args");
+                throw new ArgumentNullException(nameof(args));
             }
 
             // These are the parameters that are parsed out of the command line.

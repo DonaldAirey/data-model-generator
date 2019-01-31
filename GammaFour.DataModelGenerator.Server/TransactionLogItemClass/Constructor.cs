@@ -37,16 +37,16 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
             //        }
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
                 SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(this.Modifiers)
-                .WithParameterList(this.Parameters)
-                .WithBody(this.Body)
+                .WithModifiers(Constructor.Modifiers)
+                .WithParameterList(Constructor.Parameters)
+                .WithBody(Constructor.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the body.
         /// </summary>
-        private BlockSyntax Body
+        private static BlockSyntax Body
         {
             get
             {
@@ -88,6 +88,54 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
+            }
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // private
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.InternalKeyword)
+                    });
+            }
+        }
+
+        /// <summary>
+        /// Gets the list of parameters.
+        /// </summary>
+        private static ParameterListSyntax Parameters
+        {
+            get
+            {
+                // Create a list of parameters from the columns in the unique constraint.
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
+
+                // object[] data, long sequence, System.DateTime timeStamp
+                parameters.Add(
+                    SyntaxFactory.Parameter(SyntaxFactory.Identifier("data"))
+                    .WithType(
+                        SyntaxFactory.ArrayType(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
+                        .WithRankSpecifiers(
+                            SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
+                                SyntaxFactory.ArrayRankSpecifier(
+                                    SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
+                                        SyntaxFactory.OmittedArraySizeExpression()))))));
+                parameters.Add(
+                    SyntaxFactory.Parameter(SyntaxFactory.Identifier("sequence"))
+                    .WithType(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.LongKeyword))));
+                parameters.Add(
+                    SyntaxFactory.Parameter(SyntaxFactory.Identifier("timeStamp"))
+                    .WithType(SyntaxFactory.IdentifierName("DateTime")));
+
+                // This is the complete parameter specification for this constructor.
+                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
             }
         }
 
@@ -220,54 +268,6 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.InternalKeyword)
-                    });
-            }
-        }
-
-        /// <summary>
-        /// Gets the list of parameters.
-        /// </summary>
-        private ParameterListSyntax Parameters
-        {
-            get
-            {
-                // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // object[] data, long sequence, System.DateTime timeStamp
-                parameters.Add(
-                    SyntaxFactory.Parameter(SyntaxFactory.Identifier("data"))
-                    .WithType(
-                        SyntaxFactory.ArrayType(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
-                        .WithRankSpecifiers(
-                            SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
-                                SyntaxFactory.ArrayRankSpecifier(
-                                    SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
-                                        SyntaxFactory.OmittedArraySizeExpression()))))));
-                parameters.Add(
-                    SyntaxFactory.Parameter(SyntaxFactory.Identifier("sequence"))
-                    .WithType(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.LongKeyword))));
-                parameters.Add(
-                    SyntaxFactory.Parameter(SyntaxFactory.Identifier("timeStamp"))
-                    .WithType(SyntaxFactory.IdentifierName("DateTime")));
-
-                // This is the complete parameter specification for this constructor.
-                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
             }
         }
     }

@@ -6,6 +6,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -40,10 +41,87 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                 SyntaxFactory.PredefinedType(
                     SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                 SyntaxFactory.Identifier(this.Name))
-            .WithModifiers(this.Modifiers)
-            .WithParameterList(this.Parameters)
+            .WithModifiers(OnModelCreatingMethod.Modifiers)
+            .WithParameterList(OnModelCreatingMethod.Parameters)
             .WithBody(this.Body)
-            .WithLeadingTrivia(this.DocumentationComment);
+            .WithLeadingTrivia(OnModelCreatingMethod.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the documentation comment.
+        /// </summary>
+        private static SyntaxTriviaList DocumentationComment
+        {
+            get
+            {
+                // This is used to collect the trivia.
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
+
+                //        /// <inheritdoc/>
+                comments.Add(
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                SyntaxFactory.XmlText()
+                                .WithTextTokens(
+                                    SyntaxFactory.TokenList(
+                                        new[]
+                                        {
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                " <inheritdoc/>",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList())
+                                        }))))));
+
+                // This is the complete document comment.
+                return SyntaxFactory.TriviaList(comments);
+            }
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // private
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.ProtectedKeyword),
+                        SyntaxFactory.Token(SyntaxKind.OverrideKeyword)
+                   });
+            }
+        }
+
+        /// <summary>
+        /// Gets the list of parameters.
+        /// </summary>
+        private static ParameterListSyntax Parameters
+        {
+            get
+            {
+                // Create a list of parameters from the columns in the unique constraint.
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
+
+                // ModelBuilder modelBuilder
+                parameters.Add(
+                    SyntaxFactory.Parameter(
+                        SyntaxFactory.Identifier("modelBuilder"))
+                    .WithType(
+                        SyntaxFactory.IdentifierName("ModelBuilder")));
+
+                // This is the complete parameter specification for this constructor.
+                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
+            }
         }
 
         /// <summary>
@@ -60,7 +138,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
                     // Used as a variable when constructing the lambda expression.
-                    string abbreviation = tableElement.Name[0].ToString().ToLower();
+                    string abbreviation = tableElement.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
 
                     // Each column will have properties that need to be set by the Fluent API.
                     foreach (ColumnElement columnElement in tableElement.Columns)
@@ -242,7 +320,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.IdentifierName(abbreviation),
-                                                SyntaxFactory.IdentifierName(foreignKeyElement.UniqueKey.Table.Name)))))));
+                                                SyntaxFactory.IdentifierName(foreignKeyElement.UniqueParentName)))))));
                     }
 
                     // Add an Ignore invocation for each of the child set navigation properties.
@@ -264,7 +342,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.IdentifierName(abbreviation),
-                                                SyntaxFactory.IdentifierName(foreignKeyElement.Table.Name.ToPlural())))))));
+                                                SyntaxFactory.IdentifierName(foreignKeyElement.UniqueChildName)))))));
                     }
 
                     //            modelBuilder.Entity<Buyer>().Ignore(b => b.Buyers).Ignore(b => b.Country).Ignore(b => b.Province).Ignore(b => b.Subscriptions);
@@ -368,83 +446,6 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
-            }
-        }
-
-        /// <summary>
-        /// Gets the documentation comment.
-        /// </summary>
-        private SyntaxTriviaList DocumentationComment
-        {
-            get
-            {
-                // This is used to collect the trivia.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <inheritdoc/>
-                comments.Add(
-                    SyntaxFactory.Trivia(
-                        SyntaxFactory.DocumentationCommentTrivia(
-                            SyntaxKind.SingleLineDocumentationCommentTrivia,
-                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                SyntaxFactory.XmlText()
-                                .WithTextTokens(
-                                    SyntaxFactory.TokenList(
-                                        new[]
-                                        {
-                                            SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                " <inheritdoc/>",
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                            SyntaxFactory.XmlTextNewLine(
-                                                SyntaxFactory.TriviaList(),
-                                                Environment.NewLine,
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList())
-                                        }))))));
-
-                // This is the complete document comment.
-                return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.ProtectedKeyword),
-                        SyntaxFactory.Token(SyntaxKind.OverrideKeyword)
-                   });
-            }
-        }
-
-        /// <summary>
-        /// Gets the list of parameters.
-        /// </summary>
-        private ParameterListSyntax Parameters
-        {
-            get
-            {
-                // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // ModelBuilder modelBuilder
-                parameters.Add(
-                    SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier("modelBuilder"))
-                    .WithType(
-                        SyntaxFactory.IdentifierName("ModelBuilder")));
-
-                // This is the complete parameter specification for this constructor.
-                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
             }
         }
     }

@@ -31,17 +31,17 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             this.Syntax = SyntaxFactory.PropertyDeclaration(
                 SyntaxFactory.IdentifierName("AsyncReaderWriterLock"),
                 SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(this.Modifiers)
-                .WithAccessorList(this.AccessorList)
-                .WithInitializer(this.Initializer)
-                .WithLeadingTrivia(this.DocumentationComment)
+                .WithModifiers(LockProperty.Modifiers)
+                .WithAccessorList(LockProperty.AccessorList)
+                .WithInitializer(LockProperty.Initializer)
+                .WithLeadingTrivia(LockProperty.DocumentationComment)
                 .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
         }
 
         /// <summary>
         /// Gets the list of accessors.
         /// </summary>
-        private AccessorListSyntax AccessorList
+        private static AccessorListSyntax AccessorList
         {
             get
             {
@@ -57,7 +57,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -117,7 +117,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the initializer.
         /// </summary>
-        private EqualsValueClauseSyntax Initializer
+        private static EqualsValueClauseSyntax Initializer
         {
             get
             {
@@ -132,7 +132,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the modifiers.
         /// </summary>
-        private SyntaxTokenList Modifiers
+        private static SyntaxTokenList Modifiers
         {
             get
             {

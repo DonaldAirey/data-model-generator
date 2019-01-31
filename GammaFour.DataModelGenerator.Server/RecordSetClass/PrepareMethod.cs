@@ -33,16 +33,16 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 SyntaxFactory.PredefinedType(
                     SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                 SyntaxFactory.Identifier(this.Name))
-            .WithModifiers(this.Modifiers)
-            .WithParameterList(this.Parameters)
-            .WithBody(this.Body)
-            .WithLeadingTrivia(this.DocumentationComment);
+            .WithModifiers(PrepareMethod.Modifiers)
+            .WithParameterList(PrepareMethod.Parameters)
+            .WithBody(PrepareMethod.Body)
+            .WithLeadingTrivia(PrepareMethod.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the body.
         /// </summary>
-        private BlockSyntax Body
+        private static BlockSyntax Body
         {
             get
             {
@@ -71,10 +71,10 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.NumericLiteralExpression,
                                 SyntaxFactory.Literal(0))),
-                        SyntaxFactory.Block(this.EnlistmentDone))
+                        SyntaxFactory.Block(PrepareMethod.EnlistmentDone))
                     .WithElse(
                         SyntaxFactory.ElseClause(
-                            SyntaxFactory.Block(this.EnlistmentPrepared))));
+                            SyntaxFactory.Block(PrepareMethod.EnlistmentPrepared))));
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -84,7 +84,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -122,7 +122,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the block of code that says the transaction is done.
         /// </summary>
-        private IEnumerable<StatementSyntax> EnlistmentDone
+        private static IEnumerable<StatementSyntax> EnlistmentDone
         {
             get
             {
@@ -144,7 +144,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the block of code that says the transaction is prepared
         /// </summary>
-        private IEnumerable<StatementSyntax> EnlistmentPrepared
+        private static IEnumerable<StatementSyntax> EnlistmentPrepared
         {
             get
             {
@@ -162,7 +162,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the modifiers.
         /// </summary>
-        private SyntaxTokenList Modifiers
+        private static SyntaxTokenList Modifiers
         {
             get
             {
@@ -178,7 +178,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private ParameterListSyntax Parameters
+        private static ParameterListSyntax Parameters
         {
             get
             {

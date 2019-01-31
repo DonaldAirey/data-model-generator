@@ -15,6 +15,11 @@ namespace GammaFour.DataModelGenerator.Common
     public class TableElement : XElement, IComparable<TableElement>
     {
         /// <summary>
+        /// The verbs that will be generated in the RESTApi for this table.
+        /// </summary>
+        private readonly List<Verb> verbs = new List<Verb>();
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="TableElement"/> class.
         /// </summary>
         /// <param name="xElement">The element that describes the table.</param>
@@ -25,18 +30,15 @@ namespace GammaFour.DataModelGenerator.Common
             this.Name = this.Attribute(XmlSchemaDocument.ObjectName).Value;
 
             // The verbs tell us what actions to support in the controller when it's built.
-            List<Verb> verbs = new List<Verb>();
             XAttribute verbAttribute = this.Attribute(XmlSchemaDocument.Verbs);
             string verbStrings = verbAttribute == null ? string.Empty : verbAttribute.Value;
             foreach (string verbString in verbStrings.Split(','))
             {
                 if (Enum.TryParse<Verb>(verbString, out Verb verb))
                 {
-                    verbs.Add(verb);
+                    this.verbs.Add(verb);
                 }
             }
-
-            this.Verbs = verbs.ToArray();
 
             // This will navigate to the sequence of columns.
             XElement complexType = this.Element(XmlSchemaDocument.ComplexType);
@@ -173,9 +175,132 @@ namespace GammaFour.DataModelGenerator.Common
         }
 
         /// <summary>
-        /// Gets or sets the verbs supported by the controller.
+        /// Gets the verbs supported by the controller.
         /// </summary>
-        public Verb[] Verbs { get; set; }
+        public IEnumerable<Verb> Verbs
+        {
+            get
+            {
+                return this.verbs;
+            }
+        }
+
+        /// <summary>
+        /// Equals operation.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>true if the two operands are equal, false otherwise.</returns>
+        public static bool operator ==(TableElement left, TableElement right)
+        {
+            // Compare the left to the right.  Don't use operators or you'll recurse.
+            if (object.ReferenceEquals(left, null))
+            {
+                return object.ReferenceEquals(right, null);
+            }
+
+            return left.Equals(right);
+        }
+
+        /// <summary>
+        /// Not Equals operation.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>true if the two operands are not equal, false otherwise.</returns>
+        public static bool operator !=(TableElement left, TableElement right)
+        {
+            return !(left == right);
+        }
+
+        /// <summary>
+        /// Less Than operation.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>true if the left operand is less than the right operand, false otherwise.</returns>
+        public static bool operator <(TableElement left, TableElement right)
+        {
+            return Compare(left, right) < 0;
+        }
+
+        /// <summary>
+        /// Less Than or Equal To operation.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>true if the left operand is less than the right operand, false otherwise.</returns>
+        public static bool operator <=(TableElement left, TableElement right)
+        {
+            return Compare(left, right) <= 0;
+        }
+
+        /// <summary>
+        /// Greater Than operation.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>true if the left operand is greater than the right operand, false otherwise.</returns>
+        public static bool operator >(TableElement left, TableElement right)
+        {
+            return Compare(left, right) > 0;
+        }
+
+        /// <summary>
+        /// Greater Than or Equal To operation.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>true if the left operand is greater than the right operand, false otherwise.</returns>
+        public static bool operator >=(TableElement left, TableElement right)
+        {
+            return Compare(left, right) >= 0;
+        }
+
+        /// <summary>
+        /// Compares two <see cref="TableElement"/> records.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>-1 if left &lt; right, 0 if left == right, 1 if left &gt; right</returns>
+        public static int Compare(TableElement left, TableElement right)
+        {
+            // Don't use operators or you'll recurse.  If the left and right objects are the same object, then they're equal.
+            if (object.ReferenceEquals(left, right))
+            {
+                return 0;
+            }
+
+            // The left operand can never be equal to null.
+            if (object.ReferenceEquals(left, null))
+            {
+                return -1;
+            }
+
+            // Reference checking done.  This will compare the names to see if they're the same.
+            return left.CompareTo(right);
+        }
+
+        /// <inheritdoc/>
+        public override bool Equals(object obj)
+        {
+            // Comparing against null will always be false.
+            TableElement other = obj as TableElement;
+            if (object.ReferenceEquals(other, null))
+            {
+                return false;
+            }
+
+            // Call the common method to compare the names.
+            return this.CompareTo(other) == 0;
+        }
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            // The name is used to compare these objects.
+            return this.Name.GetHashCode();
+        }
 
         /// <summary>
         /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance
@@ -185,7 +310,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <returns>A value that indicates the relative order of the objects being compared.</returns>
         public int CompareTo(TableElement other)
         {
-            return this.Name.CompareTo(other.Name);
+            return string.Compare(this.Name, other.Name, StringComparison.InvariantCulture);
         }
 
         /// <summary>

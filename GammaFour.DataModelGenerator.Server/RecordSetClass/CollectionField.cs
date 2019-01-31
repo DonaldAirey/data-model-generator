@@ -54,14 +54,14 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                         SyntaxFactory.VariableDeclarator(
                             SyntaxFactory.Identifier("collection"))
                             .WithInitializer(this.Initializer))))
-                .WithModifiers(this.Modifiers)
-                .WithLeadingTrivia(this.DocumentationComment);
+                .WithModifiers(CollectionField.Modifiers)
+                .WithLeadingTrivia(CollectionField.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -119,6 +119,22 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         }
 
         /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // private
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
+                    });
+            }
+        }
+
+        /// <summary>
         /// Gets the initializer.
         /// </summary>
         private EqualsValueClauseSyntax Initializer
@@ -142,22 +158,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                     }))))
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList()));
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
-                    });
             }
         }
     }

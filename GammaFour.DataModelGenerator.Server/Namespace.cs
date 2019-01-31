@@ -34,10 +34,10 @@ namespace GammaFour.DataModelGenerator.Server
             // This is the syntax of the namespace.
             this.Syntax = SyntaxFactory.NamespaceDeclaration(
                     SyntaxFactory.IdentifierName(xmlSchemaDocument.TargetNamespace))
-                .WithUsings(SyntaxFactory.List<UsingDirectiveSyntax>(this.UsingStatements))
+                .WithUsings(SyntaxFactory.List<UsingDirectiveSyntax>(Namespace.UsingStatements))
                 .WithMembers(this.Members)
-                .WithLeadingTrivia(this.LeadingTrivia)
-                .WithTrailingTrivia(this.TrailingTrivia);
+                .WithLeadingTrivia(Namespace.LeadingTrivia)
+                .WithTrailingTrivia(Namespace.TrailingTrivia);
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace GammaFour.DataModelGenerator.Server
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList LeadingTrivia
+        private static SyntaxTriviaList LeadingTrivia
         {
             get
             {
@@ -89,23 +89,9 @@ namespace GammaFour.DataModelGenerator.Server
         }
 
         /// <summary>
-        /// Gets the members.
-        /// </summary>
-        private SyntaxList<MemberDeclarationSyntax> Members
-        {
-            get
-            {
-                // Create the members.
-                SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = this.CreatePublicClasses(members);
-                return members;
-            }
-        }
-
-        /// <summary>
         /// Gets the trailing trivia.
         /// </summary>
-        private SyntaxTriviaList TrailingTrivia
+        private static SyntaxTriviaList TrailingTrivia
         {
             get
             {
@@ -140,7 +126,7 @@ namespace GammaFour.DataModelGenerator.Server
         /// <summary>
         /// Gets the 'using' statements.
         /// </summary>
-        private List<UsingDirectiveSyntax> UsingStatements
+        private static List<UsingDirectiveSyntax> UsingStatements
         {
             get
             {
@@ -157,6 +143,20 @@ namespace GammaFour.DataModelGenerator.Server
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.Data")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")));
                 return usingStatements;
+            }
+        }
+
+        /// <summary>
+        /// Gets the members.
+        /// </summary>
+        private SyntaxList<MemberDeclarationSyntax> Members
+        {
+            get
+            {
+                // Create the members.
+                SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
+                members = this.CreatePublicClasses(members);
+                return members;
             }
         }
 

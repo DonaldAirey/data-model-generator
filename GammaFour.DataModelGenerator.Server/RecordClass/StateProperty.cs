@@ -31,15 +31,15 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
             this.Syntax = SyntaxFactory.PropertyDeclaration(
                 SyntaxFactory.IdentifierName("RecordState"),
                 SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(this.Modifiers)
-                .WithAccessorList(this.AccessorList)
-                .WithLeadingTrivia(this.DocumentationComment);
+                .WithModifiers(StateProperty.Modifiers)
+                .WithAccessorList(StateProperty.AccessorList)
+                .WithLeadingTrivia(StateProperty.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the list of accessors.
         /// </summary>
-        private AccessorListSyntax AccessorList
+        private static AccessorListSyntax AccessorList
         {
             get
             {
@@ -66,7 +66,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -126,7 +126,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         /// <summary>
         /// Gets the modifiers.
         /// </summary>
-        private SyntaxTokenList Modifiers
+        private static SyntaxTokenList Modifiers
         {
             get
             {

@@ -39,8 +39,24 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
                     SyntaxFactory.IdentifierName($"{this.tableElement.Name}Set"),
                     SyntaxFactory.Identifier(this.Name))
                 .WithAccessorList(this.AccessorList)
-                .WithModifiers(this.Modifiers)
+                .WithModifiers(RecordSetProperty.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // internal
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                    });
+            }
         }
 
         /// <summary>
@@ -145,22 +161,6 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // internal
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
-                    });
             }
         }
     }

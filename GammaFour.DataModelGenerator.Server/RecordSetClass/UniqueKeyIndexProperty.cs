@@ -43,8 +43,8 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                                 SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name)))),
                     SyntaxFactory.Identifier(this.uniqueKeyElement.Name))
-                .WithModifiers(this.Modifiers)
-                .WithAccessorList(this.AccessorList)
+                .WithModifiers(UniqueKeyIndexProperty.Modifiers)
+                .WithAccessorList(UniqueKeyIndexProperty.AccessorList)
                 .WithInitializer(this.Initializer)
                 .WithLeadingTrivia(this.DocumentationComment)
                 .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
@@ -53,7 +53,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the list of accessors.
         /// </summary>
-        private AccessorListSyntax AccessorList
+        private static AccessorListSyntax AccessorList
         {
             get
             {
@@ -63,6 +63,22 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                             SyntaxKind.GetAccessorDeclaration)
                         .WithSemicolonToken(
                             SyntaxFactory.Token(SyntaxKind.SemicolonToken))));
+            }
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // public
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                    });
             }
         }
 
@@ -158,22 +174,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                         SyntaxFactory.ArgumentList(
                             SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                 SyntaxFactory.Argument(UniqueKeyExpression.GetUniqueKey(this.uniqueKeyElement))))));
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
-                    });
             }
         }
     }

@@ -52,8 +52,24 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                             }))),
                 SyntaxFactory.Identifier(this.foreignKeyElement.Name))
                 .WithAccessorList(this.AccessorList)
-                .WithModifiers(this.Modifiers)
+                .WithModifiers(ForeignKeyIndexProperty.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // public
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                    });
+            }
         }
 
         /// <summary>
@@ -237,22 +253,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                     SyntaxFactory.Block(
                         SyntaxFactory.List(statements)))
                     .WithKeyword(SyntaxFactory.Token(SyntaxKind.GetKeyword));
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
-                    });
             }
         }
     }

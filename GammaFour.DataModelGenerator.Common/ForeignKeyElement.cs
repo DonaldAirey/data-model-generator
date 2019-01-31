@@ -27,46 +27,18 @@ namespace GammaFour.DataModelGenerator.Common
             // Parse the cascading delete rule out of the specification.
             XAttribute deleteRuleAttribute = xElement.Attribute(XmlSchemaDocument.DeleteRule);
             this.DeleteRule = deleteRuleAttribute == null ?
-                CascadeRules.Cascade : (CascadeRules)Enum.Parse(typeof(CascadeRules), deleteRuleAttribute.Value);
+                CascadeRule.Cascade : (CascadeRule)Enum.Parse(typeof(CascadeRule), deleteRuleAttribute.Value);
 
             // Parse the cascading update rule out of the specification.
             XAttribute updateRuleAttribute = xElement.Attribute(XmlSchemaDocument.UpdateRule);
             this.UpdateRule = updateRuleAttribute == null ?
-                CascadeRules.None : (CascadeRules)Enum.Parse(typeof(CascadeRules), updateRuleAttribute.Value);
+                CascadeRule.None : (CascadeRule)Enum.Parse(typeof(CascadeRule), updateRuleAttribute.Value);
         }
 
         /// <summary>
         /// Gets the rule that describes what happens to child records when a record is deleted.
         /// </summary>
-        public CascadeRules DeleteRule { get; } = CascadeRules.Cascade;
-
-        /// <summary>
-        /// Gets a value indicating whether there is a single or multiple paths from the child to the parent table.
-        /// </summary>
-        /// <value>An indication of whether there is a single or multiple paths from the child to the parent table.</value>
-        public bool IsDistinctPathToParent
-        {
-            get
-            {
-                return (from fke in this.Table.ForeignKeys
-                        where fke.UniqueKey.Table == this.UniqueKey.Table && fke != this
-                        select fke).Count() != 0;
-            }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether there is a single or multiple paths from the parent to the child table.
-        /// </summary>
-        /// <value>An indication of whether there is a single or multiple paths from the parent to the child table.</value>
-        public bool IsDistinctPathToChild
-        {
-            get
-            {
-                return (from fke in this.UniqueKey.Table.ForeignKeys
-                        where fke.Table == this.Table && fke != this
-                        select fke).Count() != 0;
-            }
-        }
+        public CascadeRule DeleteRule { get; } = CascadeRule.Cascade;
 
         /// <summary>
         /// Gets the name of the unique key.
@@ -110,22 +82,25 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
+                // Determinesd if there is a distinct path to the parent table.
+                var isDistinctPathToParent = (from fke in this.UniqueKey.Table.ForeignKeys
+                                              where fke.Table == this.Table
+                                              select fke).Count() == 1;
+
                 // If the path to the parent is unique, then simply use the parent table's name.  If it not unique, we will decorate the name of the
                 // key with the columns that will make it unique.
                 string parentIdentifier = default(string);
-                if (this.IsDistinctPathToParent)
+                if (isDistinctPathToParent)
                 {
-                    parentIdentifier = this.UniqueKey.Table.Name.ToCamelCase() + "Key";
+                    parentIdentifier = this.UniqueKey.Table.Name;
                 }
                 else
                 {
-                    parentIdentifier = this.UniqueKey.Table.Name.ToCamelCase() + "By";
-                    foreach (ColumnReferenceElement columnReferenceElement in this.ParentColumns)
+                    parentIdentifier = this.UniqueKey.Table.Name + "By";
+                    foreach (ColumnReferenceElement columnReferenceElement in this.Columns)
                     {
                         parentIdentifier += columnReferenceElement.Column.Name;
                     }
-
-                    parentIdentifier += "Key";
                 }
 
                 return parentIdentifier;
@@ -133,9 +108,41 @@ namespace GammaFour.DataModelGenerator.Common
         }
 
         /// <summary>
+        /// Gets an identifier that can be used to uniquely reference the parent table.
+        /// </summary>
+        public string UniqueChildName
+        {
+            get
+            {
+                // Determines if there's a single path to the child tables.
+                var isDistinctPathToChild = (from fke in this.UniqueKey.Table.ForeignKeys
+                                             where fke.Table == this.Table
+                                             select fke).Count() == 1;
+
+                // If the path to the parent is unique, then simply use the parent table's name.  If it not unique, we will decorate the name of the
+                // key with the columns that will make it unique.
+                string childIdentifier = default(string);
+                if (isDistinctPathToChild)
+                {
+                    childIdentifier = this.Table.Name.ToPlural();
+                }
+                else
+                {
+                    childIdentifier = this.Table.Name.ToPlural() + "By";
+                    foreach (ColumnReferenceElement columnReferenceElement in this.Columns)
+                    {
+                        childIdentifier += columnReferenceElement.Column.Name;
+                    }
+                }
+
+                return childIdentifier;
+            }
+        }
+
+        /// <summary>
         /// Gets the rule that describes what happens to child records when a record is updated.
         /// </summary>
         /// <value>The rule that describes what happens to child records when a record is updated.</value>
-        public CascadeRules UpdateRule { get; } = CascadeRules.Cascade;
+        public CascadeRule UpdateRule { get; } = CascadeRule.Cascade;
     }
 }

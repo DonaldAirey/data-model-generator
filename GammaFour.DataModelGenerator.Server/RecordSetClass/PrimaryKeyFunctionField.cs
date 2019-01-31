@@ -54,14 +54,30 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                             SyntaxFactory.VariableDeclarator(
                                 SyntaxFactory.Identifier("primaryKeyFunction"))
                             .WithInitializer(this.Initializer))))
-                .WithModifiers(this.Modifiers)
-                .WithLeadingTrivia(this.DocumentationComment);
+                .WithModifiers(PrimaryKeyFunctionField.Modifiers)
+                .WithLeadingTrivia(PrimaryKeyFunctionField.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // private
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
+                    });
+            }
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -153,22 +169,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                         UniqueKeyExpression.GetUniqueKey(this.uniqueKeyElement)))),
                             SyntaxFactory.IdentifierName("Compile"))));
                 }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
-                    });
-            }
         }
     }
 }

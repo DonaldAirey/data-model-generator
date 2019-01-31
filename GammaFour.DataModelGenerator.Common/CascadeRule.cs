@@ -1,4 +1,4 @@
-﻿// <copyright file="CascadeRules.cs" company="Gamma Four, Inc.">
+﻿// <copyright file="CascadeRule.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -7,7 +7,7 @@ namespace GammaFour.DataModelGenerator.Common
     /// <summary>
     /// The cascade rules for relations.
     /// </summary>
-    public enum CascadeRules
+    public enum CascadeRule
     {
         /// <summary>
         /// Child records are not adjusted when a parent record is modified.

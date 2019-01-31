@@ -44,15 +44,15 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                             SyntaxFactory.IdentifierName(this.tableElement.Name)))),
                 SyntaxFactory.Identifier("GetEnumerator"))
-                .WithModifiers(this.Modifiers)
-                .WithBody(this.Body)
-                .WithLeadingTrivia(this.DocumentationComment);
+                .WithModifiers(GenericGetEnumeratorMethod.Modifiers)
+                .WithBody(GenericGetEnumeratorMethod.Body)
+                .WithLeadingTrivia(GenericGetEnumeratorMethod.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the body.
         /// </summary>
-        private BlockSyntax Body
+        private static BlockSyntax Body
         {
             get
             {
@@ -82,7 +82,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -120,7 +120,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// Gets the modifiers.
         /// </summary>
-        private SyntaxTokenList Modifiers
+        private static SyntaxTokenList Modifiers
         {
             get
             {

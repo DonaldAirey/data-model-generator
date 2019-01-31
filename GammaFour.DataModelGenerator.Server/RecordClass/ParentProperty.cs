@@ -29,7 +29,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         {
             // Initialize the object.
             this.foreignKeyElement = foreignKeyElement;
-            this.Name = this.foreignKeyElement.UniqueKey.Table.Name;
+            this.Name = this.foreignKeyElement.UniqueParentName;
 
             //        /// <summary>
             //        /// Gets the parent <see cref="Country"/> record.
@@ -39,8 +39,45 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Table.Name),
                 SyntaxFactory.Identifier(this.Name))
                 .WithAccessorList(this.AccessorList)
-                .WithModifiers(this.Modifiers)
+                .WithModifiers(ParentProperty.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // public
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                    });
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'Set' accessor.
+        /// </summary>
+        private static AccessorDeclarationSyntax SetAccessor
+        {
+            get
+            {
+                // This list collects the statements.
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //            set
+                //            {
+                //            }
+                return SyntaxFactory.AccessorDeclaration(
+                        SyntaxKind.SetAccessorDeclaration,
+                        SyntaxFactory.Block(
+                            SyntaxFactory.List(statements)))
+                    .WithKeyword(SyntaxFactory.Token(SyntaxKind.SetKeyword));
+            }
         }
 
         /// <summary>
@@ -55,7 +92,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                         new AccessorDeclarationSyntax[]
                         {
                             this.GetAccessor,
-                            this.SetAccessor
+                            ParentProperty.SetAccessor
                         }));
             }
         }
@@ -95,7 +132,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                $" Gets the parent <see cref=\"{this.Name}\"/> record.",
+                                                $" Gets the parent <see cref=\"{this.foreignKeyElement.UniqueKey.Table.Name}\"/> record.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -158,43 +195,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                     SyntaxFactory.Block(
                         SyntaxFactory.List(statements)))
                     .WithKeyword(SyntaxFactory.Token(SyntaxKind.GetKeyword));
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
-                    });
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Set' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax SetAccessor
-        {
-            get
-            {
-                // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            set
-                //            {
-                //            }
-                return SyntaxFactory.AccessorDeclaration(
-                        SyntaxKind.SetAccessorDeclaration,
-                        SyntaxFactory.Block(
-                            SyntaxFactory.List(statements)))
-                    .WithKeyword(SyntaxFactory.Token(SyntaxKind.SetKeyword));
             }
         }
     }
