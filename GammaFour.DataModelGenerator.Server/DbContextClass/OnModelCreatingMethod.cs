@@ -407,40 +407,65 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                     // Create a foreign key index for every parent table.
                     foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys)
                     {
-                        //            modelBuilder.Entity<Province>().HasOne<Country>().WithMany().HasForeignKey(p => p.CountryId);
-                        statements.Add(
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.InvocationExpression(
+                        //            modelBuilder.Entity<Province>()
+                        ExpressionSyntax indexProperties = SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("modelBuilder"),
+                                    SyntaxFactory.GenericName(
+                                        SyntaxFactory.Identifier("Entity"))
+                                    .WithTypeArgumentList(
+                                        SyntaxFactory.TypeArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                SyntaxFactory.IdentifierName(tableElement.Name))))));
+
+                        //            ... .HasOne<Country>()
+                        indexProperties = SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    indexProperties,
+                                    SyntaxFactory.GenericName(
+                                        SyntaxFactory.Identifier("HasOne"))
+                                    .WithTypeArgumentList(
+                                        SyntaxFactory.TypeArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                SyntaxFactory.IdentifierName(foreignKeyElement.UniqueKey.Table.Name))))));
+
+                        //            ... .WithMany();
+                        indexProperties = SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    indexProperties,
+                                    SyntaxFactory.IdentifierName("WithMany")));
+
+                        //            ... .HasForeignKey(p => p.CountryId);
+                        indexProperties = SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    indexProperties,
+                                    SyntaxFactory.IdentifierName("HasForeignKey")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(ForeignKeyExpression.GetForeignKey(foreignKeyElement)))));
+
+                        //            ... .OnDelete(DeleteBehavior.Restrict)
+                        indexProperties = SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    indexProperties,
+                                    SyntaxFactory.IdentifierName("OnDelete")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.InvocationExpression(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.InvocationExpression(
-                                                            SyntaxFactory.MemberAccessExpression(
-                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.IdentifierName("modelBuilder"),
-                                                                SyntaxFactory.GenericName(
-                                                                    SyntaxFactory.Identifier("Entity"))
-                                                                .WithTypeArgumentList(
-                                                                    SyntaxFactory.TypeArgumentList(
-                                                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                                            SyntaxFactory.IdentifierName(tableElement.Name)))))),
-                                                        SyntaxFactory.GenericName(
-                                                            SyntaxFactory.Identifier("HasOne"))
-                                                        .WithTypeArgumentList(
-                                                            SyntaxFactory.TypeArgumentList(
-                                                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                                    SyntaxFactory.IdentifierName(foreignKeyElement.UniqueKey.Table.Name)))))),
-                                                SyntaxFactory.IdentifierName("WithMany"))),
-                                        SyntaxFactory.IdentifierName("HasForeignKey")))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                SyntaxFactory.Argument(ForeignKeyExpression.GetForeignKey(foreignKeyElement)))))));
+                                                SyntaxFactory.IdentifierName("DeleteBehavior"),
+                                                SyntaxFactory.IdentifierName("Restrict"))))));
+
+                        //            modelBuilder.Entity<Province>().HasOne<Country>().WithMany().HasForeignKey(p => p.CountryId);
+                        statements.Add(SyntaxFactory.ExpressionStatement(indexProperties));
                     }
                 }
 
