@@ -199,7 +199,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                         }
 
                         // Provide a reasonble range for decimal datatypes
-                        if (columnElement.Type == typeof(decimal))
+                        if (columnElement.ColumnType.FullName == "System.Decimal")
                         {
                             //            .HasColumnType("decimal(18,2)");
                             expressionSyntax = SyntaxFactory.InvocationExpression(
@@ -218,7 +218,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                         }
 
                         // Nullable datatypes that can't be null
-                        if (!columnElement.IsNullable)
+                        if (!columnElement.ColumnType.IsNullable)
                         {
                             //            .IsRequired();
                             expressionSyntax = SyntaxFactory.InvocationExpression(
@@ -229,7 +229,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                             hasModification = true;
                         }
 
-                        if (columnElement.Type == typeof(string) && columnElement.MaximumLength != int.MaxValue)
+                        if (columnElement.ColumnType.FullName == "System.String" && columnElement.MaximumLength != int.MaxValue)
                         {
                             //            .HasMaxLength(26);
                             expressionSyntax = SyntaxFactory.InvocationExpression(

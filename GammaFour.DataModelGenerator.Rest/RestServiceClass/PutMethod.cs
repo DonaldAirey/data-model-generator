@@ -226,59 +226,22 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                        country = new Country() { CountryCode = jObject.Value<string>("countryCode"), Name = jObject.Value<string>("name") };
-                List<SyntaxNodeOrToken> propertyInitialization = new List<SyntaxNodeOrToken>();
-                foreach (ColumnElement columnElement in this.uniqueKeyElement.Table.Columns)
-                {
-                    // Don't attempt to insert these kinds of properties.
-                    if (columnElement.IsRowVersion || columnElement.IsAutoIncrement)
-                    {
-                        continue;
-                    }
-
-                    // Separate property initialization expressions with commas.
-                    if (propertyInitialization.Count != 0)
-                    {
-                        propertyInitialization.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
-                    }
-
-                    // CountryCode = jObject.Value<string>("countryCode")
-                    propertyInitialization.Add(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.IdentifierName(columnElement.Name),
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("jObject"),
-                                    SyntaxFactory.GenericName(
-                                        SyntaxFactory.Identifier("Value"))
-                                    .WithTypeArgumentList(
-                                        SyntaxFactory.TypeArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                Conversions.FromType(columnElement.Type))))))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.StringLiteralExpression,
-                                                SyntaxFactory.Literal(columnElement.Name.ToCamelCase()))))))));
-                }
-
+                //                        account = jObject.ToObject<Account>();
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
                             SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase()),
-                            SyntaxFactory.ObjectCreationExpression(
-                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList())
-                            .WithInitializer(
-                                SyntaxFactory.InitializerExpression(
-                                    SyntaxKind.ObjectInitializerExpression,
-                                    SyntaxFactory.SeparatedList<ExpressionSyntax>(propertyInitialization))))));
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("jObject"),
+                                    SyntaxFactory.GenericName(
+                                        SyntaxFactory.Identifier("ToObject"))
+                                    .WithTypeArgumentList(
+                                        SyntaxFactory.TypeArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name)))))))));
 
                 //                        country.Enlist();
                 statements.Add(
@@ -653,7 +616,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
                                             SyntaxFactory.Attribute(
                                                 SyntaxFactory.IdentifierName("FromRoute"))))))
-                            .WithType(Conversions.FromType(columnReferenceElement.Column.Type)));
+                            .WithType(Conversions.FromType(columnReferenceElement.Column.ColumnType)));
                 }
 
                 // , [FromBody] JObject jObject
@@ -874,8 +837,31 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxFactory.LiteralExpression(
                                                 SyntaxKind.FalseLiteralExpression))))))));
 
-                //                country.CountryCode = jObject.Value<string>("countryCode");
-                //                country.Name = jObject.Value<string>("name");
+                //                        Account newAccount = jObject.ToObject<Account>();
+                statements.Add(
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier($"new{this.uniqueKeyElement.Table.Name}"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("jObject"),
+                                                SyntaxFactory.GenericName(
+                                                    SyntaxFactory.Identifier("ToObject"))
+                                                .WithTypeArgumentList(
+                                                    SyntaxFactory.TypeArgumentList(
+                                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name))))))))))));
+
+                //                        Account newAccount = jObject.ToObject<Account>();
+                //                        account.AccountTypeCode = newAccount.AccountTypeCode;
+                //                        account.Mnemonic = newAccount.Mnemonic;
                 foreach (ColumnElement columnElement in this.uniqueKeyElement.Table.Columns)
                 {
                     // Don't attempt to insert these kinds of properties.
@@ -884,7 +870,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                         continue;
                     }
 
-                    //                        country.CountryCode = jObject.Value<string>("countryCode");
+                    //                        account.AccountTypeCode = newAccount.AccountTypeCode;
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.AssignmentExpression(
@@ -893,23 +879,10 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase()),
                                     SyntaxFactory.IdentifierName(columnElement.Name)),
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("jObject"),
-                                        SyntaxFactory.GenericName(
-                                            SyntaxFactory.Identifier("Value"))
-                                        .WithTypeArgumentList(
-                                            SyntaxFactory.TypeArgumentList(
-                                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                    Conversions.FromType(columnElement.Type))))))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.LiteralExpression(
-                                                    SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal(columnElement.Name.ToCamelCase())))))))));
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName($"new{this.uniqueKeyElement.Table.Name}"),
+                                    SyntaxFactory.IdentifierName(columnElement.Name)))));
                 }
 
                 //                        using (TransactionScope updateScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
@@ -1320,8 +1293,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxFactory.Argument(
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.IdentifierName("account"),
-                                                        SyntaxFactory.IdentifierName("AccountId"))))))))))));
+                                                        SyntaxFactory.IdentifierName(tableElement.Name.ToCamelCase()),
+                                                        SyntaxFactory.IdentifierName(columnElement.Name))))))))))));
 
             // This is the complete block.
             return SyntaxFactory.List(statements);

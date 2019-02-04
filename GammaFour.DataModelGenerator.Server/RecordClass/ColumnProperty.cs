@@ -38,10 +38,11 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
             //        /// </summary>
             //        public string ConfigurationId { get; set; }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                    Conversions.FromType(columnElement.Type),
+                    Conversions.FromType(columnElement.ColumnType),
                     SyntaxFactory.Identifier(this.Name))
                 .WithAccessorList(this.AccessorList)
                 .WithModifiers(ColumnProperty.Modifiers)
+                .WithAttributeLists(this.Attributes)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
 
@@ -171,6 +172,38 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         }
 
         /// <summary>
+        /// Gets the data contract attribute syntax.
+        /// </summary>
+        private SyntaxList<AttributeListSyntax> Attributes
+        {
+            get
+            {
+                // This collects all the attributes.
+                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
+
+                // Don't emit a converter for the predefined types.
+                if (!this.columnElement.ColumnType.IsPredefined)
+                {
+                    //        [JsonConverter(typeof(StringEnumConverter))]
+                    attributes.Add(
+                        SyntaxFactory.AttributeList(
+                            SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                                SyntaxFactory.Attribute(
+                                    SyntaxFactory.IdentifierName("JsonConverter"))
+                                .WithArgumentList(
+                                    SyntaxFactory.AttributeArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
+                                            SyntaxFactory.AttributeArgument(
+                                                SyntaxFactory.TypeOfExpression(
+                                                    SyntaxFactory.IdentifierName("StringEnumConverter")))))))));
+                }
+
+                // The collection of attributes.
+                return SyntaxFactory.List<AttributeListSyntax>(attributes);
+            }
+        }
+
+        /// <summary>
         /// Gets the 'Get' accessor.
         /// </summary>
         private AccessorDeclarationSyntax GetAccessor
@@ -182,12 +215,12 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 string property = this.columnElement.Name;
 
                 //                return this.currentData[0] as string;
-                if (this.columnElement.Type.IsValueType)
+                if (this.columnElement.ColumnType.IsValueType)
                 {
                     statements.Add(
                         SyntaxFactory.ReturnStatement(
                             SyntaxFactory.CastExpression(
-                                Conversions.FromType(this.columnElement.Type),
+                                Conversions.FromType(this.columnElement.ColumnType),
                                 SyntaxFactory.ElementAccessExpression(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
@@ -219,7 +252,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 SyntaxFactory.LiteralExpression(
                                                     SyntaxKind.NumericLiteralExpression,
                                                     SyntaxFactory.Literal(this.columnElement.Index)))))),
-                                Conversions.FromType(this.columnElement.Type))));
+                                Conversions.FromType(this.columnElement.ColumnType))));
                 }
 
                 //            get

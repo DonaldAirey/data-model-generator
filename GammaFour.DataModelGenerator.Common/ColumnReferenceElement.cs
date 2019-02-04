@@ -55,5 +55,24 @@ namespace GammaFour.DataModelGenerator.Common
                 return columnElement;
             }
         }
+
+        /// <summary>
+        /// Gets the parent column.
+        /// </summary>
+        public ColumnElement ParentColumn
+        {
+            get
+            {
+                // If this is a forieng index then return the column in the parent table that corresponds to this column reference.
+                ForeignKeyElement foreignKeyElement = this.Parent as ForeignKeyElement;
+                if (foreignKeyElement != null)
+                {
+                    return foreignKeyElement.UniqueKey.Columns[foreignKeyElement.Columns.IndexOf(this)].Column;
+                }
+
+                // Indicates there is no parent column.
+                return null;
+            }
+        }
     }
 }

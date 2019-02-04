@@ -875,9 +875,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// Gets a block of code.
         /// </summary>
         /// <param name="tableElement">The table element.</param>
-        /// <param name="columnElement">The column element.</param>
+        /// <param name="columnReferenceElement">The column reference element.</param>
         /// <returns>A block of code to lock the record and replace the incoming JSON parameters with data from the record.</returns>
-        private static List<StatementSyntax> TryBlock3(TableElement tableElement, ColumnElement columnElement)
+        private static List<StatementSyntax> TryBlock3(TableElement tableElement, ColumnReferenceElement columnReferenceElement)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -919,7 +919,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                     SyntaxFactory.InvocationExpression(
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName($"{columnElement.Name.ToCamelCase()}Object"),
+                            SyntaxFactory.IdentifierName($"{columnReferenceElement.Column.Name.ToCamelCase()}Object"),
                             SyntaxFactory.IdentifierName("Replace")))
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList(
@@ -933,8 +933,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxFactory.Argument(
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.IdentifierName("account"),
-                                                        SyntaxFactory.IdentifierName("AccountId"))))))))))));
+                                                        SyntaxFactory.IdentifierName(tableElement.Name.ToCamelCase()),
+                                                        SyntaxFactory.IdentifierName(columnReferenceElement.ParentColumn.Name))))))))))));
 
             // This is the complete block.
             return statements;
@@ -944,9 +944,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// Gets a block of code.
         /// </summary>
         /// <param name="tableElement">The table element.</param>
-        /// <param name="columnElement">The column element.</param>
+        /// <param name="columnReferenceElement">The column reference element.</param>
         /// <returns>A block of statements.</returns>
-        private static SyntaxList<StatementSyntax> GetLockRecord(TableElement tableElement, ColumnElement columnElement)
+        private static SyntaxList<StatementSyntax> GetLockRecord(TableElement tableElement, ColumnReferenceElement columnReferenceElement)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -962,7 +962,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             statements.Add(
                 SyntaxFactory.TryStatement()
                 .WithBlock(
-                    SyntaxFactory.Block(PostMethod.TryBlock3(tableElement, columnElement)))
+                    SyntaxFactory.Block(PostMethod.TryBlock3(tableElement, columnReferenceElement)))
                 .WithFinally(
                     SyntaxFactory.FinallyClause(
                         SyntaxFactory.Block(PostMethod.FinallyBlock3(tableElement)))));
@@ -974,10 +974,10 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="columnElement">The column element.</param>
+        /// <param name="columnReferenceElement">The column reference element.</param>
         /// <param name="uniqueKeyElements">The unique key used to resolve the given column.</param>
         /// <returns>A block of statements.</returns>
-        private static SyntaxList<StatementSyntax> ResolveColumnFromParent(ColumnElement columnElement, List<UniqueKeyElement> uniqueKeyElements)
+        private static SyntaxList<StatementSyntax> ResolveColumnFromParent(ColumnReferenceElement columnReferenceElement, List<UniqueKeyElement> uniqueKeyElements)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -1001,7 +1001,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 
             foreach (UniqueKeyElement uniqueKeyElement in uniqueKeyElements)
             {
-                //                var countryCountryCodeKey = jObject.GetValue("countryCountryCodeKey");
+                //                        var childIdObject = jObject.GetValue("childId", StringComparison.InvariantCulture) as JObject;
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
@@ -1015,7 +1015,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.InvocationExpression(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName($"{columnElement.Name.ToCamelCase()}Object"),
+                                                SyntaxFactory.IdentifierName($"{columnReferenceElement.Column.Name.ToCamelCase()}Object"),
                                                 SyntaxFactory.IdentifierName("GetValue")))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
@@ -1058,7 +1058,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.IdentifierName(tableElement.Name.ToCamelCase()),
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.NullLiteralExpression)),
-                        SyntaxFactory.Block(PostMethod.GetLockRecord(uniqueKeyElement.Table, columnElement))));
+                        SyntaxFactory.Block(PostMethod.GetLockRecord(uniqueKeyElement.Table, columnReferenceElement))));
             }
 
             // This is the complete block.
@@ -1077,7 +1077,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 
             // We want to find all the relations to parent records in order to pull apart the JSON structure.  We can address different
             // indices using different parameters in the JSON. (e.g. "countryCode" will reference the CountryCode
-            Dictionary<ColumnElement, List<UniqueKeyElement>> columnResolutionKeys = new Dictionary<ColumnElement, List<UniqueKeyElement>>();
+            Dictionary<ColumnReferenceElement, List<UniqueKeyElement>> columnResolutionKeys = new Dictionary<ColumnReferenceElement, List<UniqueKeyElement>>();
             foreach (ForeignKeyElement parentKeyElement in this.tableElement.ParentKeys)
             {
                 foreach (ColumnReferenceElement columnReferenceElement in parentKeyElement.Columns)
@@ -1087,10 +1087,10 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                     {
                         if (!additionalUniqueKeyElement.IsPrimaryKey)
                         {
-                            if (!columnResolutionKeys.TryGetValue(columnElement, out List<UniqueKeyElement> uniqueKeyElements))
+                            if (!columnResolutionKeys.TryGetValue(columnReferenceElement, out List<UniqueKeyElement> uniqueKeyElements))
                             {
                                 uniqueKeyElements = new List<UniqueKeyElement>();
-                                columnResolutionKeys.Add(columnElement, uniqueKeyElements);
+                                columnResolutionKeys.Add(columnReferenceElement, uniqueKeyElements);
                             }
 
                             uniqueKeyElements.Add(additionalUniqueKeyElement);
@@ -1104,7 +1104,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             // a relationship may exist between a child and parent table.
             foreach (var columnKeyPair in columnResolutionKeys)
             {
-                ColumnElement columnElement = columnKeyPair.Key;
+                ColumnReferenceElement columnReferenceElement = columnKeyPair.Key;
+                ColumnElement columnElement = columnReferenceElement.Column;
 
                 //                        var childIdObject = jObject.GetValue("childId", StringComparison.InvariantCulture) as JObject;
                 statements.Add(
@@ -1152,49 +1153,10 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                         SyntaxFactory.IdentifierName($"{columnElement.Name.ToCamelCase()}Object"),
                         SyntaxFactory.LiteralExpression(
                             SyntaxKind.NullLiteralExpression)),
-                    SyntaxFactory.Block(PostMethod.ResolveColumnFromParent(columnElement, columnKeyPair.Value))));
+                    SyntaxFactory.Block(PostMethod.ResolveColumnFromParent(columnReferenceElement, columnKeyPair.Value))));
             }
 
-            //                 Country country = new Country() { CountryCode = jObject.Value<string>("countryCode"), Name = jObject.Value<string>("name") };
-            List<SyntaxNodeOrToken> propertyInitialization = new List<SyntaxNodeOrToken>();
-            foreach (ColumnElement columnElement in this.tableElement.Columns)
-            {
-                // Don't attempt to insert these kinds of properties.
-                if (columnElement.IsRowVersion || columnElement.IsAutoIncrement)
-                {
-                    continue;
-                }
-
-                // Separate property initialization expressions with commas.
-                if (propertyInitialization.Count != 0)
-                {
-                    propertyInitialization.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
-                }
-
-                // CountryCode = jObject.Value<string>("countryCode")
-                propertyInitialization.Add(
-                    SyntaxFactory.AssignmentExpression(
-                        SyntaxKind.SimpleAssignmentExpression,
-                        SyntaxFactory.IdentifierName(columnElement.Name),
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(jObjectName),
-                                SyntaxFactory.GenericName(
-                                    SyntaxFactory.Identifier("Value"))
-                                .WithTypeArgumentList(
-                                    SyntaxFactory.TypeArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                            Conversions.FromType(columnElement.Type))))))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.StringLiteralExpression,
-                                            SyntaxFactory.Literal(columnElement.Name.ToCamelCase()))))))));
-            }
-
+            //                        Account account = jObject.ToObject<Account>();
             statements.Add(
                 SyntaxFactory.LocalDeclarationStatement(
                     SyntaxFactory.VariableDeclaration(
@@ -1205,14 +1167,16 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                 SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase()))
                             .WithInitializer(
                                 SyntaxFactory.EqualsValueClause(
-                                    SyntaxFactory.ObjectCreationExpression(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList())
-                                    .WithInitializer(
-                                        SyntaxFactory.InitializerExpression(
-                                            SyntaxKind.ObjectInitializerExpression,
-                                            SyntaxFactory.SeparatedList<ExpressionSyntax>(propertyInitialization)))))))));
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.IdentifierName(jObjectName),
+                                            SyntaxFactory.GenericName(
+                                                SyntaxFactory.Identifier("ToObject"))
+                                            .WithTypeArgumentList(
+                                                SyntaxFactory.TypeArgumentList(
+                                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                        SyntaxFactory.IdentifierName(this.tableElement.Name))))))))))));
 
             //                        country.Enlist();
             statements.Add(

@@ -29,7 +29,9 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             //        /// </summary>
             //        private object syncRoot = new object();
             this.Syntax = SyntaxFactory.FieldDeclaration(
-                SyntaxFactory.VariableDeclaration(Conversions.FromType(typeof(object)))
+                SyntaxFactory.VariableDeclaration(
+                    SyntaxFactory.PredefinedType(
+                        SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(this.Name))
                     .WithInitializer(SyncRootField.Initializer))))

@@ -23,18 +23,18 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Maps the full name of the type to a function that parses a default value for that type.
         /// </summary>
-        private static Dictionary<Type, Func<string, object>> conversionFunctions = new Dictionary<Type, Func<string, object>>
+        private static Dictionary<string, Func<string, object>> conversionFunctions = new Dictionary<string, Func<string, object>>
         {
-            { typeof(bool), (v) => bool.Parse(v) },
-            { typeof(DateTime), (v) => DateTime.Parse(v, CultureInfo.InvariantCulture) },
-            { typeof(decimal), (v) => decimal.Parse(v, CultureInfo.InvariantCulture) },
-            { typeof(double), (v) => double.Parse(v, CultureInfo.InvariantCulture) },
-            { typeof(Guid), (v) => Guid.Parse(v) },
-            { typeof(int), (v) => int.Parse(v, CultureInfo.InvariantCulture) },
-            { typeof(long), (v) => long.Parse(v, CultureInfo.InvariantCulture) },
-            { typeof(float), (v) => float.Parse(v, CultureInfo.InvariantCulture) },
-            { typeof(short), (v) => short.Parse(v, CultureInfo.InvariantCulture) },
-            { typeof(string), (v) => v },
+            { "System.Boolean", (v) => bool.Parse(v) },
+            { "System.DateTime", (v) => DateTime.Parse(v, CultureInfo.InvariantCulture) },
+            { "System.Decimal", (v) => decimal.Parse(v, CultureInfo.InvariantCulture) },
+            { "System.Double", (v) => double.Parse(v, CultureInfo.InvariantCulture) },
+            { "System.Guid", (v) => Guid.Parse(v) },
+            { "System.Int32", (v) => int.Parse(v, CultureInfo.InvariantCulture) },
+            { "System.Int64", (v) => long.Parse(v, CultureInfo.InvariantCulture) },
+            { "System.Single", (v) => float.Parse(v, CultureInfo.InvariantCulture) },
+            { "System.Int16", (v) => short.Parse(v, CultureInfo.InvariantCulture) },
+            { "System.String", (v) => v },
         };
 
         /// <summary>
@@ -58,14 +58,9 @@ namespace GammaFour.DataModelGenerator.Common
         private bool isTypeInfoInitialized = false;
 
         /// <summary>
-        /// Indicates that the column has a value type.
-        /// </summary>
-        private bool isValueType;
-
-        /// <summary>
         /// The type for this column.
         /// </summary>
-        private Type type;
+        private ColumnType columnType = new ColumnType();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ColumnElement"/> class.
@@ -83,7 +78,7 @@ namespace GammaFour.DataModelGenerator.Common
 
             // This determines if the column allows nulls.
             XAttribute minOccursAttribute = this.Attribute(XmlSchemaDocument.MinOccurs);
-            this.IsNullable = minOccursAttribute == null ? false : Convert.ToInt32(minOccursAttribute.Value, CultureInfo.InvariantCulture) == 0;
+            this.columnType.IsNullable = minOccursAttribute == null ? false : Convert.ToInt32(minOccursAttribute.Value, CultureInfo.InvariantCulture) == 0;
 
             // Determine the IsIdentityColumn property.
             XAttribute autoIncrementAttribute = this.Attribute(XmlSchemaDocument.AutoIncrement);
@@ -159,28 +154,6 @@ namespace GammaFour.DataModelGenerator.Common
         public bool IsAutoIncrement { get; private set; }
 
         /// <summary>
-        /// Gets a value indicating whether the column is required to have a value or can be null.
-        /// </summary>
-        public bool IsNullable { get; private set; }
-
-        /// <summary>
-        /// Gets a value indicating whether the column is a value or a pointer.
-        /// </summary>
-        public bool IsValueType
-        {
-            get
-            {
-                // Make sure the type information has been extracted.
-                if (!this.isTypeInfoInitialized)
-                {
-                    this.InitializeTypeInfo();
-                }
-
-                return this.isValueType;
-            }
-        }
-
-        /// <summary>
         /// Gets a value indicating whether the column is part of a primary key.
         /// </summary>
         public bool IsPrimaryKey
@@ -253,9 +226,9 @@ namespace GammaFour.DataModelGenerator.Common
         }
 
         /// <summary>
-        /// Gets the <see cref="Type"/> of the column.
+        /// Gets the <see cref="ColumnType"/> of the column.
         /// </summary>
-        public Type Type
+        public ColumnType ColumnType
         {
             get
             {
@@ -265,7 +238,7 @@ namespace GammaFour.DataModelGenerator.Common
                     this.InitializeTypeInfo();
                 }
 
-                return this.type;
+                return this.columnType;
             }
         }
 
@@ -427,9 +400,13 @@ namespace GammaFour.DataModelGenerator.Common
                 string[] xNameParts = baseAttribute.Value.Split(':');
                 XNamespace xNamespace = this.Document.Root.GetNamespaceOfPrefix(xNameParts[0]);
                 XName typeXName = XName.Get(xNameParts[1], xNamespace.NamespaceName);
-                this.type = XmlSchemaDocument.TypeMap[typeXName];
+                Type type = XmlSchemaDocument.TypeMap[typeXName];
+                this.columnType.FullName = type.IsArray ? type.GetElementType().FullName : type.FullName;
+                this.columnType.IsArray = type.IsArray;
+                this.columnType.IsPredefined = true;
+                this.columnType.IsValueType = type.GetTypeInfo().IsValueType;
 
-                // Finally, extract the maximum length for this datatype.
+                // Extract the maximum length for this column's data.
                 XElement maxLengthElement = restrictionElement.Element(XmlSchemaDocument.MaxLength);
                 this.maximumLength = Convert.ToInt32(maxLengthElement.Attribute(XmlSchemaDocument.Value).Value, CultureInfo.InvariantCulture);
             }
@@ -443,41 +420,19 @@ namespace GammaFour.DataModelGenerator.Common
                 XAttribute dataTypeAttribute = this.Attribute(XmlSchemaDocument.DataType);
                 if (typeXName == XmlSchemaDocument.AnyType || dataTypeAttribute != null)
                 {
-                    // An 'anyType' datatype is an instruction to load an explicit type from a specification found in the 'DataType' attribute.
-                    string dataTypeText = dataTypeAttribute.Value;
-                    string[] dataTypeParts = dataTypeText.Split(',');
-                    string assemblyFullName = string.Format(
-                        CultureInfo.InvariantCulture,
-                        "{0},{1},{2},{3}",
-                        dataTypeParts[1],
-                        dataTypeParts[2],
-                        dataTypeParts[3],
-                        dataTypeParts[4]);
-                    Assembly assembly = Assembly.Load(new AssemblyName(assemblyFullName));
-                    if (assembly != null)
-                    {
-                        Type type = assembly.GetType(dataTypeParts[0]);
-                        if (type.GetTypeInfo().IsValueType && this.IsNullable)
-                        {
-                            Type generic = typeof(Nullable<>);
-                            this.type = generic.MakeGenericType(type);
-                        }
-                        else
-                        {
-                            this.type = type;
-                        }
-                    }
-
-                    // A datatype must exist for the parsing to continue.
-                    if (this.type == null)
-                    {
-                        throw new Exception($"Unable to load the type {dataTypeParts[0]} from assembly {assemblyFullName}");
-                    }
+                    this.columnType.FullName = dataTypeAttribute.Value;
+                    this.columnType.IsArray = false;
+                    this.columnType.IsPredefined = false;
+                    this.columnType.IsValueType = true;
                 }
                 else
                 {
                     // This is the simplest method of specifying a datatype: a direct mapping to a CLR type.
-                    this.type = this.IsNullable ? XmlSchemaDocument.NullableTypeMap[typeXName] : XmlSchemaDocument.TypeMap[typeXName];
+                    Type type = XmlSchemaDocument.TypeMap[typeXName];
+                    this.columnType.FullName = type.IsArray ? type.GetElementType().FullName : type.FullName;
+                    this.columnType.IsArray = type.IsArray;
+                    this.columnType.IsPredefined = true;
+                    this.columnType.IsValueType = type.GetTypeInfo().IsValueType;
                 }
             }
 
@@ -485,13 +440,10 @@ namespace GammaFour.DataModelGenerator.Common
             XAttribute defaultAttribute = this.Attribute(XmlSchemaDocument.Default);
             this.hasDefault = defaultAttribute != null;
             Func<string, object> defaultFunction = null;
-            if (defaultAttribute != null && ColumnElement.conversionFunctions.TryGetValue(this.type, out defaultFunction))
+            if (defaultAttribute != null && ColumnElement.conversionFunctions.TryGetValue(this.columnType.FullName, out defaultFunction))
             {
                 this.defaultValue = defaultFunction(defaultAttribute.Value);
             }
-
-            // This indicates whether the type is a value or a pointer.
-            this.isValueType = this.type.GetTypeInfo().IsValueType;
 
             // We don't need to run this again.
             this.isTypeInfoInitialized = true;

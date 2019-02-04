@@ -540,7 +540,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
                                             SyntaxFactory.Attribute(
                                                 SyntaxFactory.IdentifierName("FromRoute"))))))
-                            .WithType(Conversions.FromType(columnReferenceElement.Column.Type)));
+                            .WithType(Conversions.FromType(columnReferenceElement.Column.ColumnType)));
                 }
 
                 // This is the complete parameter specification for this constructor.

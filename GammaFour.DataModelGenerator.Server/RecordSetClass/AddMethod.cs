@@ -80,7 +80,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 //            }
                 foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
-                    if (!columnElement.Type.IsValueType && !columnElement.IsNullable && !columnElement.IsRowVersion)
+                    if (!columnElement.ColumnType.IsValueType && !columnElement.ColumnType.IsNullable && !columnElement.IsRowVersion)
                     {
                         statements.Add(
                             SyntaxFactory.IfStatement(

@@ -152,7 +152,7 @@ namespace GammaFour.DataModelGenerator.Common.UniqueKeyIndexClass
                 // Keys with a single element don't require a compound key in order to access the dictionary.
                 if (this.uniqueKeyElement.Columns.Count == 1)
                 {
-                    types.Add(Conversions.FromType(this.uniqueKeyElement.Columns.First().Column.Type));
+                    types.Add(Conversions.FromType(this.uniqueKeyElement.Columns.First().Column.ColumnType));
                 }
                 else
                 {

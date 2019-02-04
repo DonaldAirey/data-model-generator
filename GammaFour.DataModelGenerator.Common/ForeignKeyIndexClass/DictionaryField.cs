@@ -152,7 +152,7 @@ namespace GammaFour.DataModelGenerator.Common.ForeignKeyIndexClass
                 // The key of the dictionary is a simple or compound key that can uniquely identify the parent row.
                 if (this.foreignKeyElement.UniqueKey.Columns.Count == 1)
                 {
-                    types.Add(Conversions.FromType(this.foreignKeyElement.UniqueKey.Columns.Single().Column.Type));
+                    types.Add(Conversions.FromType(this.foreignKeyElement.UniqueKey.Columns.Single().Column.ColumnType));
                 }
                 else
                 {

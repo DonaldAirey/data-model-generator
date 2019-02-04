@@ -80,7 +80,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                         arrayElementList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
                     }
 
-                    arrayElementList.Add(SyntaxFactory.DefaultExpression(Conversions.FromType(columnElement.Type)));
+                    arrayElementList.Add(SyntaxFactory.DefaultExpression(Conversions.FromType(columnElement.ColumnType)));
                 }
 
                 //            this.currentData = new object[15]
