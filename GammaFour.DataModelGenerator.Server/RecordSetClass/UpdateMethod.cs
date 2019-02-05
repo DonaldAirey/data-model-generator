@@ -88,7 +88,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                         SyntaxFactory.InvocationExpression(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
                                                 SyntaxFactory.IdentifierName("GetVersion")))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
@@ -143,7 +143,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                             SyntaxFactory.ArgumentList(
                                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                     SyntaxFactory.Argument(
-                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))))))));
+                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))))))));
 
                 //            if (oldKey != null && oldKey.Equals(newKey))
                 //            {
@@ -190,7 +190,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))));
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
                 }
 
                 // Remove the record to each of the foreign key indices on this set.
@@ -211,7 +211,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))));
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
                 }
 
                 //            this.OnRecordChanging(DataAction.Delete, previousBuyer, buyer);
@@ -237,7 +237,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                             SyntaxFactory.IdentifierName($"previous{this.tableElement.Name}")),
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()))
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))
                                     })))));
 
                 //            buyer.Mark();
@@ -246,7 +246,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
                                 SyntaxFactory.IdentifierName("Mark")))));
 
                 // This is the syntax for the body of the method.
@@ -351,7 +351,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 // The row parameter comes after the key elements.
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase()))
+                        SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()))
                     .WithType(
                         SyntaxFactory.IdentifierName(this.tableElement.Name)));
 
@@ -400,7 +400,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                                 SyntaxFactory.IdentifierName("oldKey")),
                                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                             SyntaxFactory.Argument(
-                                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()))
+                                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))
                                                         }))))))))));
             }
         }
@@ -455,7 +455,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                             SyntaxFactory.IdentifierName("newKey")),
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()))
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))
                                     })))));
 
                 //                this.undoStack.Push(() => this.collection.Remove(newKey));

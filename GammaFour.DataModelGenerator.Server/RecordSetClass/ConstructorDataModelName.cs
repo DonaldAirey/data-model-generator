@@ -84,7 +84,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
-                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToCamelCase()))));
+                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToVariableName()))));
 
                 //            this.Name = name;
                 statements.Add(
@@ -223,7 +223,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
 
                 // DataModel dataModel;
                 parameters.Add(
-                    SyntaxFactory.Parameter(SyntaxFactory.Identifier(this.tableElement.XmlSchemaDocument.Name.ToCamelCase()))
+                    SyntaxFactory.Parameter(SyntaxFactory.Identifier(this.tableElement.XmlSchemaDocument.Name.ToVariableName()))
                     .WithType(SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)));
 
                 // ,

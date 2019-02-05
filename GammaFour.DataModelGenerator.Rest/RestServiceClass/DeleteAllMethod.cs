@@ -199,7 +199,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
                                                 SyntaxFactory.IdentifierName("Lock")),
                                             SyntaxFactory.IdentifierName("EnterReadLockAsync")))
                                     .WithArgumentList(
@@ -229,14 +229,14 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToCamelCase())),
+                                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToVariableName())),
                                     SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                                 SyntaxFactory.IdentifierName("Remove")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))));
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
 
                 //                        this.domainContext.Provinces.Remove(province);
                 statements.Add(
@@ -256,7 +256,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))));
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
 
                 // This is the complete block.
                 return statements;
@@ -419,7 +419,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 statements.Add(
                     SyntaxFactory.ForEachStatement(
                         SyntaxFactory.IdentifierName(this.tableElement.Name),
-                        SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase()),
+                        SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()),
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -428,7 +428,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToCamelCase())),
+                                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToVariableName())),
                                     SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                                 SyntaxFactory.IdentifierName("ToList"))),
                         SyntaxFactory.Block(this.DeleteRecord)));

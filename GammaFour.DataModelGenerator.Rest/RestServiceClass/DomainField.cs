@@ -21,7 +21,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         public DomainField(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.Name = xmlSchemaDocument.Name.ToCamelCase();
+            this.Name = xmlSchemaDocument.Name.ToVariableName();
 
             //        private Domain domain;
             this.Syntax = SyntaxFactory.FieldDeclaration(

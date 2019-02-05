@@ -29,7 +29,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = this.tableElement.Name.ToPlural().ToCamelCase();
+            this.Name = this.tableElement.Name.ToPlural().ToVariableName();
 
             //        /// <summary>
             //        /// The set to which this record belongs.

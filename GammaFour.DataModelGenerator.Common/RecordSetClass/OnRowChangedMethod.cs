@@ -17,9 +17,9 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
     public class OnRowChangedMethod : SyntaxElement
     {
         /// <summary>
-        /// The name of the row.
+        /// The name of the record.
         /// </summary>
-        private string rowName;
+        private string recordName;
 
         /// <summary>
         /// The type of the row.
@@ -40,7 +40,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
             // Initialize the object.
             this.tableElement = tableElement;
             this.Name = "OnRowChanged";
-            this.rowName = this.tableElement.Name.ToCamelCase();
+            this.recordName = this.tableElement.Name.ToVariableName();
             this.rowType = this.tableElement.Name;
 
             //        /// <summary>
@@ -120,7 +120,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                                                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                                 SyntaxFactory.Argument(
                                                                     SyntaxFactory.IdentifierName(
-                                                                        this.tableElement.Name.ToCamelCase()))
+                                                                        this.tableElement.Name.ToVariableName()))
                                                             }))))
                                         }))))));
 
@@ -226,7 +226,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                                                     string.Format(
                                                         CultureInfo.InvariantCulture,
                                                         " <param name=\"{0}\">The row on which the action was taken.</param>",
-                                                        this.rowName),
+                                                        this.recordName),
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -260,7 +260,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                 // ConfigurationRow configurationRow
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(this.rowName))
+                        SyntaxFactory.Identifier(this.recordName))
                         .WithType(SyntaxFactory.IdentifierName(this.rowType)));
 
                 // This is the complete parameter specification for this constructor.

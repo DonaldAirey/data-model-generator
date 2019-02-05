@@ -51,7 +51,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                         SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier(this.foreignKeyElement.Name.ToCamelCase())))))
+                            SyntaxFactory.Identifier(this.foreignKeyElement.Name.ToVariableName())))))
                 .WithModifiers(ForeignKeyIndexField.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
         }

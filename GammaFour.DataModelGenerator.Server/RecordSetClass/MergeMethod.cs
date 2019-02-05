@@ -154,7 +154,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))));
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
 
                 //                    continue;
                 statements.Add(
@@ -209,7 +209,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 statements.Add(
                     SyntaxFactory.ForEachStatement(
                         SyntaxFactory.IdentifierName(this.tableElement.Name),
-                        SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase()),
+                        SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()),
                         SyntaxFactory.IdentifierName("source"),
                         SyntaxFactory.Block(this.CheckForParents)));
 
@@ -255,7 +255,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                     SyntaxFactory.ArgumentList(
                                         SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                             SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))),
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))),
                             SyntaxFactory.Block(this.AddRecordToResiduals)));
                 }
 
@@ -265,7 +265,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
                                 SyntaxFactory.IdentifierName("Enlist")))));
 
                 //                buyer.Lock.EnterWriteLock();
@@ -276,7 +276,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
                                     SyntaxFactory.IdentifierName("Lock")),
                                 SyntaxFactory.IdentifierName("EnterWriteLock")))));
 
@@ -292,7 +292,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))));
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
 
                 return statements;
             }

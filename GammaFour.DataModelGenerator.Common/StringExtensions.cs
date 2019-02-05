@@ -4,6 +4,7 @@
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Common
 {
+    using System.Collections.Generic;
     using System.Globalization;
     using Pluralize.NET;
 
@@ -12,6 +13,18 @@ namespace GammaFour.DataModelGenerator.Common
     /// </summary>
     public static class StringExtensions
     {
+        /// <summary>
+        /// C# Keywords.
+        /// </summary>
+        private static HashSet<string> keywords = new HashSet<string>()
+        {
+            "abstract", "as", "base", "bool", "break", "byte", "case", "catch", "char", "checked", "class", "const", "continue", "decimal", "default", "delegate", "do", "double",
+            "else", "enum", "event", "explicit", "extern", "false", "finally", "fixed", "float", "for", "foreach", "goto", "if", "implicit", "in", "int", "interface", "internal",
+            "is", "lock", "long", "namespace", "new", "null", "object", "operator", "out", "override", "params", "private", "protected", "public", "readonly", "ref", "return",
+            "sbyte", "sealed", "short", "sizeof", "stackalloc", "static", "string", "struct", "switch", "this", "throw", "true", "try", "typeof", "uint", "ulong", "unchecked",
+            "unsafe", "ushort", "using", "virtual", "void", "volatile", "while"
+        };
+
         /// <summary>
         /// Used to create plurals out of singles.
         /// </summary>
@@ -26,6 +39,18 @@ namespace GammaFour.DataModelGenerator.Common
         {
             // Convert the variable to its camel case equivalent.
             return text[0].ToString(CultureInfo.InvariantCulture).ToLower(CultureInfo.InvariantCulture) + text.Remove(0, 1);
+        }
+
+        /// <summary>
+        /// Converts a string to have a lower case starting character.
+        /// </summary>
+        /// <param name="text">The text to be converted.</param>
+        /// <returns>The input string with a lower case starting letter and an @ prepended if the variable is a keyword..</returns>
+        public static string ToVariableName(this string text)
+        {
+            // Convert the variable to its camel case equivalent.
+            var name = text[0].ToString(CultureInfo.InvariantCulture).ToLower(CultureInfo.InvariantCulture) + text.Remove(0, 1);
+            return StringExtensions.keywords.Contains(name) ? "@" + name : name;
         }
 
         /// <summary>

@@ -163,7 +163,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Name.ToCamelCase())),
+                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Name.ToVariableName())),
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
@@ -232,7 +232,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Name.ToCamelCase())),
+                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Name.ToVariableName())),
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.NullLiteralExpression)),
                         SyntaxFactory.Block(this.CreateForeignKey)));
@@ -243,7 +243,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.ThisExpression(),
-                            SyntaxFactory.IdentifierName(this.foreignKeyElement.Name.ToCamelCase()))));
+                            SyntaxFactory.IdentifierName(this.foreignKeyElement.Name.ToVariableName()))));
 
                 //            get
                 //            {

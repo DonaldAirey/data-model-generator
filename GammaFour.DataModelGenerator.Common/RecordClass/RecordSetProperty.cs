@@ -91,7 +91,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.ThisExpression(),
-                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToCamelCase()))));
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToVariableName()))));
 
                 //            get
                 //            {

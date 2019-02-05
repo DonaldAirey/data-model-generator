@@ -84,7 +84,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
 
                 //        [HttpGet("provinceExternalKey/{name}/{countryCode}")]
-                string literal = this.uniqueKeyElement.IsPrimaryKey ? string.Empty : this.uniqueKeyElement.Name.ToCamelCase();
+                string literal = this.uniqueKeyElement.IsPrimaryKey ? string.Empty : this.uniqueKeyElement.Name.ToVariableName();
                 foreach (ColumnReferenceElement columnReferenceElement in this.uniqueKeyElement.Columns)
                 {
                     if (!string.IsNullOrEmpty(literal))
@@ -95,7 +95,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                     literal += $"{{{columnReferenceElement.Column.Name.ToCamelCase()}}}";
                 }
 
-                string columnName = this.uniqueKeyElement.Columns[0].Column.Name.ToCamelCase();
+                string columnName = this.uniqueKeyElement.Columns[0].Column.Name.ToVariableName();
                 attributes.Add(
                     SyntaxFactory.AttributeList(
                     SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
@@ -292,7 +292,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 
                     parameters.Add(
                         SyntaxFactory.Parameter(
-                                SyntaxFactory.Identifier(columnReferenceElement.Column.Name.ToCamelCase()))
+                                SyntaxFactory.Identifier(columnReferenceElement.Column.Name.ToVariableName()))
                             .WithAttributeLists(
                                 SyntaxFactory.SingletonList<AttributeListSyntax>(
                                     SyntaxFactory.AttributeList(
@@ -336,7 +336,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.XmlSchemaDocument.Name.ToCamelCase())),
+                                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.XmlSchemaDocument.Name.ToVariableName())),
                                                         SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
                                                     SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name)),
                                                 SyntaxFactory.IdentifierName("Lock")),
@@ -365,7 +365,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier(this.uniqueKeyElement.Table.Name.ToCamelCase()))
+                                    SyntaxFactory.Identifier(this.uniqueKeyElement.Table.Name.ToVariableName()))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
                                         SyntaxFactory.InvocationExpression(
@@ -378,7 +378,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.Name.ToCamelCase())),
+                                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.Name.ToVariableName())),
                                                         SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
                                                     SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name)),
                                                 SyntaxFactory.IdentifierName("Find")))
@@ -393,7 +393,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.EqualsExpression,
-                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase()),
+                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToVariableName()),
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.NullLiteralExpression)),
                         SyntaxFactory.Block(
@@ -417,7 +417,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToCamelCase()),
+                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToVariableName()),
                                                 SyntaxFactory.IdentifierName("Lock")),
                                             SyntaxFactory.IdentifierName("EnterReadLockAsync")))
                                     .WithArgumentList(

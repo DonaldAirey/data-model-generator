@@ -196,7 +196,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    $" <param name=\"{this.xmlSchemaDocument.Name.ToCamelCase()}Context\">The Entity Framework context.</param>",
+                                                    $" <param name=\"{this.xmlSchemaDocument.Name.ToVariableName()}Context\">The Entity Framework context.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(

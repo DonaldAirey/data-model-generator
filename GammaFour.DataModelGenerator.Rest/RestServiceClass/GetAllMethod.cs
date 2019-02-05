@@ -115,7 +115,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
                                                 SyntaxFactory.IdentifierName("Lock")),
                                             SyntaxFactory.IdentifierName("EnterReadLockAsync")))
                                     .WithArgumentList(
@@ -147,7 +147,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                         SyntaxFactory.AnonymousObjectMemberDeclarator(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
                                 SyntaxFactory.IdentifierName(columnElement.Name))));
                 }
 
@@ -156,7 +156,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToCamelCase()),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToVariableName()),
                                 SyntaxFactory.IdentifierName("Add")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -199,7 +199,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier(this.tableElement.Name.ToPlural().ToCamelCase()))
+                                    SyntaxFactory.Identifier(this.tableElement.Name.ToPlural().ToVariableName()))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
                                         SyntaxFactory.ObjectCreationExpression(
@@ -355,7 +355,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.ThisExpression(),
-                                                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToCamelCase())),
+                                                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToVariableName())),
                                                     SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                                                 SyntaxFactory.IdentifierName("Lock")),
                                             SyntaxFactory.IdentifierName("EnterReadLockAsync")))
@@ -382,13 +382,13 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 statements.Add(
                     SyntaxFactory.ForEachStatement(
                         SyntaxFactory.IdentifierName(this.tableElement.Name),
-                        SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase()),
+                        SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()),
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToCamelCase())),
+                                SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToVariableName())),
                             SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                         SyntaxFactory.Block(this.AddRecordToList)));
 
@@ -404,7 +404,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToCamelCase())))))));
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToVariableName())))))));
 
                 // This is the complete block.
                 return statements;

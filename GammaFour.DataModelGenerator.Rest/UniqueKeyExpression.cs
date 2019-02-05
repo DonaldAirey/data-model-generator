@@ -29,7 +29,7 @@ namespace GammaFour.DataModelGenerator.RestService
             if (uniqueKeyElement.Columns.Count == 1)
             {
                 ColumnElement columnElement = uniqueKeyElement.Columns[0].Column;
-                string attributeName = isDecorated ? uniqueKeyElement.Name.ToCamelCase() + columnElement.Name : columnElement.Name.ToCamelCase();
+                string attributeName = isDecorated ? $"{uniqueKeyElement.Name.ToCamelCase()}{columnElement.Name}" : columnElement.Name.ToVariableName();
                 findParameters = SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                     SyntaxFactory.Argument(
                         SyntaxFactory.IdentifierName(attributeName)));
@@ -45,7 +45,7 @@ namespace GammaFour.DataModelGenerator.RestService
                     }
 
                     ColumnElement columnElement = columnReferenceElement.Column;
-                    string attributeName = isDecorated ? uniqueKeyElement.Name.ToCamelCase() + columnElement.Name : columnElement.Name.ToCamelCase();
+                    string attributeName = isDecorated ? $"{uniqueKeyElement.Name.ToCamelCase()}{columnElement.Name}" : columnElement.Name.ToVariableName();
                     keys.Add(
                         SyntaxFactory.Argument(
                             SyntaxFactory.IdentifierName(attributeName)));

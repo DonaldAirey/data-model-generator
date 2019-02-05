@@ -95,7 +95,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                         SyntaxFactory.ArgumentList(
                                             SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                 SyntaxFactory.Argument(
-                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))))))));
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))))))));
 
                 //            country.SetOwner(null);
                 statements.Add(
@@ -103,7 +103,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
                                 SyntaxFactory.IdentifierName("SetOwner")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -162,7 +162,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                                 SyntaxFactory.IdentifierName("key")),
                                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                             SyntaxFactory.Argument(
-                                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase()))
+                                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))
                                                         }))))))))));
 
                 // Remove the record to each of the unique key indices on this set.
@@ -183,7 +183,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))));
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
                 }
 
                 // Remove the record to each of the foreign key indices on this set.
@@ -204,7 +204,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())))))));
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
                 }
 
                 //            this.OnRecordChanging(DataAction.Delete, buyer, null);
@@ -227,7 +227,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.IdentifierName("Delete"))),
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())),
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.LiteralExpression(
@@ -335,7 +335,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 // The row parameter comes after the key elements.
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase()))
+                        SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()))
                     .WithType(
                         SyntaxFactory.IdentifierName(this.tableElement.Name)));
 

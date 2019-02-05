@@ -41,9 +41,9 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
-                    SyntaxFactory.Identifier("DomainContext"))
+                    SyntaxFactory.Identifier($"{this.xmlSchemaDocument.Name}Context"))
                 .WithModifiers(ConstructorDbContextOptions.Modifiers)
-                .WithParameterList(ConstructorDbContextOptions.Parameters)
+                .WithParameterList(this.Parameters)
                 .WithInitializer(ConstructorDbContextOptions.Initializer)
                 .WithBody(ConstructorDbContextOptions.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
@@ -94,33 +94,6 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                     {
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword)
                     });
-            }
-        }
-
-        /// <summary>
-        /// Gets the list of parameters.
-        /// </summary>
-        private static ParameterListSyntax Parameters
-        {
-            get
-            {
-                // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // DomainContext domainContext
-                parameters.Add(
-                    SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier("contextOptions"))
-                    .WithType(
-                        SyntaxFactory.GenericName(
-                            SyntaxFactory.Identifier("DbContextOptions"))
-                        .WithTypeArgumentList(
-                            SyntaxFactory.TypeArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName("DomainContext"))))));
-
-                // This is the complete parameter specification for this constructor.
-                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
             }
         }
 
@@ -468,6 +441,33 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                 }
 
                 return statements;
+            }
+        }
+
+        /// <summary>
+        /// Gets the list of parameters.
+        /// </summary>
+        private ParameterListSyntax Parameters
+        {
+            get
+            {
+                // Create a list of parameters from the columns in the unique constraint.
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
+
+                // DomainContext domainContext
+                parameters.Add(
+                    SyntaxFactory.Parameter(
+                        SyntaxFactory.Identifier("contextOptions"))
+                    .WithType(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("DbContextOptions"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                    SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name}Context"))))));
+
+                // This is the complete parameter specification for this constructor.
+                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
             }
         }
     }

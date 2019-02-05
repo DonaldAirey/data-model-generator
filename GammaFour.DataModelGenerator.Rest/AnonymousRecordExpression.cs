@@ -35,7 +35,7 @@ namespace GammaFour.DataModelGenerator.RestService
                     SyntaxFactory.AnonymousObjectMemberDeclarator(
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName(tableElement.Name.ToCamelCase()),
+                            SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
                             SyntaxFactory.IdentifierName(columnElement.Name))));
             }
 

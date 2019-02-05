@@ -83,8 +83,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToCamelCase())),
-                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToCamelCase()))));
+                                SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToVariableName())),
+                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToVariableName()))));
 
                 //            this.domainContext = domainContext;
                 statements.Add(
@@ -289,7 +289,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(this.tableElement.XmlSchemaDocument.Name.ToCamelCase()))
+                        SyntaxFactory.Identifier(this.tableElement.XmlSchemaDocument.Name.ToVariableName()))
                     .WithType(
                         SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)));
 
