@@ -17,7 +17,7 @@ your database servers even with heavy real-time reads on your front end.
 
 ## Project Wiki
 
-More details about our project, like [how to build an API](https://github.com/GammaFour/data-model-generator/wiki/Step-by-Step-Guide-to-Building-an-API), are located in our our
+More details about our project, like [how to build an API](https://github.com/GammaFour/data-model-generator/wiki/Lesson-1:-Step-by-Step-Guide-to-Building-a-simple-API), are located in our our
 [project wiki](https://github.com/GammaFour/data-model-generator/wiki/).
 
 ## Keeping it Real
