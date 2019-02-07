@@ -22,8 +22,7 @@ More details about our project, like [how to build an API](https://github.com/Ga
 
 ## Keeping it Real
 
-The current version is the result of several years of research into the subject of augmenting ORM efficiency.  It has been designed with speed as the highest priority, funcionality second.  We're happy to
-consider your functional requirements as we go foreward and we'd love hear your feedback and use cases.
+The current version is the result of several years of research into the subject of augmenting ORM efficiency.  It has been designed with speed as the highest priority, funcionality second.  That is to say, we know you'll find the speed you're looking for, but you may not find the full spectrum of operations available with an ORM.  We're happy to consider your functional requirements as we go forward.  We'd love to hear about your use cases and any kind of feedback.  Also, we derive our income from a service model, so please reach out if you have a database you want to be faster.
 
 ## Contact Info
 You can contact the author(s) at info@gammafour.com.
