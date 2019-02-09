@@ -30,18 +30,15 @@ namespace GammaFour.DataModelGenerator.Common
         /// Initializes a new instance of the <see cref="XmlSchemaDocument"/> class.
         /// </summary>
         /// <param name="fileContents">The contents of a file that specifies the schema in XML.</param>
-        /// <param name="targetNamespace">The namespace for the generated code.</param>
-        public XmlSchemaDocument(string fileContents, string targetNamespace)
+        public XmlSchemaDocument(string fileContents)
             : this(XmlReader.Create(new StringReader(fileContents)))
         {
-            // Initialize the object.
-            this.TargetNamespace = targetNamespace;
-
             // The root element of the schema definition.
             XElement rootElement = this.Root.Element(XmlSchemaDocument.Element);
 
-            // Extract the name from the schema.
+            // Extract the name and the target namespace from the schema.
             this.Name = this.Root.Element(XmlSchemaDocument.Element).Attribute("name").Value;
+            this.TargetNamespace = this.Root.Attribute("targetNamespace").Value;
 
             // The data model description is found on the first element of the first complex type in the module.
             XElement complexTypeElement = rootElement.Element(XmlSchemaDocument.ComplexType);
@@ -98,9 +95,6 @@ namespace GammaFour.DataModelGenerator.Common
         private XmlSchemaDocument(XmlReader xmlReader)
             : base(XDocument.Load(xmlReader))
         {
-            // Initialize the object.
-            this.NamespaceManager = new XmlNamespaceManager(xmlReader.NameTable);
-            this.NamespaceManager.AddNamespace("xs", "http://www.w3.org/2001/XMLSchema");
         }
 
         /// <summary>
@@ -121,11 +115,6 @@ namespace GammaFour.DataModelGenerator.Common
         public string Name { get; private set; }
 
         /// <summary>
-        /// Gets the XML Namespace manager.
-        /// </summary>
-        public XmlNamespaceManager NamespaceManager { get; private set; }
-
-        /// <summary>
         /// Gets a sorted list of the tables in the data model schema.
         /// </summary>
         public List<TableElement> Tables
@@ -140,7 +129,7 @@ namespace GammaFour.DataModelGenerator.Common
         }
 
         /// <summary>
-        /// Gets the target namespace for the generated data model.
+        /// Gets the target namespace.
         /// </summary>
         public string TargetNamespace { get; private set; }
 

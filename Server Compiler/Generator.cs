@@ -31,10 +31,10 @@ namespace ServerCompiler
 
             // This creates the compilation unit from the schema.
             // This schema describes the data model that is to be generated.
-            XmlSchemaDocument xmlSchemaDocument = new XmlSchemaDocument(inputFileContent, this.TargetNamespace);
+            XmlSchemaDocument xmlSchemaDocument = new XmlSchemaDocument(inputFileContent);
 
             // This creates the compilation unit from the schema.
-            CompilationUnit compilationUnit = new CompilationUnit(xmlSchemaDocument);
+            CompilationUnit compilationUnit = new CompilationUnit(xmlSchemaDocument, this.CustomToolNamespace);
 
             // A workspace is needed in order to turn the compilation unit into code.
             AdhocWorkspace adhocWorkspace = new AdhocWorkspace();

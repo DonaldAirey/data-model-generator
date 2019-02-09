@@ -26,9 +26,9 @@ namespace GammaFour.VisualStudio
         protected string InputFilePath { get; private set; }
 
         /// <summary>
-        /// Gets the namespace for the target module.
+        /// Gets the namespace for the generated module.
         /// </summary>
-        protected string TargetNamespace { get; private set; }
+        protected string CustomToolNamespace { get; private set; }
 
         /// <summary>
         /// Retrieves the file extension that is given to the output file name.
@@ -68,7 +68,7 @@ namespace GammaFour.VisualStudio
 
             // Initialize the object.
             this.InputFilePath = wszInputFilePath ?? throw new ArgumentNullException(nameof(wszInputFilePath));
-            this.TargetNamespace = wszDefaultNamespace ?? throw new ArgumentNullException(nameof(wszDefaultNamespace));
+            this.CustomToolNamespace = wszDefaultNamespace ?? throw new ArgumentNullException(nameof(wszDefaultNamespace));
             this.generateProgress = pGenerateProgress;
 
             // Generate the file using the input contents.

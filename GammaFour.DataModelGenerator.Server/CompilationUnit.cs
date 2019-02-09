@@ -15,6 +15,11 @@ namespace GammaFour.DataModelGenerator.Server
     public class CompilationUnit
     {
         /// <summary>
+        /// The namespace for the generated module.
+        /// </summary>
+        private string customToolNamespace;
+
+        /// <summary>
         /// The data model schema.
         /// </summary>
         private XmlSchemaDocument xmlSchemaDocument;
@@ -23,9 +28,11 @@ namespace GammaFour.DataModelGenerator.Server
         /// Initializes a new instance of the <see cref="CompilationUnit"/> class.
         /// </summary>
         /// <param name="xmlSchemaDocument">The data model schema.</param>
-        public CompilationUnit(XmlSchemaDocument xmlSchemaDocument)
+        /// <param name="customToolNamespace">The namespace for the genreated file.</param>
+        public CompilationUnit(XmlSchemaDocument xmlSchemaDocument, string customToolNamespace)
         {
             // Initialize the object.
+            this.customToolNamespace = customToolNamespace;
             this.xmlSchemaDocument = xmlSchemaDocument;
 
             // This is the syntax for the compilation unit.
@@ -49,7 +56,7 @@ namespace GammaFour.DataModelGenerator.Server
             get
             {
                 // The compilation unit consists of a single namespace.
-                Namespace @namespace = new Namespace(this.xmlSchemaDocument);
+                Namespace @namespace = new Namespace(this.xmlSchemaDocument, this.customToolNamespace);
                 return SyntaxFactory.SingletonList<MemberDeclarationSyntax>(@namespace.Syntax);
             }
         }

@@ -24,13 +24,14 @@ namespace GammaFour.DataModelGenerator.RestService
         /// Initializes a new instance of the <see cref="Namespace"/> class.
         /// </summary>
         /// <param name="xmlSchemaDocument">The name of the namespace.</param>
-        public Namespace(XmlSchemaDocument xmlSchemaDocument)
+        /// <param name="customToolNamespace">The namespace of the generated module.</param>
+        public Namespace(XmlSchemaDocument xmlSchemaDocument, string customToolNamespace)
         {
             // Initialize the object.
             this.xmlSchemaDocument = xmlSchemaDocument;
 
             // This is the syntax of the namespace.
-            this.Syntax = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.IdentifierName(xmlSchemaDocument.TargetNamespace))
+            this.Syntax = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.IdentifierName(customToolNamespace))
                 .WithUsings(SyntaxFactory.List<UsingDirectiveSyntax>(Namespace.UsingStatements))
                 .WithMembers(this.Members)
                 .WithLeadingTrivia(Namespace.LeadingTrivia);
