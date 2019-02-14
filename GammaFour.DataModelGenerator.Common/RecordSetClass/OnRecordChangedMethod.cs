@@ -1,4 +1,4 @@
-// <copyright file="OnRowChangedMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="OnRecordChangedMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,7 +14,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
     /// <summary>
     /// Creates a method to start editing.
     /// </summary>
-    public class OnRowChangedMethod : SyntaxElement
+    public class OnRecordChangedMethod : SyntaxElement
     {
         /// <summary>
         /// The name of the record.
@@ -32,14 +32,14 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
         private TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OnRowChangedMethod"/> class.
+        /// Initializes a new instance of the <see cref="OnRecordChangedMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public OnRowChangedMethod(TableElement tableElement)
+        public OnRecordChangedMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = "OnRowChanged";
+            this.Name = "OnRecordChanged";
             this.recordName = this.tableElement.Name.ToVariableName();
             this.rowType = this.tableElement.Name;
 
@@ -48,14 +48,14 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
             //        /// </summary>
             //        /// <param name="dataAction">The action taken.</param>
             //        /// <param name="configuration">The row on which the action was taken.</param>
-            //        internal void OnRowChanged(DataAction dataAction, ConfigurationRow configurationRow)
+            //        internal void OnRecordChanged(DataAction dataAction, ConfigurationRecord configurationRecord)
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
                 SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                 SyntaxFactory.Identifier(this.Name))
-            .WithModifiers(OnRowChangedMethod.Modifiers)
+            .WithModifiers(OnRecordChangedMethod.Modifiers)
             .WithParameterList(this.Parameters)
             .WithBody(this.Body)
             .WithLeadingTrivia(this.DocumentationComment);
@@ -87,14 +87,14 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            this.RowChanged?.Invoke(this, new ConfigurationRowChangeEventArgs(dataAction, configurationRow));
+                //            this.RecordChanged?.Invoke(this, new ConfigurationRecordChangeEventArgs(dataAction, configurationRecord));
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.ConditionalAccessExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("RowChanged")),
+                                SyntaxFactory.IdentifierName("RecordChanged")),
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberBindingExpression(
                                     SyntaxFactory.IdentifierName("Invoke")))
@@ -109,7 +109,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.ObjectCreationExpression(
                                                     SyntaxFactory.IdentifierName(
-                                                        this.tableElement.Name + "RowChangeEventArgs"))
+                                                        this.tableElement.Name + "RecordChangeEventArgs"))
                                                 .WithArgumentList(
                                                     SyntaxFactory.ArgumentList(
                                                         SyntaxFactory.SeparatedList<ArgumentSyntax>(
@@ -257,7 +257,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                         SyntaxFactory.Identifier("dataAction"))
                         .WithType(SyntaxFactory.IdentifierName("DataAction")));
 
-                // ConfigurationRow configurationRow
+                // ConfigurationRecord configurationRecord
                 parameters.Add(
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier(this.recordName))

@@ -1,4 +1,4 @@
-// <copyright file="RowChangedEvent.cs" company="Gamma Four, Inc.">
+// <copyright file="RecordChangingEvent.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -13,50 +13,40 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
     /// <summary>
     /// Creates a field that holds the column.
     /// </summary>
-    public class RowChangedEvent : SyntaxElement
+    public class RecordChangingEvent : SyntaxElement
     {
         /// <summary>
-        /// The event type.
-        /// </summary>
-        private SimpleNameSyntax eventType;
-
-        /// <summary>
-        /// The unique constraint schema.
-        /// </summary>
-        private TableElement tableElement;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RowChangedEvent"/> class.
+        /// Initializes a new instance of the <see cref="RecordChangingEvent"/> class.
         /// </summary>
         /// <param name="tableElement">The column schema.</param>
-        public RowChangedEvent(TableElement tableElement)
+        public RecordChangingEvent(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement;
-            this.Name = "RowChanged";
-
-            // The type of event.
-            this.eventType = SyntaxFactory.GenericName(
-                SyntaxFactory.Identifier("EventHandler"))
-            .WithTypeArgumentList(
-                SyntaxFactory.TypeArgumentList(
-                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                        SyntaxFactory.IdentifierName(this.tableElement.Name + "RowChangeEventArgs")))
-                .WithLessThanToken(SyntaxFactory.Token(SyntaxKind.LessThanToken))
-                .WithGreaterThanToken(SyntaxFactory.Token(SyntaxKind.GreaterThanToken)));
+            this.Name = "RecordChanging";
 
             //        /// <summary>
             //        /// Occurs when a row has changed.
             //        /// </summary>
-            //        public event EventHandler<ConfigurationRowChangeEventArgs> RowChanged;
+            //        public event EventHandler<RecordChangeEventArgs<Buyer>> RecordChanging;
             this.Syntax = SyntaxFactory.EventFieldDeclaration(
-                SyntaxFactory.VariableDeclaration(this.eventType)
-                .WithVariables(
-                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                        SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(this.Name)))))
-            .WithModifiers(RowChangedEvent.Modifiers)
-            .WithEventKeyword(SyntaxFactory.Token(SyntaxKind.EventKeyword))
-            .WithLeadingTrivia(RowChangedEvent.DocumentationComment);
+                    SyntaxFactory.VariableDeclaration(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("EventHandler"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                    SyntaxFactory.GenericName(
+                                        SyntaxFactory.Identifier("RecordChangeEventArgs"))
+                                    .WithTypeArgumentList(
+                                        SyntaxFactory.TypeArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                SyntaxFactory.IdentifierName(tableElement.Name))))))))
+                    .WithVariables(
+                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                            SyntaxFactory.VariableDeclarator(
+                                SyntaxFactory.Identifier("RecordChanging")))))
+            .WithModifiers(RecordChangingEvent.Modifiers)
+            .WithLeadingTrivia(RecordChangingEvent.DocumentationComment);
         }
 
         /// <summary>

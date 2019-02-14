@@ -322,7 +322,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> events = new List<SyntaxElement>();
-            events.Add(new RowChangingEvent(this.tableElement));
+            events.Add(new RecordChangingEvent(this.tableElement));
 
             // Alphabetize and add the events as members of the class.
             foreach (SyntaxElement syntaxElement in events.OrderBy(m => m.Name))

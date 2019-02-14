@@ -214,7 +214,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                         SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
                 }
 
-                //            this.OnRecordChanging(DataAction.Delete, previousBuyer, buyer);
+                //            this.OnRecordChanging(DataAction.Update, previousBuyer, buyer);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -231,7 +231,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.IdentifierName("DataAction"),
-                                                SyntaxFactory.IdentifierName("Delete"))),
+                                                SyntaxFactory.IdentifierName("Update"))),
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.IdentifierName($"previous{this.tableElement.Name}")),

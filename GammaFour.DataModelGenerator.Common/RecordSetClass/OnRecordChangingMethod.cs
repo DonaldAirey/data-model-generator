@@ -76,14 +76,14 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            this.RowChanging?.Invoke(this, new RecordChangeEventArgs<Buyer> { DataAction = dataAction, Previous = previous, Current = current });
+                //            this.RecordChanging?.Invoke(this, new RecordChangeEventArgs<Buyer> { DataAction = dataAction, Previous = previous, Current = current });
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.ConditionalAccessExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("RowChanging")),
+                                SyntaxFactory.IdentifierName("RecordChanging")),
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberBindingExpression(
                                     SyntaxFactory.IdentifierName("Invoke")))
