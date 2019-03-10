@@ -1,4 +1,4 @@
-// <copyright file="CollectionField.cs" company="Gamma Four, Inc.">
+// <copyright file="DeletedCollectionField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,7 +14,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
     /// <summary>
     /// Creates a field to hold the current contents of the record.
     /// </summary>
-    public class CollectionField : SyntaxElement
+    public class DeletedCollectionField : SyntaxElement
     {
         /// <summary>
         /// The description of the table.
@@ -22,40 +22,44 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         private TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CollectionField"/> class.
+        /// Initializes a new instance of the <see cref="DeletedCollectionField"/> class.
         /// </summary>
         /// <param name="tableElement">The table element.</param>
-        public CollectionField(TableElement tableElement)
+        public DeletedCollectionField(TableElement tableElement)
         {
             // Initialize the object.
-            this.Name = "collection";
             this.tableElement = tableElement;
+            this.Name = "deletedCollection";
 
             //        /// <summary>
-            //        /// The collection of records.
+            //        /// The collection of deleted records.
             //        /// </summary>
-            //        private SortedList<object, Buyer> collection = new SortedList<object, Buyer>();
+            //        private List<ValueTuple<DateTime, Alert>> deletedCollection = new List<ValueTuple<DateTime, Alert>>();
             this.Syntax = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
                     SyntaxFactory.GenericName(
-                        SyntaxFactory.Identifier("SortedList"))
+                        SyntaxFactory.Identifier("List"))
                     .WithTypeArgumentList(
                         SyntaxFactory.TypeArgumentList(
-                            SyntaxFactory.SeparatedList<TypeSyntax>(
-                                new SyntaxNodeOrToken[]
-                                {
-                                    SyntaxFactory.PredefinedType(
-                                        SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
-                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name)
-                                }))))
+                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                SyntaxFactory.GenericName(
+                                    SyntaxFactory.Identifier("ValueTuple"))
+                                .WithTypeArgumentList(
+                                    SyntaxFactory.TypeArgumentList(
+                                        SyntaxFactory.SeparatedList<TypeSyntax>(
+                                            new SyntaxNodeOrToken[]
+                                            {
+                                                SyntaxFactory.IdentifierName("DateTime"),
+                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name)
+                                            })))))))
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                         SyntaxFactory.VariableDeclarator(
                             SyntaxFactory.Identifier(this.Name))
                             .WithInitializer(this.Initializer))))
-                .WithModifiers(CollectionField.Modifiers)
-                .WithLeadingTrivia(CollectionField.DocumentationComment);
+                .WithModifiers(DeletedCollectionField.Modifiers)
+                .WithLeadingTrivia(DeletedCollectionField.DocumentationComment);
         }
 
         /// <summary>
@@ -69,7 +73,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// The collection of records.
+                //        /// The collection of deleted records.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -93,7 +97,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " The collection of records.",
+                                                " The collection of deleted records.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -141,21 +145,25 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         {
             get
             {
-                // = new object();
+                // = new List<ValueTuple<DateTime, Alert>>();
                 return SyntaxFactory.EqualsValueClause(
                     SyntaxFactory.ObjectCreationExpression(
                         SyntaxFactory.GenericName(
-                            SyntaxFactory.Identifier("SortedList"))
+                            SyntaxFactory.Identifier("List"))
                         .WithTypeArgumentList(
                             SyntaxFactory.TypeArgumentList(
-                                SyntaxFactory.SeparatedList<TypeSyntax>(
-                                    new SyntaxNodeOrToken[]
-                                    {
-                                        SyntaxFactory.PredefinedType(
-                                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
-                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name)
-                                    }))))
+                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                    SyntaxFactory.GenericName(
+                                        SyntaxFactory.Identifier("ValueTuple"))
+                                    .WithTypeArgumentList(
+                                        SyntaxFactory.TypeArgumentList(
+                                            SyntaxFactory.SeparatedList<TypeSyntax>(
+                                                new SyntaxNodeOrToken[]
+                                                {
+                                                    SyntaxFactory.IdentifierName("DateTime"),
+                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Name)
+                                                })))))))
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList()));
             }

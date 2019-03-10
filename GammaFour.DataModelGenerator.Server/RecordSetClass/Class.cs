@@ -238,6 +238,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             List<SyntaxElement> fields = new List<SyntaxElement>();
             fields.Add(new PrimaryKeyFunctionField(this.tableElement.PrimaryKey));
             fields.Add(new CollectionField(this.tableElement));
+            fields.Add(new DeletedCollectionField(this.tableElement));
             fields.Add(new SyncRootField());
             fields.Add(new UndoStackField());
 
@@ -267,6 +268,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
             properties.Add(new DataModelProperty(this.tableElement.XmlSchemaDocument));
+            properties.Add(new DeletedItemsProperty(this.tableElement));
             properties.Add(new LockProperty());
             properties.Add(new NameProperty());
 

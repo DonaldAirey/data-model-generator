@@ -2,10 +2,6 @@
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-// <copyright file="ColumnElement.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
-// </copyright>
-// <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Common
 {
     using System;
@@ -38,14 +34,14 @@ namespace GammaFour.DataModelGenerator.Common
         };
 
         /// <summary>
+        /// The type for this column.
+        /// </summary>
+        private ColumnType columnType = new ColumnType();
+
+        /// <summary>
         /// The default, if any, for this column.
         /// </summary>
         private object defaultValue;
-
-        /// <summary>
-        /// The maximum length of a variable length data type.
-        /// </summary>
-        private int maximumLength;
 
         /// <summary>
         /// Indicates that the column has a default value.
@@ -53,14 +49,29 @@ namespace GammaFour.DataModelGenerator.Common
         private bool hasDefault;
 
         /// <summary>
+        /// The index of the column in the table.
+        /// </summary>
+        private int? index;
+
+        /// <summary>
+        /// A value indicating whether ths column is part of the primary key.
+        /// </summary>
+        private bool? isPrimaryKey;
+
+        /// <summary>
         /// Indicates that the type information has been initialized.
         /// </summary>
         private bool isTypeInfoInitialized = false;
 
         /// <summary>
-        /// The type for this column.
+        /// A value indicating whether the column is part of a parent primary key.
         /// </summary>
-        private ColumnType columnType = new ColumnType();
+        private bool? isInParentKey;
+
+        /// <summary>
+        /// The maximum length of a variable length data type.
+        /// </summary>
+        private int maximumLength;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ColumnElement"/> class.
@@ -144,7 +155,12 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                return this.Table.Columns.IndexOf(this);
+                if (!this.index.HasValue)
+                {
+                    this.index = this.Table.Columns.IndexOf(this);
+                }
+
+                return this.index.Value;
             }
         }
 
@@ -161,9 +177,14 @@ namespace GammaFour.DataModelGenerator.Common
             get
             {
                 // This will examine the primary key to see if the column is part of the key.
-                return (from ce in this.Table.PrimaryKey.Columns
-                        where ce.Column == this
-                        select ce).Any();
+                if (this.isPrimaryKey.HasValue)
+                {
+                    this.isPrimaryKey = (from ce in this.Table.PrimaryKey.Columns
+                                         where ce.Column == this
+                                         select ce).Any();
+                }
+
+                return this.isPrimaryKey.Value;
             }
         }
 
@@ -174,16 +195,21 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                // Examine each of the parent relations to see if the column is used.
-                var list = from fke in this.Table.ParentKeys
-                           from ce in fke.Columns
-                           where ce.Column == this
-                           select ce;
+                if (!this.isInParentKey.HasValue)
+                {
+                    // Examine each of the parent relations to see if the column is used.
+                    var list = from fke in this.Table.ParentKeys
+                               from ce in fke.Columns
+                               where ce.Column == this
+                               select ce;
 
-                return (from fke in this.Table.ParentKeys
-                        from ce in fke.Columns
-                        where ce.Column == this
-                        select ce).Any();
+                    this.isInParentKey = (from fke in this.Table.ParentKeys
+                                          from ce in fke.Columns
+                                          where ce.Column == this
+                                          select ce).Any();
+                }
+
+                return this.isInParentKey.Value;
             }
         }
 

@@ -33,6 +33,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 SyntaxFactory.Identifier(this.Name))
                 .WithModifiers(StateProperty.Modifiers)
                 .WithAccessorList(StateProperty.AccessorList)
+                .WithAttributeLists(StateProperty.Attributes)
                 .WithLeadingTrivia(StateProperty.DocumentationComment);
         }
 
@@ -60,6 +61,28 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                 .WithSemicolonToken(
                                     SyntaxFactory.Token(SyntaxKind.SemicolonToken))
                             }));
+            }
+        }
+
+        /// <summary>
+        /// Gets the data contract attribute syntax.
+        /// </summary>
+        private static SyntaxList<AttributeListSyntax> Attributes
+        {
+            get
+            {
+                // This collects all the attributes.
+                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
+
+                //        [JsonConverter(typeof(StringEnumConverter))]
+                attributes.Add(
+                    SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                SyntaxFactory.IdentifierName("JsonIgnore")))));
+
+                // The collection of attributes.
+                return SyntaxFactory.List<AttributeListSyntax>(attributes);
             }
         }
 

@@ -6,7 +6,6 @@ namespace GammaFour.DataModelGenerator.Common
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using System.Text.RegularExpressions;
     using System.Xml.Linq;
@@ -20,6 +19,26 @@ namespace GammaFour.DataModelGenerator.Common
         /// Used to parse the XPath specification from constraints.
         /// </summary>
         private static Regex xPath = new Regex(@"(\.//)?(\w+:)?(\w+)");
+
+        /// <summary>
+        /// The columns in this constraint.
+        /// </summary>
+        private List<ColumnReferenceElement> columns;
+
+        /// <summary>
+        /// A value indicating whether the column is autoincrementing.
+        /// </summary>
+        private bool? isAutoIncrementing;
+
+        /// <summary>
+        /// A value indicating whether the column can contain null.
+        /// </summary>
+        private bool? isNullable;
+
+        /// <summary>
+        /// The table element.
+        /// </summary>
+        private TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstraintElement"/> class.
@@ -47,7 +66,12 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                return this.Elements(XmlSchemaDocument.Field).Cast<ColumnReferenceElement>().ToList();
+                if (this.columns == null)
+                {
+                    this.columns = this.Elements(XmlSchemaDocument.Field).Cast<ColumnReferenceElement>().ToList();
+                }
+
+                return this.columns;
             }
         }
 
@@ -69,10 +93,15 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                // This determines if any of the columns in the index are autoincrementing.
-                return (from cre in this.Columns
-                        where cre.Column.IsAutoIncrement
-                        select cre).Any();
+                if (!this.isAutoIncrementing.HasValue)
+                {
+                    // This determines if any of the columns in the index are autoincrementing.
+                    this.isAutoIncrementing = (from cre in this.Columns
+                                               where cre.Column.IsAutoIncrement
+                                               select cre).Any();
+                }
+
+                return this.isAutoIncrementing.Value;
             }
         }
 
@@ -83,10 +112,15 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                // If all the columns of a given constraint can contain null, then the constraint is nullable.
-                return (from cre in this.Columns
-                        where cre.Column.ColumnType.IsNullable
-                        select cre).Count() == this.Columns.Count();
+                if (this.isNullable.HasValue)
+                {
+                    // If all the columns of a given constraint can contain null, then the constraint is nullable.
+                    this.isNullable = (from cre in this.Columns
+                                       where cre.Column.ColumnType.IsNullable
+                                       select cre).Count() == this.Columns.Count();
+                }
+
+                return this.isNullable.Value;
             }
         }
 
@@ -102,27 +136,30 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                // The location of the table is kept in an XPath specification which addresses the target document.  Since we're not actually parsing
-                // a document with this schema, then the interpetation gets a little fuzzy.  We can't actually scan the source document with this
-                // specification, but we can pull it apart to get the table name for which this constraint is intended.
-                XElement selectorElement = this.Element(XmlSchemaDocument.Selector);
-                XAttribute xPathAttribute = selectorElement.Attribute(XmlSchemaDocument.XPath);
-                Match match = ConstraintElement.xPath.Match(xPathAttribute.Value);
-                if (!match.Success)
+                if (this.tableElement == null)
                 {
-                    throw new InvalidOperationException($"Unique Constraint {this.Name} can't parse expression '{xPathAttribute.Value}'");
+                    // The location of the table is kept in an XPath specification which addresses the target document.  Since we're not actually parsing
+                    // a document with this schema, then the interpetation gets a little fuzzy.  We can't actually scan the source document with this
+                    // specification, but we can pull it apart to get the table name for which this constraint is intended.
+                    XElement selectorElement = this.Element(XmlSchemaDocument.Selector);
+                    XAttribute xPathAttribute = selectorElement.Attribute(XmlSchemaDocument.XPath);
+                    Match match = ConstraintElement.xPath.Match(xPathAttribute.Value);
+                    if (!match.Success)
+                    {
+                        throw new InvalidOperationException($"Unique Constraint {this.Name} can't parse expression '{xPathAttribute.Value}'");
+                    }
+
+                    // Select the table from the name in the XPath specification.
+                    this.tableElement = (from te in this.XmlSchemaDocument.Tables
+                                        where te.Name == match.Groups[match.Groups.Count - 1].Value
+                                        select te).FirstOrDefault();
+                    if (this.tableElement == null)
+                    {
+                        throw new InvalidOperationException($"Constraint {this.Name} can't find referenced table {match.Groups[match.Groups.Count - 1]}");
+                    }
                 }
 
-                // Select the table from the name in the XPath specification.
-                var tableElement = (from te in this.XmlSchemaDocument.Tables
-                                    where te.Name == match.Groups[match.Groups.Count - 1].Value
-                                    select te).FirstOrDefault();
-                if (tableElement == null)
-                {
-                    throw new InvalidOperationException($"Constraint {this.Name} can't find referenced table {match.Groups[match.Groups.Count - 1]}");
-                }
-
-                return tableElement;
+                return this.tableElement;
             }
         }
 

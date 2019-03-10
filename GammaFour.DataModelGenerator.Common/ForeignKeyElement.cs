@@ -15,6 +15,21 @@ namespace GammaFour.DataModelGenerator.Common
     public class ForeignKeyElement : ConstraintElement
     {
         /// <summary>
+        /// A unique key element.
+        /// </summary>
+        private UniqueKeyElement uniqueKeyElement;
+
+        /// <summary>
+        /// The name of the parent table.
+        /// </summary>
+        private string uniqueParentName;
+
+        /// <summary>
+        /// The unique name of the child table.
+        /// </summary>
+        private string uniqueChildName;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ForeignKeyElement"/> class.
         /// </summary>
         /// <param name="xElement">The description of the unique constraint.</param>
@@ -63,15 +78,25 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                var uniqueKeyElement = (from uk in this.XmlSchemaDocument.UniqueKeys
-                                        where uk.Name == this.Refer
-                                        select uk).SingleOrDefault();
-                if (uniqueKeyElement == default(UniqueKeyElement))
+                if (this.uniqueKeyElement == null)
                 {
-                    throw new InvalidOperationException($"Foreign key constraint {this.Name} can't find referenced unique key constraint {this.Refer}");
+                    try
+                    {
+                        this.uniqueKeyElement = (from uk in this.XmlSchemaDocument.UniqueKeys
+                                                 where uk.Name == this.Refer
+                                                 select uk).SingleOrDefault();
+                        if (this.uniqueKeyElement == default(UniqueKeyElement))
+                        {
+                            throw new InvalidOperationException($"Foreign key constraint {this.Name} can't find referenced unique key constraint {this.Refer}");
+                        }
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        throw new InvalidOperationException($"Foreign key constraint {this.Name} has multiple unique key constraint named {this.Refer}");
+                    }
                 }
 
-                return uniqueKeyElement;
+                return this.uniqueKeyElement;
             }
         }
 
@@ -82,28 +107,30 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                // Determinesd if there is a distinct path to the parent table.
-                var isDistinctPathToParent = (from fke in this.UniqueKey.Table.ForeignKeys
-                                              where fke.Table == this.Table
-                                              select fke).Count() == 1;
+                if (this.uniqueParentName == null)
+                {
+                    // Determinesd if there is a distinct path to the parent table.
+                    var isDistinctPathToParent = (from fke in this.UniqueKey.Table.ForeignKeys
+                                                  where fke.Table == this.Table
+                                                  select fke).Count() == 1;
 
-                // If the path to the parent is unique, then simply use the parent table's name.  If it not unique, we will decorate the name of the
-                // key with the columns that will make it unique.
-                string parentIdentifier = default(string);
-                if (isDistinctPathToParent)
-                {
-                    parentIdentifier = this.UniqueKey.Table.Name;
-                }
-                else
-                {
-                    parentIdentifier = this.UniqueKey.Table.Name + "By";
-                    foreach (ColumnReferenceElement columnReferenceElement in this.Columns)
+                    // If the path to the parent is unique, then simply use the parent table's name.  If it not unique, we will decorate the name of the
+                    // key with the columns that will make it unique.
+                    if (isDistinctPathToParent)
                     {
-                        parentIdentifier += columnReferenceElement.Column.Name;
+                        this.uniqueParentName = this.UniqueKey.Table.Name;
+                    }
+                    else
+                    {
+                        this.uniqueParentName = this.UniqueKey.Table.Name + "By";
+                        foreach (ColumnReferenceElement columnReferenceElement in this.Columns)
+                        {
+                            this.uniqueParentName += columnReferenceElement.Column.Name;
+                        }
                     }
                 }
 
-                return parentIdentifier;
+                return this.uniqueParentName;
             }
         }
 
@@ -114,28 +141,30 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                // Determines if there's a single path to the child tables.
-                var isDistinctPathToChild = (from fke in this.UniqueKey.Table.ForeignKeys
-                                             where fke.Table == this.Table
-                                             select fke).Count() == 1;
+                if (this.uniqueChildName == null)
+                {
+                    // Determines if there's a single path to the child tables.
+                    var isDistinctPathToChild = (from fke in this.UniqueKey.Table.ForeignKeys
+                                                 where fke.Table == this.Table
+                                                 select fke).Count() == 1;
 
-                // If the path to the parent is unique, then simply use the parent table's name.  If it not unique, we will decorate the name of the
-                // key with the columns that will make it unique.
-                string childIdentifier = default(string);
-                if (isDistinctPathToChild)
-                {
-                    childIdentifier = this.Table.Name.ToPlural();
-                }
-                else
-                {
-                    childIdentifier = this.Table.Name.ToPlural() + "By";
-                    foreach (ColumnReferenceElement columnReferenceElement in this.Columns)
+                    // If the path to the parent is unique, then simply use the parent table's name.  If it not unique, we will decorate the name of the
+                    // key with the columns that will make it unique.
+                    if (isDistinctPathToChild)
                     {
-                        childIdentifier += columnReferenceElement.Column.Name;
+                        this.uniqueChildName = this.Table.Name.ToPlural();
+                    }
+                    else
+                    {
+                        this.uniqueChildName = this.Table.Name.ToPlural() + "By";
+                        foreach (ColumnReferenceElement columnReferenceElement in this.Columns)
+                        {
+                            this.uniqueChildName += columnReferenceElement.Column.Name;
+                        }
                     }
                 }
 
-                return childIdentifier;
+                return this.uniqueChildName;
             }
         }
 

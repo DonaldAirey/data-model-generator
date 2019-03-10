@@ -20,9 +20,19 @@ namespace GammaFour.DataModelGenerator.Common
         private static Regex xPath = new Regex(@"(\w+:|@)?(\w+)");
 
         /// <summary>
+        /// The column element that this class references.
+        /// </summary>
+        private ColumnElement columnElement;
+
+        /// <summary>
         /// The name of the underlying column.
         /// </summary>
         private string name;
+
+        /// <summary>
+        /// The parent column.
+        /// </summary>
+        private ColumnElement parentColumn;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ColumnReferenceElement"/> class.
@@ -43,16 +53,19 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                ConstraintElement parentConstraint = this.Parent as ConstraintElement;
-                ColumnElement columnElement = (from ce in parentConstraint.Table.Columns
-                                               where ce.Name == this.name
-                                               select ce).SingleOrDefault();
-                if (columnElement == default(ColumnElement))
+                if (this.columnElement == null)
                 {
-                    throw new InvalidOperationException($"The column {this.name} in constraint {parentConstraint.Name} doesn't exist in table {parentConstraint.Table.Name}.");
+                    ConstraintElement parentConstraint = this.Parent as ConstraintElement;
+                    this.columnElement = (from ce in parentConstraint.Table.Columns
+                                          where ce.Name == this.name
+                                          select ce).SingleOrDefault();
+                    if (this.columnElement == default(ColumnElement))
+                    {
+                        throw new InvalidOperationException($"The column {this.name} in constraint {parentConstraint.Name} doesn't exist in table {parentConstraint.Table.Name}.");
+                    }
                 }
 
-                return columnElement;
+                return this.columnElement;
             }
         }
 
@@ -63,15 +76,17 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                // If this is a forieng index then return the column in the parent table that corresponds to this column reference.
-                ForeignKeyElement foreignKeyElement = this.Parent as ForeignKeyElement;
-                if (foreignKeyElement != null)
+                if (this.parentColumn == null)
                 {
-                    return foreignKeyElement.UniqueKey.Columns[foreignKeyElement.Columns.IndexOf(this)].Column;
+                    // If this is a forieng index then return the column in the parent table that corresponds to this column reference.
+                    ForeignKeyElement foreignKeyElement = this.Parent as ForeignKeyElement;
+                    if (foreignKeyElement != null)
+                    {
+                        this.parentColumn = foreignKeyElement.UniqueKey.Columns[foreignKeyElement.Columns.IndexOf(this)].Column;
+                    }
                 }
 
-                // Indicates there is no parent column.
-                return null;
+                return this.parentColumn;
             }
         }
     }

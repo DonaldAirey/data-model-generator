@@ -1,8 +1,8 @@
-// <copyright file="LockProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="DeletedItemsProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.RecordClass
+namespace GammaFour.DataModelGenerator.Server.RecordSetClass
 {
     using System;
     using System.Collections.Generic;
@@ -14,67 +14,49 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
     /// <summary>
     /// Creates a field that holds the column.
     /// </summary>
-    public class LockProperty : SyntaxElement
+    public class DeletedItemsProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="LockProperty"/> class.
+        /// The description of the table.
         /// </summary>
-        public LockProperty()
+        private TableElement tableElement;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DeletedItemsProperty"/> class.
+        /// </summary>
+        /// <param name="tableElement">The table element.</param>
+        public DeletedItemsProperty(TableElement tableElement)
         {
             // Initialize the object.
-            this.Name = "Lock";
+            this.tableElement = tableElement;
+            this.Name = "DeletedItems";
 
             //        /// <summary>
-            //        /// Gets the lock used to manage multithreaded access to this record.
+            //        /// Gets the collection of deleted records.
             //        /// </summary>
-            //        public AsyncReaderWriterLock Lock { get; } = new AsyncReaderWriterLock();
+            //        public List<ValueTuple<DateTime, Alert>> Deleted => this.deletedCollection;
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.IdentifierName("AsyncReaderWriterLock"),
-                SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(LockProperty.Modifiers)
-                .WithAccessorList(LockProperty.AccessorList)
-                .WithInitializer(LockProperty.Initializer)
-                .WithAttributeLists(LockProperty.Attributes)
-                .WithLeadingTrivia(LockProperty.DocumentationComment)
+                    SyntaxFactory.GenericName(
+                        SyntaxFactory.Identifier("List"))
+                    .WithTypeArgumentList(
+                        SyntaxFactory.TypeArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                SyntaxFactory.GenericName(
+                                    SyntaxFactory.Identifier("ValueTuple"))
+                                .WithTypeArgumentList(
+                                    SyntaxFactory.TypeArgumentList(
+                                        SyntaxFactory.SeparatedList<TypeSyntax>(
+                                            new SyntaxNodeOrToken[]
+                                            {
+                                                SyntaxFactory.IdentifierName("DateTime"),
+                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name)
+                                            })))))),
+                    SyntaxFactory.Identifier(this.Name))
+                .WithModifiers(DeletedItemsProperty.Modifiers)
+                .WithExpressionBody(DeletedItemsProperty.ExpressionBody)
+                .WithLeadingTrivia(DeletedItemsProperty.DocumentationComment)
                 .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
-        }
-
-        /// <summary>
-        /// Gets the list of accessors.
-        /// </summary>
-        private static AccessorListSyntax AccessorList
-        {
-            get
-            {
-                return SyntaxFactory.AccessorList(
-                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
-                        SyntaxFactory.AccessorDeclaration(
-                            SyntaxKind.GetAccessorDeclaration)
-                        .WithSemicolonToken(
-                            SyntaxFactory.Token(SyntaxKind.SemicolonToken))));
-            }
-        }
-
-        /// <summary>
-        /// Gets the data contract attribute syntax.
-        /// </summary>
-        private static SyntaxList<AttributeListSyntax> Attributes
-        {
-            get
-            {
-                // This collects all the attributes.
-                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
-
-                //        [JsonConverter(typeof(StringEnumConverter))]
-                attributes.Add(
-                    SyntaxFactory.AttributeList(
-                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
-                            SyntaxFactory.Attribute(
-                                SyntaxFactory.IdentifierName("JsonIgnore")))));
-
-                // The collection of attributes.
-                return SyntaxFactory.List<AttributeListSyntax>(attributes);
-            }
         }
 
         /// <summary>
@@ -88,7 +70,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Gets the lock used to manage multithreaded access to this record.
+                //        /// Gets the collection of deleted records.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -112,7 +94,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                $" Gets the lock used to manage multithreaded access to this record.",
+                                                $" Gets the collection of deleted records.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -140,15 +122,15 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         /// <summary>
         /// Gets the initializer.
         /// </summary>
-        private static EqualsValueClauseSyntax Initializer
+        private static ArrowExpressionClauseSyntax ExpressionBody
         {
             get
             {
-                return SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.ObjectCreationExpression(
-                        SyntaxFactory.IdentifierName("AsyncReaderWriterLock"))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList()));
+                return SyntaxFactory.ArrowExpressionClause(
+                    SyntaxFactory.MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        SyntaxFactory.ThisExpression(),
+                        SyntaxFactory.IdentifierName("deletedCollection")));
             }
         }
 

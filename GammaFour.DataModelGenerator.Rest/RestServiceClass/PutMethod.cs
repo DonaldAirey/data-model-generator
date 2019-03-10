@@ -1303,7 +1303,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
-                                                        SyntaxFactory.IdentifierName(columnElement.Name))))))))))));
+                                                        SyntaxFactory.IdentifierName(tableElement.PrimaryKey.Columns[0].Column.Name))))))))))));
 
             // This is the complete block.
             return SyntaxFactory.List(statements);

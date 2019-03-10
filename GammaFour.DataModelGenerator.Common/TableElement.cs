@@ -20,6 +20,41 @@ namespace GammaFour.DataModelGenerator.Common
         private readonly List<Verb> verbs = new List<Verb>();
 
         /// <summary>
+        /// The columns.
+        /// </summary>
+        private List<ColumnElement> columnElements;
+
+        /// <summary>
+        /// The foreign key elements.
+        /// </summary>
+        private List<ForeignKeyElement> foreignKeyElements;
+
+        /// <summary>
+        /// The index of the table.
+        /// </summary>
+        private int? index;
+
+        /// <summary>
+        /// The child foreign key elements.
+        /// </summary>
+        private List<ForeignKeyElement> childKeyElements;
+
+        /// <summary>
+        /// The parent key elements.
+        /// </summary>
+        private List<ForeignKeyElement> parentKeyElements;
+
+        /// <summary>
+        /// The primary key element.
+        /// </summary>
+        private UniqueKeyElement primaryKeyElement;
+
+        /// <summary>
+        /// The unique key elements.
+        /// </summary>
+        private List<UniqueKeyElement> uniqueKeyElements;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="TableElement"/> class.
         /// </summary>
         /// <param name="xElement">The element that describes the table.</param>
@@ -68,9 +103,14 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                XElement complexType = this.Element(XmlSchemaDocument.ComplexType);
-                XElement sequence = complexType.Element(XmlSchemaDocument.Sequence);
-                return sequence.Elements(XmlSchemaDocument.Element).Cast<ColumnElement>().ToList();
+                if (this.columnElements == null)
+                {
+                    XElement complexType = this.Element(XmlSchemaDocument.ComplexType);
+                    XElement sequence = complexType.Element(XmlSchemaDocument.Sequence);
+                    this.columnElements = sequence.Elements(XmlSchemaDocument.Element).Cast<ColumnElement>().ToList();
+                }
+
+                return this.columnElements;
             }
         }
 
@@ -81,9 +121,14 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                return (from fke in this.XmlSchemaDocument.ForeignKeys
-                        where fke.UniqueKey.Table == this
-                        select fke).ToList();
+                if (this.foreignKeyElements == null)
+                {
+                    this.foreignKeyElements = (from fke in this.XmlSchemaDocument.ForeignKeys
+                                               where fke.UniqueKey.Table == this
+                                               select fke).ToList();
+                }
+
+                return this.foreignKeyElements;
             }
         }
 
@@ -94,7 +139,12 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                return this.XmlSchemaDocument.Tables.IndexOf(this);
+                if (!this.index.HasValue)
+                {
+                    this.index = this.XmlSchemaDocument.Tables.IndexOf(this);
+                }
+
+                return this.index.Value;
             }
         }
 
@@ -115,10 +165,15 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                return (from fke in this.XmlSchemaDocument.ForeignKeys
-                        where fke.UniqueKey.Table == this
-                        orderby fke.Name
-                        select fke).ToList();
+                if (this.childKeyElements == null)
+                {
+                    this.childKeyElements = (from fke in this.XmlSchemaDocument.ForeignKeys
+                                             where fke.UniqueKey.Table == this
+                                             orderby fke.Name
+                                             select fke).ToList();
+                }
+
+                return this.childKeyElements;
             }
         }
 
@@ -129,10 +184,15 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                return (from fke in this.XmlSchemaDocument.ForeignKeys
-                        where fke.Table == this
-                        orderby fke.Name
-                        select fke).ToList();
+                if (this.parentKeyElements == null)
+                {
+                    this.parentKeyElements = (from fke in this.XmlSchemaDocument.ForeignKeys
+                                              where fke.Table == this
+                                              orderby fke.Name
+                                              select fke).ToList();
+                }
+
+                return this.parentKeyElements;
             }
         }
 
@@ -143,9 +203,14 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                return (from uk in this.UniqueKeys
-                        where uk.IsPrimaryKey
-                        select uk).FirstOrDefault();
+                if (this.primaryKeyElement == null)
+                {
+                    this.primaryKeyElement = (from uk in this.UniqueKeys
+                                              where uk.IsPrimaryKey
+                                              select uk).FirstOrDefault();
+                }
+
+                return this.primaryKeyElement;
             }
         }
 
@@ -156,10 +221,15 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                return (from uke in this.XmlSchemaDocument.UniqueKeys
-                        where uke.Table == this
-                        orderby uke.Name
-                        select uke).ToList();
+                if (this.uniqueKeyElements == null)
+                {
+                    this.uniqueKeyElements = (from uke in this.XmlSchemaDocument.UniqueKeys
+                                              where uke.Table == this
+                                              orderby uke.Name
+                                              select uke).ToList();
+                }
+
+                return this.uniqueKeyElements;
             }
         }
 
