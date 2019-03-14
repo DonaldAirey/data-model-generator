@@ -2,7 +2,7 @@
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.RecordClass
+namespace GammaFour.DataModelGenerator.Server.DataModelClass
 {
     using System;
     using System.Collections.Generic;
@@ -19,27 +19,28 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableElement tableElement;
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Constructor"/> class.
         /// </summary>
-        /// <param name="tableElement">The table schema.</param>
-        public Constructor(TableElement tableElement)
+        /// <param name="xmlSchemaDocument">The table schema.</param>
+        public Constructor(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.tableElement = tableElement;
-            this.Name = this.tableElement.Name;
+            this.xmlSchemaDocument = xmlSchemaDocument;
+            this.Name = this.xmlSchemaDocument.Name;
 
             //        /// <summary>
-            //        /// Initializes a new instance of the <see cref="Buyer"/> class.
+            //        /// Initializes a new instance of the <see cref="DataModel"/> class.
             //        /// </summary>
-            //        public Buyer()
+            //        /// <param name="domainContext">The domain dabase context.</param>
+            //        public Domain()
             //        {
-            //             <Body>
+            //            <Body>
             //        }
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
-                SyntaxFactory.Identifier(this.Name))
+                    SyntaxFactory.Identifier(this.Name))
                 .WithModifiers(Constructor.Modifiers)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
@@ -71,66 +72,10 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                // This constructs the list of default elements for each of the properties.
-                List<SyntaxNodeOrToken> arrayElementList = new List<SyntaxNodeOrToken>();
-                foreach (ColumnElement columnElement in this.tableElement.Columns)
+                // Initialize each of the record sets.
+                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
-                    if (arrayElementList.Count != 0)
-                    {
-                        arrayElementList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
-                    }
-
-                    arrayElementList.Add(SyntaxFactory.DefaultExpression(Conversions.FromType(columnElement.ColumnType)));
-                }
-
-                //            this.currentData = new object[15]
-                //            {
-                //                default(string),
-                //                default(string),
-                //                default(int),
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("currentData")),
-                            SyntaxFactory.ArrayCreationExpression(
-                                SyntaxFactory.ArrayType(
-                                    SyntaxFactory.PredefinedType(
-                                        SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
-                                .WithRankSpecifiers(
-                                    SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
-                                        SyntaxFactory.ArrayRankSpecifier(
-                                            SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
-                                                SyntaxFactory.LiteralExpression(
-                                                    SyntaxKind.NumericLiteralExpression,
-                                                    SyntaxFactory.Literal(this.tableElement.Columns.Count)))))))
-                            .WithInitializer(
-                                SyntaxFactory.InitializerExpression(
-                                    SyntaxKind.ArrayInitializerExpression,
-                                        SyntaxFactory.SeparatedList<ExpressionSyntax>(arrayElementList.ToArray()))))));
-
-                //            this.State = RecordState.Detached;
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("RecordState")),
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("RecordState"),
-                                SyntaxFactory.IdentifierName("Detached")))));
-
-                //            this.getBuyers = () => Country.defaultBuyers;
-                //            this.getProvinces = () => Country.defaultProvinces;
-                //            this.getRegions = () => Country.defaultRegions;
-                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ChildKeys)
-                {
+                    //            this.Buyers = new BuyerSet(this, "Buyers");
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.AssignmentExpression(
@@ -138,12 +83,22 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName($"get{foreignKeyElement.UniqueChildName}")),
-                                SyntaxFactory.ParenthesizedLambdaExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name),
-                                        SyntaxFactory.IdentifierName($"default{foreignKeyElement.UniqueChildName}"))))));
+                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
+                                SyntaxFactory.ObjectCreationExpression(
+                                    SyntaxFactory.IdentifierName($"{tableElement.Name}Set"))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                            new SyntaxNodeOrToken[]
+                                            {
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.ThisExpression()),
+                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        SyntaxKind.StringLiteralExpression,
+                                                        SyntaxFactory.Literal(tableElement.Name.ToPlural())))
+                                            }))))));
                 }
 
                 // This is the syntax for the body of the constructor.
@@ -162,7 +117,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Initializes a new instance of the <see cref="Configuration"/> class.
+                //        /// Initializes a new instance of the <see cref="DataModel"/> class.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -186,7 +141,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                $" Initializes a new instance of the <see cref=\"{this.tableElement.Name}\"/> class.",
+                                                $" Initializes a new instance of the <see cref=\"{this.xmlSchemaDocument.Name}\"/> class.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

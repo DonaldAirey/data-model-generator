@@ -86,7 +86,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("State")),
+                                SyntaxFactory.IdentifierName("RecordState")),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("RecordState"),
@@ -104,7 +104,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("State")),
+                                SyntaxFactory.IdentifierName("RecordState")),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("RecordState"),
@@ -164,7 +164,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("State")),
+                                SyntaxFactory.IdentifierName("RecordState")),
                             SyntaxFactory.ConditionalExpression(
                                 SyntaxFactory.BinaryExpression(
                                     SyntaxKind.EqualsExpression,
@@ -306,7 +306,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("State")),
+                                SyntaxFactory.IdentifierName("RecordState")),
                             SyntaxFactory.ConditionalExpression(
                                 SyntaxFactory.BinaryExpression(
                                     SyntaxKind.EqualsExpression,

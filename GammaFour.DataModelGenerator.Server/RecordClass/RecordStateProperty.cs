@@ -1,4 +1,4 @@
-// <copyright file="StateProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="RecordStateProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,15 +14,15 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
     /// <summary>
     /// Creates a property that describes the state.
     /// </summary>
-    public class StateProperty : SyntaxElement
+    public class RecordStateProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="StateProperty"/> class.
+        /// Initializes a new instance of the <see cref="RecordStateProperty"/> class.
         /// </summary>
-        public StateProperty()
+        public RecordStateProperty()
         {
             // Initialize the object.
-            this.Name = "State";
+            this.Name = "RecordState";
 
             //        /// <summary>
             //        /// Gets the state of the record.
@@ -31,10 +31,10 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
             this.Syntax = SyntaxFactory.PropertyDeclaration(
                 SyntaxFactory.IdentifierName("RecordState"),
                 SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(StateProperty.Modifiers)
-                .WithAccessorList(StateProperty.AccessorList)
-                .WithAttributeLists(StateProperty.Attributes)
-                .WithLeadingTrivia(StateProperty.DocumentationComment);
+                .WithModifiers(RecordStateProperty.Modifiers)
+                .WithAccessorList(RecordStateProperty.AccessorList)
+                .WithAttributeLists(RecordStateProperty.Attributes)
+                .WithLeadingTrivia(RecordStateProperty.DocumentationComment);
         }
 
         /// <summary>

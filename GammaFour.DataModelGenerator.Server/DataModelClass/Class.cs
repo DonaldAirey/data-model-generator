@@ -242,8 +242,15 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <returns>The structure members with the fields added.</returns>
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
-            // These are the constructors.
-            members = members.Add(new ConstructorDbContext(this.xmlSchemaDocument).Syntax);
+            // The volatile data model doesn't try to load the data from a DbContext, the non-volatile data model does.
+            if (this.xmlSchemaDocument.IsVolatile)
+            {
+                members = members.Add(new Constructor(this.xmlSchemaDocument).Syntax);
+            }
+            else
+            {
+                members = members.Add(new ConstructorDbContext(this.xmlSchemaDocument).Syntax);
+            }
 
             // Return the new collection of members.
             return members;

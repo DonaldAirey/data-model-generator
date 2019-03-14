@@ -299,7 +299,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.IdentifierName(abbreviation),
-                                                SyntaxFactory.IdentifierName("State")))))));
+                                                SyntaxFactory.IdentifierName("RecordState")))))));
 
                     // Add an Ignore invocation for each of the owner (record set) navigation properties.
                     // .Ignore(b => b.Country)

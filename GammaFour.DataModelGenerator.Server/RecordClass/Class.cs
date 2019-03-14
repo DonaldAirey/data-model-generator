@@ -319,7 +319,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
             List<SyntaxElement> properties = new List<SyntaxElement>();
             properties.Add(new LockProperty());
             properties.Add(new RecordSetProperty(this.tableElement));
-            properties.Add(new StateProperty());
+            properties.Add(new RecordStateProperty());
 
             // Create a navigation property to each of the parent collections.
             foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)

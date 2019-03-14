@@ -6,6 +6,7 @@ namespace GammaFour.DataModelGenerator.Common
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Xml;
@@ -39,6 +40,10 @@ namespace GammaFour.DataModelGenerator.Common
             // Extract the name and the target namespace from the schema.
             this.Name = this.Root.Element(XmlSchemaDocument.Element).Attribute("name").Value;
             this.TargetNamespace = this.Root.Attribute("targetNamespace").Value;
+
+            // This tells us whether to provide an interface to Entity Framework or not.
+            XAttribute isVolatileAttribute = this.Root.Element(XmlSchemaDocument.Element).Attribute(XmlSchemaDocument.IsVolatileAttribute);
+            this.IsVolatile = isVolatileAttribute == null ? false : Convert.ToBoolean(isVolatileAttribute.Value, CultureInfo.InvariantCulture);
 
             // The data model description is found on the first element of the first complex type in the module.
             XElement complexTypeElement = rootElement.Element(XmlSchemaDocument.ComplexType);
@@ -108,6 +113,11 @@ namespace GammaFour.DataModelGenerator.Common
                 return rootElement.Elements(XmlSchemaDocument.Keyref).Cast<ForeignKeyElement>().ToList();
             }
         }
+
+        /// <summary>
+        /// Gets a value indicating whether the data model supports a persistent Entity Framework store.
+        /// </summary>
+        public bool IsVolatile { get; private set; }
 
         /// <summary>
         /// Gets the name of the data model.
@@ -214,6 +224,11 @@ namespace GammaFour.DataModelGenerator.Common
         /// Gets the Field element.
         /// </summary>
         internal static XName Field { get; } = XName.Get("field", XmlSchemaDocument.XmlSchemaNamespace);
+
+        /// <summary>
+        /// Gets the IsVolatile attribute.
+        /// </summary>
+        internal static XName IsVolatileAttribute { get; } = XName.Get("IsVolatile", XmlSchemaDocument.GammaFourDataNamespace);
 
         /// <summary>
         /// Gets the IsPrimaryKey attribute.

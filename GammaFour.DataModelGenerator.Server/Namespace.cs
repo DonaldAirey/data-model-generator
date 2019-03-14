@@ -35,7 +35,7 @@ namespace GammaFour.DataModelGenerator.Server
             // This is the syntax of the namespace.
             this.Syntax = SyntaxFactory.NamespaceDeclaration(
                     SyntaxFactory.IdentifierName(customToolNamespace))
-                .WithUsings(SyntaxFactory.List<UsingDirectiveSyntax>(Namespace.UsingStatements))
+                .WithUsings(SyntaxFactory.List<UsingDirectiveSyntax>(this.UsingStatements))
                 .WithMembers(this.Members)
                 .WithLeadingTrivia(Namespace.LeadingTrivia)
                 .WithTrailingTrivia(Namespace.TrailingTrivia);
@@ -127,7 +127,7 @@ namespace GammaFour.DataModelGenerator.Server
         /// <summary>
         /// Gets the 'using' statements.
         /// </summary>
-        private static List<UsingDirectiveSyntax> UsingStatements
+        private List<UsingDirectiveSyntax> UsingStatements
         {
             get
             {
@@ -138,11 +138,19 @@ namespace GammaFour.DataModelGenerator.Server
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")));
+                if (!this.xmlSchemaDocument.IsVolatile)
+                {
+                    usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")));
+                }
+
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq.Expressions")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.Data")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")));
+                if (!this.xmlSchemaDocument.IsVolatile)
+                {
+                    usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")));
+                }
+
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Newtonsoft.Json")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Newtonsoft.Json.Converters")));
                 return usingStatements;
@@ -199,8 +207,12 @@ namespace GammaFour.DataModelGenerator.Server
             // The actual data model class.
             members = members.Add(new DataModelClass.Class(this.xmlSchemaDocument).Syntax);
 
-            // The DbContext class that provides access to the persistent store.
-            members = members.Add(new DbContextClass.Class(this.xmlSchemaDocument).Syntax);
+            // The non-volatile data model doesn't need the ORM infrastructure.
+            if (!this.xmlSchemaDocument.IsVolatile)
+            {
+                // The DbContext class that provides access to the persistent store.
+                members = members.Add(new DbContextClass.Class(this.xmlSchemaDocument).Syntax);
+            }
 
             // This is the collection of alphabetized fields.
             return members;
