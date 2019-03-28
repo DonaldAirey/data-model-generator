@@ -109,7 +109,8 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                        SyntaxFactory.Token(SyntaxKind.PartialKeyword)
                     });
             }
         }

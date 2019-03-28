@@ -337,6 +337,28 @@ namespace GammaFour.DataModelGenerator.Common
         };
 
         /// <summary>
+        /// Gets the system types.
+        /// </summary>
+        internal static HashSet<string> SystemTypes { get; } = new HashSet<string>
+        {
+            typeof(byte[]).FullName,
+            typeof(bool).FullName,
+            typeof(DateTime).FullName,
+            typeof(Guid).FullName,
+            typeof(decimal).FullName,
+            typeof(double).FullName,
+            typeof(float).FullName,
+            typeof(int).FullName,
+            typeof(long).FullName,
+            typeof(short).FullName,
+            typeof(string).FullName,
+            typeof(byte).FullName,
+            typeof(uint).FullName,
+            typeof(ulong).FullName,
+            typeof(ushort).FullName
+        };
+
+        /// <summary>
         /// Gets the Unique element.
         /// </summary>
         internal static XName Unique { get; } = XName.Get("unique", XmlSchemaDocument.XmlSchemaNamespace);

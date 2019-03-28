@@ -16,5 +16,5 @@ using System.Resources;
 [assembly: NeutralResourcesLanguage("en-US")]
 
 // Version information for this assembly.
-[assembly: AssemblyVersion("1.22.0.0")]
-[assembly: AssemblyFileVersion("1.22.0.0")]
+[assembly: AssemblyVersion("1.24.0.0")]
+[assembly: AssemblyFileVersion("1.24.0.0")]

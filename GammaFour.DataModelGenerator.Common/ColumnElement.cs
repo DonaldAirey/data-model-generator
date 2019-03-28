@@ -448,7 +448,7 @@ namespace GammaFour.DataModelGenerator.Common
                 {
                     this.columnType.FullName = dataTypeAttribute.Value;
                     this.columnType.IsArray = false;
-                    this.columnType.IsPredefined = false;
+                    this.columnType.IsPredefined = XmlSchemaDocument.SystemTypes.Contains(dataTypeAttribute.Value);
                     this.columnType.IsValueType = true;
                 }
                 else
