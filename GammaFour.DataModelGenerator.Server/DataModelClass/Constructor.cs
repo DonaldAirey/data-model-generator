@@ -85,7 +85,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                                 SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.IdentifierName($"{tableElement.Name}Set"))
+                                    SyntaxFactory.IdentifierName($"{tableElement.Name}Collection"))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
                                         SyntaxFactory.SeparatedList<ArgumentSyntax>(

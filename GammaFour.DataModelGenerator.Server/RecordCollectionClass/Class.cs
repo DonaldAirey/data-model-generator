@@ -43,7 +43,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             // Initialize the object.
             this.tableElement = tableElement;
             this.xmlSchemaDocument = this.tableElement.XmlSchemaDocument;
-            this.Name = tableElement.Name + "Set";
+            this.Name = tableElement.Name + "Collection";
             this.rowType = this.tableElement.Name;
 
             //    /// <summary>
@@ -239,7 +239,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             fields.Add(new PrimaryKeyFunctionField(this.tableElement.PrimaryKey));
             fields.Add(new CollectionField(this.tableElement));
             fields.Add(new DeletedCollectionField(this.tableElement));
-            fields.Add(new SyncRootField());
             fields.Add(new UndoStackField());
 
             // Add a field for each of the foreign indices.

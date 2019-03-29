@@ -36,7 +36,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             //        /// </summary>
             //        public BuyerSet Buyers { get; }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                    SyntaxFactory.IdentifierName($"{tableElement.Name}Set"),
+                    SyntaxFactory.IdentifierName($"{tableElement.Name}Collection"),
                     SyntaxFactory.Identifier(this.Name))
                 .WithAccessorList(RecordSetProperty.AccessorList)
                 .WithModifiers(RecordSetProperty.Modifiers)

@@ -29,7 +29,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         {
             // Initialize the object.
             this.foreignKeyElement = foreignKeyElement;
-            this.Name = $"default{this.foreignKeyElement.UniqueChildName}";
+            this.Name = $"Default{this.foreignKeyElement.UniqueChildName}";
 
             //        /// <summary>
             //        /// Default Buyers.

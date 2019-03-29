@@ -1,4 +1,4 @@
-// <copyright file="RecordSetField.cs" company="Gamma Four, Inc.">
+// <copyright file="RecordCollectionField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,7 +14,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
     /// <summary>
     /// Creates a field to hold the current contents of the record.
     /// </summary>
-    public class RecordSetField : SyntaxElement
+    public class RecordCollectionField : SyntaxElement
     {
         /// <summary>
         /// The unique constraint schema.
@@ -22,10 +22,10 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
         private TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RecordSetField"/> class.
+        /// Initializes a new instance of the <see cref="RecordCollectionField"/> class.
         /// </summary>
         /// <param name="tableElement">The column schema.</param>
-        public RecordSetField(TableElement tableElement)
+        public RecordCollectionField(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
@@ -37,7 +37,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
             //        private CountrySet countries;
             this.Syntax = SyntaxFactory.FieldDeclaration(
                     SyntaxFactory.VariableDeclaration(
-                        SyntaxFactory.IdentifierName($"{this.tableElement}Set"))
+                        SyntaxFactory.IdentifierName($"{this.tableElement}Collection"))
                     .WithVariables(
                         SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                             SyntaxFactory.VariableDeclarator(
@@ -45,8 +45,8 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
                 .WithModifiers(
                     SyntaxFactory.TokenList(
                         SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
-                .WithModifiers(RecordSetField.Modifiers)
-                .WithLeadingTrivia(RecordSetField.DocumentationComment);
+                .WithModifiers(RecordCollectionField.Modifiers)
+                .WithLeadingTrivia(RecordCollectionField.DocumentationComment);
         }
 
         /// <summary>

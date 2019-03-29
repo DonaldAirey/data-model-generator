@@ -125,7 +125,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                $"A {this.tableElement.Name} record.",
+                                                $" A {this.tableElement.Name} record.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -156,6 +156,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
+                members = this.CreatePrivateStaticReadonlyFields(members);
                 members = this.CreatePrivateStaticFields(members);
                 members = this.CreatePrivateInstanceFields(members);
                 members = this.CreateConstructors(members);
@@ -258,13 +259,10 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new CloneVersionField(this.tableElement));
             fields.Add(new CurrentDataField());
             fields.Add(new PreviousDataField());
             fields.Add(new OriginalDataField());
-            fields.Add(new RecordSetField(this.tableElement));
-            fields.Add(new SyncRootField());
-            fields.Add(new TransactionsField());
+            fields.Add(new RecordCollectionField(this.tableElement));
 
             // Create these fields for each child table.
             foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ChildKeys)
@@ -288,6 +286,27 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         /// <param name="members">The structure members.</param>
         /// <returns>The syntax for creating the internal instance properties.</returns>
         private SyntaxList<MemberDeclarationSyntax> CreatePrivateStaticFields(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            // This will create the private instance fields.
+            List<SyntaxElement> fields = new List<SyntaxElement>();
+            fields.Add(new CloneVersionField(this.tableElement));
+
+            // Alphabetize and add the fields as members of the class.
+            foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
+            }
+
+            // Return the new collection of members.
+            return members;
+        }
+
+        /// <summary>
+        /// Create the private instance fields.
+        /// </summary>
+        /// <param name="members">The structure members.</param>
+        /// <returns>The syntax for creating the internal instance properties.</returns>
+        private SyntaxList<MemberDeclarationSyntax> CreatePrivateStaticReadonlyFields(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
@@ -318,7 +337,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
             properties.Add(new LockProperty());
-            properties.Add(new RecordSetProperty(this.tableElement));
+            properties.Add(new RecordCollectionProperty(this.tableElement));
             properties.Add(new RecordStateProperty());
 
             // Create a navigation property to each of the parent collections.

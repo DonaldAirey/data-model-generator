@@ -144,7 +144,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new SyncRootField());
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(f => f.Name))

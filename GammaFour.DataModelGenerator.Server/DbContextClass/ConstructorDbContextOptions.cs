@@ -132,7 +132,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                $" Initializes a new instance of the <see cref=\"{this.xmlSchemaDocument.Name}\"/> class.",
+                                                $" Initializes a new instance of the <see cref=\"{this.xmlSchemaDocument.Name}Context\"/> class.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

@@ -83,27 +83,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         }
 
         /// <summary>
-        /// Gets the 'Set' accessor.
-        /// </summary>
-        private static AccessorDeclarationSyntax SetAccessor
-        {
-            get
-            {
-                // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            set
-                //            {
-                //            }
-                return SyntaxFactory.AccessorDeclaration(
-                        SyntaxKind.SetAccessorDeclaration,
-                        SyntaxFactory.Block(
-                            SyntaxFactory.List(statements)))
-                    .WithKeyword(SyntaxFactory.Token(SyntaxKind.SetKeyword));
-            }
-        }
-
-        /// <summary>
         /// Gets the list of accessors.
         /// </summary>
         private AccessorListSyntax AccessorList
@@ -114,8 +93,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                     SyntaxFactory.List(
                         new AccessorDeclarationSyntax[]
                         {
-                            this.GetAccessor,
-                            ParentProperty.SetAccessor
+                            this.GetAccessor
                         }));
             }
         }

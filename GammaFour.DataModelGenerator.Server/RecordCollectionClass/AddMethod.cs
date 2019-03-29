@@ -74,45 +74,33 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            if (buyer.Address1 == null)
+                //            if (buyer == null)
                 //            {
-                //                throw new ArgumentNullException(nameof(buyer.Address1));
+                //                throw new ArgumentNullException(nameof(buyer));
                 //            }
-                foreach (ColumnElement columnElement in this.tableElement.Columns)
-                {
-                    if (!columnElement.ColumnType.IsValueType && !columnElement.ColumnType.IsNullable && !columnElement.IsRowVersion)
-                    {
-                        statements.Add(
-                            SyntaxFactory.IfStatement(
-                                SyntaxFactory.BinaryExpression(
-                                    SyntaxKind.EqualsExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                                        SyntaxFactory.IdentifierName(columnElement.Name)),
-                                    SyntaxFactory.LiteralExpression(
-                                        SyntaxKind.NullLiteralExpression)),
-                                SyntaxFactory.Block(
-                                    SyntaxFactory.SingletonList<StatementSyntax>(
-                                        SyntaxFactory.ThrowStatement(
-                                            SyntaxFactory.ObjectCreationExpression(
-                                                SyntaxFactory.IdentifierName("ArgumentNullException"))
-                                            .WithArgumentList(
-                                                SyntaxFactory.ArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                        SyntaxFactory.Argument(
-                                                            SyntaxFactory.InvocationExpression(
-                                                                SyntaxFactory.IdentifierName("nameof"))
-                                                            .WithArgumentList(
-                                                                SyntaxFactory.ArgumentList(
-                                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                                        SyntaxFactory.Argument(
-                                                                            SyntaxFactory.MemberAccessExpression(
-                                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                                                                                SyntaxFactory.IdentifierName(columnElement.Name)))))))))))))));
-                    }
-                }
+                statements.Add(
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.EqualsExpression,
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression)),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ThrowStatement(
+                                    SyntaxFactory.ObjectCreationExpression(
+                                        SyntaxFactory.IdentifierName("ArgumentNullException"))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.InvocationExpression(
+                                                        SyntaxFactory.IdentifierName("nameof"))
+                                                    .WithArgumentList(
+                                                        SyntaxFactory.ArgumentList(
+                                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                                SyntaxFactory.Argument(
+                                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))))))))))))));
 
                 //            object key = this.primaryKeyFunction(buyer);
                 statements.Add(

@@ -279,6 +279,9 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 //        /// <summary>
                 //        /// Gets or sets Address1.
                 //        /// </summary>
+                string description = this.columnElement.ColumnType.FullName == "System.Boolean" ?
+                    $" Gets or sets a value indicating whether {this.Name}" :
+                    $" Gets or sets {this.Name}.";
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -301,7 +304,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                $" Gets or sets {this.Name}.",
+                                                description,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

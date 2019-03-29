@@ -1,4 +1,4 @@
-﻿// <copyright file="RecordSetProperty.cs" company="Gamma Four, Inc.">
+﻿// <copyright file="RecordCollectionProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,7 +14,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
     /// <summary>
     /// Creates a field that holds the column.
     /// </summary>
-    public class RecordSetProperty : SyntaxElement
+    public class RecordCollectionProperty : SyntaxElement
     {
         /// <summary>
         /// The unique constraint schema.
@@ -22,10 +22,10 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
         private TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RecordSetProperty"/> class.
+        /// Initializes a new instance of the <see cref="RecordCollectionProperty"/> class.
         /// </summary>
         /// <param name="tableElement">The column schema.</param>
-        public RecordSetProperty(TableElement tableElement)
+        public RecordCollectionProperty(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
@@ -36,11 +36,11 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
             //        /// </summary>
             //        public CountrySet Countries
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                    SyntaxFactory.IdentifierName($"{this.tableElement.Name}Set"),
+                    SyntaxFactory.IdentifierName($"{this.tableElement.Name}Collection"),
                     SyntaxFactory.Identifier(this.Name))
                 .WithAccessorList(this.AccessorList)
-                .WithModifiers(RecordSetProperty.Modifiers)
-                .WithAttributeLists(RecordSetProperty.Attributes)
+                .WithModifiers(RecordCollectionProperty.Modifiers)
+                .WithAttributeLists(RecordCollectionProperty.Attributes)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
 
@@ -162,7 +162,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                $" Gets or sets the set of <see cref=\"{this.tableElement.Name}\"/> records.",
+                                                $" Gets the set of <see cref=\"{this.tableElement.Name}\"/> records.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

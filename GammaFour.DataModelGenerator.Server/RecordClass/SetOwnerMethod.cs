@@ -282,7 +282,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase().ToPlural()))
                     .WithType(
-                        SyntaxFactory.IdentifierName($"{this.tableElement.Name}Set")));
+                        SyntaxFactory.IdentifierName($"{this.tableElement.Name}Collection")));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
@@ -406,7 +406,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.IdentifierName(this.tableElement.Name),
-                                        SyntaxFactory.IdentifierName($"default{foreignKeyElement.UniqueChildName}"))))));
+                                        SyntaxFactory.IdentifierName($"Default{foreignKeyElement.UniqueChildName}"))))));
                 }
 
                 return statements;

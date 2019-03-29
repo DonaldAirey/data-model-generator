@@ -143,7 +143,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.IdentifierName(this.tableElement.Name),
-                                        SyntaxFactory.IdentifierName($"default{foreignKeyElement.UniqueChildName}"))))));
+                                        SyntaxFactory.IdentifierName($"Default{foreignKeyElement.UniqueChildName}"))))));
                 }
 
                 // This is the syntax for the body of the constructor.

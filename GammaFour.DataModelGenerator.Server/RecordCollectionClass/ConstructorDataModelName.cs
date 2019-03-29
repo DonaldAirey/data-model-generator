@@ -32,7 +32,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             this.tableElement = tableElement;
 
             // This is the name of the constructor.
-            this.Name = $"{this.tableElement.Name}Set";
+            this.Name = $"{this.tableElement.Name}Collection";
 
             //        /// <summary>
             //        /// Initializes a new instance of the <see cref="ConfigurationSet"/> class.
@@ -139,7 +139,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
                                                 string.Format(
                                                     CultureInfo.InvariantCulture,
-                                                    " Initializes a new instance of the <see cref=\"{0}Set\"/> class.",
+                                                    " Initializes a new instance of the <see cref=\"{0}Collection\"/> class.",
                                                     this.tableElement.Name),
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
