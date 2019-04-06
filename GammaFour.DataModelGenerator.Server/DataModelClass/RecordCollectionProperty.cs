@@ -1,4 +1,4 @@
-// <copyright file="RecordSetProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="RecordCollectionProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,7 +14,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
     /// <summary>
     /// Creates a collection of readers (transactions) waiting for a read lock.
     /// </summary>
-    public class RecordSetProperty : SyntaxElement
+    public class RecordCollectionProperty : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -22,10 +22,10 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         private TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RecordSetProperty"/> class.
+        /// Initializes a new instance of the <see cref="RecordCollectionProperty"/> class.
         /// </summary>
         /// <param name="tableElement">The table schema.</param>
-        public RecordSetProperty(TableElement tableElement)
+        public RecordCollectionProperty(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
@@ -38,8 +38,8 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             this.Syntax = SyntaxFactory.PropertyDeclaration(
                     SyntaxFactory.IdentifierName($"{tableElement.Name}Collection"),
                     SyntaxFactory.Identifier(this.Name))
-                .WithAccessorList(RecordSetProperty.AccessorList)
-                .WithModifiers(RecordSetProperty.Modifiers)
+                .WithAccessorList(RecordCollectionProperty.AccessorList)
+                .WithModifiers(RecordCollectionProperty.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
 
@@ -54,7 +54,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                     SyntaxFactory.List(
                         new AccessorDeclarationSyntax[]
                         {
-                            RecordSetProperty.GetAccessor
+                            RecordCollectionProperty.GetAccessor
                         }));
             }
         }

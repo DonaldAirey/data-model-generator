@@ -269,7 +269,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             // Create a field for each of the tables.
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                properties.Add(new RecordSetProperty(tableElement));
+                properties.Add(new RecordCollectionProperty(tableElement));
             }
 
             // Alphabetize and add the fields as members of the class.

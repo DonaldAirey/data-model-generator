@@ -203,6 +203,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             fields.Add(new DbContextField(this.tableElement.XmlSchemaDocument));
             fields.Add(new DomainField(this.tableElement.XmlSchemaDocument));
             fields.Add(new LockTimeoutField());
+            fields.Add(new TransactionTimeoutField());
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
