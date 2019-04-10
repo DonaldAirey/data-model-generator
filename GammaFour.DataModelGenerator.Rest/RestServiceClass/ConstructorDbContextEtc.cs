@@ -167,7 +167,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.IdentifierName("timespan")))))))));
 
-                //            this.transactionTimeout = configuration.GetValue<TimeSpan>("Domain:TransactionTimeout", TimeSpan.MaxValue);
+                //            this.transactionTimeout = configuration.GetValue<TimeSpan>("Domain:TransactionTimeout", TimeSpan.FromSeconds(int.MaxValue));
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
@@ -194,14 +194,47 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.LiteralExpression(
                                                     SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal($"{this.tableElement.XmlSchemaDocument.Name}:TransactionTimeout"))),
+                                                    SyntaxFactory.Literal("Domain:TransactionTimeout"))),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.Argument(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.IdentifierName("TimeSpan"),
-                                                    SyntaxFactory.IdentifierName("MaxValue")))
+                                                SyntaxFactory.InvocationExpression(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.IdentifierName("TimeSpan"),
+                                                        SyntaxFactory.IdentifierName("FromSeconds")))
+                                                .WithArgumentList(
+                                                    SyntaxFactory.ArgumentList(
+                                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxFactory.PredefinedType(
+                                                                        SyntaxFactory.Token(SyntaxKind.IntKeyword)),
+                                                                    SyntaxFactory.IdentifierName("MaxValue")))))))
                                         }))))));
+
+                //            this.domainContext.Database.SetCommandTimeout(this.transactionTimeout);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("domainContext")),
+                                    SyntaxFactory.IdentifierName("Database")),
+                                SyntaxFactory.IdentifierName("SetCommandTimeout")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName("transactionTimeout"))))))));
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));

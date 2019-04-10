@@ -45,6 +45,10 @@ namespace GammaFour.DataModelGenerator.Common
             XAttribute isVolatileAttribute = this.Root.Element(XmlSchemaDocument.Element).Attribute(XmlSchemaDocument.IsVolatileAttribute);
             this.IsVolatile = isVolatileAttribute == null ? false : Convert.ToBoolean(isVolatileAttribute.Value, CultureInfo.InvariantCulture);
 
+            // This tells us whether the generated controllers should require authorization.
+            XAttribute isSecureAttribute = this.Root.Element(XmlSchemaDocument.Element).Attribute(XmlSchemaDocument.IsSecureAttribute);
+            this.IsSecure = isSecureAttribute == null ? false : Convert.ToBoolean(isSecureAttribute.Value, CultureInfo.InvariantCulture);
+
             // The data model description is found on the first element of the first complex type in the module.
             XElement complexTypeElement = rootElement.Element(XmlSchemaDocument.ComplexType);
             XElement choiceElement = complexTypeElement.Element(XmlSchemaDocument.Choice);
@@ -118,6 +122,11 @@ namespace GammaFour.DataModelGenerator.Common
         /// Gets a value indicating whether the data model supports a persistent Entity Framework store.
         /// </summary>
         public bool IsVolatile { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether the generated controllers require authentication.
+        /// </summary>
+        public bool IsSecure { get; private set; }
 
         /// <summary>
         /// Gets the name of the data model.
@@ -224,6 +233,11 @@ namespace GammaFour.DataModelGenerator.Common
         /// Gets the Field element.
         /// </summary>
         internal static XName Field { get; } = XName.Get("field", XmlSchemaDocument.XmlSchemaNamespace);
+
+        /// <summary>
+        /// Gets the IsSecure attribute.
+        /// </summary>
+        internal static XName IsSecureAttribute { get; } = XName.Get("IsSecure", XmlSchemaDocument.GammaFourDataNamespace);
 
         /// <summary>
         /// Gets the IsVolatile attribute.

@@ -46,45 +46,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
                 .WithModifiers(Class.Modifiers)
                 .WithBaseList(Class.BaseList)
-                .WithAttributeLists(Class.Attributes)
+                .WithAttributeLists(this.Attributes)
                 .WithMembers(this.Members)
                 .WithLeadingTrivia(this.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the data contract attribute syntax.
-        /// </summary>
-        private static SyntaxList<AttributeListSyntax> Attributes
-        {
-            get
-            {
-                // This collects all the attributes.
-                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
-
-                //        [Route("api/[controller]")]
-                attributes.Add(
-                    SyntaxFactory.AttributeList(
-                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
-                            SyntaxFactory.Attribute(
-                                SyntaxFactory.IdentifierName("Route"))
-                            .WithArgumentList(
-                                SyntaxFactory.AttributeArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
-                                        SyntaxFactory.AttributeArgument(
-                                            SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.StringLiteralExpression,
-                                                SyntaxFactory.Literal("api/[controller]")))))))));
-
-                //        [ApiController]
-                attributes.Add(
-                    SyntaxFactory.AttributeList(
-                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
-                            SyntaxFactory.Attribute(
-                                SyntaxFactory.IdentifierName("ApiController")))));
-
-                // The collection of attributes.
-                return SyntaxFactory.List<AttributeListSyntax>(attributes);
-            }
         }
 
         /// <summary>
@@ -118,6 +82,52 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                         SyntaxFactory.Token(SyntaxKind.PartialKeyword)
                     });
+            }
+        }
+
+        /// <summary>
+        /// Gets the data contract attribute syntax.
+        /// </summary>
+        private SyntaxList<AttributeListSyntax> Attributes
+        {
+            get
+            {
+                // This collects all the attributes.
+                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
+
+                //        [Route("api/[controller]")]
+                attributes.Add(
+                    SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                SyntaxFactory.IdentifierName("Route"))
+                            .WithArgumentList(
+                                SyntaxFactory.AttributeArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
+                                        SyntaxFactory.AttributeArgument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                SyntaxFactory.Literal("api/[controller]")))))))));
+
+                //        [ApiController]
+                attributes.Add(
+                    SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                SyntaxFactory.IdentifierName("ApiController")))));
+
+                //        [Authorize]
+                if (this.tableElement.XmlSchemaDocument.IsSecure)
+                {
+                    attributes.Add(
+                    SyntaxFactory.AttributeList(
+                    SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                        SyntaxFactory.Attribute(
+                            SyntaxFactory.IdentifierName("Authorize")))));
+                }
+
+                // The collection of attributes.
+                return SyntaxFactory.List<AttributeListSyntax>(attributes);
             }
         }
 
