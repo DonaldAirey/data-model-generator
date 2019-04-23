@@ -37,15 +37,15 @@ namespace GammaFour.DataModelGenerator.Common
             : base(xElement)
         {
             // Initialize the object.
-            this.Refer = this.Attribute(XmlSchemaDocument.Refer).Value;
+            this.Refer = this.Attribute(XmlSchemaDocument.ReferName).Value;
 
             // Parse the cascading delete rule out of the specification.
-            XAttribute deleteRuleAttribute = xElement.Attribute(XmlSchemaDocument.DeleteRule);
+            XAttribute deleteRuleAttribute = xElement.Attribute(XmlSchemaDocument.DeleteRuleName);
             this.DeleteRule = deleteRuleAttribute == null ?
                 CascadeRule.Cascade : (CascadeRule)Enum.Parse(typeof(CascadeRule), deleteRuleAttribute.Value);
 
             // Parse the cascading update rule out of the specification.
-            XAttribute updateRuleAttribute = xElement.Attribute(XmlSchemaDocument.UpdateRule);
+            XAttribute updateRuleAttribute = xElement.Attribute(XmlSchemaDocument.UpdateRuleName);
             this.UpdateRule = updateRuleAttribute == null ?
                 CascadeRule.None : (CascadeRule)Enum.Parse(typeof(CascadeRule), updateRuleAttribute.Value);
         }

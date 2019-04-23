@@ -42,7 +42,7 @@ namespace GammaFour.DataModelGenerator.Common
             : base(xElement)
         {
             // Pull the column name out of the XPath.
-            Match match = ColumnReferenceElement.xPath.Match(this.Attribute(XmlSchemaDocument.XPath).Value);
+            Match match = ColumnReferenceElement.xPath.Match(this.Attribute(XmlSchemaDocument.XPathName).Value);
             this.name = match.Groups[match.Groups.Count - 1].Value;
         }
 

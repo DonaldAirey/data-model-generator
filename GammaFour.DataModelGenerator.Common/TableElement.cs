@@ -65,7 +65,7 @@ namespace GammaFour.DataModelGenerator.Common
             this.Name = this.Attribute(XmlSchemaDocument.ObjectName).Value;
 
             // The verbs tell us what actions to support in the controller when it's built.
-            XAttribute verbAttribute = this.Attribute(XmlSchemaDocument.Verbs);
+            XAttribute verbAttribute = this.Attribute(XmlSchemaDocument.VerbsName);
             string verbStrings = verbAttribute == null ? string.Empty : verbAttribute.Value;
             foreach (string verbString in verbStrings.Split(','))
             {
@@ -76,19 +76,19 @@ namespace GammaFour.DataModelGenerator.Common
             }
 
             // This will navigate to the sequence of columns.
-            XElement complexType = this.Element(XmlSchemaDocument.ComplexType);
-            XElement sequence = complexType.Element(XmlSchemaDocument.Sequence);
+            XElement complexType = this.Element(XmlSchemaDocument.ComplexTypeName);
+            XElement sequence = complexType.Element(XmlSchemaDocument.SequenceName);
 
             // Every table has an implicit row version column to track changes.
             sequence.Add(
                 new XElement(
-                    XmlSchemaDocument.Element,
+                    XmlSchemaDocument.ElementName,
                     new XAttribute("name", "RowVersion"),
-                    new XAttribute(XName.Get("IsRowVersion", "urn:schemas-gamma-four-com:xml-gfdata"), "true"),
+                    new XAttribute(XmlSchemaDocument.IsRowVersionName, "true"),
                     new XAttribute("type", "xs:base64Binary")));
 
             // This will replace each of the undecorated elements with decorated ones.
-            List<XElement> columnElements = sequence.Elements(XmlSchemaDocument.Element).ToList();
+            List<XElement> columnElements = sequence.Elements(XmlSchemaDocument.ElementName).ToList();
             foreach (XElement columnElement in columnElements)
             {
                 sequence.Add(new ColumnElement(columnElement));
@@ -105,9 +105,9 @@ namespace GammaFour.DataModelGenerator.Common
             {
                 if (this.columnElements == null)
                 {
-                    XElement complexType = this.Element(XmlSchemaDocument.ComplexType);
-                    XElement sequence = complexType.Element(XmlSchemaDocument.Sequence);
-                    this.columnElements = sequence.Elements(XmlSchemaDocument.Element).Cast<ColumnElement>().ToList();
+                    XElement complexType = this.Element(XmlSchemaDocument.ComplexTypeName);
+                    XElement sequence = complexType.Element(XmlSchemaDocument.SequenceName);
+                    this.columnElements = sequence.Elements(XmlSchemaDocument.ElementName).Cast<ColumnElement>().ToList();
                 }
 
                 return this.columnElements;
@@ -149,9 +149,9 @@ namespace GammaFour.DataModelGenerator.Common
         }
 
         /// <summary>
-        /// Gets a value indicating whether gets an indication whether the table is written to a persistent store.
+        /// Gets a value indicating whether the table supports write-through operations to a persistent store.
         /// </summary>
-        public bool IsPersistent { get; private set; } = true;
+        public bool IsVolatile { get; private set; } = true;
 
         /// <summary>
         /// Gets the name of the table.

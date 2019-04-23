@@ -35,27 +35,27 @@ namespace GammaFour.DataModelGenerator.Common
             : this(XmlReader.Create(new StringReader(fileContents)))
         {
             // The root element of the schema definition.
-            XElement rootElement = this.Root.Element(XmlSchemaDocument.Element);
+            XElement rootElement = this.Root.Element(XmlSchemaDocument.ElementName);
 
             // Extract the name and the target namespace from the schema.
-            this.Name = this.Root.Element(XmlSchemaDocument.Element).Attribute("name").Value;
+            this.Name = this.Root.Element(XmlSchemaDocument.ElementName).Attribute("name").Value;
             this.TargetNamespace = this.Root.Attribute("targetNamespace").Value;
 
             // This tells us whether to provide an interface to Entity Framework or not.
-            XAttribute isVolatileAttribute = this.Root.Element(XmlSchemaDocument.Element).Attribute(XmlSchemaDocument.IsVolatileAttribute);
+            XAttribute isVolatileAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.IsVolatileName);
             this.IsVolatile = isVolatileAttribute == null ? false : Convert.ToBoolean(isVolatileAttribute.Value, CultureInfo.InvariantCulture);
 
             // This tells us whether the generated controllers should require authorization.
-            XAttribute isSecureAttribute = this.Root.Element(XmlSchemaDocument.Element).Attribute(XmlSchemaDocument.IsSecureAttribute);
+            XAttribute isSecureAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.IsSecureName);
             this.IsSecure = isSecureAttribute == null ? false : Convert.ToBoolean(isSecureAttribute.Value, CultureInfo.InvariantCulture);
 
             // The data model description is found on the first element of the first complex type in the module.
-            XElement complexTypeElement = rootElement.Element(XmlSchemaDocument.ComplexType);
-            XElement choiceElement = complexTypeElement.Element(XmlSchemaDocument.Choice);
+            XElement complexTypeElement = rootElement.Element(XmlSchemaDocument.ComplexTypeName);
+            XElement choiceElement = complexTypeElement.Element(XmlSchemaDocument.ChoiceName);
 
             // We're going to remove all the generic XElements from the section of the schema where the tables live and replace them with decorated
             // ones (that is, decorated with links to constraints, foreign keys, etc.)
-            List<XElement> tables = choiceElement.Elements(XmlSchemaDocument.Element).ToList();
+            List<XElement> tables = choiceElement.Elements(XmlSchemaDocument.ElementName).ToList();
             foreach (XElement xElement in tables)
             {
                 // This create a description of the table.
@@ -64,7 +64,7 @@ namespace GammaFour.DataModelGenerator.Common
             }
 
             // This will remove all the undecorated unique keys and replace them with decorated ones.
-            List<XElement> uniqueElements = rootElement.Elements(XmlSchemaDocument.Unique).ToList();
+            List<XElement> uniqueElements = rootElement.Elements(XmlSchemaDocument.UniqueName).ToList();
             foreach (XElement xElement in uniqueElements)
             {
                 // This creates the unique constraints.
@@ -73,7 +73,7 @@ namespace GammaFour.DataModelGenerator.Common
             }
 
             // From the data model description, create a description of the foreign key constraints and the relation between the tables.
-            List<XElement> keyRefElements = rootElement.Elements(XmlSchemaDocument.Keyref).ToList();
+            List<XElement> keyRefElements = rootElement.Elements(XmlSchemaDocument.KeyrefName).ToList();
             foreach (XElement xElement in keyRefElements)
             {
                 // This will create the foreign key constraints.
@@ -107,14 +107,184 @@ namespace GammaFour.DataModelGenerator.Common
         }
 
         /// <summary>
+        /// Gets the AcceptRejectRule attribute.
+        /// </summary>
+        public static XName AcceptRejectRuleName { get; } = XName.Get("acceptRejectRule", XmlSchemaDocument.GammaFourDataNamespace);
+
+        /// <summary>
+        /// Gets the  indication that a custom type is specified.
+        /// </summary>
+        public static XName AnyTypeName { get; } = XName.Get("anyType", XmlSchemaDocument.XmlSchemaNamespace);
+
+        /// <summary>
+        /// Gets the AutoIncrement attribute.
+        /// </summary>
+        public static XName AutoIncrementName { get; } = XName.Get("autoIncrement", XmlSchemaDocument.GammaFourDataNamespace);
+
+        /// <summary>
+        /// Gets the AutoIncrementSeed attribute.
+        /// </summary>
+        public static XName AutoIncrementSeedName { get; } = XName.Get("autoIncrementSeed", XmlSchemaDocument.GammaFourDataNamespace);
+
+        /// <summary>
+        /// Gets the AutoIncrementStep attribute.
+        /// </summary>
+        public static XName AutoIncrementStepName { get; } = XName.Get("autoIncrementStep", XmlSchemaDocument.GammaFourDataNamespace);
+
+        /// <summary>
+        /// Gets the Base attribute.
+        /// </summary>
+        public static XName BaseName { get; } = XName.Get("base", string.Empty);
+
+        /// <summary>
+        /// Gets the Choice element.
+        /// </summary>
+        public static XName ChoiceName { get; } = XName.Get("choice", XmlSchemaDocument.XmlSchemaNamespace);
+
+        /// <summary>
+        /// Gets the ComplexType element.
+        /// </summary>
+        public static XName ComplexTypeName { get; } = XName.Get("complexType", XmlSchemaDocument.XmlSchemaNamespace);
+
+        /// <summary>
+        /// Gets the ConstraintOnly attribute.
+        /// </summary>
+        public static XName ConstraintOnlyName { get; } = XName.Get("constraintOnly", XmlSchemaDocument.GammaFourDataNamespace);
+
+        /// <summary>
+        /// Gets the DataType attribute.
+        /// </summary>
+        public static XName DataTypeName { get; } = XName.Get("dataType", XmlSchemaDocument.GammaFourDataNamespace);
+
+        /// <summary>
+        /// Gets the Default attribute.
+        /// </summary>
+        public static XName DefaultName { get; } = XName.Get("default", string.Empty);
+
+        /// <summary>
+        /// Gets the DeleteRule attribute.
+        /// </summary>
+        public static XName DeleteRuleName { get; } = XName.Get("deleteRule", XmlSchemaDocument.GammaFourDataNamespace);
+
+        /// <summary>
+        /// Gets the Element element.
+        /// </summary>
+        public static XName ElementName { get; } = XName.Get("element", XmlSchemaDocument.XmlSchemaNamespace);
+
+        /// <summary>
+        /// Gets the Field element.
+        /// </summary>
+        public static XName FieldName { get; } = XName.Get("field", XmlSchemaDocument.XmlSchemaNamespace);
+
+        /// <summary>
+        /// Gets the IsSecure attribute.
+        /// </summary>
+        public static XName IsSecureName { get; } = XName.Get("isSecure", XmlSchemaDocument.GammaFourDataNamespace);
+
+        /// <summary>
+        /// Gets the IsVolatile attribute.
+        /// </summary>
+        public static XName IsVolatileName { get; } = XName.Get("isVolatile", XmlSchemaDocument.GammaFourDataNamespace);
+
+        /// <summary>
+        /// Gets the IsPrimaryKey attribute.
+        /// </summary>
+        public static XName IsPrimaryKeyName { get; } = XName.Get("isPrimaryKey", XmlSchemaDocument.GammaFourDataNamespace);
+
+        /// <summary>
+        /// Gets the IsRowVersion attribute.
+        /// </summary>
+        public static XName IsRowVersionName { get; } = XName.Get("isRowVersion", XmlSchemaDocument.GammaFourDataNamespace);
+
+        /// <summary>
+        /// Gets the Keyref element.
+        /// </summary>
+        public static XName KeyrefName { get; } = XName.Get("keyref", XmlSchemaDocument.XmlSchemaNamespace);
+
+        /// <summary>
+        /// Gets the MaxLength element.
+        /// </summary>
+        public static XName MaxLengthName { get; } = XName.Get("maxLength", XmlSchemaDocument.XmlSchemaNamespace);
+
+        /// <summary>
+        /// Gets the MaxOccurs attribute.
+        /// </summary>
+        public static XName MaxOccursName { get; } = XName.Get("maxOccurs", XmlSchemaDocument.XmlSchemaNamespace);
+
+        /// <summary>
+        /// Gets the MinOccurs attribute.
+        /// </summary>
+        public static XName MinOccursName { get; } = XName.Get("minOccurs", string.Empty);
+
+        /// <summary>
+        /// Gets the Name attribute.
+        /// </summary>
+        public static XName ObjectName { get; } = XName.Get("name", string.Empty);
+
+        /// <summary>
+        /// Gets the Refer attribute.
+        /// </summary>
+        public static XName ReferName { get; } = XName.Get("refer", string.Empty);
+
+        /// <summary>
+        /// Gets the Restriction element.
+        /// </summary>
+        public static XName RestrictionName { get; } = XName.Get("restriction", XmlSchemaDocument.XmlSchemaNamespace);
+
+        /// <summary>
+        /// Gets the Selector element.
+        /// </summary>
+        public static XName SelectorName { get; } = XName.Get("selector", XmlSchemaDocument.XmlSchemaNamespace);
+
+        /// <summary>
+        /// Gets the Sequence element.
+        /// </summary>
+        public static XName SequenceName { get; } = XName.Get("sequence", XmlSchemaDocument.XmlSchemaNamespace);
+
+        /// <summary>
+        /// Gets the SimpleType element.
+        /// </summary>
+        public static XName SimpleTypeName { get; } = XName.Get("simpleType", XmlSchemaDocument.XmlSchemaNamespace);
+
+        /// <summary>
+        /// Gets the Type attribute.
+        /// </summary>
+        public static XName TypeName { get; } = XName.Get("type", string.Empty);
+
+        /// <summary>
+        /// Gets the Unique element.
+        /// </summary>
+        public static XName UniqueName { get; } = XName.Get("unique", XmlSchemaDocument.XmlSchemaNamespace);
+
+        /// <summary>
+        /// Gets the UpdateRule attribute.
+        /// </summary>
+        public static XName UpdateRuleName { get; } = XName.Get("updateRule", XmlSchemaDocument.GammaFourDataNamespace);
+
+        /// <summary>
+        /// Gets the Value attribute.
+        /// </summary>
+        public static XName ValueName { get; } = XName.Get("value", string.Empty);
+
+        /// <summary>
+        /// Gets the Verbs attribute.
+        /// </summary>
+        public static XName VerbsName { get; } = XName.Get("verbs", XmlSchemaDocument.GammaFourDataNamespace);
+
+        /// <summary>
+        /// Gets the XPath attribute.
+        /// </summary>
+        public static XName XPathName { get; } = XName.Get("xpath", string.Empty);
+
+        /// <summary>
         /// Gets the constraint elements.
         /// </summary>
         public List<ForeignKeyElement> ForeignKeys
         {
             get
             {
-                XElement rootElement = this.Root.Element(XmlSchemaDocument.Element);
-                return rootElement.Elements(XmlSchemaDocument.Keyref).Cast<ForeignKeyElement>().ToList();
+                XElement rootElement = this.Root.Element(XmlSchemaDocument.ElementName);
+                return rootElement.Elements(XmlSchemaDocument.KeyrefName).Cast<ForeignKeyElement>().ToList();
             }
         }
 
@@ -140,10 +310,10 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                XElement dataModelElement = this.Root.Element(XmlSchemaDocument.Element);
-                XElement complexTypeElement = dataModelElement.Element(XmlSchemaDocument.ComplexType);
-                XElement choiceElement = complexTypeElement.Element(XmlSchemaDocument.Choice);
-                return choiceElement.Elements(XmlSchemaDocument.Element).Cast<TableElement>().ToList();
+                XElement dataModelElement = this.Root.Element(XmlSchemaDocument.ElementName);
+                XElement complexTypeElement = dataModelElement.Element(XmlSchemaDocument.ComplexTypeName);
+                XElement choiceElement = complexTypeElement.Element(XmlSchemaDocument.ChoiceName);
+                return choiceElement.Elements(XmlSchemaDocument.ElementName).Cast<TableElement>().ToList();
             }
         }
 
@@ -159,125 +329,10 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                XElement rootElement = this.Root.Element(XmlSchemaDocument.Element);
-                return rootElement.Elements(XmlSchemaDocument.Unique).Cast<UniqueKeyElement>().ToList();
+                XElement rootElement = this.Root.Element(XmlSchemaDocument.ElementName);
+                return rootElement.Elements(XmlSchemaDocument.UniqueName).Cast<UniqueKeyElement>().ToList();
             }
         }
-
-        /// <summary>
-        /// Gets the AcceptRejectRule attribute.
-        /// </summary>
-        internal static XName AcceptRejectRule { get; } = XName.Get("AcceptRejectRule", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
-        /// Gets the  indication that a custom type is specified.
-        /// </summary>
-        internal static XName AnyType { get; } = XName.Get("anyType", XmlSchemaDocument.XmlSchemaNamespace);
-
-        /// <summary>
-        /// Gets the AutoIncrement attribute.
-        /// </summary>
-        internal static XName AutoIncrement { get; } = XName.Get("AutoIncrement", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
-        /// Gets the AutoIncrementSeed attribute.
-        /// </summary>
-        internal static XName AutoIncrementSeed { get; } = XName.Get("AutoIncrementSeed", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
-        /// Gets the AutoIncrementStep attribute.
-        /// </summary>
-        internal static XName AutoIncrementStep { get; } = XName.Get("AutoIncrementStep", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
-        /// Gets the Base attribute.
-        /// </summary>
-        internal static XName Base { get; } = XName.Get("base", string.Empty);
-
-        /// <summary>
-        /// Gets the Choice element.
-        /// </summary>
-        internal static XName Choice { get; } = XName.Get("choice", XmlSchemaDocument.XmlSchemaNamespace);
-
-        /// <summary>
-        /// Gets the ComplexType element.
-        /// </summary>
-        internal static XName ComplexType { get; } = XName.Get("complexType", XmlSchemaDocument.XmlSchemaNamespace);
-
-        /// <summary>
-        /// Gets the ConstraintOnly attribute.
-        /// </summary>
-        internal static XName ConstraintOnly { get; } = XName.Get("ConstraintOnly", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
-        /// Gets the DataType attribute.
-        /// </summary>
-        internal static XName DataType { get; } = XName.Get("DataType", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
-        /// Gets the Default attribute.
-        /// </summary>
-        internal static XName Default { get; } = XName.Get("default", string.Empty);
-
-        /// <summary>
-        /// Gets the DeleteRule attribute.
-        /// </summary>
-        internal static XName DeleteRule { get; } = XName.Get("DeleteRule", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
-        /// Gets the Element element.
-        /// </summary>
-        internal static new XName Element { get; } = XName.Get("element", XmlSchemaDocument.XmlSchemaNamespace);
-
-        /// <summary>
-        /// Gets the Field element.
-        /// </summary>
-        internal static XName Field { get; } = XName.Get("field", XmlSchemaDocument.XmlSchemaNamespace);
-
-        /// <summary>
-        /// Gets the IsSecure attribute.
-        /// </summary>
-        internal static XName IsSecureAttribute { get; } = XName.Get("IsSecure", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
-        /// Gets the IsVolatile attribute.
-        /// </summary>
-        internal static XName IsVolatileAttribute { get; } = XName.Get("IsVolatile", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
-        /// Gets the IsPrimaryKey attribute.
-        /// </summary>
-        internal static XName IsPrimaryKey { get; } = XName.Get("IsPrimaryKey", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
-        /// Gets the IsRowVersion attribute.
-        /// </summary>
-        internal static XName IsRowVersion { get; } = XName.Get("IsRowVersion", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
-        /// Gets the Keyref element.
-        /// </summary>
-        internal static XName Keyref { get; } = XName.Get("keyref", XmlSchemaDocument.XmlSchemaNamespace);
-
-        /// <summary>
-        /// Gets the MaxLength element.
-        /// </summary>
-        internal static XName MaxLength { get; } = XName.Get("maxLength", XmlSchemaDocument.XmlSchemaNamespace);
-
-        /// <summary>
-        /// Gets the MaxOccurs attribute.
-        /// </summary>
-        internal static XName MaxOccurs { get; } = XName.Get("maxOccurs", XmlSchemaDocument.XmlSchemaNamespace);
-
-        /// <summary>
-        /// Gets the MinOccurs attribute.
-        /// </summary>
-        internal static XName MinOccurs { get; } = XName.Get("minOccurs", string.Empty);
-
-        /// <summary>
-        /// Gets the Name attribute.
-        /// </summary>
-        internal static XName ObjectName { get; } = XName.Get("name", string.Empty);
 
         /// <summary>
         /// Gets the mapping of the XName to the corresponding nullable CLR type.
@@ -298,36 +353,6 @@ namespace GammaFour.DataModelGenerator.Common
             { XName.Get("unsignedLong", XmlSchemaNamespace), typeof(ulong?) },
             { XName.Get("unsignedShort", XmlSchemaNamespace), typeof(ushort?) }
         };
-
-        /// <summary>
-        /// Gets the Refer attribute.
-        /// </summary>
-        internal static XName Refer { get; } = XName.Get("refer", string.Empty);
-
-        /// <summary>
-        /// Gets the Restriction element.
-        /// </summary>
-        internal static XName Restriction { get; } = XName.Get("restriction", XmlSchemaDocument.XmlSchemaNamespace);
-
-        /// <summary>
-        /// Gets the Selector element.
-        /// </summary>
-        internal static XName Selector { get; } = XName.Get("selector", XmlSchemaDocument.XmlSchemaNamespace);
-
-        /// <summary>
-        /// Gets the Sequence element.
-        /// </summary>
-        internal static XName Sequence { get; } = XName.Get("sequence", XmlSchemaDocument.XmlSchemaNamespace);
-
-        /// <summary>
-        /// Gets the SimpleType element.
-        /// </summary>
-        internal static XName SimpleType { get; } = XName.Get("simpleType", XmlSchemaDocument.XmlSchemaNamespace);
-
-        /// <summary>
-        /// Gets the Type attribute.
-        /// </summary>
-        internal static XName Type { get; } = XName.Get("type", string.Empty);
 
         /// <summary>
         /// Gets the mapping of the XName to the corresponding CLR type.
@@ -371,30 +396,5 @@ namespace GammaFour.DataModelGenerator.Common
             typeof(ulong).FullName,
             typeof(ushort).FullName
         };
-
-        /// <summary>
-        /// Gets the Unique element.
-        /// </summary>
-        internal static XName Unique { get; } = XName.Get("unique", XmlSchemaDocument.XmlSchemaNamespace);
-
-        /// <summary>
-        /// Gets the UpdateRule attribute.
-        /// </summary>
-        internal static XName UpdateRule { get; } = XName.Get("UpdateRule", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
-        /// Gets the Value attribute.
-        /// </summary>
-        internal static XName Value { get; } = XName.Get("value", string.Empty);
-
-        /// <summary>
-        /// Gets the Verbs attribute.
-        /// </summary>
-        internal static XName Verbs { get; } = XName.Get("verbs", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
-        /// Gets the XPath attribute.
-        /// </summary>
-        internal static XName XPath { get; } = XName.Get("xpath", string.Empty);
     }
 }

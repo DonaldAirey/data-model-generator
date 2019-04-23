@@ -24,7 +24,7 @@ namespace GammaFour.DataModelGenerator.Common
             : base(uniqueElement)
         {
             // Parse out the primary key attribute.
-            XAttribute isPrimaryKeyAttribute = this.Attribute(XmlSchemaDocument.IsPrimaryKey);
+            XAttribute isPrimaryKeyAttribute = this.Attribute(XmlSchemaDocument.IsPrimaryKeyName);
             this.isPrimaryKey = isPrimaryKeyAttribute == null ? false : bool.Parse(isPrimaryKeyAttribute.Value);
         }
 

@@ -51,7 +51,7 @@ namespace GammaFour.DataModelGenerator.Common
             this.Name = this.Attribute(XmlSchemaDocument.ObjectName).Value;
 
             // Replace the undecorated columns with decorated ones.
-            List<XElement> columns = this.Elements(XmlSchemaDocument.Field).ToList();
+            List<XElement> columns = this.Elements(XmlSchemaDocument.FieldName).ToList();
             foreach (XElement column in columns)
             {
                 this.Add(new ColumnReferenceElement(column));
@@ -68,7 +68,7 @@ namespace GammaFour.DataModelGenerator.Common
             {
                 if (this.columns == null)
                 {
-                    this.columns = this.Elements(XmlSchemaDocument.Field).Cast<ColumnReferenceElement>().ToList();
+                    this.columns = this.Elements(XmlSchemaDocument.FieldName).Cast<ColumnReferenceElement>().ToList();
                 }
 
                 return this.columns;
@@ -141,8 +141,8 @@ namespace GammaFour.DataModelGenerator.Common
                     // The location of the table is kept in an XPath specification which addresses the target document.  Since we're not actually parsing
                     // a document with this schema, then the interpetation gets a little fuzzy.  We can't actually scan the source document with this
                     // specification, but we can pull it apart to get the table name for which this constraint is intended.
-                    XElement selectorElement = this.Element(XmlSchemaDocument.Selector);
-                    XAttribute xPathAttribute = selectorElement.Attribute(XmlSchemaDocument.XPath);
+                    XElement selectorElement = this.Element(XmlSchemaDocument.SelectorName);
+                    XAttribute xPathAttribute = selectorElement.Attribute(XmlSchemaDocument.XPathName);
                     Match match = ConstraintElement.xPath.Match(xPathAttribute.Value);
                     if (!match.Success)
                     {
