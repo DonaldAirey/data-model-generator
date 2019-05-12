@@ -340,7 +340,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                                     SyntaxFactory.MemberAccessExpression(
                                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                                         SyntaxFactory.ThisExpression(),
-                                                                        SyntaxFactory.IdentifierName("domainContext")),
+                                                                        SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context")),
                                                                     SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))))
                                         })))));
                 }

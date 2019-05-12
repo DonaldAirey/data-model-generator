@@ -937,20 +937,20 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.NullLiteralExpression)),
                         SyntaxFactory.Block(PostMethod.GetFindRecord(uniqueKeyElement))));
-
-                //                if (country != null)
-                //                {
-                //                    <LockRecord>
-                //                }
-                statements.Add(
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.NotEqualsExpression,
-                            SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.NullLiteralExpression)),
-                        SyntaxFactory.Block(PostMethod.GetLockRecord(uniqueKeyElement.Table, columnReferenceElement))));
             }
+
+            //                if (country != null)
+            //                {
+            //                    <LockRecord>
+            //                }
+            statements.Add(
+                SyntaxFactory.IfStatement(
+                    SyntaxFactory.BinaryExpression(
+                        SyntaxKind.NotEqualsExpression,
+                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                        SyntaxFactory.LiteralExpression(
+                            SyntaxKind.NullLiteralExpression)),
+                    SyntaxFactory.Block(PostMethod.GetLockRecord(tableElement, columnReferenceElement))));
 
             // This is the complete block.
             return SyntaxFactory.List(statements);

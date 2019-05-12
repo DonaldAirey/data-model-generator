@@ -112,7 +112,7 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                if (this.isNullable.HasValue)
+                if (!this.isNullable.HasValue)
                 {
                     // If all the columns of a given constraint can contain null, then the constraint is nullable.
                     this.isNullable = (from cre in this.Columns

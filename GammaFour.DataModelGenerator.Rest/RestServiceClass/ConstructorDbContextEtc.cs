@@ -224,7 +224,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("domainContext")),
+                                        SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.Name.ToCamelCase()}Context")),
                                     SyntaxFactory.IdentifierName("Database")),
                                 SyntaxFactory.IdentifierName("SetCommandTimeout")))
                         .WithArgumentList(

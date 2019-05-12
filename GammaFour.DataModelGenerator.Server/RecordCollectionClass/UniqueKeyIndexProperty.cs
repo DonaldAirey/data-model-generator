@@ -149,10 +149,9 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         {
             get
             {
-                // = new UniqueKeyIndex<Buyer>("BuyerExternalId0Key").HasIndex(b => b.ExternalId0);
-                // = new UniqueKeyIndex<Province>("ProvinceExternalKey").HasIndex(p => ValueTuple.Create(p.Name, p.CountryCode));
-                return SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.InvocationExpression(
+                // .HasIndex(b => b.ExternalId0)
+                // .HasIndex(p => ValueTuple.Create(p.Name, p.CountryCode))
+                InvocationExpressionSyntax invocationExpressionSyntax = SyntaxFactory.InvocationExpression(
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.ObjectCreationExpression(
@@ -173,7 +172,26 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList(
                             SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                SyntaxFactory.Argument(UniqueKeyExpression.GetUniqueKey(this.uniqueKeyElement))))));
+                                SyntaxFactory.Argument(UniqueKeyExpression.GetUniqueKey(this.uniqueKeyElement)))));
+
+                // This allows for unique indices that also allow nulls.
+                // [TODO] make this work on compound nullable indices.
+                if (this.uniqueKeyElement.IsNullable && this.uniqueKeyElement.Columns.Count == 1)
+                {
+                    // .HasFilter(s => s.Figi != null)
+                    invocationExpressionSyntax = SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            invocationExpressionSyntax,
+                            SyntaxFactory.IdentifierName("HasFilter")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(NullableKeyFilterExpression.GetNullableKeyFilter(this.uniqueKeyElement)))));
+                }
+
+                // = new UniqueKeyIndex<Security>("SecurityFigiKey").HasIndex(s => s.Figi).HasFilter(s => s.Figi != null);
+                return SyntaxFactory.EqualsValueClause(invocationExpressionSyntax);
             }
         }
     }
