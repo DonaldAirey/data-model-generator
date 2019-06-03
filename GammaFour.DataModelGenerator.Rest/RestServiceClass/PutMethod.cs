@@ -880,7 +880,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 foreach (ColumnElement columnElement in this.uniqueKeyElement.Table.Columns)
                 {
                     // Don't attempt to insert these kinds of properties.
-                    if (columnElement.IsRowVersion || columnElement.IsAutoIncrement)
+                    if (columnElement.IsRowVersion || columnElement.IsAutoIncrement || columnElement.IsPrimaryKey)
                     {
                         continue;
                     }

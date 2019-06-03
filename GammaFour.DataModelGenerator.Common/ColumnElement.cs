@@ -177,7 +177,7 @@ namespace GammaFour.DataModelGenerator.Common
             get
             {
                 // This will examine the primary key to see if the column is part of the key.
-                if (this.isPrimaryKey.HasValue)
+                if (!this.isPrimaryKey.HasValue)
                 {
                     this.isPrimaryKey = (from ce in this.Table.PrimaryKey.Columns
                                          where ce.Column == this
