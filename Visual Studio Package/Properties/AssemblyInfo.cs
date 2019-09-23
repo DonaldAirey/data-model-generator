@@ -1,5 +1,5 @@
 ﻿// <copyright file="AssemblyInfo.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 using System.Reflection;
@@ -10,11 +10,11 @@ using System.Resources;
 [assembly: AssemblyDescription("Visual Studio Package generation for the Resource Generator.")]
 [assembly: AssemblyCompany("Gamma Four")]
 [assembly: AssemblyProduct("Resource Generator")]
-[assembly: AssemblyCopyright("Copyright © 2018, Gamma Four, Inc.  All rights reserved.")]
+[assembly: AssemblyCopyright("Copyright © 2019, Gamma Four, Inc.  All rights reserved.")]
 
 // Describes the default language used for the resources.
 [assembly: NeutralResourcesLanguage("en-US")]
 
 // Version information for this assembly.
-[assembly: AssemblyVersion("1.35.0.0")]
-[assembly: AssemblyFileVersion("1.35.0.0")]
+[assembly: AssemblyVersion("1.36.0.0")]
+[assembly: AssemblyFileVersion("1.36.0.0")]

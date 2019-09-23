@@ -1,8 +1,8 @@
-// <copyright file="SequenceProperty.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+// <copyright file="RecordStateProperty.cs" company="Gamma Four, Inc.">
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
+namespace GammaFour.DataModelGenerator.Client.RecordClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,28 +12,29 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a collection of readers (transactions) waiting for a read lock.
+    /// Creates a property that describes the state.
     /// </summary>
-    public class SequenceProperty : SyntaxElement
+    public class RecordStateProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SequenceProperty"/> class.
+        /// Initializes a new instance of the <see cref="RecordStateProperty"/> class.
         /// </summary>
-        public SequenceProperty()
+        public RecordStateProperty()
         {
             // Initialize the object.
-            this.Name = "Sequence";
+            this.Name = "RecordState";
 
             //        /// <summary>
-            //        /// Gets or sets the sequence number.
+            //        /// Gets the state of the record.
             //        /// </summary>
-            //        internal long sequence { get; set; }
+            //        public RecordState State { get; private set; }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.LongKeyword)),
+                SyntaxFactory.IdentifierName("RecordState"),
                 SyntaxFactory.Identifier(this.Name))
-                .WithAccessorList(SequenceProperty.AccessorList)
-                .WithModifiers(SequenceProperty.Modifiers)
-                .WithLeadingTrivia(SequenceProperty.DocumentationComment);
+                .WithModifiers(RecordStateProperty.Modifiers)
+                .WithAccessorList(RecordStateProperty.AccessorList)
+                .WithAttributeLists(RecordStateProperty.Attributes)
+                .WithLeadingTrivia(RecordStateProperty.DocumentationComment);
         }
 
         /// <summary>
@@ -43,13 +44,45 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
         {
             get
             {
+                // { get; private set; }
                 return SyntaxFactory.AccessorList(
-                    SyntaxFactory.List(
-                        new AccessorDeclarationSyntax[]
-                        {
-                            SequenceProperty.GetAccessor,
-                            SequenceProperty.SetAccessor
-                        }));
+                        SyntaxFactory.List<AccessorDeclarationSyntax>(
+                            new AccessorDeclarationSyntax[]
+                            {
+                                SyntaxFactory.AccessorDeclaration(
+                                    SyntaxKind.GetAccessorDeclaration)
+                                .WithSemicolonToken(
+                                    SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                                SyntaxFactory.AccessorDeclaration(
+                                    SyntaxKind.SetAccessorDeclaration)
+                                .WithModifiers(
+                                    SyntaxFactory.TokenList(
+                                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
+                                .WithSemicolonToken(
+                                    SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                            }));
+            }
+        }
+
+        /// <summary>
+        /// Gets the data contract attribute syntax.
+        /// </summary>
+        private static SyntaxList<AttributeListSyntax> Attributes
+        {
+            get
+            {
+                // This collects all the attributes.
+                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
+
+                //        [JsonConverter(typeof(StringEnumConverter))]
+                attributes.Add(
+                    SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                SyntaxFactory.IdentifierName("JsonIgnore")))));
+
+                // The collection of attributes.
+                return SyntaxFactory.List<AttributeListSyntax>(attributes);
             }
         }
 
@@ -64,7 +97,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Gets or sets the sequence number.
+                //        /// Gets the state of the record.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -77,7 +110,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -87,8 +120,8 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Gets or sets the sequence number.",
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                $" Gets the state of the record.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -97,7 +130,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -105,25 +138,11 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Get' accessor.
-        /// </summary>
-        private static AccessorDeclarationSyntax GetAccessor
-        {
-            get
-            {
-                // get;
-                return SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                    .WithSemicolonToken(
-                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
             }
         }
 
@@ -134,26 +153,12 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
         {
             get
             {
-                // private
+                // public
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.InternalKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                     });
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Set' accessor.
-        /// </summary>
-        private static AccessorDeclarationSyntax SetAccessor
-        {
-            get
-            {
-                //            set;
-                return SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                    .WithSemicolonToken(
-                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
             }
         }
     }

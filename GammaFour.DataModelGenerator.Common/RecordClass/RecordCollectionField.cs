@@ -1,5 +1,5 @@
 // <copyright file="RecordCollectionField.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Common.RecordClass
@@ -28,7 +28,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
         public RecordCollectionField(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement;
+            this.tableElement = tableElement ?? throw new ArgumentNullException(nameof(tableElement));
             this.Name = this.tableElement.Name.ToPlural().ToVariableName();
 
             //        /// <summary>
@@ -73,7 +73,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -83,7 +83,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " The set to which this record belongs.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -93,7 +93,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -101,7 +101,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
 
                 // This is the complete document comment.
@@ -120,7 +120,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
                     });
             }
         }

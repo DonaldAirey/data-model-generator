@@ -1,5 +1,5 @@
 // <copyright file="Class.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.DataModelClass
@@ -29,7 +29,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         public Class(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.xmlSchemaDocument = xmlSchemaDocument;
+            this.xmlSchemaDocument = xmlSchemaDocument ?? throw new ArgumentNullException(nameof(xmlSchemaDocument));
             this.Name = xmlSchemaDocument.Name;
 
             //    /// <summary>
@@ -66,7 +66,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -76,7 +76,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " A thread-safe, transaction-oriented data domain.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -86,7 +86,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -94,7 +94,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
             }
         }
@@ -110,7 +110,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                     new[]
                     {
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                        SyntaxFactory.Token(SyntaxKind.PartialKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PartialKeyword),
                     });
             }
         }
@@ -127,6 +127,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 members = Class.CreatePrivateInstanceFields(members);
                 members = this.CreateConstructors(members);
                 members = this.CreatePublicInstanceProperties(members);
+                members = Class.CreateInternalInstanceProperties(members);
                 members = Class.CreatePublicInstanceMethods(members);
                 members = Class.CreateInternalInstanceMethods(members);
                 members = Class.CreateProtectedInstanceMethods(members);
@@ -144,6 +145,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
+            fields.Add(new RowVersionField());
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(f => f.Name))
@@ -164,6 +166,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
+            methods.Add(new IncrementRowVersionMethod());
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
@@ -187,6 +190,27 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
+            }
+
+            // Return the new collection of members.
+            return members;
+        }
+
+        /// <summary>
+        /// Create the private instance fields.
+        /// </summary>
+        /// <param name="members">The structure members.</param>
+        /// <returns>The structure members with the fields added.</returns>
+        private static SyntaxList<MemberDeclarationSyntax> CreateInternalInstanceProperties(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            // This will create the internal instance properties.
+            List<SyntaxElement> properties = new List<SyntaxElement>();
+            properties.Add(new RowVersionProperty());
+
+            // Alphabetize and add the fields as members of the class.
+            foreach (SyntaxElement syntaxElement in properties.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -266,7 +290,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             // This will create the internal instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
 
-            // Create a field for each of the tables.
+            // Create a property for each of the tables.
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
                 properties.Add(new RecordCollectionProperty(tableElement));

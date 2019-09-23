@@ -1,5 +1,5 @@
 // <copyright file="OnRecordChangedMethod.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Common.RecordSet
@@ -38,7 +38,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
         public OnRecordChangedMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement;
+            this.tableElement = tableElement ?? throw new ArgumentNullException(nameof(tableElement));
             this.Name = "OnRecordChanged";
             this.recordName = this.tableElement.Name.ToVariableName();
             this.rowType = this.tableElement.Name;
@@ -72,8 +72,8 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.InternalKeyword)
-                   });
+                        SyntaxFactory.Token(SyntaxKind.InternalKeyword),
+                    });
             }
         }
 
@@ -120,8 +120,8 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                                                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                                 SyntaxFactory.Argument(
                                                                     SyntaxFactory.IdentifierName(
-                                                                        this.tableElement.Name.ToVariableName()))
-                                                            }))))
+                                                                        this.tableElement.Name.ToVariableName())),
+                                                            })))),
                                         }))))));
 
                 // This is the syntax for the body of the method.
@@ -153,7 +153,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -163,7 +163,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 string.Format(
                                                     CultureInfo.InvariantCulture,
                                                     " Handles a change to the {0} row.",
@@ -176,7 +176,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -184,7 +184,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
 
                 //        /// <param name="dataAction">The action taken.</param>
@@ -192,49 +192,49 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
-                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                    SyntaxFactory.XmlText()
-                                    .WithTextTokens(
-                                        SyntaxFactory.TokenList(
-                                            new[]
-                                            {
-                                                SyntaxFactory.XmlTextLiteral(
-                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    " <param name=\"dataAction\">The action taken.</param>",
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList()),
-                                                SyntaxFactory.XmlTextNewLine(
-                                                    SyntaxFactory.TriviaList(),
-                                                    Environment.NewLine,
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList())
-                                            }))))));
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                SyntaxFactory.XmlText()
+                                .WithTextTokens(
+                                    SyntaxFactory.TokenList(
+                                        new[]
+                                        {
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                " <param name=\"dataAction\">The action taken.</param>",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                        }))))));
 
                 //        /// <param name="configuration">The row on which the action was taken.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
-                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                    SyntaxFactory.XmlText()
-                                    .WithTextTokens(
-                                        SyntaxFactory.TokenList(
-                                            new[]
-                                            {
-                                                SyntaxFactory.XmlTextLiteral(
-                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
-                                                    string.Format(
-                                                        CultureInfo.InvariantCulture,
-                                                        " <param name=\"{0}\">The row on which the action was taken.</param>",
-                                                        this.recordName),
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList()),
-                                                SyntaxFactory.XmlTextNewLine(
-                                                    SyntaxFactory.TriviaList(),
-                                                    Environment.NewLine,
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList())
-                                            }))))));
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                SyntaxFactory.XmlText()
+                                .WithTextTokens(
+                                    SyntaxFactory.TokenList(
+                                        new[]
+                                        {
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                string.Format(
+                                                    CultureInfo.InvariantCulture,
+                                                    " <param name=\"{0}\">The row on which the action was taken.</param>",
+                                                    this.recordName),
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                        }))))));
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);

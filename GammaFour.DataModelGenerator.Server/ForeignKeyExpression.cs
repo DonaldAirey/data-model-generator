@@ -1,9 +1,10 @@
 ﻿// <copyright file="ForeignKeyExpression.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server
 {
+    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using GammaFour.DataModelGenerator.Common;
@@ -23,6 +24,12 @@ namespace GammaFour.DataModelGenerator.Server
         /// <returns>An argument that extracts a key from an object.</returns>
         public static ExpressionSyntax GetForeignKey(ForeignKeyElement foreignKeyElement)
         {
+            // Validate the parameter
+            if (foreignKeyElement == null)
+            {
+                throw new ArgumentNullException(nameof(foreignKeyElement));
+            }
+
             // Used as a variable when constructing the lambda expression.
             string abbreviation = foreignKeyElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
 

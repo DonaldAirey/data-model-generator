@@ -1,5 +1,5 @@
 // <copyright file="ColumnProperty.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.RecordClass
@@ -28,7 +28,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         public ColumnProperty(ColumnElement columnElement)
         {
             // Initialize the object.
-            this.columnElement = columnElement;
+            this.columnElement = columnElement ?? throw new ArgumentNullException(nameof(columnElement));
 
             // This is the name of the property.
             this.Name = this.columnElement.Name;
@@ -153,7 +153,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                     });
             }
         }
@@ -293,7 +293,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -303,7 +303,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 description,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -313,7 +313,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -321,7 +321,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
 
                 // This is the complete document comment.
@@ -356,7 +356,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("RecordState"),
                                 SyntaxFactory.IdentifierName("Unchanged"))),
-                                    SyntaxFactory.Block(ColumnProperty.InitializeState)));
+                        SyntaxFactory.Block(ColumnProperty.InitializeState)));
 
                 //                    this.currentData[1] = value;
                 statements.Add(

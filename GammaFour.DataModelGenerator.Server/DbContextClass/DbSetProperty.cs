@@ -1,5 +1,5 @@
 // <copyright file="DbSetProperty.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.DbContextClass
@@ -28,7 +28,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
         public DbSetProperty(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement;
+            this.tableElement = tableElement ?? throw new ArgumentNullException(nameof(tableElement));
             this.Name = this.tableElement.Name.ToPlural();
 
             //        /// <summary>
@@ -60,7 +60,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                         new AccessorDeclarationSyntax[]
                         {
                             DbSetProperty.GetAccessor,
-                            DbSetProperty.SetAccessor
+                            DbSetProperty.SetAccessor,
                         }));
             }
         }
@@ -92,7 +92,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                     new[]
                     {
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                        SyntaxFactory.Token(SyntaxKind.VirtualKeyword)
+                        SyntaxFactory.Token(SyntaxKind.VirtualKeyword),
                     });
             }
         }
@@ -135,7 +135,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -145,7 +145,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 $" Gets or sets the <see cref=\"{this.tableElement.Name}\"/> set.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -155,7 +155,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -163,7 +163,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
 
                 // This is the complete document comment.

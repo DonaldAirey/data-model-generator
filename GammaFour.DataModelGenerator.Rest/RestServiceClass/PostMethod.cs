@@ -1,5 +1,5 @@
 // <copyright file="PostMethod.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
@@ -28,7 +28,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         public PostMethod(TableElement tableElement)
         {
             // Initialize the object.  Note that we decorate the name of every method that's not the primary key to prevent ambiguous signatures.
-            this.tableElement = tableElement;
+            this.tableElement = tableElement ?? throw new ArgumentNullException(nameof(tableElement));
             this.Name = $"Post{this.tableElement.Name}";
 
             //        /// <summary>
@@ -183,8 +183,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                     new[]
                     {
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                        SyntaxFactory.Token(SyntaxKind.AsyncKeyword)
-                   });
+                        SyntaxFactory.Token(SyntaxKind.AsyncKeyword),
+                    });
             }
         }
 
@@ -347,7 +347,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("BadRequest")))));
+                                                                SyntaxFactory.IdentifierName("BadRequest")))));
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -378,7 +378,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -388,7 +388,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 $" Post the <see cref=\"{this.tableElement.Name}\"/> record into the domain.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -398,7 +398,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -406,7 +406,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
 
                 //        /// <param name="object">The message body.</param>
@@ -414,14 +414,14 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
-                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
                                     SyntaxFactory.XmlText()
                                     .WithTextTokens(
                                         SyntaxFactory.TokenList(
                                             new[]
                                             {
                                                     SyntaxFactory.XmlTextLiteral(
-                                                        SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                        SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                         $" <param name=\"object\">The message body.</param>",
                                                         string.Empty,
                                                         SyntaxFactory.TriviaList()),
@@ -429,7 +429,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxFactory.TriviaList(),
                                                         Environment.NewLine,
                                                         string.Empty,
-                                                        SyntaxFactory.TriviaList())
+                                                        SyntaxFactory.TriviaList()),
                                             }))))));
 
                 //        /// <returns>The result of the POST verb.</returns>
@@ -437,14 +437,14 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
-                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
                                     SyntaxFactory.XmlText()
                                     .WithTextTokens(
                                         SyntaxFactory.TokenList(
                                             new[]
                                             {
                                                     SyntaxFactory.XmlTextLiteral(
-                                                        SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                        SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                         $" <returns>The result of the POST verb.</returns>",
                                                         string.Empty,
                                                         SyntaxFactory.TriviaList()),
@@ -452,7 +452,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxFactory.TriviaList(),
                                                         Environment.NewLine,
                                                         string.Empty,
-                                                        SyntaxFactory.TriviaList())
+                                                        SyntaxFactory.TriviaList()),
                                             }))))));
 
                 // This is the complete document comment.
@@ -731,7 +731,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.IdentifierName("TransactionScopeAsyncFlowOption"),
-                                                                SyntaxFactory.IdentifierName("Enabled")))
+                                                                SyntaxFactory.IdentifierName("Enabled"))),
                                                     })))))))));
 
                 // This is the complete block.
@@ -782,7 +782,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.IdentifierName("TransactionScopeAsyncFlowOption"),
-                                                                SyntaxFactory.IdentifierName("Enabled")))
+                                                                SyntaxFactory.IdentifierName("Enabled"))),
                                                     })))))))));
 
                 // This is the complete block.
@@ -912,7 +912,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                            SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
                                             SyntaxFactory.IdentifierName("Lock")),
                                         SyntaxFactory.IdentifierName("EnterReadLockAsync")))
                                 .WithArgumentList(
@@ -1049,7 +1049,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                                     SyntaxFactory.MemberAccessExpression(
                                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                                         SyntaxFactory.IdentifierName("StringComparison"),
-                                                                        SyntaxFactory.IdentifierName("InvariantCulture")))
+                                                                        SyntaxFactory.IdentifierName("InvariantCulture"))),
                                                     })))))))));
 
                 //                if (countryCountryCodeKey != null)
@@ -1157,7 +1157,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                                     SyntaxFactory.MemberAccessExpression(
                                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                                         SyntaxFactory.IdentifierName("StringComparison"),
-                                                                        SyntaxFactory.IdentifierName("InvariantCulture")))
+                                                                        SyntaxFactory.IdentifierName("InvariantCulture"))),
                                                         }))),
                                             SyntaxFactory.IdentifierName("JObject"))))))));
 
@@ -1236,6 +1236,26 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.LiteralExpression(
                                             SyntaxKind.FalseLiteralExpression))))))));
 
+            //                        this.domain.Countries.Add(country);
+            statements.Add(
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToVariableName())),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
+                            SyntaxFactory.IdentifierName("Add")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
+
             //                        using (TransactionScope additionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             //                        {
             //                            <AdditionTransaction>
@@ -1262,26 +1282,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.IdentifierName("TransactionScopeAsyncFlowOption"),
                                                         SyntaxFactory.IdentifierName("Enabled"))))))))))));
-
-            //                        this.domain.Countries.Add(country);
-            statements.Add(
-                SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToVariableName())),
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                            SyntaxFactory.IdentifierName("Add")))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList(
-                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                SyntaxFactory.Argument(
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
 
             // This is the complete block.
             return SyntaxFactory.List(statements);

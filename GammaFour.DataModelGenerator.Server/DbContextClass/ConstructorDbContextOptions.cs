@@ -1,5 +1,5 @@
 // <copyright file="ConstructorDbContextOptions.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.DbContextClass
@@ -28,7 +28,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
         public ConstructorDbContextOptions(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.xmlSchemaDocument = xmlSchemaDocument;
+            this.xmlSchemaDocument = xmlSchemaDocument ?? throw new ArgumentNullException(nameof(xmlSchemaDocument));
             this.Name = this.xmlSchemaDocument.Name;
 
             //        /// <summary>
@@ -92,7 +92,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                     });
             }
         }
@@ -121,7 +121,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -131,7 +131,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 $" Initializes a new instance of the <see cref=\"{this.xmlSchemaDocument.Name}Context\"/> class.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -141,7 +141,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -149,7 +149,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
 
                 //        /// <param name="contextOptions">The options for bulding the DbContext.</param>
@@ -157,14 +157,14 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
-                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
                                     SyntaxFactory.XmlText()
                                     .WithTextTokens(
                                         SyntaxFactory.TokenList(
                                             new[]
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
-                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                     $" <param name=\"contextOptions\">The options for bulding the DbContext.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
@@ -172,7 +172,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                     SyntaxFactory.TriviaList(),
                                                     Environment.NewLine,
                                                     string.Empty,
-                                                    SyntaxFactory.TriviaList())
+                                                    SyntaxFactory.TriviaList()),
                                             }))))));
 
                 // This is the complete document comment.
@@ -271,7 +271,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                 SyntaxFactory.TypeArgumentList(
                                                     SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                                                         SyntaxFactory.PredefinedType(
-                                                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))))
+                                                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword))))),
                                         }))))
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
@@ -295,7 +295,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                                 SyntaxFactory.TypeArgumentList(
                                                                     SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                                                                         SyntaxFactory.PredefinedType(
-                                                                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))))
+                                                                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword))))),
                                                         }))))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList())))))));
@@ -341,7 +341,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                                         SyntaxFactory.ThisExpression(),
                                                                         SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context")),
-                                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))))
+                                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural()))))))),
                                         })))));
                 }
 

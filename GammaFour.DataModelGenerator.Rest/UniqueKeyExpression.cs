@@ -1,9 +1,10 @@
 ﻿// <copyright file="UniqueKeyExpression.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.RestService
 {
+    using System;
     using System.Collections.Generic;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
@@ -23,6 +24,12 @@ namespace GammaFour.DataModelGenerator.RestService
         /// <returns>An expression that builds an anonymous type from a table description.</returns>
         public static SeparatedSyntaxList<ArgumentSyntax> GetSyntax(UniqueKeyElement uniqueKeyElement, bool isDecorated = false)
         {
+            // Validate the argument.
+            if (uniqueKeyElement == null)
+            {
+                throw new ArgumentNullException(nameof(uniqueKeyElement));
+            }
+
             //                    country = this.domain.Countries.CountryCountryCodeKey.Find(countryCountryCodeKeyCountryCode);
             //                    region = this.domain.Regions.RegionExternalKey.Find((regionExternalKeyName, regionExternalKeyCountryCode));
             SeparatedSyntaxList<ArgumentSyntax> findParameters;

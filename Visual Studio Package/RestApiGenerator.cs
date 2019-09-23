@@ -1,5 +1,5 @@
 ﻿// <copyright file="RestApiGenerator.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.VisualStudioPackage
@@ -34,10 +34,10 @@ namespace GammaFour.VisualStudioPackage
         private const string PackageGuid = "524C6084-295E-476B-BA16-C124D48912E5";
 
         /// <summary>
-        /// The method that does the actual work of generating code given the input file
+        /// The method that does the actual work of generating code given the input file.
         /// </summary>
-        /// <param name="inputFileContent">File contents as a string</param>
-        /// <returns>The generated code file as a byte-array</returns>
+        /// <param name="inputFileContent">File contents as a string.</param>
+        /// <returns>The generated code file as a byte-array.</returns>
         protected override byte[] GenerateCode(string inputFileContent)
         {
             byte[] buffer = Array.Empty<byte>();

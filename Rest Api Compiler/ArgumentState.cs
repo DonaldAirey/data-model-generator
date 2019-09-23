@@ -1,8 +1,8 @@
 ﻿// <copyright file="ArgumentState.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace RestServiceCompiler
+namespace RestApiCompiler
 {
     /// <summary>
     /// These are the parsing states used to read the arguments on the command line.
@@ -22,6 +22,6 @@ namespace RestServiceCompiler
         /// <summary>
         /// The output file name.
         /// </summary>
-        OutputFileName
+        OutputFileName,
     }
 }

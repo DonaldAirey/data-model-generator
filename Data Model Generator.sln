@@ -1,26 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.12
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{ACD6C03D-4EE8-4DC9-AEDF-7939F4C724E3}"
-	ProjectSection(SolutionItems) = preProject
-		Recompile All.ps1 = Recompile All.ps1
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client Compiler", "Client Compiler\Client Compiler.csproj", "{5A584008-63BC-49AD-B430-B6C33E4C2AA6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server Compiler", "Server Compiler\Server Compiler.csproj", "{95A42F18-B84A-44D6-9919-676051D8FF2E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GammaFour.DataModelGenerator.Client", "GammaFour.DataModelGenerator.Client\GammaFour.DataModelGenerator.Client.csproj", "{D987AA31-F806-4894-B988-F406AC2A3C06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visual Studio Package", "Visual Studio Package\Visual Studio Package.csproj", "{AFCB57EE-9BA5-4420-AF72-B7A3ABB7F9EB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GammaFour.DataModelGenerator.Common", "GammaFour.DataModelGenerator.Common\GammaFour.DataModelGenerator.Common.csproj", "{47DD349F-2066-42A4-833D-1B23D9A65F78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GammaFour.VisualStudio", "GammaFour.VisualStudio\GammaFour.VisualStudio.csproj", "{D53BFE07-DD87-4992-A808-C3E94958FABB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GammaFour.DataModelGenerator.Rest", "GammaFour.DataModelGenerator.Rest\GammaFour.DataModelGenerator.Rest.csproj", "{B239B79B-F22A-4BB3-8268-3837A0C63FDC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.Common", "GammaFour.DataModelGenerator.Common\GammaFour.DataModelGenerator.Common.csproj", "{0539C55D-E64E-4E09-8703-BA39DFEB23DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GammaFour.DataModelGenerator.Server", "GammaFour.DataModelGenerator.Server\GammaFour.DataModelGenerator.Server.csproj", "{19B25749-C8D4-4903-B942-5C4E66E54389}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.Server", "GammaFour.DataModelGenerator.Server\GammaFour.DataModelGenerator.Server.csproj", "{12EB72BA-3516-4BBF-8512-CE9BB16E2EF7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GammaFour.VisualStudio", "GammaFour.VisualStudio\GammaFour.VisualStudio.csproj", "{4839B5F9-0436-41A3-BFE5-020EC75F9582}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.Rest", "GammaFour.DataModelGenerator.Rest\GammaFour.DataModelGenerator.Rest.csproj", "{5882C75C-97D9-4943-B403-49E37486A403}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "REST Api Compiler", "REST Api Compiler\REST Api Compiler.csproj", "{11C243E0-D349-4673-9737-91DC89A829EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "REST Api Compiler", "Rest Api Compiler\REST Api Compiler.csproj", "{4D13E76C-2AC6-4D33-8060-17A788872BAA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server Compiler", "Server Compiler\Server Compiler.csproj", "{0DA184ED-C60E-4C1E-83B7-A51E7EF6A95E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visual Studio Package", "Visual Studio Package\Visual Studio Package.csproj", "{9481CF81-50DC-4752-8F3D-58B6166CD63D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,38 +27,47 @@ Global
 		Production|Any CPU = Production|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{95A42F18-B84A-44D6-9919-676051D8FF2E}.Development|Any CPU.ActiveCfg = Development|Any CPU
-		{95A42F18-B84A-44D6-9919-676051D8FF2E}.Development|Any CPU.Build.0 = Development|Any CPU
-		{95A42F18-B84A-44D6-9919-676051D8FF2E}.Production|Any CPU.ActiveCfg = Production|Any CPU
-		{95A42F18-B84A-44D6-9919-676051D8FF2E}.Production|Any CPU.Build.0 = Production|Any CPU
-		{AFCB57EE-9BA5-4420-AF72-B7A3ABB7F9EB}.Development|Any CPU.ActiveCfg = Development|Any CPU
-		{AFCB57EE-9BA5-4420-AF72-B7A3ABB7F9EB}.Production|Any CPU.ActiveCfg = Production|Any CPU
-		{AFCB57EE-9BA5-4420-AF72-B7A3ABB7F9EB}.Production|Any CPU.Build.0 = Production|Any CPU
-		{D53BFE07-DD87-4992-A808-C3E94958FABB}.Development|Any CPU.ActiveCfg = Development|Any CPU
-		{D53BFE07-DD87-4992-A808-C3E94958FABB}.Development|Any CPU.Build.0 = Development|Any CPU
-		{D53BFE07-DD87-4992-A808-C3E94958FABB}.Production|Any CPU.ActiveCfg = Production|Any CPU
-		{D53BFE07-DD87-4992-A808-C3E94958FABB}.Production|Any CPU.Build.0 = Production|Any CPU
-		{0539C55D-E64E-4E09-8703-BA39DFEB23DD}.Development|Any CPU.ActiveCfg = Development|Any CPU
-		{0539C55D-E64E-4E09-8703-BA39DFEB23DD}.Development|Any CPU.Build.0 = Development|Any CPU
-		{0539C55D-E64E-4E09-8703-BA39DFEB23DD}.Production|Any CPU.ActiveCfg = Production|Any CPU
-		{0539C55D-E64E-4E09-8703-BA39DFEB23DD}.Production|Any CPU.Build.0 = Production|Any CPU
-		{12EB72BA-3516-4BBF-8512-CE9BB16E2EF7}.Development|Any CPU.ActiveCfg = Development|Any CPU
-		{12EB72BA-3516-4BBF-8512-CE9BB16E2EF7}.Development|Any CPU.Build.0 = Development|Any CPU
-		{12EB72BA-3516-4BBF-8512-CE9BB16E2EF7}.Production|Any CPU.ActiveCfg = Production|Any CPU
-		{12EB72BA-3516-4BBF-8512-CE9BB16E2EF7}.Production|Any CPU.Build.0 = Production|Any CPU
-		{5882C75C-97D9-4943-B403-49E37486A403}.Development|Any CPU.ActiveCfg = Development|Any CPU
-		{5882C75C-97D9-4943-B403-49E37486A403}.Development|Any CPU.Build.0 = Development|Any CPU
-		{5882C75C-97D9-4943-B403-49E37486A403}.Production|Any CPU.ActiveCfg = Production|Any CPU
-		{5882C75C-97D9-4943-B403-49E37486A403}.Production|Any CPU.Build.0 = Production|Any CPU
-		{4D13E76C-2AC6-4D33-8060-17A788872BAA}.Development|Any CPU.ActiveCfg = Development|Any CPU
-		{4D13E76C-2AC6-4D33-8060-17A788872BAA}.Development|Any CPU.Build.0 = Development|Any CPU
-		{4D13E76C-2AC6-4D33-8060-17A788872BAA}.Production|Any CPU.ActiveCfg = Production|Any CPU
-		{4D13E76C-2AC6-4D33-8060-17A788872BAA}.Production|Any CPU.Build.0 = Production|Any CPU
+		{5A584008-63BC-49AD-B430-B6C33E4C2AA6}.Development|Any CPU.ActiveCfg = Development|Any CPU
+		{5A584008-63BC-49AD-B430-B6C33E4C2AA6}.Development|Any CPU.Build.0 = Development|Any CPU
+		{5A584008-63BC-49AD-B430-B6C33E4C2AA6}.Production|Any CPU.ActiveCfg = Production|Any CPU
+		{5A584008-63BC-49AD-B430-B6C33E4C2AA6}.Production|Any CPU.Build.0 = Production|Any CPU
+		{D987AA31-F806-4894-B988-F406AC2A3C06}.Development|Any CPU.ActiveCfg = Development|Any CPU
+		{D987AA31-F806-4894-B988-F406AC2A3C06}.Development|Any CPU.Build.0 = Development|Any CPU
+		{D987AA31-F806-4894-B988-F406AC2A3C06}.Production|Any CPU.ActiveCfg = Production|Any CPU
+		{D987AA31-F806-4894-B988-F406AC2A3C06}.Production|Any CPU.Build.0 = Production|Any CPU
+		{47DD349F-2066-42A4-833D-1B23D9A65F78}.Development|Any CPU.ActiveCfg = Development|Any CPU
+		{47DD349F-2066-42A4-833D-1B23D9A65F78}.Development|Any CPU.Build.0 = Development|Any CPU
+		{47DD349F-2066-42A4-833D-1B23D9A65F78}.Production|Any CPU.ActiveCfg = Production|Any CPU
+		{47DD349F-2066-42A4-833D-1B23D9A65F78}.Production|Any CPU.Build.0 = Production|Any CPU
+		{B239B79B-F22A-4BB3-8268-3837A0C63FDC}.Development|Any CPU.ActiveCfg = Development|Any CPU
+		{B239B79B-F22A-4BB3-8268-3837A0C63FDC}.Development|Any CPU.Build.0 = Development|Any CPU
+		{B239B79B-F22A-4BB3-8268-3837A0C63FDC}.Production|Any CPU.ActiveCfg = Production|Any CPU
+		{B239B79B-F22A-4BB3-8268-3837A0C63FDC}.Production|Any CPU.Build.0 = Production|Any CPU
+		{19B25749-C8D4-4903-B942-5C4E66E54389}.Development|Any CPU.ActiveCfg = Development|Any CPU
+		{19B25749-C8D4-4903-B942-5C4E66E54389}.Development|Any CPU.Build.0 = Development|Any CPU
+		{19B25749-C8D4-4903-B942-5C4E66E54389}.Production|Any CPU.ActiveCfg = Production|Any CPU
+		{19B25749-C8D4-4903-B942-5C4E66E54389}.Production|Any CPU.Build.0 = Production|Any CPU
+		{4839B5F9-0436-41A3-BFE5-020EC75F9582}.Development|Any CPU.ActiveCfg = Development|Any CPU
+		{4839B5F9-0436-41A3-BFE5-020EC75F9582}.Development|Any CPU.Build.0 = Development|Any CPU
+		{4839B5F9-0436-41A3-BFE5-020EC75F9582}.Production|Any CPU.ActiveCfg = Production|Any CPU
+		{4839B5F9-0436-41A3-BFE5-020EC75F9582}.Production|Any CPU.Build.0 = Production|Any CPU
+		{11C243E0-D349-4673-9737-91DC89A829EE}.Development|Any CPU.ActiveCfg = Development|Any CPU
+		{11C243E0-D349-4673-9737-91DC89A829EE}.Development|Any CPU.Build.0 = Development|Any CPU
+		{11C243E0-D349-4673-9737-91DC89A829EE}.Production|Any CPU.ActiveCfg = Production|Any CPU
+		{11C243E0-D349-4673-9737-91DC89A829EE}.Production|Any CPU.Build.0 = Production|Any CPU
+		{0DA184ED-C60E-4C1E-83B7-A51E7EF6A95E}.Development|Any CPU.ActiveCfg = Development|Any CPU
+		{0DA184ED-C60E-4C1E-83B7-A51E7EF6A95E}.Development|Any CPU.Build.0 = Development|Any CPU
+		{0DA184ED-C60E-4C1E-83B7-A51E7EF6A95E}.Production|Any CPU.ActiveCfg = Production|Any CPU
+		{0DA184ED-C60E-4C1E-83B7-A51E7EF6A95E}.Production|Any CPU.Build.0 = Production|Any CPU
+		{9481CF81-50DC-4752-8F3D-58B6166CD63D}.Development|Any CPU.ActiveCfg = Development|Any CPU
+		{9481CF81-50DC-4752-8F3D-58B6166CD63D}.Development|Any CPU.Build.0 = Development|Any CPU
+		{9481CF81-50DC-4752-8F3D-58B6166CD63D}.Production|Any CPU.ActiveCfg = Production|Any CPU
+		{9481CF81-50DC-4752-8F3D-58B6166CD63D}.Production|Any CPU.Build.0 = Production|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {FE0FB1C9-585E-4068-BCEB-D9703AF6DFD7}
+		SolutionGuid = {F22F3428-750C-4EC0-B632-F3E49E239BD5}
 	EndGlobalSection
 EndGlobal

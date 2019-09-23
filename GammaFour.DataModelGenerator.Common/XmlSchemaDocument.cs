@@ -1,5 +1,5 @@
 ﻿// <copyright file="XmlSchemaDocument.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Common
@@ -32,7 +32,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// </summary>
         /// <param name="fileContents">The contents of a file that specifies the schema in XML.</param>
         public XmlSchemaDocument(string fileContents)
-            : this(XmlReader.Create(new StringReader(fileContents)))
+            : base(XDocument.Parse(fileContents))
         {
             // The root element of the schema definition.
             XElement rootElement = this.Root.Element(XmlSchemaDocument.ElementName);
@@ -95,15 +95,6 @@ namespace GammaFour.DataModelGenerator.Common
                     throw new InvalidOperationException($"Table name '{tableElement.Name}' must not be pluralized.");
                 }
             }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="XmlSchemaDocument"/> class.
-        /// </summary>
-        /// <param name="xmlReader">A <see cref="XmlReader"/> that contains the content for the <see cref="XDocument"/>.</param>
-        private XmlSchemaDocument(XmlReader xmlReader)
-            : base(XDocument.Load(xmlReader))
-        {
         }
 
         /// <summary>
@@ -351,7 +342,7 @@ namespace GammaFour.DataModelGenerator.Common
             { XName.Get("unsignedByte", XmlSchemaNamespace), typeof(byte?) },
             { XName.Get("unsignedInt", XmlSchemaNamespace), typeof(uint?) },
             { XName.Get("unsignedLong", XmlSchemaNamespace), typeof(ulong?) },
-            { XName.Get("unsignedShort", XmlSchemaNamespace), typeof(ushort?) }
+            { XName.Get("unsignedShort", XmlSchemaNamespace), typeof(ushort?) },
         };
 
         /// <summary>
@@ -372,7 +363,7 @@ namespace GammaFour.DataModelGenerator.Common
             { XName.Get("unsignedByte", XmlSchemaNamespace), typeof(byte) },
             { XName.Get("unsignedInt", XmlSchemaNamespace), typeof(uint) },
             { XName.Get("unsignedLong", XmlSchemaNamespace), typeof(ulong) },
-            { XName.Get("unsignedShort", XmlSchemaNamespace), typeof(ushort) }
+            { XName.Get("unsignedShort", XmlSchemaNamespace), typeof(ushort) },
         };
 
         /// <summary>
@@ -394,7 +385,7 @@ namespace GammaFour.DataModelGenerator.Common
             typeof(byte).FullName,
             typeof(uint).FullName,
             typeof(ulong).FullName,
-            typeof(ushort).FullName
+            typeof(ushort).FullName,
         };
     }
 }

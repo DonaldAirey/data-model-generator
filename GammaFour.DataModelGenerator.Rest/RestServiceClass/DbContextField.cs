@@ -1,9 +1,10 @@
 // <copyright file="DbContextField.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 {
+    using System;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -20,6 +21,12 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <param name="xmlSchemaDocument">The XML Schema document.</param>
         public DbContextField(XmlSchemaDocument xmlSchemaDocument)
         {
+            // Validate the parameter
+            if (xmlSchemaDocument == null)
+            {
+                throw new ArgumentNullException(nameof(xmlSchemaDocument));
+            }
+
             // Initialize the object.
             this.Name = $"{xmlSchemaDocument.Name.ToCamelCase()}Context";
 
@@ -45,7 +52,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
                     });
             }
         }

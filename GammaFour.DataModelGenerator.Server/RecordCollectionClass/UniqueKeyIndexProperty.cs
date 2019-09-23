@@ -1,5 +1,5 @@
 // <copyright file="UniqueKeyIndexProperty.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.RecordSetClass
@@ -28,7 +28,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         public UniqueKeyIndexProperty(UniqueKeyElement uniqueKeyElement)
         {
             // Initialize the object.
-            this.uniqueKeyElement = uniqueKeyElement;
+            this.uniqueKeyElement = uniqueKeyElement ?? throw new ArgumentNullException(nameof(uniqueKeyElement));
             this.Name = this.uniqueKeyElement.Name;
 
             //        /// <summary>
@@ -77,7 +77,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                     });
             }
         }
@@ -106,7 +106,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -116,7 +116,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 $" Gets the {this.uniqueKeyElement.Name} unique index.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -126,7 +126,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -134,7 +134,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
 
                 // This is the complete document comment.

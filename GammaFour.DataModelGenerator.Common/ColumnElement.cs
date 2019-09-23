@@ -1,5 +1,5 @@
 ﻿// <copyright file="ColumnElement.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Common
@@ -26,11 +26,14 @@ namespace GammaFour.DataModelGenerator.Common
             { "System.Decimal", (v) => decimal.Parse(v, CultureInfo.InvariantCulture) },
             { "System.Double", (v) => double.Parse(v, CultureInfo.InvariantCulture) },
             { "System.Guid", (v) => Guid.Parse(v) },
+            { "System.Int16", (v) => short.Parse(v, CultureInfo.InvariantCulture) },
             { "System.Int32", (v) => int.Parse(v, CultureInfo.InvariantCulture) },
             { "System.Int64", (v) => long.Parse(v, CultureInfo.InvariantCulture) },
             { "System.Single", (v) => float.Parse(v, CultureInfo.InvariantCulture) },
-            { "System.Int16", (v) => short.Parse(v, CultureInfo.InvariantCulture) },
             { "System.String", (v) => v },
+            { "System.UInt16", (v) => ushort.Parse(v, CultureInfo.InvariantCulture) },
+            { "System.UInt32", (v) => uint.Parse(v, CultureInfo.InvariantCulture) },
+            { "System.UInt64", (v) => ulong.Parse(v, CultureInfo.InvariantCulture) },
         };
 
         /// <summary>
@@ -345,7 +348,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// </summary>
         /// <param name="left">The left operand.</param>
         /// <param name="right">The right operand.</param>
-        /// <returns>-1 if left &lt; right, 0 if left == right, 1 if left &gt; right</returns>
+        /// <returns>-1 if left &lt; right, 0 if left == right, 1 if left &gt; right.</returns>
         public static int Compare(ColumnElement left, ColumnElement right)
         {
             // Don't use operators or you'll recurse.  If the left and right objects are the same object, then they're equal.
@@ -393,6 +396,12 @@ namespace GammaFour.DataModelGenerator.Common
         /// <returns>A value that indicates the relative order of the objects being compared.</returns>
         public int CompareTo(ColumnElement other)
         {
+            // Validate the parameter
+            if (other == null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
+
             return string.Compare(this.Name, other.Name, StringComparison.InvariantCulture);
         }
 

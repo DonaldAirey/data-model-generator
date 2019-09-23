@@ -1,8 +1,8 @@
-// <copyright file="TimeStampProperty.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+// <copyright file="NameProperty.cs" company="Gamma Four, Inc.">
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
+namespace GammaFour.DataModelGenerator.Client.RecordSetClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,29 +12,29 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a collection of readers (transactions) waiting for a read lock.
+    /// Creates a field that holds the name.
     /// </summary>
-    public class TimeStampProperty : SyntaxElement
+    public class NameProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TimeStampProperty"/> class.
+        /// Initializes a new instance of the <see cref="NameProperty"/> class.
         /// </summary>
-        public TimeStampProperty()
+        public NameProperty()
         {
             // Initialize the object.
-            this.Name = "TimeStamp";
+            this.Name = "Name";
 
             //        /// <summary>
-            //        /// Gets or sets the time the item was created.
+            //        /// Gets the Name.
             //        /// </summary>
-            //        internal DateTime timeStamp { get; set; }
+            //        public string Name { get; }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.IdentifierName("DateTime"),
-                SyntaxFactory.Identifier(this.Name))
-                .WithAttributeLists(TimeStampProperty.Attributes)
-                .WithAccessorList(TimeStampProperty.AccessorList)
-                .WithModifiers(TimeStampProperty.Modifiers)
-                .WithLeadingTrivia(TimeStampProperty.DocumentationComment);
+                    SyntaxFactory.PredefinedType(
+                        SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                    SyntaxFactory.Identifier("Name"))
+                .WithModifiers(NameProperty.Modifiers)
+                .WithAccessorList(NameProperty.AccessorList)
+                .WithLeadingTrivia(NameProperty.DocumentationComment);
         }
 
         /// <summary>
@@ -48,53 +48,8 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
                     SyntaxFactory.List(
                         new AccessorDeclarationSyntax[]
                         {
-                            TimeStampProperty.GetAccessor,
-                            TimeStampProperty.SetAccessor
+                            NameProperty.GetAccessor,
                         }));
-            }
-        }
-
-        /// <summary>
-        /// Gets the data contract attribute syntax.
-        /// </summary>
-        private static SyntaxList<AttributeListSyntax> Attributes
-        {
-            get
-            {
-                // This collects all the attributes.
-                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
-
-                //        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-                attributes.Add(
-                    SyntaxFactory.AttributeList(
-                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
-                            SyntaxFactory.Attribute(
-                                SyntaxFactory.IdentifierName("SuppressMessage"))
-                            .WithArgumentList(
-                                SyntaxFactory.AttributeArgumentList(
-                                    SyntaxFactory.SeparatedList<AttributeArgumentSyntax>(
-                                        new SyntaxNodeOrToken[]
-                                        {
-                                            SyntaxFactory.AttributeArgument(
-                                                SyntaxFactory.LiteralExpression(
-                                                    SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal("Microsoft.Performance"))),
-                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                            SyntaxFactory.AttributeArgument(
-                                                SyntaxFactory.LiteralExpression(
-                                                    SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal("CA1811:AvoidUncalledPrivateCode"))),
-                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                            SyntaxFactory.AttributeArgument(
-                                                SyntaxFactory.LiteralExpression(
-                                                    SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal("This will be used in the near future.")))
-                                            .WithNameEquals(
-                                                SyntaxFactory.NameEquals(SyntaxFactory.IdentifierName("Justification")))
-                                        }))))));
-
-                // The collection of attributes.
-                return SyntaxFactory.List<AttributeListSyntax>(attributes);
             }
         }
 
@@ -123,7 +78,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Gets or sets the time the item was created.
+                //        /// Gets the Name.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -136,7 +91,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -146,8 +101,8 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Gets or sets the time the item was created.",
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                " Gets the Name.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -156,7 +111,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -164,7 +119,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
 
                 // This is the complete document comment.
@@ -179,11 +134,11 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
         {
             get
             {
-                // private
+                // internal
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.InternalKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                     });
             }
         }
@@ -195,10 +150,13 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
         {
             get
             {
-                //            set;
+                //            private set;
                 return SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
                     .WithSemicolonToken(
-                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+                        SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+                    .WithModifiers(
+                        SyntaxFactory.TokenList(
+                            SyntaxFactory.Token(SyntaxKind.PrivateKeyword)));
             }
         }
     }

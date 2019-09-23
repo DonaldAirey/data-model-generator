@@ -1,9 +1,10 @@
 ﻿// <copyright file="EnlistAndLockStatements.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.RestService
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using GammaFour.DataModelGenerator.Common;
@@ -23,6 +24,12 @@ namespace GammaFour.DataModelGenerator.RestService
         /// <returns>An expression that builds an anonymous type from a table description.</returns>
         public static List<StatementSyntax> GetSyntax(TableElement tableElement, bool lockParentKeys = false)
         {
+            // Validate the argument.
+            if (tableElement == null)
+            {
+                throw new ArgumentNullException(nameof(tableElement));
+            }
+
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 

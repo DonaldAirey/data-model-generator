@@ -1,8 +1,8 @@
-// <copyright file="DataProperty.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+// <copyright file="LockProperty.cs" company="Gamma Four, Inc.">
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
+namespace GammaFour.DataModelGenerator.Client.RecordClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,33 +12,31 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a collection of readers (transactions) waiting for a read lock.
+    /// Creates a field that holds the column.
     /// </summary>
-    public class DataProperty : SyntaxElement
+    public class LockProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DataProperty"/> class.
+        /// Initializes a new instance of the <see cref="LockProperty"/> class.
         /// </summary>
-        public DataProperty()
+        public LockProperty()
         {
             // Initialize the object.
-            this.Name = "Data";
+            this.Name = "Lock";
 
             //        /// <summary>
-            //        /// Gets or sets the transaction data.
+            //        /// Gets the lock used to manage multithreaded access to this record.
             //        /// </summary>
-            //        internal object[] data { get; set; }
+            //        public AsyncReaderWriterLock Lock { get; } = new AsyncReaderWriterLock();
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.ArrayType(
-                        SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
-                    .WithRankSpecifiers(
-                        SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
-                            SyntaxFactory.ArrayRankSpecifier(
-                                SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(SyntaxFactory.OmittedArraySizeExpression())))),
+                SyntaxFactory.IdentifierName("AsyncReaderWriterLock"),
                 SyntaxFactory.Identifier(this.Name))
-                .WithAccessorList(DataProperty.AccessorList)
-                .WithModifiers(DataProperty.Modifiers)
-                .WithLeadingTrivia(DataProperty.DocumentationComment);
+                .WithModifiers(LockProperty.Modifiers)
+                .WithAccessorList(LockProperty.AccessorList)
+                .WithInitializer(LockProperty.Initializer)
+                .WithAttributeLists(LockProperty.Attributes)
+                .WithLeadingTrivia(LockProperty.DocumentationComment)
+                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
         }
 
         /// <summary>
@@ -49,12 +47,33 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
             get
             {
                 return SyntaxFactory.AccessorList(
-                    SyntaxFactory.List(
-                        new AccessorDeclarationSyntax[]
-                        {
-                            DataProperty.GetAccessor,
-                            DataProperty.SetAccessor
-                        }));
+                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
+                        SyntaxFactory.AccessorDeclaration(
+                            SyntaxKind.GetAccessorDeclaration)
+                        .WithSemicolonToken(
+                            SyntaxFactory.Token(SyntaxKind.SemicolonToken))));
+            }
+        }
+
+        /// <summary>
+        /// Gets the data contract attribute syntax.
+        /// </summary>
+        private static SyntaxList<AttributeListSyntax> Attributes
+        {
+            get
+            {
+                // This collects all the attributes.
+                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
+
+                //        [JsonConverter(typeof(StringEnumConverter))]
+                attributes.Add(
+                    SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                SyntaxFactory.IdentifierName("JsonIgnore")))));
+
+                // The collection of attributes.
+                return SyntaxFactory.List<AttributeListSyntax>(attributes);
             }
         }
 
@@ -69,7 +88,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Gets or sets the transaction data.
+                //        /// Gets the lock used to manage multithreaded access to this record.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -82,7 +101,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -92,8 +111,8 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
-                                                " Gets or sets the transaction data.",
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                $" Gets the lock used to manage multithreaded access to this record.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -102,7 +121,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -110,7 +129,7 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
 
                 // This is the complete document comment.
@@ -119,16 +138,17 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
         }
 
         /// <summary>
-        /// Gets the 'Get' accessor.
+        /// Gets the initializer.
         /// </summary>
-        private static AccessorDeclarationSyntax GetAccessor
+        private static EqualsValueClauseSyntax Initializer
         {
             get
             {
-                // get;
-                return SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                    .WithSemicolonToken(
-                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+                return SyntaxFactory.EqualsValueClause(
+                    SyntaxFactory.ObjectCreationExpression(
+                        SyntaxFactory.IdentifierName("AsyncReaderWriterLock"))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList()));
             }
         }
 
@@ -139,26 +159,12 @@ namespace GammaFour.DataModelGenerator.Server.TransactionLogItemClass
         {
             get
             {
-                // private
+                // public
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.InternalKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                     });
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Set' accessor.
-        /// </summary>
-        private static AccessorDeclarationSyntax SetAccessor
-        {
-            get
-            {
-                //            set;
-                return SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                    .WithSemicolonToken(
-                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
             }
         }
     }

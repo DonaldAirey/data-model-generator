@@ -1,9 +1,10 @@
 ﻿// <copyright file="UniqueKeyExpression.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server
 {
+    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using GammaFour.DataModelGenerator.Common;
@@ -24,6 +25,12 @@ namespace GammaFour.DataModelGenerator.Server
         /// <returns>An argument that extracts a key from an object.</returns>
         public static ExpressionSyntax GetUniqueKey(UniqueKeyElement uniqueKeyElement, bool isAnonymous = false)
         {
+            // Validate the parameter
+            if (uniqueKeyElement == null)
+            {
+                throw new ArgumentNullException(nameof(uniqueKeyElement));
+            }
+
             // Used as a variable when constructing the lambda expression.
             string abbreviation = uniqueKeyElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
 

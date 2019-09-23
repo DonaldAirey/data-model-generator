@@ -1,5 +1,5 @@
 // <copyright file="ConstructorDbContextEtc.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
@@ -28,7 +28,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         public ConstructorDbContextEtc(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement;
+            this.tableElement = tableElement ?? throw new ArgumentNullException(nameof(tableElement));
             this.Name = tableElement.Name.ToPlural() + "Controller";
 
             //        /// <summary>
@@ -60,7 +60,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                     });
             }
         }
@@ -132,7 +132,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.IdentifierName("TimeSpan"),
-                                                                SyntaxFactory.IdentifierName("MaxValue")))
+                                                                SyntaxFactory.IdentifierName("MaxValue"))),
                                                     })))))))));
 
                 //            this.lockTimeout = timespan == TimeSpan.MaxValue ? Timeout.Infinite : Convert.ToInt32(timespan);
@@ -210,7 +210,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                                     SyntaxFactory.PredefinedType(
                                                                         SyntaxFactory.Token(SyntaxKind.IntKeyword)),
-                                                                    SyntaxFactory.IdentifierName("MaxValue")))))))
+                                                                    SyntaxFactory.IdentifierName("MaxValue"))))))),
                                         }))))));
 
                 //            this.domainContext.Database.SetCommandTimeout(this.transactionTimeout);
@@ -265,7 +265,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -275,7 +275,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 $" Initializes a new instance of the <see cref=\"{this.Name}\"/> class.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -285,7 +285,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -293,7 +293,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
 
                 //        /// <param name="configuration">Configuration settings.</param>
@@ -301,14 +301,14 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
-                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
                                     SyntaxFactory.XmlText()
                                     .WithTextTokens(
                                         SyntaxFactory.TokenList(
                                             new[]
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
-                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                     $" <param name=\"configuration\">Configuration settings.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
@@ -316,7 +316,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     SyntaxFactory.TriviaList(),
                                                     Environment.NewLine,
                                                     string.Empty,
-                                                    SyntaxFactory.TriviaList())
+                                                    SyntaxFactory.TriviaList()),
                                             }))))));
 
                 //        /// <param name="domain">The data model.</param>
@@ -324,14 +324,14 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
-                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
                                     SyntaxFactory.XmlText()
                                     .WithTextTokens(
                                         SyntaxFactory.TokenList(
                                             new[]
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
-                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                     $" <param name=\"domain\">The data model.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
@@ -339,7 +339,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     SyntaxFactory.TriviaList(),
                                                     Environment.NewLine,
                                                     string.Empty,
-                                                    SyntaxFactory.TriviaList())
+                                                    SyntaxFactory.TriviaList()),
                                             }))))));
 
                 //        /// <param name="domainContext">The DbContext for the domain.</param>
@@ -347,14 +347,14 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
-                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
                                     SyntaxFactory.XmlText()
                                     .WithTextTokens(
                                         SyntaxFactory.TokenList(
                                             new[]
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
-                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                     $" <param name=\"domainContext\">The DbContext for the domain.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
@@ -362,7 +362,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     SyntaxFactory.TriviaList(),
                                                     Environment.NewLine,
                                                     string.Empty,
-                                                    SyntaxFactory.TriviaList())
+                                                    SyntaxFactory.TriviaList()),
                                             }))))));
 
                 // This is the complete document comment.

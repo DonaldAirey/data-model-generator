@@ -1,5 +1,5 @@
 // <copyright file="ConstructorRecordVersion.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.RecordClass
@@ -28,7 +28,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         public ConstructorRecordVersion(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement;
+            this.tableElement = tableElement ?? throw new ArgumentNullException(nameof(tableElement));
             this.Name = this.tableElement.Name;
 
             //        /// <summary>
@@ -58,7 +58,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
                     });
             }
         }
@@ -176,7 +176,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -186,7 +186,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 $" Initializes a new instance of the <see cref=\"{this.tableElement.Name}\"/> class.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -196,7 +196,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -204,7 +204,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
 
                 //        /// <param name="data">The data behind the properties.</param>
@@ -212,14 +212,14 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
-                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
                                     SyntaxFactory.XmlText()
                                     .WithTextTokens(
                                         SyntaxFactory.TokenList(
                                             new[]
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
-                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                     " <param name=\"data\">The data behind the properties.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
@@ -227,7 +227,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                     SyntaxFactory.TriviaList(),
                                                     Environment.NewLine,
                                                     string.Empty,
-                                                    SyntaxFactory.TriviaList())
+                                                    SyntaxFactory.TriviaList()),
                                             }))))));
 
                 // This is the complete document comment.

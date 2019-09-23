@@ -1,5 +1,5 @@
 // <copyright file="Constructor.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.RecordClass
@@ -28,7 +28,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         public Constructor(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement;
+            this.tableElement = tableElement ?? throw new ArgumentNullException(nameof(tableElement));
             this.Name = this.tableElement.Name;
 
             //        /// <summary>
@@ -56,7 +56,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                     });
             }
         }
@@ -110,7 +110,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                             .WithInitializer(
                                 SyntaxFactory.InitializerExpression(
                                     SyntaxKind.ArrayInitializerExpression,
-                                        SyntaxFactory.SeparatedList<ExpressionSyntax>(arrayElementList.ToArray()))))));
+                                    SyntaxFactory.SeparatedList<ExpressionSyntax>(arrayElementList.ToArray()))))));
 
                 //            this.State = RecordState.Detached;
                 statements.Add(
@@ -175,7 +175,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -185,7 +185,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 $" Initializes a new instance of the <see cref=\"{this.tableElement.Name}\"/> class.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -195,7 +195,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -203,7 +203,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
 
                 // This is the complete document comment.

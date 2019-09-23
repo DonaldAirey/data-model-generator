@@ -1,5 +1,5 @@
 // <copyright file="Class.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.RecordSetClass
@@ -41,7 +41,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         public Class(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement;
+            this.tableElement = tableElement ?? throw new ArgumentNullException(nameof(tableElement));
             this.xmlSchemaDocument = this.tableElement.XmlSchemaDocument;
             this.Name = tableElement.Name + "Collection";
             this.rowType = this.tableElement.Name;
@@ -70,7 +70,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                     });
             }
         }
@@ -137,7 +137,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -147,7 +147,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 string.Format(
                                                     CultureInfo.InvariantCulture,
                                                     $" A collection of <see cref=\"{this.tableElement.Name}\"/> records.",
@@ -160,7 +160,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -168,7 +168,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
             }
         }
@@ -240,6 +240,15 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             fields.Add(new CollectionField(this.tableElement));
             fields.Add(new DeletedCollectionField(this.tableElement));
             fields.Add(new UndoStackField());
+
+            // Create an indexer for new records on all auto-increment columns.
+            foreach (ColumnElement columnElement in this.tableElement.Columns)
+            {
+                if (columnElement.IsAutoIncrement)
+                {
+                    fields.Add(new AutoIncrementField(columnElement));
+                }
+            }
 
             // Add a field for each of the foreign indices.
             foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)

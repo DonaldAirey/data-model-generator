@@ -1,9 +1,10 @@
 ﻿// <copyright file="AnonymousRecordExpression.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.RestService
 {
+    using System;
     using System.Collections.Generic;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
@@ -22,6 +23,12 @@ namespace GammaFour.DataModelGenerator.RestService
         /// <returns>An expression that builds an anonymous type from a table description.</returns>
         public static ExpressionSyntax GetSyntax(TableElement tableElement)
         {
+            // Validate the parameter
+            if (tableElement == null)
+            {
+                throw new ArgumentNullException(nameof(tableElement));
+            }
+
             // new { country.CountryId, country.CountryCode, country.Name, country.RowVersion };
             List<SyntaxNodeOrToken> properties = new List<SyntaxNodeOrToken>();
             foreach (ColumnElement columnElement in tableElement.Columns)

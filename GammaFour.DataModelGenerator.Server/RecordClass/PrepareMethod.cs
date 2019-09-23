@@ -1,5 +1,5 @@
 // <copyright file="PrepareMethod.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.RecordClass
@@ -32,7 +32,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
             this.Syntax = SyntaxFactory.MethodDeclaration(
                     SyntaxFactory.PredefinedType(
                             SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
-                        SyntaxFactory.Identifier(this.Name))
+                    SyntaxFactory.Identifier(this.Name))
                 .WithModifiers(PrepareMethod.Modifiers)
                 .WithParameterList(PrepareMethod.Parameters)
                 .WithBody(PrepareMethod.Body)
@@ -101,7 +101,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <inheritdoc/>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -109,7 +109,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
 
                 // This is the complete document comment.
@@ -140,7 +140,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         }
 
         /// <summary>
-        /// Gets the block of code that says the transaction is prepared
+        /// Gets the block of code that says the transaction is prepared.
         /// </summary>
         private static IEnumerable<StatementSyntax> EnlistmentPrepared
         {
@@ -168,8 +168,8 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
-                   });
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                    });
             }
         }
 

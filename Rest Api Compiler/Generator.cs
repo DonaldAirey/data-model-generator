@@ -1,8 +1,8 @@
 ﻿// <copyright file="Generator.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace RestServiceCompiler
+namespace RestApiCompiler
 {
     using System.Globalization;
     using System.IO;
@@ -21,10 +21,10 @@ namespace RestServiceCompiler
     public sealed class Generator : BaseCodeGeneratorWithSite
     {
         /// <summary>
-        /// The method that does the actual work of generating code given the input file
+        /// The method that does the actual work of generating code given the input file.
         /// </summary>
-        /// <param name="inputFileContent">File contents as a string</param>
-        /// <returns>The generated code file as a byte-array</returns>
+        /// <param name="inputFileContent">File contents as a string.</param>
+        /// <returns>The generated code file as a byte-array.</returns>
         protected override byte[] GenerateCode(string inputFileContent)
         {
             // Extract the name of the target class from the input file name.

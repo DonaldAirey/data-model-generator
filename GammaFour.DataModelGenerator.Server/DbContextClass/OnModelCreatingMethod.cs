@@ -1,5 +1,5 @@
 // <copyright file="OnModelCreatingMethod.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.DbContextClass
@@ -69,7 +69,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <inheritdoc/>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -77,7 +77,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
 
                 // This is the complete document comment.
@@ -97,8 +97,8 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                     new[]
                     {
                         SyntaxFactory.Token(SyntaxKind.ProtectedKeyword),
-                        SyntaxFactory.Token(SyntaxKind.OverrideKeyword)
-                   });
+                        SyntaxFactory.Token(SyntaxKind.OverrideKeyword),
+                    });
             }
         }
 
@@ -182,19 +182,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         expressionSyntax,
-                                        SyntaxFactory.IdentifierName("ValueGeneratedOnAdd")));
-                            hasModification = true;
-                        }
-
-                        // RowVersion columns
-                        if (columnElement.IsRowVersion)
-                        {
-                            //            .IsRowVersion();
-                            expressionSyntax = SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        expressionSyntax,
-                                        SyntaxFactory.IdentifierName("IsRowVersion")));
+                                        SyntaxFactory.IdentifierName("ValueGeneratedNever")));
                             hasModification = true;
                         }
 
@@ -400,7 +388,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                 SyntaxFactory.ArgumentList(
                                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                 SyntaxFactory.Argument(UniqueKeyExpression.GetUniqueKey(uniqueKeyElement, true))))),
-                            SyntaxFactory.IdentifierName("IsUnique")))));
+                                            SyntaxFactory.IdentifierName("IsUnique")))));
                         }
                     }
 

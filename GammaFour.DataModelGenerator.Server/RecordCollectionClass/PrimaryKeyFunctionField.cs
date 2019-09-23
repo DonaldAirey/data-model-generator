@@ -1,5 +1,5 @@
 // <copyright file="PrimaryKeyFunctionField.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.RecordSetClass
@@ -29,7 +29,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         {
             // Initialize the object.
             this.Name = "primaryKeyFunction";
-            this.uniqueKeyElement = uniqueKeyElement;
+            this.uniqueKeyElement = uniqueKeyElement ?? throw new ArgumentNullException(nameof(uniqueKeyElement));
 
             //        /// <summary>
             //        /// Used to get the primary key from the record.
@@ -47,7 +47,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                         SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name),
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.PredefinedType(
-                                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword))
+                                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
                                     }))))
                     .WithVariables(
                         SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
@@ -69,7 +69,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
                     });
             }
         }
@@ -98,7 +98,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -108,7 +108,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " Used to get the primary key from the record.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -118,7 +118,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -126,7 +126,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
 
                 // This is the complete document comment.
@@ -163,7 +163,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                                 SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name),
                                                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                                 SyntaxFactory.PredefinedType(
-                                                                    SyntaxFactory.Token(SyntaxKind.ObjectKeyword))
+                                                                    SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
                                                             })))))),
                                     SyntaxFactory.ParenthesizedExpression(
                                         UniqueKeyExpression.GetUniqueKey(this.uniqueKeyElement)))),

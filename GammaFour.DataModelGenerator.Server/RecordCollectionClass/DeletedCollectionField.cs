@@ -1,5 +1,5 @@
 // <copyright file="DeletedCollectionField.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.RecordSetClass
@@ -28,7 +28,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         public DeletedCollectionField(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement;
+            this.tableElement = tableElement ?? throw new ArgumentNullException(nameof(tableElement));
             this.Name = "deletedCollection";
 
             //        /// <summary>
@@ -51,7 +51,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                             {
                                                 SyntaxFactory.IdentifierName("DateTime"),
                                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name)
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name),
                                             })))))))
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
@@ -86,7 +86,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -96,7 +96,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " The collection of deleted records.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -106,7 +106,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -114,7 +114,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
 
                 // This is the complete document comment.
@@ -133,7 +133,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
                     });
             }
         }
@@ -162,7 +162,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 {
                                                     SyntaxFactory.IdentifierName("DateTime"),
                                                     SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                    SyntaxFactory.IdentifierName(this.tableElement.Name)
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Name),
                                                 })))))))
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList()));

@@ -1,9 +1,10 @@
 ﻿// <copyright file="NullableKeyFilterExpression.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server
 {
+    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using GammaFour.DataModelGenerator.Common;
@@ -23,6 +24,12 @@ namespace GammaFour.DataModelGenerator.Server
         /// <returns>An expression that creates a filter for an index.</returns>
         public static ExpressionSyntax GetNullableKeyFilter(UniqueKeyElement uniqueKeyElement)
         {
+            // Validate the parameter
+            if (uniqueKeyElement == null)
+            {
+                throw new ArgumentNullException(nameof(uniqueKeyElement));
+            }
+
             // Used as a variable when constructing the lambda expression.
             string abbreviation = uniqueKeyElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
 

@@ -1,15 +1,16 @@
 ﻿// <copyright file="StringExtensions.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Common
 {
+    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using Pluralize.NET;
 
     /// <summary>
-    /// String Extension Methods
+    /// String Extension Methods.
     /// </summary>
     public static class StringExtensions
     {
@@ -22,7 +23,7 @@ namespace GammaFour.DataModelGenerator.Common
             "else", "enum", "event", "explicit", "extern", "false", "finally", "fixed", "float", "for", "foreach", "goto", "if", "implicit", "in", "int", "interface", "internal",
             "is", "lock", "long", "namespace", "new", "null", "object", "operator", "out", "override", "params", "private", "protected", "public", "readonly", "ref", "return",
             "sbyte", "sealed", "short", "sizeof", "stackalloc", "static", "string", "struct", "switch", "this", "throw", "true", "try", "typeof", "uint", "ulong", "unchecked",
-            "unsafe", "ushort", "using", "virtual", "void", "volatile", "while"
+            "unsafe", "ushort", "using", "virtual", "void", "volatile", "while",
         };
 
         /// <summary>
@@ -37,6 +38,12 @@ namespace GammaFour.DataModelGenerator.Common
         /// <returns>The input string with a lower case starting letter.</returns>
         public static string ToCamelCase(this string text)
         {
+            // Validate the parameter
+            if (text == null)
+            {
+                throw new ArgumentNullException(nameof(text));
+            }
+
             // Convert the variable to its camel case equivalent.
             return text[0].ToString(CultureInfo.InvariantCulture).ToLower(CultureInfo.InvariantCulture) + text.Remove(0, 1);
         }
@@ -48,6 +55,12 @@ namespace GammaFour.DataModelGenerator.Common
         /// <returns>The input string with a lower case starting letter and an @ prepended if the variable is a keyword..</returns>
         public static string ToVariableName(this string text)
         {
+            // Validate the parameter
+            if (text == null)
+            {
+                throw new ArgumentNullException(nameof(text));
+            }
+
             // Convert the variable to its camel case equivalent.
             var name = text[0].ToString(CultureInfo.InvariantCulture).ToLower(CultureInfo.InvariantCulture) + text.Remove(0, 1);
             return StringExtensions.keywords.Contains(name) ? "@" + name : name;

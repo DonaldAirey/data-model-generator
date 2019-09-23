@@ -1,5 +1,5 @@
 // <copyright file="AddMethod.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.RecordSetClass
@@ -59,8 +59,8 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)
-                   });
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                    });
             }
         }
 
@@ -101,6 +101,38 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                             SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                                 SyntaxFactory.Argument(
                                                                     SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))))))))))))));
+
+                // Initialize all the autoincrement columns in the table.
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
+                {
+                    //            entity.EntityId = Interlocked.Increment(ref this.entityId);
+                    if (columnElement.IsAutoIncrement)
+                    {
+                        statements.Add(
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.AssignmentExpression(
+                                    SyntaxKind.SimpleAssignmentExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                        SyntaxFactory.IdentifierName(columnElement.Name)),
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.IdentifierName("Interlocked"),
+                                            SyntaxFactory.IdentifierName("Increment")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase())))
+                                                .WithRefKindKeyword(
+                                                    SyntaxFactory.Token(SyntaxKind.RefKeyword))))))));
+                    }
+                }
 
                 //            object key = this.primaryKeyFunction(buyer);
                 statements.Add(
@@ -175,7 +207,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                             SyntaxFactory.IdentifierName("Name"))),
                                                     SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                     SyntaxFactory.Argument(
-                                                        SyntaxFactory.IdentifierName("key"))
+                                                        SyntaxFactory.IdentifierName("key")),
                                                 }))))))));
 
                 //            this.collection.Add(key, buyer);
@@ -198,7 +230,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                         SyntaxFactory.IdentifierName("key")),
                                     SyntaxFactory.Token(SyntaxKind.CommaToken),
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
                                 })))));
 
                 //            this.undoStack.Push(() => this.collection.Remove(key));
@@ -297,8 +329,26 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxKind.NullLiteralExpression)),
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
                                     })))));
+
+                //            assetClass.RowVersion = this.Domain.IncrementRowVersion();
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                SyntaxFactory.IdentifierName("RowVersion")),
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("Domain")),
+                                    SyntaxFactory.IdentifierName("IncrementRowVersion"))))));
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -329,7 +379,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -339,7 +389,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 $" Adds a <see cref=\"{this.tableElement.Name}\"/> to the set.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -349,7 +399,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -357,7 +407,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
 
                 //        /// <param name="buyer">The buyer to be added.</param>
@@ -365,14 +415,14 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
-                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
                                     SyntaxFactory.XmlText()
                                     .WithTextTokens(
                                         SyntaxFactory.TokenList(
                                             new[]
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
-                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                     $" <param name=\"{this.tableElement.Name.ToCamelCase()}\">The {this.tableElement.Name.ToCamelCase()} to be added.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
@@ -380,7 +430,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                     SyntaxFactory.TriviaList(),
                                                     Environment.NewLine,
                                                     string.Empty,
-                                                    SyntaxFactory.TriviaList())
+                                                    SyntaxFactory.TriviaList()),
                                             }))))));
 
                 // This is the complete document comment.

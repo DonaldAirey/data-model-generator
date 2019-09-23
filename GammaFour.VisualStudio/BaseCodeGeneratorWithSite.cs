@@ -10,7 +10,7 @@ namespace GammaFour.VisualStudio
     using Microsoft.VisualStudio.OLE.Interop;
 
     /// <summary>
-    /// Base code generator with site implementation
+    /// Base code generator with site implementation.
     /// </summary>
     [ComVisible(true)]
     public abstract class BaseCodeGeneratorWithSite : BaseCodeGenerator, IObjectWithSite
@@ -29,7 +29,7 @@ namespace GammaFour.VisualStudio
         {
             if (this.site == null)
             {
-                throw new COMException("object is not sited", VSConstants.E_FAIL);
+                throw new COMException(Strings.ObjectNotSitedError, VSConstants.E_FAIL);
             }
 
             var pUnknownPointer = Marshal.GetIUnknownForObject(this.site);
@@ -38,7 +38,7 @@ namespace GammaFour.VisualStudio
 
             if (intPointer == IntPtr.Zero)
             {
-                throw new COMException("site does not support requested interface", VSConstants.E_NOINTERFACE);
+                throw new COMException(Strings.InterfaceNotSupportedError, VSConstants.E_NOINTERFACE);
             }
 
             // The address of the caller's void* variable.
@@ -48,7 +48,7 @@ namespace GammaFour.VisualStudio
         /// <summary>
         /// Provides the site's IUnknown pointer to the object.
         /// </summary>
-        /// <param name="pUnkSite">An interface pointer to the site managing this object. If null, the object should call Release to release the existing site</param>
+        /// <param name="pUnkSite">An interface pointer to the site managing this object. If null, the object should call Release to release the existing site.</param>
         public void SetSite(object pUnkSite)
         {
             // Initialize the site.

@@ -1,8 +1,8 @@
 ﻿// <copyright file="Program.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace RestServiceCompiler
+namespace RestApiCompiler
 {
     using System;
     using System.Collections.Generic;
@@ -24,7 +24,7 @@ namespace RestServiceCompiler
         {
             { "-i", ArgumentState.InputFileName },
             { "-ns", ArgumentState.TargetNamespace },
-            { "-out", ArgumentState.OutputFileName }
+            { "-out", ArgumentState.OutputFileName },
         };
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace RestServiceCompiler
                 IVsSingleFileGenerator ivsSingleFileGenerator = generator as IVsSingleFileGenerator;
                 if (ivsSingleFileGenerator.Generate(inputFilePath, fileContents, targetNamespace, buffer, out bufferSize, null) != 0)
                 {
-                    throw new Exception("Unable to generate file.");
+                    throw new InvalidOperationException(Strings.UnableToGenerateFileError);
                 }
 
                 // Once the buffer of source code is generated, it is copied back out of the unmanaged buffers and written to the output file.
@@ -120,7 +120,7 @@ namespace RestServiceCompiler
                     streamWriter.Write(Encoding.UTF8.GetString(outputBuffer));
                 }
             }
-            catch (Exception exception)
+            catch (InvalidOperationException exception)
             {
                 // This will catch any generic errors and dump them to the console.
                 Console.WriteLine(exception.Message);

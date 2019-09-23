@@ -1,5 +1,5 @@
 // <copyright file="DeleteAllMethod.cs" company="Gamma Four, Inc.">
-//    Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
@@ -28,7 +28,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         public DeleteAllMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement;
+            this.tableElement = tableElement ?? throw new ArgumentNullException(nameof(tableElement));
             this.Name = $"Delete{tableElement.Name.ToPlural()}";
 
             //        /// <summary>
@@ -122,8 +122,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                     new[]
                     {
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                        SyntaxFactory.Token(SyntaxKind.AsyncKeyword)
-                   });
+                        SyntaxFactory.Token(SyntaxKind.AsyncKeyword),
+                    });
             }
         }
 
@@ -182,7 +182,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.IdentifierName("TransactionScopeAsyncFlowOption"),
-                                                                SyntaxFactory.IdentifierName("Enabled")))
+                                                                SyntaxFactory.IdentifierName("Enabled"))),
                                                     })))))))));
 
                 // This is the syntax for the body of the method.
@@ -358,7 +358,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         new[]
                                         {
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " <summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -368,7 +368,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 $" Deletes all the <see cref=\"{this.tableElement.Name}\"/> records.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -378,7 +378,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("         ///")),
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -386,7 +386,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxFactory.TriviaList(),
                                                 Environment.NewLine,
                                                 string.Empty,
-                                                SyntaxFactory.TriviaList())
+                                                SyntaxFactory.TriviaList()),
                                         }))))));
 
                 //        /// <returns>The result of the DELETE verb.</returns>
@@ -394,14 +394,14 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
-                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
                                     SyntaxFactory.XmlText()
                                     .WithTextTokens(
                                         SyntaxFactory.TokenList(
                                             new[]
                                             {
                                                     SyntaxFactory.XmlTextLiteral(
-                                                        SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior("///")),
+                                                        SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                         $" <returns>The result of the DELETE verb.</returns>",
                                                         string.Empty,
                                                         SyntaxFactory.TriviaList()),
@@ -409,7 +409,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxFactory.TriviaList(),
                                                         Environment.NewLine,
                                                         string.Empty,
-                                                        SyntaxFactory.TriviaList())
+                                                        SyntaxFactory.TriviaList()),
                                             }))))));
 
                 // This is the complete document comment.

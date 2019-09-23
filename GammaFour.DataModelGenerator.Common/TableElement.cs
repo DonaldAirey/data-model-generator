@@ -1,5 +1,5 @@
 ﻿// <copyright file="TableElement.cs" company="Gamma Four, Inc.">
-//     Copyright © 2018 - Gamma Four, Inc.  All Rights Reserved.
+//     Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Common
@@ -85,7 +85,7 @@ namespace GammaFour.DataModelGenerator.Common
                     XmlSchemaDocument.ElementName,
                     new XAttribute("name", "RowVersion"),
                     new XAttribute(XmlSchemaDocument.IsRowVersionName, "true"),
-                    new XAttribute("type", "xs:base64Binary")));
+                    new XAttribute("type", "xs:long")));
 
             // This will replace each of the undecorated elements with decorated ones.
             List<XElement> columnElements = sequence.Elements(XmlSchemaDocument.ElementName).ToList();
@@ -332,7 +332,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// </summary>
         /// <param name="left">The left operand.</param>
         /// <param name="right">The right operand.</param>
-        /// <returns>-1 if left &lt; right, 0 if left == right, 1 if left &gt; right</returns>
+        /// <returns>-1 if left &lt; right, 0 if left == right, 1 if left &gt; right.</returns>
         public static int Compare(TableElement left, TableElement right)
         {
             // Don't use operators or you'll recurse.  If the left and right objects are the same object, then they're equal.
@@ -380,6 +380,12 @@ namespace GammaFour.DataModelGenerator.Common
         /// <returns>A value that indicates the relative order of the objects being compared.</returns>
         public int CompareTo(TableElement other)
         {
+            // Validate the parameter
+            if (other == null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
+
             return string.Compare(this.Name, other.Name, StringComparison.InvariantCulture);
         }
 
