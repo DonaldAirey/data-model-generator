@@ -1,4 +1,4 @@
-// <copyright file="ForeignKeyIndexField.cs" company="Gamma Four, Inc.">
+// <copyright file="SimpleForeignKeyIndexField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,7 +14,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
     /// <summary>
     /// Creates a field to hold the current contents of the record.
     /// </summary>
-    public class ForeignKeyIndexField : SyntaxElement
+    public class SimpleForeignKeyIndexField : SyntaxElement
     {
         /// <summary>
         /// The unique key.
@@ -22,10 +22,10 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
         private ForeignKeyElement foreignKeyElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ForeignKeyIndexField"/> class.
+        /// Initializes a new instance of the <see cref="SimpleForeignKeyIndexField"/> class.
         /// </summary>
         /// <param name="foreignKeyElement">The description of the unique key.</param>
-        public ForeignKeyIndexField(ForeignKeyElement foreignKeyElement)
+        public SimpleForeignKeyIndexField(ForeignKeyElement foreignKeyElement)
         {
             // Initialize the object.
             this.foreignKeyElement = foreignKeyElement ?? throw new ArgumentNullException(nameof(foreignKeyElement));
@@ -34,11 +34,11 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
             //        /// <summary>
             //        /// The CountryBuyerCountryIdKey foreign index.
             //        /// </summary>
-            //        private ForeignKeyIndex<Buyer, Country> countryBuyerCountryIdKey;
+            //        private SimpleForeignKeyIndex<Buyer, Country> countryBuyerCountryIdKey;
             this.Syntax = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
                     SyntaxFactory.GenericName(
-                        SyntaxFactory.Identifier("ForeignKeyIndex"))
+                        SyntaxFactory.Identifier("SimpleForeignKeyIndex"))
                     .WithTypeArgumentList(
                         SyntaxFactory.TypeArgumentList(
                             SyntaxFactory.SeparatedList<TypeSyntax>(
@@ -52,7 +52,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                         SyntaxFactory.VariableDeclarator(
                             SyntaxFactory.Identifier(this.foreignKeyElement.Name.ToVariableName())))))
-                .WithModifiers(ForeignKeyIndexField.Modifiers)
+                .WithModifiers(SimpleForeignKeyIndexField.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
 

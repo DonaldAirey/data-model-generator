@@ -174,14 +174,14 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                foreach (IMergable mergable in mergeBuckets.Keys.ToList())
+                //                foreach (IPurgable purgable in mergeBuckets.Keys.ToList())
                 //                {
                 //                    <PurgeBucket>
                 //                }
                 statements.Add(
                     ForEachStatement(
-                        IdentifierName("IMergable"),
-                        Identifier("mergable"),
+                        IdentifierName("IPurgable"),
+                        Identifier("purgable"),
                         InvocationExpression(
                             MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -300,11 +300,11 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                 BracketedArgumentList(
                                     SingletonSeparatedList<ArgumentSyntax>(
                                         Argument(
-                                            IdentifierName("mergable"))))),
+                                            IdentifierName("purgable"))))),
                             InvocationExpression(
                                 MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    IdentifierName("mergable"),
+                                    IdentifierName("purgable"),
                                     IdentifierName("Purge")))
                             .WithArgumentList(
                                 ArgumentList(
@@ -316,7 +316,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                 BracketedArgumentList(
                                                     SingletonSeparatedList<ArgumentSyntax>(
                                                         Argument(
-                                                            IdentifierName("mergable"))))))))))));
+                                                            IdentifierName("purgable"))))))))))));
 
                 // This is the syntax for the body of the method.
                 return statements;
@@ -451,7 +451,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                 IdentifierName("Any"))),
                         Block(MergeMethod.EmptyMergeBuckets)));
                 
-                //            Dictionary<IMergable, IEnumerable<object>> purgeBuckets = new Dictionary<IMergable, IEnumerable<object>>();
+                //            Dictionary<IPurgable, IEnumerable<object>> purgeBuckets = new Dictionary<IPurgable, IEnumerable<object>>();
                 statements.Add(
                     LocalDeclarationStatement(
                         VariableDeclaration(
@@ -461,7 +461,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                 TypeArgumentList(
                                     SeparatedList<TypeSyntax>(
                                         new SyntaxNodeOrToken[]{
-                                            IdentifierName("IMergable"),
+                                            IdentifierName("IPurgable"),
                                             Token(SyntaxKind.CommaToken),
                                             GenericName(
                                                 Identifier("IEnumerable"))
@@ -483,7 +483,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                 TypeArgumentList(
                                                     SeparatedList<TypeSyntax>(
                                                         new SyntaxNodeOrToken[]{
-                                                            IdentifierName("IMergable"),
+                                                            IdentifierName("IPurgable"),
                                                             Token(SyntaxKind.CommaToken),
                                                             GenericName(
                                                                 Identifier("IEnumerable"))

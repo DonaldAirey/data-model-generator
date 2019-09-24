@@ -67,7 +67,7 @@ namespace GammaFour.DataModelGenerator.Client
                         SyntaxFactory.SeparatedList<AnonymousObjectMemberDeclaratorSyntax>(keyElements.ToArray()));
             }
 
-            //            this.BuyerKey = new ForeignKeyIndex<Buyer>("BuyerKey").HasIndex(b => b.BuyerId);
+            //            this.BuyerKey = new SimpleForeignKeyIndex<Buyer>("BuyerKey").HasIndex(b => b.BuyerId);
             return SyntaxFactory.SimpleLambdaExpression(SyntaxFactory.Parameter(SyntaxFactory.Identifier(abbreviation)), syntaxNode);
         }
     }

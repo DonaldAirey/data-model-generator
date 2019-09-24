@@ -1,4 +1,4 @@
-// <copyright file="UniqueKeyIndexProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="SimpleUniqueKeyIndexProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,7 +14,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
     /// <summary>
     /// Creates a unique key for the set.
     /// </summary>
-    public class UniqueKeyIndexProperty : SyntaxElement
+    public class SimpleUniqueKeyIndexProperty : SyntaxElement
     {
         /// <summary>
         /// The unique key element.
@@ -22,10 +22,10 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
         private UniqueKeyElement uniqueKeyElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UniqueKeyIndexProperty"/> class.
+        /// Initializes a new instance of the <see cref="SimpleUniqueKeyIndexProperty"/> class.
         /// </summary>
         /// <param name="uniqueKeyElement">The unique key element.</param>
-        public UniqueKeyIndexProperty(UniqueKeyElement uniqueKeyElement)
+        public SimpleUniqueKeyIndexProperty(UniqueKeyElement uniqueKeyElement)
         {
             // Initialize the object.
             this.uniqueKeyElement = uniqueKeyElement ?? throw new ArgumentNullException(nameof(uniqueKeyElement));
@@ -34,17 +34,17 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
             //        /// <summary>
             //        /// Gets the BuyerExternalId0Key unique index.
             //        /// </summary>
-            //        public UniqueKeyIndex<Buyer> BuyerExternalId0Key { get; } = new UniqueKeyIndex<Buyer>("BuyerExternalId0Key").HasIndex(b => b.ExternalId0);
+            //        public SimpleUniqueKeyIndex<Buyer> BuyerExternalId0Key { get; } = new SimpleUniqueKeyIndex<Buyer>("BuyerExternalId0Key").HasIndex(b => b.ExternalId0);
             this.Syntax = SyntaxFactory.PropertyDeclaration(
                     SyntaxFactory.GenericName(
-                        SyntaxFactory.Identifier("UniqueKeyIndex"))
+                        SyntaxFactory.Identifier("SimpleUniqueKeyIndex"))
                     .WithTypeArgumentList(
                         SyntaxFactory.TypeArgumentList(
                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                                 SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name)))),
                     SyntaxFactory.Identifier(this.uniqueKeyElement.Name))
-                .WithModifiers(UniqueKeyIndexProperty.Modifiers)
-                .WithAccessorList(UniqueKeyIndexProperty.AccessorList)
+                .WithModifiers(SimpleUniqueKeyIndexProperty.Modifiers)
+                .WithAccessorList(SimpleUniqueKeyIndexProperty.AccessorList)
                 .WithInitializer(this.Initializer)
                 .WithLeadingTrivia(this.DocumentationComment)
                 .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
@@ -156,7 +156,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.ObjectCreationExpression(
                                 SyntaxFactory.GenericName(
-                                    SyntaxFactory.Identifier("UniqueKeyIndex"))
+                                    SyntaxFactory.Identifier("SimpleUniqueKeyIndex"))
                                 .WithTypeArgumentList(
                                     SyntaxFactory.TypeArgumentList(
                                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
@@ -190,7 +190,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
                                     SyntaxFactory.Argument(NullableKeyFilterExpression.GetNullableKeyFilter(this.uniqueKeyElement)))));
                 }
 
-                // = new UniqueKeyIndex<Security>("SecurityFigiKey").HasIndex(s => s.Figi).HasFilter(s => s.Figi != null);
+                // = new SimpleUniqueKeyIndex<Security>("SecurityFigiKey").HasIndex(s => s.Figi).HasFilter(s => s.Figi != null);
                 return SyntaxFactory.EqualsValueClause(invocationExpressionSyntax);
             }
         }

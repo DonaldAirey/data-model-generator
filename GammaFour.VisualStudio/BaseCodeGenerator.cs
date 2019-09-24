@@ -7,6 +7,7 @@ namespace GammaFour.VisualStudio
     using System;
     using System.Runtime.InteropServices;
     using Microsoft.VisualStudio;
+    using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Interop;
 
     /// <summary>
@@ -103,6 +104,7 @@ namespace GammaFour.VisualStudio
         /// <param name="message">The error message.</param>
         protected void ErrorMessage(string message)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             if (this.generateProgress != null)
             {
                 this.generateProgress.GeneratorError(0, 0, message, 0xFFFFFFFF, 0xFFFFFFFF);
@@ -115,6 +117,7 @@ namespace GammaFour.VisualStudio
         /// <param name="message">The error message.</param>
         protected void WarningMessage(string message)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             if (this.generateProgress != null)
             {
                 this.generateProgress.GeneratorError(1, 0, message, 0xFFFFFFFF, 0xFFFFFFFF);
