@@ -120,7 +120,6 @@
     <Compile Include="RestServiceClass\Class.cs" />
     <Compile Include="RestServiceClass\ConstructorDbContextEtc.cs" />
     <Compile Include="RestServiceClass\DbContextField.cs" />
-    <Compile Include="RestServiceClass\DeleteAllMethod.cs" />
     <Compile Include="RestServiceClass\DeleteMethod.cs" />
     <Compile Include="RestServiceClass\DomainField.cs" />
     <Compile Include="RestServiceClass\GetAllMethod.cs" />

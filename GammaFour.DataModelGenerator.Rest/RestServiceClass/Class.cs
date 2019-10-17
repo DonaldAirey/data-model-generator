@@ -253,13 +253,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             if (this.tableElement.Verbs.Contains(Verb.Delete))
             {
                 // Delete everything.
-                methods.Add(new DeleteAllMethod(this.tableElement));
-
-                // Delete a record using a unique key.
-                foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
-                {
-                    methods.Add(new DeleteMethod(uniqueKeyElement));
-                }
+                methods.Add(new DeleteMethod(this.tableElement));
             }
 
             // Generate support for the GET verb.

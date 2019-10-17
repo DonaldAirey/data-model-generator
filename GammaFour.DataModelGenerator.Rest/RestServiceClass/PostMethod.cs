@@ -481,7 +481,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 statements.AddRange(EnlistAndLockStatements.GetSyntax(this.tableElement, true));
 
                 // This is the block of code that resolves external references and writes the records.  It's shared with the batch processing.
-                statements.AddRange(this.WriteBody("jObject"));
+                statements.AddRange(this.WriteSingleBody);
 
                 //                    transactionScope.Complete();
                 statements.Add(
@@ -533,14 +533,14 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 
                 //                        foreach (JObject innerJObject in jArray)
                 //                        {
-                //                               <WriteRecord>
+                //                               <WriteBatchBody>
                 //                        }
                 statements.Add(
                     SyntaxFactory.ForEachStatement(
                         SyntaxFactory.IdentifierName("JObject"),
                         SyntaxFactory.Identifier("innerJObject"),
                         SyntaxFactory.IdentifierName("jArray"),
-                        SyntaxFactory.Block(this.WriteBody("innerJObject"))));
+                        SyntaxFactory.Block(this.WriteBatchBody)));
 
                 //                    transactionScope.Complete();
                 statements.Add(
@@ -551,14 +551,19 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                 SyntaxFactory.IdentifierName("transactionScope"),
                                 SyntaxFactory.IdentifierName("Complete")))));
 
-                //                    return this.Ok();
+                //                    return this.Ok(proposedOrders);
                 statements.Add(
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("Ok")))));
+                                SyntaxFactory.IdentifierName("Ok")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase().ToPlural())))))));
 
                 // This is the complete block.
                 return statements;
@@ -698,10 +703,36 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.RequiresNew, TransactionScopeAsyncFlowOption.Enabled))
-                //            {
-                //                <WriteBatchRecords>
-                //            }
+                //                List<ProposedOrder> proposedOrders = new List<ProposedOrder>();
+                statements.Add(
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.GenericName(
+                                SyntaxFactory.Identifier("List"))
+                            .WithTypeArgumentList(
+                                SyntaxFactory.TypeArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name)))))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase().ToPlural()))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.GenericName(
+                                                SyntaxFactory.Identifier("List"))
+                                            .WithTypeArgumentList(
+                                                SyntaxFactory.TypeArgumentList(
+                                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                        SyntaxFactory.IdentifierName(this.tableElement.Name)))))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList())))))));
+
+                //                using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.RequiresNew, TransactionScopeAsyncFlowOption.Enabled))
+                //                {
+                //                    <WriteBatchRecords>
+                //                }
                 statements.Add(
                     SyntaxFactory.UsingStatement(
                         SyntaxFactory.Block(this.WriteBatchRecords))
@@ -726,6 +757,12 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.IdentifierName("TransactionScopeOption"),
                                                                 SyntaxFactory.IdentifierName("RequiresNew"))),
+                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.ThisExpression(),
+                                                                SyntaxFactory.IdentifierName("transactionTimeout"))),
                                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                         SyntaxFactory.Argument(
                                                             SyntaxFactory.MemberAccessExpression(
@@ -777,6 +814,12 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.IdentifierName("TransactionScopeOption"),
                                                                 SyntaxFactory.IdentifierName("RequiresNew"))),
+                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.ThisExpression(),
+                                                                SyntaxFactory.IdentifierName("transactionTimeout"))),
                                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                         SyntaxFactory.Argument(
                                                             SyntaxFactory.MemberAccessExpression(
@@ -1086,68 +1129,69 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        /// <param name="jObjectName">The name of the variable that has the current parameter.</param>
         /// <returns>A block of statements.</returns>
-        private SyntaxList<StatementSyntax> WriteBody(string jObjectName)
+        private SyntaxList<StatementSyntax> WriteBatchBody
         {
-            // This is used to collect the statements.
-            List<StatementSyntax> statements = new List<StatementSyntax>();
-
-            // We want to find all the relations to parent records in order to pull apart the JSON structure.  We can address different
-            // indices using different parameters in the JSON. (e.g. "countryCode" will reference the CountryCode
-            Dictionary<ColumnReferenceElement, List<UniqueKeyElement>> columnResolutionKeys = new Dictionary<ColumnReferenceElement, List<UniqueKeyElement>>();
-            foreach (ForeignKeyElement parentKeyElement in this.tableElement.ParentKeys)
+            get
             {
-                foreach (ColumnReferenceElement columnReferenceElement in parentKeyElement.Columns)
-                {
-                    ColumnElement columnElement = columnReferenceElement.Column;
-                    foreach (UniqueKeyElement additionalUniqueKeyElement in parentKeyElement.UniqueKey.Table.UniqueKeys)
-                    {
-                        if (!additionalUniqueKeyElement.IsPrimaryKey)
-                        {
-                            if (!columnResolutionKeys.TryGetValue(columnReferenceElement, out List<UniqueKeyElement> uniqueKeyElements))
-                            {
-                                uniqueKeyElements = new List<UniqueKeyElement>();
-                                columnResolutionKeys.Add(columnReferenceElement, uniqueKeyElements);
-                            }
+                // This is used to collect the statements.
+                List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                            uniqueKeyElements.Add(additionalUniqueKeyElement);
+                // We want to find all the relations to parent records in order to pull apart the JSON structure.  We can address different
+                // indices using different parameters in the JSON. (e.g. "countryCode" will reference the CountryCode
+                Dictionary<ColumnReferenceElement, List<UniqueKeyElement>> columnResolutionKeys = new Dictionary<ColumnReferenceElement, List<UniqueKeyElement>>();
+                foreach (ForeignKeyElement parentKeyElement in this.tableElement.ParentKeys)
+                {
+                    foreach (ColumnReferenceElement columnReferenceElement in parentKeyElement.Columns)
+                    {
+                        ColumnElement columnElement = columnReferenceElement.Column;
+                        foreach (UniqueKeyElement additionalUniqueKeyElement in parentKeyElement.UniqueKey.Table.UniqueKeys)
+                        {
+                            if (!additionalUniqueKeyElement.IsPrimaryKey)
+                            {
+                                if (!columnResolutionKeys.TryGetValue(columnReferenceElement, out List<UniqueKeyElement> uniqueKeyElements))
+                                {
+                                    uniqueKeyElements = new List<UniqueKeyElement>();
+                                    columnResolutionKeys.Add(columnReferenceElement, uniqueKeyElements);
+                                }
+
+                                uniqueKeyElements.Add(additionalUniqueKeyElement);
+                            }
                         }
                     }
                 }
-            }
 
-            // This constructs code that attempts to resolve a column from the input parameters.  Sometimes a primary key index isn't available
-            // to the outside world because the data comes from an external system or is kept in a script file.  This makes use of the fact that
-            // a relationship may exist between a child and parent table.
-            foreach (var columnKeyPair in columnResolutionKeys)
-            {
-                ColumnReferenceElement columnReferenceElement = columnKeyPair.Key;
-                ColumnElement columnElement = columnReferenceElement.Column;
+                // This constructs code that attempts to resolve a column from the input parameters.  Sometimes a primary key index isn't available
+                // to the outside world because the data comes from an external system or is kept in a script file.  This makes use of the fact that
+                // a relationship may exist between a child and parent table.
+                foreach (var columnKeyPair in columnResolutionKeys)
+                {
+                    ColumnReferenceElement columnReferenceElement = columnKeyPair.Key;
+                    ColumnElement columnElement = columnReferenceElement.Column;
 
-                //                        var childIdObject = jObject.GetValue("childId", StringComparison.InvariantCulture) as JObject;
-                statements.Add(
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName("var"))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier($"{columnElement.Name.ToCamelCase()}Object"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.BinaryExpression(
-                                            SyntaxKind.AsExpression,
-                                            SyntaxFactory.InvocationExpression(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.IdentifierName(jObjectName),
-                                                    SyntaxFactory.IdentifierName("GetValue")))
-                                            .WithArgumentList(
-                                                SyntaxFactory.ArgumentList(
-                                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                        new SyntaxNodeOrToken[]
-                                                        {
+                    //                        var childIdObject = jObject.GetValue("childId", StringComparison.InvariantCulture) as JObject;
+                    statements.Add(
+                        SyntaxFactory.LocalDeclarationStatement(
+                            SyntaxFactory.VariableDeclaration(
+                                SyntaxFactory.IdentifierName("var"))
+                            .WithVariables(
+                                SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                    SyntaxFactory.VariableDeclarator(
+                                        SyntaxFactory.Identifier($"{columnElement.Name.ToCamelCase()}Object"))
+                                    .WithInitializer(
+                                        SyntaxFactory.EqualsValueClause(
+                                            SyntaxFactory.BinaryExpression(
+                                                SyntaxKind.AsExpression,
+                                                SyntaxFactory.InvocationExpression(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.IdentifierName("innerJObject"),
+                                                        SyntaxFactory.IdentifierName("GetValue")))
+                                                .WithArgumentList(
+                                                    SyntaxFactory.ArgumentList(
+                                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                            new SyntaxNodeOrToken[]
+                                                            {
                                                                 SyntaxFactory.Argument(
                                                                     SyntaxFactory.LiteralExpression(
                                                                         SyntaxKind.StringLiteralExpression,
@@ -1158,133 +1202,354 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                                         SyntaxFactory.IdentifierName("StringComparison"),
                                                                         SyntaxFactory.IdentifierName("InvariantCulture"))),
-                                                        }))),
-                                            SyntaxFactory.IdentifierName("JObject"))))))));
+                                                            }))),
+                                                SyntaxFactory.IdentifierName("JObject"))))))));
 
-                //                        if (childIdObject != null)
-                //                        {
-                //                            <ResolveColumnFromParent>
-                //                        }
-                statements.Add(SyntaxFactory.IfStatement(
-                    SyntaxFactory.BinaryExpression(
-                        SyntaxKind.NotEqualsExpression,
-                        SyntaxFactory.IdentifierName($"{columnElement.Name.ToCamelCase()}Object"),
-                        SyntaxFactory.LiteralExpression(
-                            SyntaxKind.NullLiteralExpression)),
-                    SyntaxFactory.Block(PostMethod.ResolveColumnFromParent(columnReferenceElement, columnKeyPair.Value))));
-            }
+                    //                        if (childIdObject != null)
+                    //                        {
+                    //                            <ResolveColumnFromParent>
+                    //                        }
+                    statements.Add(SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
+                            SyntaxFactory.IdentifierName($"{columnElement.Name.ToCamelCase()}Object"),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression)),
+                        SyntaxFactory.Block(PostMethod.ResolveColumnFromParent(columnReferenceElement, columnKeyPair.Value))));
+                }
 
-            //                        Account account = jObject.ToObject<Account>();
-            statements.Add(
-                SyntaxFactory.LocalDeclarationStatement(
-                    SyntaxFactory.VariableDeclaration(
-                        SyntaxFactory.IdentifierName(this.tableElement.Name))
-                    .WithVariables(
-                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                            SyntaxFactory.VariableDeclarator(
-                                SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()))
-                            .WithInitializer(
-                                SyntaxFactory.EqualsValueClause(
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName(jObjectName),
-                                            SyntaxFactory.GenericName(
-                                                SyntaxFactory.Identifier("ToObject"))
-                                            .WithTypeArgumentList(
-                                                SyntaxFactory.TypeArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                        SyntaxFactory.IdentifierName(this.tableElement.Name))))))))))));
+                //                        Account account = jObject.ToObject<Account>();
+                statements.Add(
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(this.tableElement.Name))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("innerJObject"),
+                                                SyntaxFactory.GenericName(
+                                                    SyntaxFactory.Identifier("ToObject"))
+                                                .WithTypeArgumentList(
+                                                    SyntaxFactory.TypeArgumentList(
+                                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                            SyntaxFactory.IdentifierName(this.tableElement.Name))))))))))));
 
-            //                        country.Enlist();
-            statements.Add(
-                SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                            SyntaxFactory.IdentifierName("Enlist")))));
-
-            //                        await province.Lock.EnterWriteLockAsync(this.lockTimeout).ConfigureAwait(false);
-            statements.Add(
-                SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.AwaitExpression(
+                //                        country.Enlist();
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                                            SyntaxFactory.IdentifierName("Lock")),
-                                        SyntaxFactory.IdentifierName("EnterWriteLockAsync")))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName("lockTimeout")))))),
-                                SyntaxFactory.IdentifierName("ConfigureAwait")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.FalseLiteralExpression))))))));
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                SyntaxFactory.IdentifierName("Enlist")))));
 
-            //                        this.domain.Countries.Add(country);
-            statements.Add(
-                SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
+                //                        await province.Lock.EnterWriteLockAsync(this.lockTimeout).ConfigureAwait(false);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AwaitExpression(
+                            SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToVariableName())),
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                            SyntaxFactory.IdentifierName("Add")))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList(
-                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                SyntaxFactory.Argument(
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
-
-            //                        using (TransactionScope additionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-            //                        {
-            //                            <AdditionTransaction>
-            //                        }
-            statements.Add(
-                SyntaxFactory.UsingStatement(
-                    SyntaxFactory.Block(this.AddTransaction))
-                .WithDeclaration(
-                    SyntaxFactory.VariableDeclaration(
-                        SyntaxFactory.IdentifierName("TransactionScope"))
-                    .WithVariables(
-                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                            SyntaxFactory.VariableDeclarator(
-                                SyntaxFactory.Identifier("additionScope"))
-                            .WithInitializer(
-                                SyntaxFactory.EqualsValueClause(
-                                    SyntaxFactory.ObjectCreationExpression(
-                                        SyntaxFactory.IdentifierName("TransactionScope"))
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                                SyntaxFactory.IdentifierName("Lock")),
+                                            SyntaxFactory.IdentifierName("EnterWriteLockAsync")))
                                     .WithArgumentList(
                                         SyntaxFactory.ArgumentList(
                                             SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                 SyntaxFactory.Argument(
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.IdentifierName("TransactionScopeAsyncFlowOption"),
-                                                        SyntaxFactory.IdentifierName("Enabled"))))))))))));
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName("lockTimeout")))))),
+                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.FalseLiteralExpression))))))));
 
-            // This is the complete block.
-            return SyntaxFactory.List(statements);
+                //                        this.domain.Countries.Add(country);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToVariableName())),
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
+                                SyntaxFactory.IdentifierName("Add")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
+
+                //                        using (TransactionScope additionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                //                        {
+                //                            <AdditionTransaction>
+                //                        }
+                statements.Add(
+                    SyntaxFactory.UsingStatement(
+                        SyntaxFactory.Block(this.AddTransaction))
+                    .WithDeclaration(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName("TransactionScope"))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("additionScope"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.IdentifierName("TransactionScope"))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.IdentifierName("TransactionScopeAsyncFlowOption"),
+                                                            SyntaxFactory.IdentifierName("Enabled"))))))))))));
+
+                //                            proposedOrders.Add(proposedOrder);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase().ToPlural()),
+                                SyntaxFactory.IdentifierName("Add")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
+
+                // This is the complete block.
+                return SyntaxFactory.List(statements);
+            }
+        }
+
+        /// <summary>
+        /// Gets a block of code.
+        /// </summary>
+        /// <returns>A block of statements.</returns>
+        private SyntaxList<StatementSyntax> WriteSingleBody
+        {
+            get
+            {
+                // This is used to collect the statements.
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                // We want to find all the relations to parent records in order to pull apart the JSON structure.  We can address different
+                // indices using different parameters in the JSON. (e.g. "countryCode" will reference the CountryCode
+                Dictionary<ColumnReferenceElement, List<UniqueKeyElement>> columnResolutionKeys = new Dictionary<ColumnReferenceElement, List<UniqueKeyElement>>();
+                foreach (ForeignKeyElement parentKeyElement in this.tableElement.ParentKeys)
+                {
+                    foreach (ColumnReferenceElement columnReferenceElement in parentKeyElement.Columns)
+                    {
+                        ColumnElement columnElement = columnReferenceElement.Column;
+                        foreach (UniqueKeyElement additionalUniqueKeyElement in parentKeyElement.UniqueKey.Table.UniqueKeys)
+                        {
+                            if (!additionalUniqueKeyElement.IsPrimaryKey)
+                            {
+                                if (!columnResolutionKeys.TryGetValue(columnReferenceElement, out List<UniqueKeyElement> uniqueKeyElements))
+                                {
+                                    uniqueKeyElements = new List<UniqueKeyElement>();
+                                    columnResolutionKeys.Add(columnReferenceElement, uniqueKeyElements);
+                                }
+
+                                uniqueKeyElements.Add(additionalUniqueKeyElement);
+                            }
+                        }
+                    }
+                }
+
+                // This constructs code that attempts to resolve a column from the input parameters.  Sometimes a primary key index isn't available
+                // to the outside world because the data comes from an external system or is kept in a script file.  This makes use of the fact that
+                // a relationship may exist between a child and parent table.
+                foreach (var columnKeyPair in columnResolutionKeys)
+                {
+                    ColumnReferenceElement columnReferenceElement = columnKeyPair.Key;
+                    ColumnElement columnElement = columnReferenceElement.Column;
+
+                    //                        var childIdObject = jObject.GetValue("childId", StringComparison.InvariantCulture) as JObject;
+                    statements.Add(
+                        SyntaxFactory.LocalDeclarationStatement(
+                            SyntaxFactory.VariableDeclaration(
+                                SyntaxFactory.IdentifierName("var"))
+                            .WithVariables(
+                                SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                    SyntaxFactory.VariableDeclarator(
+                                        SyntaxFactory.Identifier($"{columnElement.Name.ToCamelCase()}Object"))
+                                    .WithInitializer(
+                                        SyntaxFactory.EqualsValueClause(
+                                            SyntaxFactory.BinaryExpression(
+                                                SyntaxKind.AsExpression,
+                                                SyntaxFactory.InvocationExpression(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.IdentifierName("jObject"),
+                                                        SyntaxFactory.IdentifierName("GetValue")))
+                                                .WithArgumentList(
+                                                    SyntaxFactory.ArgumentList(
+                                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                            new SyntaxNodeOrToken[]
+                                                            {
+                                                                SyntaxFactory.Argument(
+                                                                    SyntaxFactory.LiteralExpression(
+                                                                        SyntaxKind.StringLiteralExpression,
+                                                                        SyntaxFactory.Literal(columnElement.Name.ToVariableName()))),
+                                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                                SyntaxFactory.Argument(
+                                                                    SyntaxFactory.MemberAccessExpression(
+                                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                                        SyntaxFactory.IdentifierName("StringComparison"),
+                                                                        SyntaxFactory.IdentifierName("InvariantCulture"))),
+                                                            }))),
+                                                SyntaxFactory.IdentifierName("JObject"))))))));
+
+                    //                        if (childIdObject != null)
+                    //                        {
+                    //                            <ResolveColumnFromParent>
+                    //                        }
+                    statements.Add(SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
+                            SyntaxFactory.IdentifierName($"{columnElement.Name.ToCamelCase()}Object"),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression)),
+                        SyntaxFactory.Block(PostMethod.ResolveColumnFromParent(columnReferenceElement, columnKeyPair.Value))));
+                }
+
+                //                        Account account = jObject.ToObject<Account>();
+                statements.Add(
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(this.tableElement.Name))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("jObject"),
+                                                SyntaxFactory.GenericName(
+                                                    SyntaxFactory.Identifier("ToObject"))
+                                                .WithTypeArgumentList(
+                                                    SyntaxFactory.TypeArgumentList(
+                                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                            SyntaxFactory.IdentifierName(this.tableElement.Name))))))))))));
+
+                //                        country.Enlist();
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                SyntaxFactory.IdentifierName("Enlist")))));
+
+                //                        await province.Lock.EnterWriteLockAsync(this.lockTimeout).ConfigureAwait(false);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AwaitExpression(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                                SyntaxFactory.IdentifierName("Lock")),
+                                            SyntaxFactory.IdentifierName("EnterWriteLockAsync")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName("lockTimeout")))))),
+                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.FalseLiteralExpression))))))));
+
+                //                        this.domain.Countries.Add(country);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToVariableName())),
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
+                                SyntaxFactory.IdentifierName("Add")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
+
+                //                        using (TransactionScope additionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                //                        {
+                //                            <AdditionTransaction>
+                //                        }
+                statements.Add(
+                    SyntaxFactory.UsingStatement(
+                        SyntaxFactory.Block(this.AddTransaction))
+                    .WithDeclaration(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName("TransactionScope"))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("additionScope"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.IdentifierName("TransactionScope"))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.IdentifierName("TransactionScopeAsyncFlowOption"),
+                                                            SyntaxFactory.IdentifierName("Enabled"))))))))))));
+
+                // This is the complete block.
+                return SyntaxFactory.List(statements);
+            }
         }
     }
 }
