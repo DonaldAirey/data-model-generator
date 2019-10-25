@@ -253,19 +253,64 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
                             Block(this.AddRecordToResiduals)));
                 }
 
-                //                this.Remove(oldBuyer);
+                //                ProposedOrder proposedOrder = this.PortfolioDomain.ProposedOrders.ProposedOrderKey.Find(oldProposedOrder.ProposedOrderId);
                 statements.Add(
-                    ExpressionStatement(
-                        InvocationExpression(
-                            MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                ThisExpression(),
-                                IdentifierName("Remove")))
-                        .WithArgumentList(
-                            ArgumentList(
-                                SingletonSeparatedList<ArgumentSyntax>(
-                                    Argument(
-                                        IdentifierName($"old{this.tableElement.Name}")))))));
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(this.tableElement.Name))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.ThisExpression(),
+                                                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
+                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
+                                                    SyntaxFactory.IdentifierName(this.tableElement.PrimaryKey.Name)),
+                                                SyntaxFactory.IdentifierName("Find")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.IdentifierName($"old{this.tableElement.Name}"),
+                                                            SyntaxFactory.IdentifierName(this.tableElement.PrimaryKey.Columns[0].Column.Name))))))))))));
+
+                //                if (proposedOrder != null)
+                //                {
+                //                    this.Remove(proposedOrder);
+                //                }
+                statements.Add(
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression)),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ExpressionStatement(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName("Remove")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))))))))));
 
                 //                if (entity.RowVersion > this.AlertDomain.RowVersion)
                 //                {
