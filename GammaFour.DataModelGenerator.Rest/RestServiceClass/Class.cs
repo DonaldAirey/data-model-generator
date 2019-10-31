@@ -107,7 +107,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.AttributeArgument(
                                             SyntaxFactory.LiteralExpression(
                                                 SyntaxKind.StringLiteralExpression,
-                                                SyntaxFactory.Literal("api/[controller]")))))))));
+                                                SyntaxFactory.Literal($"{this.tableElement.XmlSchemaDocument.Name.ToCamelCase()}/[controller]")))))))));
 
                 //        [ApiController]
                 attributes.Add(

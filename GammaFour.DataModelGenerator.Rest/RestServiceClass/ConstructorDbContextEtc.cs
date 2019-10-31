@@ -83,8 +83,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToVariableName())),
-                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToVariableName()))));
+                                SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Domain.ToVariableName())),
+                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Domain.ToVariableName()))));
 
                 //            this.domainContext = domainContext;
                 statements.Add(
@@ -94,10 +94,10 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.Name.ToCamelCase()}Context")),
-                            SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.Name.ToCamelCase()}Context"))));
+                                SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.Domain.ToCamelCase()}Context")),
+                            SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.Domain.ToCamelCase()}Context"))));
 
-                //            var timespan = configuration.GetValue<TimeSpan>("Domain:LockTimeout", TimeSpan.MaxValue);
+                //            var timespan = configuration.GetValue<TimeSpan>("Rest:LockTimeout", TimeSpan.MaxValue);
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
@@ -224,7 +224,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.Name.ToCamelCase()}Context")),
+                                        SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.Domain.ToCamelCase()}Context")),
                                     SyntaxFactory.IdentifierName("Database")),
                                 SyntaxFactory.IdentifierName("SetCommandTimeout")))
                         .WithArgumentList(
@@ -391,17 +391,17 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(this.tableElement.XmlSchemaDocument.Name.ToVariableName()))
+                        SyntaxFactory.Identifier(this.tableElement.XmlSchemaDocument.Domain.ToVariableName()))
                     .WithType(
-                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)));
+                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Domain)));
 
                 // , DomainContext domainContext
                 parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier($"{this.tableElement.XmlSchemaDocument.Name.ToCamelCase()}Context"))
+                        SyntaxFactory.Identifier($"{this.tableElement.XmlSchemaDocument.Domain.ToCamelCase()}Context"))
                     .WithType(
-                        SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.Name}Context")));
+                        SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.Domain}Context")));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

@@ -49,6 +49,15 @@ namespace GammaFour.DataModelGenerator.Common
             XAttribute isSecureAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.IsSecureName);
             this.IsSecure = isSecureAttribute == null ? false : Convert.ToBoolean(isSecureAttribute.Value, CultureInfo.InvariantCulture);
 
+            // This tells us where the data domain when compiling the REST API.
+            XAttribute domainAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.DomainName);
+            if (domainAttribute != null)
+            {
+                string[] domainParts = domainAttribute.Value.Split('.');
+                this.Domain = domainParts[domainParts.Length - 1];
+                this.DomainNamespace = String.Join(".", domainParts, 0, domainParts.Length - 1);
+            }
+
             // The data model description is found on the first element of the first complex type in the module.
             XElement complexTypeElement = rootElement.Element(XmlSchemaDocument.ComplexTypeName);
             XElement choiceElement = complexTypeElement.Element(XmlSchemaDocument.ChoiceName);
@@ -156,6 +165,11 @@ namespace GammaFour.DataModelGenerator.Common
         /// Gets the DeleteRule attribute.
         /// </summary>
         public static XName DeleteRuleName { get; } = XName.Get("deleteRule", XmlSchemaDocument.GammaFourDataNamespace);
+
+        /// <summary>
+        /// Gets the Domain attribute.
+        /// </summary>
+        public static XName DomainName { get; } = XName.Get("domain", XmlSchemaDocument.GammaFourDataNamespace);
 
         /// <summary>
         /// Gets the Element element.
@@ -266,6 +280,16 @@ namespace GammaFour.DataModelGenerator.Common
         /// Gets the XPath attribute.
         /// </summary>
         public static XName XPathName { get; } = XName.Get("xpath", string.Empty);
+
+        /// <summary>
+        /// Gets the name of the data domain.
+        /// </summary>
+        public string Domain { get; private set; }
+
+        /// <summary>
+        /// Gets the namespace of the data domain.
+        /// </summary>
+        public string DomainNamespace { get; private set; }
 
         /// <summary>
         /// Gets the constraint elements.

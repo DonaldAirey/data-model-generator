@@ -163,7 +163,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName($"{this.uniqueKeyElement.XmlSchemaDocument.Name.ToCamelCase()}Context")),
+                                                    SyntaxFactory.IdentifierName($"{this.uniqueKeyElement.XmlSchemaDocument.Domain.ToCamelCase()}Context")),
                                                 SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
                                             SyntaxFactory.IdentifierName("AddAsync")))
                                     .WithArgumentList(
@@ -192,7 +192,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName($"{this.uniqueKeyElement.XmlSchemaDocument.Name.ToCamelCase()}Context")),
+                                                SyntaxFactory.IdentifierName($"{this.uniqueKeyElement.XmlSchemaDocument.Domain.ToCamelCase()}Context")),
                                             SyntaxFactory.IdentifierName("SaveChangesAsync"))),
                                     SyntaxFactory.IdentifierName("ConfigureAwait")))
                             .WithArgumentList(
@@ -294,7 +294,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.Name.ToVariableName())),
+                                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.Domain.ToVariableName())),
                                     SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
                                 SyntaxFactory.IdentifierName("Add")))
                         .WithArgumentList(
@@ -593,7 +593,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.Name.ToVariableName())),
+                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.Domain.ToVariableName())),
                                             SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
                                         SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name)),
                                     SyntaxFactory.IdentifierName("Lock")),
@@ -682,7 +682,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.Name.ToVariableName())),
+                                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.Domain.ToVariableName())),
                                                         SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
                                                     SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name)),
                                                 SyntaxFactory.IdentifierName("Lock")),
@@ -719,7 +719,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.Name.ToVariableName())),
+                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.Domain.ToVariableName())),
                                             SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
                                         SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name)),
                                     SyntaxFactory.IdentifierName("Find")))
@@ -911,7 +911,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.Name.ToVariableName())),
+                                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.Domain.ToVariableName())),
                                     SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
                                 SyntaxFactory.IdentifierName("Update")))
                         .WithArgumentList(
@@ -973,7 +973,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName($"{this.uniqueKeyElement.XmlSchemaDocument.Name.ToCamelCase()}Context")),
+                                        SyntaxFactory.IdentifierName($"{this.uniqueKeyElement.XmlSchemaDocument.Domain.ToCamelCase()}Context")),
                                     SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
                                 SyntaxFactory.IdentifierName("Update")))
                         .WithArgumentList(
@@ -995,7 +995,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName($"{this.uniqueKeyElement.XmlSchemaDocument.Name.ToCamelCase()}Context")),
+                                                SyntaxFactory.IdentifierName($"{this.uniqueKeyElement.XmlSchemaDocument.Domain.ToCamelCase()}Context")),
                                             SyntaxFactory.IdentifierName("SaveChangesAsync"))),
                                     SyntaxFactory.IdentifierName("ConfigureAwait")))
                             .WithArgumentList(
@@ -1235,7 +1235,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(uniqueKeyElement.XmlSchemaDocument.Name.ToVariableName())),
+                                            SyntaxFactory.IdentifierName(uniqueKeyElement.XmlSchemaDocument.Domain.ToVariableName())),
                                         SyntaxFactory.IdentifierName(uniqueKeyElement.Table.Name.ToPlural())),
                                     SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
                                 SyntaxFactory.IdentifierName("Find")))
@@ -1252,41 +1252,68 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <param name="tableElement">The table element.</param>
         /// <param name="columnElement">The column element.</param>
         /// <returns>A block of statements.</returns>
-        private static SyntaxList<StatementSyntax> GetLockRecord(TableElement tableElement, ColumnElement columnElement)
+        private static SyntaxList<StatementSyntax> FinallyBlock3(TableElement tableElement)
+        {
+            // This is used to collect the statements.
+            List<StatementSyntax> statements = new List<StatementSyntax>();
+
+            //                                blotter.Lock.ExitReadLock();
+            statements.Add(
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                SyntaxFactory.IdentifierName("Lock")),
+                            SyntaxFactory.IdentifierName("ExitReadLock")))));
+
+            // This is the complete block.
+            return SyntaxFactory.List(statements);
+        }
+
+        /// <summary>
+        /// Gets a block of code.
+        /// </summary>
+        /// <param name="tableElement">The table element.</param>
+        /// <param name="columnElement">The column element.</param>
+        /// <returns>A block of statements.</returns>
+        private static SyntaxList<StatementSyntax> TryBlock3(TableElement tableElement, ColumnElement columnElement)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 
             //                    await country.Lock.EnterReadLockAsync(this.lockTimeout).ConfigureAwait(false);
             statements.Add(
-                SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.AwaitExpression(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.InvocationExpression(
+            SyntaxFactory.ExpressionStatement(
+                SyntaxFactory.AwaitExpression(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
-                                            SyntaxFactory.IdentifierName("Lock")),
-                                        SyntaxFactory.IdentifierName("EnterReadLockAsync")))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName("lockTimeout")))))),
-                                SyntaxFactory.IdentifierName("ConfigureAwait")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.FalseLiteralExpression))))))));
+                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                        SyntaxFactory.IdentifierName("Lock")),
+                                    SyntaxFactory.IdentifierName("EnterReadLockAsync")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName("lockTimeout")))))),
+                            SyntaxFactory.IdentifierName("ConfigureAwait")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.LiteralExpression(
+                                        SyntaxKind.FalseLiteralExpression))))))));
 
             //                                childIdObject.Replace(new JValue(account.AccountId));
             statements.Add(
@@ -1394,7 +1421,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 
             //                if (country != null)
             //                {
-            //                    <LockRecord>
+            //                    <TryLockRecord>
             //                }
             statements.Add(
                 SyntaxFactory.IfStatement(
@@ -1404,6 +1431,37 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                         SyntaxFactory.LiteralExpression(
                             SyntaxKind.NullLiteralExpression)),
                     SyntaxFactory.Block(PutMethod.GetLockRecord(tableElement, columnElement))));
+
+            // This is the complete block.
+            return SyntaxFactory.List(statements);
+        }
+
+        /// <summary>
+        /// Gets a block of code.
+        /// </summary>
+        /// <param name="tableElement">The table element.</param>
+        /// <param name="columnElement">The column element.</param>
+        /// <returns>A block of statements.</returns>
+        private static SyntaxList<StatementSyntax> GetLockRecord(TableElement tableElement, ColumnElement columnElement)
+        {
+            // This is used to collect the statements.
+            List<StatementSyntax> statements = new List<StatementSyntax>();
+
+            //                            try
+            //                            {
+            //                                <GetLockRecord>
+            //                            }
+            //                            finally
+            //                            {
+            //                                <ExitLockRecord>
+            //                            }
+            statements.Add(
+                SyntaxFactory.TryStatement()
+                .WithBlock(
+                    SyntaxFactory.Block(PutMethod.TryBlock3(tableElement, columnElement)))
+                .WithFinally(
+                    SyntaxFactory.FinallyClause(
+                        SyntaxFactory.Block(PutMethod.FinallyBlock3(tableElement)))));
 
             // This is the complete block.
             return SyntaxFactory.List(statements);

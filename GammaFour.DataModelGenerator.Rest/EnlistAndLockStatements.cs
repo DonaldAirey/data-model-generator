@@ -44,7 +44,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.Name.ToVariableName())),
+                                    SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.Domain.ToVariableName())),
                                 SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                             SyntaxFactory.IdentifierName("Enlist")))));
 
@@ -64,7 +64,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.Name.ToVariableName())),
+                                            SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.Domain.ToVariableName())),
                                         SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                                     SyntaxFactory.IdentifierName(innerUniqueKeyElement.Name)),
                                 SyntaxFactory.IdentifierName("Enlist")))));
@@ -86,7 +86,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.Name.ToVariableName())),
+                                            SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.Domain.ToVariableName())),
                                         SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                                     SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
                                 SyntaxFactory.IdentifierName("Enlist")))));
@@ -109,7 +109,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.Name.ToVariableName())),
+                                                    SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.Domain.ToVariableName())),
                                                 SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                                             SyntaxFactory.IdentifierName("Lock")),
                                         SyntaxFactory.IdentifierName("EnterWriteLockAsync")))
@@ -151,7 +151,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(innerUniqueKeyElement.XmlSchemaDocument.Name.ToVariableName())),
+                                                            SyntaxFactory.IdentifierName(innerUniqueKeyElement.XmlSchemaDocument.Domain.ToVariableName())),
                                                         SyntaxFactory.IdentifierName(innerUniqueKeyElement.Table.Name.ToPlural())),
                                                     SyntaxFactory.IdentifierName(innerUniqueKeyElement.Name)),
                                                 SyntaxFactory.IdentifierName("Lock")),
@@ -195,7 +195,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(foreignKeyElement.XmlSchemaDocument.Name.ToVariableName())),
+                                                            SyntaxFactory.IdentifierName(foreignKeyElement.XmlSchemaDocument.Domain.ToVariableName())),
                                                         SyntaxFactory.IdentifierName(foreignKeyElement.Table.Name.ToPlural())),
                                                     SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
                                                 SyntaxFactory.IdentifierName("Lock")),
@@ -251,7 +251,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.ThisExpression(),
-                                                                SyntaxFactory.IdentifierName(uniqueKeyElement.XmlSchemaDocument.Name.ToVariableName())),
+                                                                SyntaxFactory.IdentifierName(uniqueKeyElement.XmlSchemaDocument.Domain.ToVariableName())),
                                                             SyntaxFactory.IdentifierName(uniqueKeyElement.Table.Name.ToPlural())),
                                                         SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
                                                     SyntaxFactory.IdentifierName("Lock")),

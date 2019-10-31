@@ -5,6 +5,7 @@
 namespace GammaFour.DataModelGenerator.RestService
 {
     using System.Collections.Generic;
+    using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -106,14 +107,16 @@ namespace GammaFour.DataModelGenerator.RestService
         {
             get
             {
-                // Create the 'using' statements.
+                // Create the list of system namespaces.
+                List<UsingDirectiveSyntax> systemUsingStatements = new List<UsingDirectiveSyntax>();
+                systemUsingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System")));
+                systemUsingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")));
+                systemUsingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading")));
+                systemUsingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")));
+                systemUsingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")));
+
+                // Create the list of non-system namespaces.
                 List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>();
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.Data")));
                 if (this.xmlSchemaDocument.IsSecure)
                 {
@@ -125,7 +128,13 @@ namespace GammaFour.DataModelGenerator.RestService
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Configuration")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Newtonsoft.Json.Linq")));
-                return usingStatements;
+                if (!string.IsNullOrEmpty(this.xmlSchemaDocument.DomainNamespace))
+                {
+                    usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName(this.xmlSchemaDocument.DomainNamespace)));
+                }
+
+                // This sorts and concatenates the two lists.  The 'System' namespace comes before the rest.
+                return systemUsingStatements.OrderBy(ud => ud.Name.ToString()).Concat(usingStatements.OrderBy(ud => ud.Name.ToString())).ToList();
             }
         }
 

@@ -28,12 +28,12 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             }
 
             // Initialize the object.
-            this.Name = xmlSchemaDocument.Name.ToVariableName();
+            this.Name = xmlSchemaDocument.Domain.ToVariableName();
 
             //        private Domain domain;
             this.Syntax = SyntaxFactory.FieldDeclaration(
                     SyntaxFactory.VariableDeclaration(
-                        SyntaxFactory.IdentifierName(xmlSchemaDocument.Name))
+                        SyntaxFactory.IdentifierName(xmlSchemaDocument.Domain))
                     .WithVariables(
                         SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                             SyntaxFactory.VariableDeclarator(
