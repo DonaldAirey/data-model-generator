@@ -215,6 +215,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordClass
                                                             SyntaxFactory.IdentifierName("Current")),
                                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                         SyntaxFactory.ParenthesizedLambdaExpression(
+                                                            SyntaxFactory.ParameterList(),
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.IdentifierName("c"),
@@ -237,6 +238,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordClass
                                                             SyntaxFactory.IdentifierName("Previous")),
                                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                         SyntaxFactory.ParenthesizedLambdaExpression(
+                                                            SyntaxFactory.ParameterList(),
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.IdentifierName("c"),

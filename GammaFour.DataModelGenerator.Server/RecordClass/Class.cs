@@ -220,6 +220,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // Add the constructors.
+            members = members.Add(new StaticConstructor(this.tableElement).Syntax);
             members = members.Add(new Constructor(this.tableElement).Syntax);
             members = members.Add(new ConstructorRecordVersion(this.tableElement).Syntax);
 

@@ -1,4 +1,4 @@
-// <copyright file="Constructor.cs" company="Gamma Four, Inc.">
+// <copyright file="StaticConstructor.cs" company="Gamma Four, Inc.">
 //    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,7 +14,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
     /// <summary>
     /// Creates a constructor.
     /// </summary>
-    public class Constructor : SyntaxElement
+    public class StaticConstructor : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -22,10 +22,10 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         private TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Constructor"/> class.
+        /// Initializes a new instance of the <see cref="StaticConstructor"/> class.
         /// </summary>
         /// <param name="tableElement">The table schema.</param>
-        public Constructor(TableElement tableElement)
+        public StaticConstructor(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement ?? throw new ArgumentNullException(nameof(tableElement));
@@ -34,13 +34,13 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
             //        /// <summary>
             //        /// Initializes a new instance of the <see cref="Buyer"/> class.
             //        /// </summary>
-            //        public Buyer()
+            //        static Buyer()
             //        {
             //             <Body>
             //        }
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
                 SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(Constructor.Modifiers)
+                .WithModifiers(StaticConstructor.Modifiers)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -56,7 +56,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                        SyntaxFactory.Token(SyntaxKind.StaticKeyword),
                     });
             }
         }
@@ -71,81 +71,95 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                // This constructs the list of default elements for each of the properties.
-                List<SyntaxNodeOrToken> arrayElementList = new List<SyntaxNodeOrToken>();
-                foreach (ColumnElement columnElement in this.tableElement.Columns)
-                {
-                    if (arrayElementList.Count != 0)
-                    {
-                        arrayElementList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
-                    }
-
-                    arrayElementList.Add(SyntaxFactory.DefaultExpression(Conversions.FromType(columnElement.ColumnType)));
-                }
-
-                //            this.currentData = new object[15]
-                //            {
-                //                default(string),
-                //                default(string),
-                //                default(int),
+                //            Account.cloneVersions.Add(RecordVersion.Current, c => c.currentData);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
+                        SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("currentData")),
-                            SyntaxFactory.ArrayCreationExpression(
-                                SyntaxFactory.ArrayType(
-                                    SyntaxFactory.PredefinedType(
-                                        SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
-                                .WithRankSpecifiers(
-                                    SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
-                                        SyntaxFactory.ArrayRankSpecifier(
-                                            SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
-                                                SyntaxFactory.LiteralExpression(
-                                                    SyntaxKind.NumericLiteralExpression,
-                                                    SyntaxFactory.Literal(this.tableElement.Columns.Count)))))))
-                            .WithInitializer(
-                                SyntaxFactory.InitializerExpression(
-                                    SyntaxKind.ArrayInitializerExpression,
-                                    SyntaxFactory.SeparatedList<ExpressionSyntax>(arrayElementList.ToArray()))))));
-
-                //            this.State = RecordState.Detached;
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("RecordState")),
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("RecordState"),
-                                SyntaxFactory.IdentifierName("Detached")))));
-
-                //            this.getBuyers = () => Country.defaultBuyers;
-                //            this.getProvinces = () => Country.defaultProvinces;
-                //            this.getRegions = () => Country.defaultRegions;
-                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ChildKeys)
-                {
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName($"get{foreignKeyElement.UniqueChildName}")),
-                                SyntaxFactory.ParenthesizedLambdaExpression(
-                                    SyntaxFactory.ParameterList(),
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name),
-                                        SyntaxFactory.IdentifierName($"Default{foreignKeyElement.UniqueChildName}"))))));
-                }
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name),
+                                    SyntaxFactory.IdentifierName("cloneVersions")),
+                                SyntaxFactory.IdentifierName("Add")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]{
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("RecordVersion"),
+                                                SyntaxFactory.IdentifierName("Current"))),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.SimpleLambdaExpression(
+                                                SyntaxFactory.Parameter(
+                                                    SyntaxFactory.Identifier("c")),
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName("c"),
+                                                    SyntaxFactory.IdentifierName("currentData"))))})))));
+
+                //            Account.cloneVersions.Add(RecordVersion.Original, c => c.originalData);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name),
+                                    SyntaxFactory.IdentifierName("cloneVersions")),
+                                SyntaxFactory.IdentifierName("Add")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]{
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("RecordVersion"),
+                                                SyntaxFactory.IdentifierName("Original"))),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.SimpleLambdaExpression(
+                                                SyntaxFactory.Parameter(
+                                                    SyntaxFactory.Identifier("c")),
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName("c"),
+                                                    SyntaxFactory.IdentifierName("originalData"))))})))));
+
+                //            Account.cloneVersions.Add(RecordVersion.Previous, c => c.previousData);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name),
+                                    SyntaxFactory.IdentifierName("cloneVersions")),
+                                SyntaxFactory.IdentifierName("Add")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]{
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("RecordVersion"),
+                                                SyntaxFactory.IdentifierName("Previous"))),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.SimpleLambdaExpression(
+                                                SyntaxFactory.Parameter(
+                                                    SyntaxFactory.Identifier("c")),
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName("c"),
+                                                    SyntaxFactory.IdentifierName("previousData"))))})))));
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -187,7 +201,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Initializes a new instance of the <see cref=\"{this.tableElement.Name}\"/> class.",
+                                                $" Initializes static members of the <see cref=\"{this.tableElement.Name}\"/> class.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

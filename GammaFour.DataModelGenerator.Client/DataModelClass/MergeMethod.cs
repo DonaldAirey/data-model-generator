@@ -25,7 +25,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         /// <summary>
         /// Initializes a new instance of the <see cref="MergeMethod"/> class.
         /// </summary>
-        /// <param name="tableElement">The unique constraint schema.</param>
+        /// <param name="xmlSchemaDocument">The XML document schema.</param>
         public MergeMethod(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.

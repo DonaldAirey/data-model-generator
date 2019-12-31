@@ -175,8 +175,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                 .WithTypeArgumentList(
                                     SyntaxFactory.TypeArgumentList(
                                         SyntaxFactory.SeparatedList<TypeSyntax>(
-                                            new SyntaxNodeOrToken[]
-                                            {
+                                            new SyntaxNodeOrToken[]{
                                                 SyntaxFactory.IdentifierName("RecordVersion"),
                                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                 SyntaxFactory.GenericName(
@@ -184,8 +183,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 .WithTypeArgumentList(
                                                     SyntaxFactory.TypeArgumentList(
                                                         SyntaxFactory.SeparatedList<TypeSyntax>(
-                                                            new SyntaxNodeOrToken[]
-                                                            {
+                                                            new SyntaxNodeOrToken[]{
                                                                 SyntaxFactory.IdentifierName(this.tableElement.Name),
                                                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                                 SyntaxFactory.ArrayType(
@@ -195,81 +193,9 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                                     SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
                                                                         SyntaxFactory.ArrayRankSpecifier(
                                                                             SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
-                                                                                SyntaxFactory.OmittedArraySizeExpression())))),
-                                                            }))),
-                                            }))))
-                            .WithInitializer(
-                                SyntaxFactory.InitializerExpression(
-                                    SyntaxKind.CollectionInitializerExpression,
-                                    SyntaxFactory.SeparatedList<ExpressionSyntax>(
-                                        new SyntaxNodeOrToken[]
-                                        {
-                                            SyntaxFactory.InitializerExpression(
-                                                SyntaxKind.ComplexElementInitializerExpression,
-                                                SyntaxFactory.SeparatedList<ExpressionSyntax>(
-                                                    new SyntaxNodeOrToken[]
-                                                    {
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.IdentifierName("RecordVersion"),
-                                                            SyntaxFactory.IdentifierName("Current")),
-                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                        SyntaxFactory.ParenthesizedLambdaExpression(
-                                                            SyntaxFactory.MemberAccessExpression(
-                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.IdentifierName("c"),
-                                                                SyntaxFactory.IdentifierName("currentData")))
-                                                        .WithParameterList(
-                                                            SyntaxFactory.ParameterList(
-                                                                SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
-                                                                    SyntaxFactory.Parameter(
-                                                                        SyntaxFactory.Identifier("c"))))),
-                                                    })),
-                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                            SyntaxFactory.InitializerExpression(
-                                                SyntaxKind.ComplexElementInitializerExpression,
-                                                SyntaxFactory.SeparatedList<ExpressionSyntax>(
-                                                    new SyntaxNodeOrToken[]
-                                                    {
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.IdentifierName("RecordVersion"),
-                                                            SyntaxFactory.IdentifierName("Original")),
-                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                        SyntaxFactory.ParenthesizedLambdaExpression(
-                                                            SyntaxFactory.MemberAccessExpression(
-                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.IdentifierName("c"),
-                                                                SyntaxFactory.IdentifierName("originalData")))
-                                                        .WithParameterList(
-                                                            SyntaxFactory.ParameterList(
-                                                                SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
-                                                                    SyntaxFactory.Parameter(
-                                                                        SyntaxFactory.Identifier("c"))))),
-                                                    })),
-                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                            SyntaxFactory.InitializerExpression(
-                                                SyntaxKind.ComplexElementInitializerExpression,
-                                                SyntaxFactory.SeparatedList<ExpressionSyntax>(
-                                                    new SyntaxNodeOrToken[]
-                                                    {
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.IdentifierName("RecordVersion"),
-                                                            SyntaxFactory.IdentifierName("Previous")),
-                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                        SyntaxFactory.ParenthesizedLambdaExpression(
-                                                            SyntaxFactory.MemberAccessExpression(
-                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.IdentifierName("c"),
-                                                                SyntaxFactory.IdentifierName("previousData")))
-                                                        .WithParameterList(
-                                                            SyntaxFactory.ParameterList(
-                                                                SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
-                                                                    SyntaxFactory.Parameter(
-                                                                        SyntaxFactory.Identifier("c"))))),
-                                                    })),
-                                        }))))));
+                                                                                SyntaxFactory.OmittedArraySizeExpression()))))})))}))))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList()))));
             }
         }
     }

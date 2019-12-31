@@ -376,6 +376,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordClass
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName($"get{foreignKeyElement.UniqueChildName}")),
                                 SyntaxFactory.ParenthesizedLambdaExpression(
+                                    SyntaxFactory.ParameterList(),
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.IdentifierName(this.tableElement.Name),
@@ -409,6 +410,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordClass
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName($"get{foreignKeyElement.UniqueChildName}")),
                                 SyntaxFactory.ParenthesizedLambdaExpression(
+                                    SyntaxFactory.ParameterList(),
                                     SyntaxFactory.InvocationExpression(
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,

@@ -20,7 +20,7 @@ namespace GammaFour.VisualStudioPackage
     /// <summary>
     /// The data model generator for the service.
     /// </summary>
-    [ComVisible(true)]
+    [ClassInterface(ClassInterfaceType.None)]
     [Guid(PackageGuid)]
     [CodeGeneratorRegistration(typeof(ServerDataModelGenerator), nameof(ServerDataModelGenerator), "{FAE04EC1-301F-11D3-BF4B-00C04F79EFBC}", GeneratesDesignTimeSource = true)]
     [CodeGeneratorRegistration(typeof(ServerDataModelGenerator), nameof(ServerDataModelGenerator), "{9A19103F-16F7-4668-BE54-9A1E7A4F7556}", GeneratesDesignTimeSource = true)]

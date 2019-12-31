@@ -869,6 +869,32 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 
+            //                                    if (securityExternalKey.HasValues)
+            //                                    {
+            //                                        <TranslateArgument>
+            //                                    }
+            statements.Add(
+                SyntaxFactory.IfStatement(
+                    SyntaxFactory.MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        SyntaxFactory.IdentifierName(uniqueKeyElement.Name.ToVariableName()),
+                        SyntaxFactory.IdentifierName("HasValues")),
+                    SyntaxFactory.Block(PostMethod.TranslateArgument(uniqueKeyElement))));
+
+            // This is the complete block.
+            return SyntaxFactory.List(statements);
+        }
+
+        /// <summary>
+        /// Gets a block of code.
+        /// </summary>
+        /// <param name="uniqueKeyElement">The unique constraint element.</param>
+        /// <returns>A block of code to lock the record and replace the incoming JSON parameters with data from the record.</returns>
+        private static List<StatementSyntax> TranslateArgument(UniqueKeyElement uniqueKeyElement)
+        {
+            // This is used to collect the statements.
+            List<StatementSyntax> statements = new List<StatementSyntax>();
+
             //                    string countryCountryCodeKeyCountryCode = countryCountryCodeKey.Value<string>("countryCode");
             foreach (ColumnReferenceElement columnReferenceElement in uniqueKeyElement.Columns)
             {
@@ -904,7 +930,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                             SyntaxFactory.Literal(columnElement.Name.ToVariableName()))))))))))));
             }
 
-            //                    country = this.domain.Countries.CountryCountryCodeKey.Find(countryCountryCodeKeyCountryCode).ConfigureAwait(false);
             //                    region = this.domain.Regions.RegionExternalKey.Find((regionExternalKeyName, regionExternalKeyCountryCode));
             statements.Add(
                 SyntaxFactory.ExpressionStatement(
@@ -929,7 +954,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.ArgumentList(UniqueKeyExpression.GetSyntax(uniqueKeyElement, true))))));
 
             // This is the complete block.
-            return SyntaxFactory.List(statements);
+            return statements;
         }
 
         /// <summary>

@@ -141,6 +141,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName($"get{foreignKeyElement.UniqueChildName}")),
                                 SyntaxFactory.ParenthesizedLambdaExpression(
+                                    SyntaxFactory.ParameterList(),
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.IdentifierName(this.tableElement.Name),

@@ -145,6 +145,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.ParenthesizedLambdaExpression(
+                                            SyntaxFactory.ParameterList(),
                                             SyntaxFactory.InvocationExpression(
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,

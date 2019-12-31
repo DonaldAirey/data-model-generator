@@ -1250,7 +1250,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// Gets a block of code.
         /// </summary>
         /// <param name="tableElement">The table element.</param>
-        /// <param name="columnElement">The column element.</param>
         /// <returns>A block of statements.</returns>
         private static SyntaxList<StatementSyntax> FinallyBlock3(TableElement tableElement)
         {
