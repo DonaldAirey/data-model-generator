@@ -124,14 +124,14 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = Class.CreatePrivateInstanceFields(members);
+                members = this.CreatePrivateInstanceFields(members);
                 members = this.CreateConstructors(members);
                 members = this.CreatePublicInstanceProperties(members);
                 members = Class.CreateInternalInstanceProperties(members);
                 members = Class.CreatePublicInstanceMethods(members);
                 members = Class.CreateInternalInstanceMethods(members);
                 members = Class.CreateProtectedInstanceMethods(members);
-                members = Class.CreatePrivateInstanceMethods(members);
+                members = this.CreatePrivateInstanceMethods(members);
                 return members;
             }
         }
@@ -141,10 +141,12 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The structure members with the fields added.</returns>
-        private static SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
+        private SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
+            fields.Add(new DbContextField(this.xmlSchemaDocument));
+            fields.Add(new LoggerField());
             fields.Add(new RowVersionField());
 
             // Alphabetize and add the fields as members of the class.
@@ -224,7 +226,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The structure members with the methods added.</returns>
-        private static SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
+        private static SyntaxList<MemberDeclarationSyntax> CreateProtectedInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
@@ -244,10 +246,11 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The structure members with the methods added.</returns>
-        private static SyntaxList<MemberDeclarationSyntax> CreateProtectedInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
+        private SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
+            methods.Add(new InitializeMethod(this.xmlSchemaDocument));
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))

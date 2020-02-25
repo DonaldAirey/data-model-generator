@@ -235,7 +235,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                         SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                                     SyntaxFactory.IdentifierName("Enlist")))));
 
-                    // Lock each of the unique key indices
+                    // Enlist each of the unique key indices
                     foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
                     {
                         //                this.Buyers.BuyerKey.Enlist();
@@ -254,10 +254,10 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                         SyntaxFactory.IdentifierName("Enlist")))));
                     }
 
-                    // Lock each of the foreign key indices.
+                    // Enlist each of the foreign key indices.
                     foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys)
                     {
-                        //                this.Buyers.CountryBuyerCountryIdKey.Lock.EnterWriteLock();
+                        //                this.Buyers.CountryBuyerCountryIdKey.Enlist();
                         statements.Add(
                             SyntaxFactory.ExpressionStatement(
                                 SyntaxFactory.InvocationExpression(
@@ -271,69 +271,6 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                 SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                                             SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
                                         SyntaxFactory.IdentifierName("Enlist")))));
-                    }
-                }
-
-                // Create a write lock for each of the tables and it's indices.
-                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
-                {
-                    //                this.Buyers.Lock.EnterWriteLock();
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                        SyntaxFactory.IdentifierName("Lock")),
-                                    SyntaxFactory.IdentifierName("EnterWriteLock")))));
-
-                    // Lock each of the unique key indices
-                    foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
-                    {
-                        //                this.Buyers.BuyerKey.Lock.EnterWriteLock();
-                        statements.Add(
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                                SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
-                                            SyntaxFactory.IdentifierName("Lock")),
-                                        SyntaxFactory.IdentifierName("EnterWriteLock")))));
-                    }
-
-                    // Lock each of the foreign key indices.
-                    foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys)
-                    {
-                        //                this.Buyers.CountryBuyerCountryIdKey.Lock.EnterWriteLock();
-                        statements.Add(
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                                SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
-                                            SyntaxFactory.IdentifierName("Lock")),
-                                        SyntaxFactory.IdentifierName("EnterWriteLock")))));
                     }
                 }
 

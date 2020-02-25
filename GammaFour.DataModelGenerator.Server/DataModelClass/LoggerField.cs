@@ -1,8 +1,8 @@
-// <copyright file="LockProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="LoggerField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Client.RecordClass
+namespace GammaFour.DataModelGenerator.Server.DataModelClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,69 +12,34 @@ namespace GammaFour.DataModelGenerator.Client.RecordClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field that holds the column.
+    /// Creates a field to hold the current contents of the row.
     /// </summary>
-    public class LockProperty : SyntaxElement
+    public class LoggerField : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="LockProperty"/> class.
+        /// Initializes a new instance of the <see cref="LoggerField"/> class.
         /// </summary>
-        public LockProperty()
+        public LoggerField()
         {
             // Initialize the object.
-            this.Name = "Lock";
+            this.Name = "logger";
 
             //        /// <summary>
-            //        /// Gets the lock used to manage multithreaded access to this record.
+            //        /// The log device.
             //        /// </summary>
-            //        public AsyncReaderWriterLock Lock { get; } = new AsyncReaderWriterLock();
-            this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.IdentifierName("AsyncReaderWriterLock"),
-                SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(LockProperty.Modifiers)
-                .WithAccessorList(LockProperty.AccessorList)
-                .WithInitializer(LockProperty.Initializer)
-                .WithAttributeLists(LockProperty.Attributes)
-                .WithLeadingTrivia(LockProperty.DocumentationComment)
-                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
-        }
-
-        /// <summary>
-        /// Gets the list of accessors.
-        /// </summary>
-        private static AccessorListSyntax AccessorList
-        {
-            get
-            {
-                return SyntaxFactory.AccessorList(
-                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
-                        SyntaxFactory.AccessorDeclaration(
-                            SyntaxKind.GetAccessorDeclaration)
-                        .WithSemicolonToken(
-                            SyntaxFactory.Token(SyntaxKind.SemicolonToken))));
-            }
-        }
-
-        /// <summary>
-        /// Gets the data contract attribute syntax.
-        /// </summary>
-        private static SyntaxList<AttributeListSyntax> Attributes
-        {
-            get
-            {
-                // This collects all the attributes.
-                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
-
-                //        [JsonConverter(typeof(StringEnumConverter))]
-                attributes.Add(
-                    SyntaxFactory.AttributeList(
-                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
-                            SyntaxFactory.Attribute(
-                                SyntaxFactory.IdentifierName("JsonIgnore")))));
-
-                // The collection of attributes.
-                return SyntaxFactory.List<AttributeListSyntax>(attributes);
-            }
+            //        private ILogger logger;
+            this.Syntax = SyntaxFactory.FieldDeclaration(
+                SyntaxFactory.VariableDeclaration(
+                    SyntaxFactory.IdentifierName("ILogger"))
+                .WithVariables(
+                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                        SyntaxFactory.VariableDeclarator(
+                            SyntaxFactory.Identifier(this.Name)))))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
+                .WithModifiers(LoggerField.Modifiers)
+                .WithLeadingTrivia(LoggerField.DocumentationComment);
         }
 
         /// <summary>
@@ -88,7 +53,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Gets the lock used to manage multithreaded access to this record.
+                //        /// The master row version.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -112,7 +77,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Gets the lock used to manage multithreaded access to this record.",
+                                                " The log device.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -138,32 +103,17 @@ namespace GammaFour.DataModelGenerator.Client.RecordClass
         }
 
         /// <summary>
-        /// Gets the initializer.
-        /// </summary>
-        private static EqualsValueClauseSyntax Initializer
-        {
-            get
-            {
-                return SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.ObjectCreationExpression(
-                        SyntaxFactory.IdentifierName("AsyncReaderWriterLock"))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList()));
-            }
-        }
-
-        /// <summary>
         /// Gets the modifiers.
         /// </summary>
         private static SyntaxTokenList Modifiers
         {
             get
             {
-                // public
+                // private
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
                     });
             }
         }

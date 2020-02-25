@@ -325,7 +325,6 @@ namespace GammaFour.DataModelGenerator.Client.RecordClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new LockProperty());
             properties.Add(new RecordCollectionProperty(this.tableElement));
             properties.Add(new RecordStateProperty());
 

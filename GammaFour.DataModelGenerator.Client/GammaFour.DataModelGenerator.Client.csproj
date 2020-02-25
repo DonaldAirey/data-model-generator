@@ -134,7 +134,6 @@
     <Compile Include="RecordClass\DefaultChildrenField.cs" />
     <Compile Include="RecordClass\GetChildrenFunctionField.cs" />
     <Compile Include="RecordClass\GetVersionMethod.cs" />
-    <Compile Include="RecordClass\LockProperty.cs" />
     <Compile Include="RecordClass\MarkMethod.cs" />
     <Compile Include="RecordClass\ParentProperty.cs" />
     <Compile Include="RecordClass\PreviousDataField.cs" />
@@ -149,7 +148,6 @@
     <Compile Include="RecordCollectionClass\ForeignKeyIndexProperty.cs" />
     <Compile Include="RecordCollectionClass\GenericGetEnumeratorMethod.cs" />
     <Compile Include="RecordCollectionClass\GetEnumeratorMethod.cs" />
-    <Compile Include="RecordCollectionClass\LockProperty.cs" />
     <Compile Include="RecordCollectionClass\PurgeMethod.cs" />
     <Compile Include="RecordCollectionClass\MergeMethod.cs" />
     <Compile Include="RecordCollectionClass\NameProperty.cs" />

@@ -35,7 +35,8 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             //        /// Initializes a new instance of the <see cref="DataModel"/> class.
             //        /// </summary>
             //        /// <param name="domainContext">The domain dabase context.</param>
-            //        public Domain(DomainContext domainContext)
+            //        /// <param name="logger">The log device.</param>
+            //        public Domain(DomainContext domainContext, ILogger<Domain> logger)
             //        {
             //            <Body>
             //        }
@@ -73,6 +74,28 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
+                //            this.domainContext = domainContext;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToVariableName()}Context")),
+                            SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToVariableName()}Context"))));
+
+                //            this.logger = logger;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName($"logger")),
+                            SyntaxFactory.IdentifierName($"logger"))));
+
                 // Initialize each of the record sets.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
@@ -101,27 +124,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                         SyntaxFactory.Literal(tableElement.Name.ToPlural()))),
                                             }))))));
                 }
-
-                //            using (TransactionScope transactionScope = new TransactionScope())
-                //            {
-                //                <LoadDomain>
-                //            }
-                statements.Add(
-                    SyntaxFactory.UsingStatement(
-                        SyntaxFactory.Block(this.LoadDomain))
-                    .WithDeclaration(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName("TransactionScope"))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("transactionScope"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName("TransactionScope"))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList())))))));
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -206,323 +208,31 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                     SyntaxFactory.TriviaList()),
                                             }))))));
 
+                //        /// <param name="domainContext">The domain dabase context.</param>
+                comments.Add(
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                    SyntaxFactory.XmlText()
+                                    .WithTextTokens(
+                                        SyntaxFactory.TokenList(
+                                            new[]
+                                            {
+                                                SyntaxFactory.XmlTextLiteral(
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                    $" <param name=\"logger\">The log device.</param>",
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                                SyntaxFactory.XmlTextNewLine(
+                                                    SyntaxFactory.TriviaList(),
+                                                    Environment.NewLine,
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                            }))))));
+
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the statements that load a domain from a DbContext.
-        /// </summary>
-        private List<StatementSyntax> LoadDomain
-        {
-            get
-            {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                // Enlist each of the tables and it's indices into the curren transaction.
-                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
-                {
-                    //                this.Buyers.Enlist();
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                    SyntaxFactory.IdentifierName("Enlist")))));
-
-                    // Lock each of the unique key indices
-                    foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
-                    {
-                        //                this.Buyers.BuyerKey.Enlist();
-                        statements.Add(
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                            SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
-                                        SyntaxFactory.IdentifierName("Enlist")))));
-                    }
-
-                    // Lock each of the foreign key indices.
-                    foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys)
-                    {
-                        //                this.Buyers.CountryBuyerCountryIdKey.Lock.EnterWriteLock();
-                        statements.Add(
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                            SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
-                                        SyntaxFactory.IdentifierName("Enlist")))));
-                    }
-                }
-
-                // Create a write lock for each of the tables and it's indices.
-                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
-                {
-                    //                this.Buyers.Lock.EnterWriteLock();
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                        SyntaxFactory.IdentifierName("Lock")),
-                                    SyntaxFactory.IdentifierName("EnterWriteLock")))));
-
-                    // Lock each of the unique key indices
-                    foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
-                    {
-                        //                this.Buyers.BuyerKey.Lock.EnterWriteLock();
-                        statements.Add(
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                                SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
-                                            SyntaxFactory.IdentifierName("Lock")),
-                                        SyntaxFactory.IdentifierName("EnterWriteLock")))));
-                    }
-
-                    // Lock each of the foreign key indices.
-                    foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys)
-                    {
-                        //                this.Buyers.CountryBuyerCountryIdKey.Lock.EnterWriteLock();
-                        statements.Add(
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                                SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
-                                            SyntaxFactory.IdentifierName("Lock")),
-                                        SyntaxFactory.IdentifierName("EnterWriteLock")))));
-                    }
-                }
-
-                //                Dictionary<IMergable, IEnumerable<object>> bucket = new Dictionary<IMergable, IEnumerable<object>>();
-                statements.Add(
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.GenericName(
-                                SyntaxFactory.Identifier("Dictionary"))
-                            .WithTypeArgumentList(
-                                SyntaxFactory.TypeArgumentList(
-                                    SyntaxFactory.SeparatedList<TypeSyntax>(
-                                        new SyntaxNodeOrToken[]
-                                        {
-                                            SyntaxFactory.IdentifierName("IMergable"),
-                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                            SyntaxFactory.GenericName(
-                                                SyntaxFactory.Identifier("IEnumerable"))
-                                            .WithTypeArgumentList(
-                                                SyntaxFactory.TypeArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                        SyntaxFactory.PredefinedType(
-                                                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword))))),
-                                        }))))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("bucket"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.GenericName(
-                                                SyntaxFactory.Identifier("Dictionary"))
-                                            .WithTypeArgumentList(
-                                                SyntaxFactory.TypeArgumentList(
-                                                    SyntaxFactory.SeparatedList<TypeSyntax>(
-                                                        new SyntaxNodeOrToken[]
-                                                        {
-                                                            SyntaxFactory.IdentifierName("IMergable"),
-                                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                            SyntaxFactory.GenericName(
-                                                                SyntaxFactory.Identifier("IEnumerable"))
-                                                            .WithTypeArgumentList(
-                                                                SyntaxFactory.TypeArgumentList(
-                                                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                                        SyntaxFactory.PredefinedType(
-                                                                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword))))),
-                                                        }))))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList())))))));
-
-                // Merge each of the tables.
-                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
-                {
-                    //                bucket.Add(this.Buyers, this.Buyers.Merge(domainContext.Buyers));
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("bucket"),
-                                    SyntaxFactory.IdentifierName("Add")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                        new SyntaxNodeOrToken[]
-                                        {
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural()))),
-                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.InvocationExpression(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                                        SyntaxFactory.IdentifierName("Merge")))
-                                                .WithArgumentList(
-                                                    SyntaxFactory.ArgumentList(
-                                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                            SyntaxFactory.Argument(
-                                                                SyntaxFactory.MemberAccessExpression(
-                                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                                    SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context"),
-                                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural()))))))),
-                                        })))));
-                }
-
-                //                while (bucket.Values.Where(v => v.Any()).Any())
-                //                {
-                //                    <MergeTables>
-                //                }
-                statements.Add(
-                    SyntaxFactory.WhileStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName("bucket"),
-                                            SyntaxFactory.IdentifierName("Values")),
-                                        SyntaxFactory.IdentifierName("Where")))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.SimpleLambdaExpression(
-                                                    SyntaxFactory.Parameter(
-                                                        SyntaxFactory.Identifier("v")),
-                                                    SyntaxFactory.InvocationExpression(
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.IdentifierName("v"),
-                                                            SyntaxFactory.IdentifierName("Any")))))))),
-                                SyntaxFactory.IdentifierName("Any"))),
-                        SyntaxFactory.Block(this.MergeTables)));
-
-                //                transactionScope.Complete();
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("transactionScope"),
-                                SyntaxFactory.IdentifierName("Complete")))));
-
-                return statements;
-            }
-        }
-
-        /// <summary>
-        /// Gets the statements that load a domain from a DbContext.
-        /// </summary>
-        private List<StatementSyntax> MergeTables
-        {
-            get
-            {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
-                {
-                    //                    bucket[this.Buyers] = this.Buyers.Merge(bucket[this.Buyers]);
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                SyntaxFactory.ElementAccessExpression(
-                                    SyntaxFactory.IdentifierName("bucket"))
-                                .WithArgumentList(
-                                    SyntaxFactory.BracketedArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))),
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                        SyntaxFactory.IdentifierName("Merge")))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.ElementAccessExpression(
-                                                    SyntaxFactory.IdentifierName("bucket"))
-                                                .WithArgumentList(
-                                                    SyntaxFactory.BracketedArgumentList(
-                                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                            SyntaxFactory.Argument(
-                                                                SyntaxFactory.MemberAccessExpression(
-                                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                                    SyntaxFactory.ThisExpression(),
-                                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))))))))));
-                }
-
-                return statements;
             }
         }
 
@@ -542,6 +252,13 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                         SyntaxFactory.Identifier($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context"))
                     .WithType(
                         SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name}Context")));
+
+                // DomainContext domainContext
+                parameters.Add(
+                    SyntaxFactory.Parameter(
+                        SyntaxFactory.Identifier($"logger"))
+                    .WithType(
+                        SyntaxFactory.IdentifierName($"ILogger<{this.xmlSchemaDocument.Name}>")));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

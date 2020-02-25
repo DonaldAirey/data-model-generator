@@ -167,7 +167,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.IdentifierName("timespan")))))))));
 
-                //            this.transactionTimeout = configuration.GetValue<TimeSpan>("Domain:TransactionTimeout", TimeSpan.FromSeconds(int.MaxValue));
+                //            this.transactionTimeout = configuration.GetValue<TimeSpan>("Rest:TransactionTimeout", TimeSpan.FromSeconds(int.MaxValue));
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
@@ -194,7 +194,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.LiteralExpression(
                                                     SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal("Domain:TransactionTimeout"))),
+                                                    SyntaxFactory.Literal($"{this.tableElement.XmlSchemaDocument.Name}:TransactionTimeout"))),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.InvocationExpression(

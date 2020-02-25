@@ -1,8 +1,8 @@
-// <copyright file="LockProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="DbContextField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Client.RecordSetClass
+namespace GammaFour.DataModelGenerator.Server.DataModelClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,46 +12,40 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field that holds the column.
+    /// Creates a field to hold the current contents of the row.
     /// </summary>
-    public class LockProperty : SyntaxElement
+    public class DbContextField : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="LockProperty"/> class.
+        /// The XML schema document.
         /// </summary>
-        public LockProperty()
-        {
-            // Initialize the object.
-            this.Name = "Lock";
-
-            //        /// <summary>
-            //        /// Gets the lock used to manage multithreaded access to this record.
-            //        /// </summary>
-            //        public AsyncReaderWriterLock Lock { get; } = new AsyncReaderWriterLock();
-            this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.IdentifierName("AsyncReaderWriterLock"),
-                SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(LockProperty.Modifiers)
-                .WithAccessorList(LockProperty.AccessorList)
-                .WithInitializer(LockProperty.Initializer)
-                .WithLeadingTrivia(LockProperty.DocumentationComment)
-                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
-        }
+        private XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
-        /// Gets the list of accessors.
+        /// Initializes a new instance of the <see cref="DbContextField"/> class.
         /// </summary>
-        private static AccessorListSyntax AccessorList
+        public DbContextField(XmlSchemaDocument xmlSchemaDocument)
         {
-            get
-            {
-                return SyntaxFactory.AccessorList(
-                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
-                        SyntaxFactory.AccessorDeclaration(
-                            SyntaxKind.GetAccessorDeclaration)
-                        .WithSemicolonToken(
-                            SyntaxFactory.Token(SyntaxKind.SemicolonToken))));
-            }
+            // Initialize the object.
+            this.xmlSchemaDocument = xmlSchemaDocument ?? throw new ArgumentNullException(nameof(xmlSchemaDocument));
+            this.Name = $"{this.xmlSchemaDocument.Name.ToVariableName()}Context";
+
+            //        /// <summary>
+            //        /// The data context for the persistent store.
+            //        /// </summary>
+            //        private DomainContext domainContext;
+            this.Syntax = SyntaxFactory.FieldDeclaration(
+                SyntaxFactory.VariableDeclaration(
+                    SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name}Context"))
+                .WithVariables(
+                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                        SyntaxFactory.VariableDeclarator(
+                            SyntaxFactory.Identifier(this.Name)))))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
+                .WithModifiers(DbContextField.Modifiers)
+                .WithLeadingTrivia(DbContextField.DocumentationComment);
         }
 
         /// <summary>
@@ -65,7 +59,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Gets the lock used to manage multithreaded access to this record.
+                //        /// The master row version.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -89,7 +83,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Gets the lock used to manage multithreaded access to this record.",
+                                                " The data context for the persistent store.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -115,32 +109,17 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
         }
 
         /// <summary>
-        /// Gets the initializer.
-        /// </summary>
-        private static EqualsValueClauseSyntax Initializer
-        {
-            get
-            {
-                return SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.ObjectCreationExpression(
-                        SyntaxFactory.IdentifierName("AsyncReaderWriterLock"))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList()));
-            }
-        }
-
-        /// <summary>
         /// Gets the modifiers.
         /// </summary>
         private static SyntaxTokenList Modifiers
         {
             get
             {
-                // public
+                // private
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
                     });
             }
         }

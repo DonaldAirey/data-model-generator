@@ -115,8 +115,11 @@
     <Compile Include="DataModelClass\Class.cs" />
     <Compile Include="DataModelClass\Constructor.cs" />
     <Compile Include="DataModelClass\ConstructorDbContext.cs" />
+    <Compile Include="DataModelClass\DbContextField.cs" />
+    <Compile Include="DataModelClass\InitializeMethod.cs" />
     <Compile Include="DataModelClass\IncrementRowVersionMethod.cs" />
     <Compile Include="DataModelClass\RecordCollectionProperty.cs" />
+    <Compile Include="DataModelClass\LoggerField.cs" />
     <Compile Include="DataModelClass\RowVersionField.cs" />
     <Compile Include="DataModelClass\RowVersionProperty.cs" />
     <Compile Include="DbContextClass\Class.cs" />

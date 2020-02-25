@@ -114,7 +114,8 @@
     <Compile Include="AnonymousRecordExpression.cs" />
     <Compile Include="CheckStateExpression.cs" />
     <Compile Include="CompilationUnit.cs" />
-    <Compile Include="EnlistAndLockStatements.cs" />
+    <Compile Include="EnlistTableStatements.cs" />
+    <Compile Include="LockTableStatements.cs" />
     <Compile Include="GlobalSupressions.cs" />
     <Compile Include="Namespace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

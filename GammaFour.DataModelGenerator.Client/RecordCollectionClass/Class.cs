@@ -265,7 +265,6 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
             properties.Add(new DataModelProperty(this.tableElement.XmlSchemaDocument));
-            properties.Add(new LockProperty());
             properties.Add(new NameProperty());
 
             // Add a property for each of the unique keys indices.
