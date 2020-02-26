@@ -130,7 +130,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 //            }
                 statements.Add(CheckStateExpression.Syntax);
 
-                //             using (DisposableList disposables = new DisposableList())
+                //             using (var disposables = new DisposableList())
                 var usingStatement = SyntaxFactory.UsingStatement(
                     SyntaxFactory.Block(this.ReadRecord))
                 .WithDeclaration(

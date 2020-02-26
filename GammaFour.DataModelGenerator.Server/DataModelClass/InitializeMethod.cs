@@ -54,7 +54,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            using (DisposableList disposables = new DisposableList())
+                //            using (var disposables = new DisposableList())
                 //            using (var transactionScope = new TransactionScope(TransactionScopeOption.RequiresNew, TransactionScopeAsyncFlowOption.Enabled))
                 //            {
                 //                <LoadDomain>
@@ -93,7 +93,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 })))))))))
                     .WithDeclaration(
                         SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName("DisposableList"))
+                            SyntaxFactory.IdentifierName("var"))
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(

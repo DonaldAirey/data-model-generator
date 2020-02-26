@@ -72,7 +72,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                                             SyntaxFactory.IdentifierName("Enabled"))),
                                                 }))))))));
 
-            //             using (DisposableList disposables = new DisposableList())
+            //             using (var disposables = new DisposableList())
             usingStatement = SyntaxFactory.UsingStatement(usingStatement)
             .WithDeclaration(
                 SyntaxFactory.VariableDeclaration(
@@ -168,8 +168,8 @@ namespace GammaFour.DataModelGenerator.RestService
             //            using (await this.Accounts.Lock.WriteLockAsync())
             //            using (await this.Accounts.AccountExternalKey.Lock.WriteLockAsync())
             //            using (await this.ManagedAccounts.AccountExternalKey.Lock.WriteLockAsync())
-            //            using (DisposableList disposables = new DisposableList())
-            //            using (TransactionScope transactionScope = new TransactionScope())
+            //            using (var disposables = new DisposableList())
+            //            using (var transactionScope = new TransactionScope())
             //            {
             //                <LoadDomain>
             //            }
