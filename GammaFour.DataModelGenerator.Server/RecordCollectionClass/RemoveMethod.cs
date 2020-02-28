@@ -112,6 +112,34 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                         SyntaxFactory.LiteralExpression(
                                             SyntaxKind.NullLiteralExpression)))))));
 
+                //            this.undoStack.Push(() => sourceOrder.SetOwner(this));
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("undoStack")),
+                                SyntaxFactory.IdentifierName("Push")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.ParenthesizedLambdaExpression(
+                                            SyntaxFactory.ParameterList(),
+                                            SyntaxFactory.InvocationExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                                    SyntaxFactory.IdentifierName("SetOwner")))
+                                            .WithArgumentList(
+                                                SyntaxFactory.ArgumentList(
+                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.ThisExpression())))))))))));
+
                 //            this.collection.Remove(key);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
