@@ -637,39 +637,42 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 
-            //                    string countryCountryCodeKeyCountryCode = countryCountryCodeKey.Value<string>("countryCode");
+            //                            var accountExternalKeyMnemonic = (string)accountExternalKey.GetValue("mnemonic", StringComparison.OrdinalIgnoreCase);
             foreach (ColumnReferenceElement columnReferenceElement in uniqueKeyElement.Columns)
             {
                 ColumnElement columnElement = columnReferenceElement.Column;
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.PredefinedType(
-                                SyntaxFactory.Token(SyntaxKind.StringKeyword)))
+                            SyntaxFactory.IdentifierName("var"))
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
                                     SyntaxFactory.Identifier($"{uniqueKeyElement.Name.ToCamelCase()}{columnElement.Name}"))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.InvocationExpression(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName(uniqueKeyElement.Name.ToVariableName()),
-                                                SyntaxFactory.GenericName(
-                                                    SyntaxFactory.Identifier("Value"))
-                                                .WithTypeArgumentList(
-                                                    SyntaxFactory.TypeArgumentList(
-                                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                            SyntaxFactory.PredefinedType(
-                                                                SyntaxFactory.Token(SyntaxKind.StringKeyword)))))))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.LiteralExpression(
-                                                            SyntaxKind.StringLiteralExpression,
-                                                            SyntaxFactory.Literal(columnElement.Name.ToVariableName()))))))))))));
+                                        SyntaxFactory.CastExpression(
+                                            SyntaxFactory.PredefinedType(
+                                                SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                                            SyntaxFactory.InvocationExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName(uniqueKeyElement.Name.ToVariableName()),
+                                                    SyntaxFactory.IdentifierName("GetValue")))
+                                            .WithArgumentList(
+                                                SyntaxFactory.ArgumentList(
+                                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                        new SyntaxNodeOrToken[]{
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.LiteralExpression(
+                                                                    SyntaxKind.StringLiteralExpression,
+                                                                    SyntaxFactory.Literal(columnElement.Name.ToVariableName()))),
+                                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxFactory.IdentifierName("StringComparison"),
+                                                                    SyntaxFactory.IdentifierName("OrdinalIgnoreCase")))}))))))))));
             }
 
             //                    region = this.domain.Regions.RegionExternalKey.Find((regionExternalKeyName, regionExternalKeyCountryCode));
@@ -800,17 +803,19 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 
             foreach (UniqueKeyElement uniqueKeyElement in uniqueKeyElements)
             {
-                //                        var childIdObject = jObject.GetValue("childId", StringComparison.InvariantCulture) as JObject;
+                //                    var accountExternalKey = accountIdObject.GetValue("accountExternalKey", StringComparison.OrdinalIgnoreCase) as JObject;
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName("var"))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier(uniqueKeyElement.Name.ToVariableName()))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
+                    SyntaxFactory.VariableDeclaration(
+                        SyntaxFactory.IdentifierName("var"))
+                    .WithVariables(
+                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                            SyntaxFactory.VariableDeclarator(
+                                SyntaxFactory.Identifier(uniqueKeyElement.Name.ToVariableName()))
+                            .WithInitializer(
+                                SyntaxFactory.EqualsValueClause(
+                                    SyntaxFactory.BinaryExpression(
+                                        SyntaxKind.AsExpression,
                                         SyntaxFactory.InvocationExpression(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -819,23 +824,22 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
                                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                    new SyntaxNodeOrToken[]
-                                                    {
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.LiteralExpression(
-                                                                        SyntaxKind.StringLiteralExpression,
-                                                                        SyntaxFactory.Literal(uniqueKeyElement.Name.ToVariableName()))),
-                                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.MemberAccessExpression(
-                                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                                        SyntaxFactory.IdentifierName("StringComparison"),
-                                                                        SyntaxFactory.IdentifierName("InvariantCulture"))),
-                                                    })))))))));
+                                                    new SyntaxNodeOrToken[]{
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.LiteralExpression(
+                                                                SyntaxKind.StringLiteralExpression,
+                                                                SyntaxFactory.Literal(uniqueKeyElement.Name.ToVariableName()))),
+                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.IdentifierName("StringComparison"),
+                                                                SyntaxFactory.IdentifierName("OrdinalIgnoreCase")))}))),
+                                        SyntaxFactory.IdentifierName("JObject"))))))));
 
                 //                if (countryCountryCodeKey != null)
                 //                {
-                //                    <FindRecord>
+                //                    <FindParentRecord>
                 //                }
                 statements.Add(
                     SyntaxFactory.IfStatement(
@@ -905,7 +909,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                                     SyntaxFactory.MemberAccessExpression(
                                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                                         SyntaxFactory.IdentifierName("StringComparison"),
-                                                                        SyntaxFactory.IdentifierName("InvariantCulture"))),
+                                                                        SyntaxFactory.IdentifierName("OrdinalIgnoreCase"))),
                                                     }))),
                                         SyntaxFactory.IdentifierName("JObject"))))))));
 
@@ -966,27 +970,28 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.Identifier(uniqueKeyElement.Name.ToVariableName()))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.InvocationExpression(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName($"{columnElement.Name.ToCamelCase()}Object"),
-                                                SyntaxFactory.IdentifierName("GetValue")))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                    new SyntaxNodeOrToken[]
-                                                    {
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.LiteralExpression(
-                                                                        SyntaxKind.StringLiteralExpression,
-                                                                        SyntaxFactory.Literal(uniqueKeyElement.Name.ToVariableName()))),
-                                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.MemberAccessExpression(
-                                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                                        SyntaxFactory.IdentifierName("StringComparison"),
-                                                                        SyntaxFactory.IdentifierName("InvariantCulture"))),
-                                                    })))))))));
+                                        SyntaxFactory.BinaryExpression(
+                                            SyntaxKind.AsExpression,
+                                            SyntaxFactory.InvocationExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName($"{columnElement.Name.ToCamelCase()}Object"),
+                                                    SyntaxFactory.IdentifierName("GetValue")))
+                                            .WithArgumentList(
+                                                SyntaxFactory.ArgumentList(
+                                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                        new SyntaxNodeOrToken[]{
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.LiteralExpression(
+                                                                    SyntaxKind.StringLiteralExpression,
+                                                                    SyntaxFactory.Literal(uniqueKeyElement.Name.ToVariableName()))),
+                                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxFactory.IdentifierName("StringComparison"),
+                                                                    SyntaxFactory.IdentifierName("OrdinalIgnoreCase")))}))),
+                                            SyntaxFactory.IdentifierName("JObject"))))))));
 
                 //                if (countryCountryCodeKey != null)
                 //                {
@@ -1095,7 +1100,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                                     SyntaxFactory.MemberAccessExpression(
                                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                                         SyntaxFactory.IdentifierName("StringComparison"),
-                                                                        SyntaxFactory.IdentifierName("InvariantCulture"))),
+                                                                        SyntaxFactory.IdentifierName("OrdinalIgnoreCase"))),
                                                             }))),
                                                 SyntaxFactory.IdentifierName("JObject"))))))));
 
