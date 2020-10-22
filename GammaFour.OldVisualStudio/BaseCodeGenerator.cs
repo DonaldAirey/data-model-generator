@@ -6,6 +6,7 @@ namespace GammaFour.VisualStudio
 {
     using System;
     using System.Runtime.InteropServices;
+    using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Interop;
 
     /// <summary>

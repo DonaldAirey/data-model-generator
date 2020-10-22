@@ -225,9 +225,9 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
         }
 
         /// <summary>
-        /// Gets the statements checks to see if the parent record exists.
+        /// Gets the statements checks to check to see if there are child records and remove if not.
         /// </summary>
-        private List<StatementSyntax> ProcessRecord
+        private List<StatementSyntax> CheckAndRemove
         {
             get
             {
@@ -236,7 +236,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
                 // For each parent table, include a check to make sure the parent exists before adding the record.
                 foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ChildKeys)
                 {
-                    //                if (oldEntity.EntityTreesByChildId.Any())
+                    //                if (entity.EntityTreesByChildId.Any())
                     //                {
                     //                    <AddRecordToResiduals>
                     //                }
@@ -247,11 +247,38 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        IdentifierName($"old{this.tableElement.Name}"),
+                                        IdentifierName(this.tableElement.Name.ToCamelCase()),
                                         IdentifierName(foreignKeyElement.UniqueChildName)),
                                     IdentifierName("Any"))),
                             Block(this.AddRecordToResiduals)));
                 }
+
+                //                this.Remove(proposedOrder);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("Remove")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
+
+                return statements;
+            }
+        }
+
+        /// <summary>
+        /// Gets the statements checks to see if the parent record exists.
+        /// </summary>
+        private List<StatementSyntax> ProcessRecord
+        {
+            get
+            {
+                List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 //                ProposedOrder proposedOrder = this.PortfolioDomain.ProposedOrders.ProposedOrderKey.Find(oldProposedOrder.ProposedOrderId);
                 statements.Add(
@@ -289,7 +316,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
 
                 //                if (proposedOrder != null)
                 //                {
-                //                    this.Remove(proposedOrder);
+                //                    <CheckAndRemove>
                 //                }
                 statements.Add(
                     SyntaxFactory.IfStatement(
@@ -298,19 +325,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
                             SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.NullLiteralExpression)),
-                        SyntaxFactory.Block(
-                            SyntaxFactory.SingletonList<StatementSyntax>(
-                                SyntaxFactory.ExpressionStatement(
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("Remove")))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))))))))));
+                        SyntaxFactory.Block(this.CheckAndRemove)));
 
                 //                if (entity.RowVersion > this.AlertDomain.RowVersion)
                 //                {

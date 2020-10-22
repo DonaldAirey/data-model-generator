@@ -40,10 +40,6 @@ namespace ServerCompiler
             SyntaxNode syntaxNode = null;
             using (AdhocWorkspace adhocWorkspace = new AdhocWorkspace())
             {
-                OptionSet options = adhocWorkspace.Options;
-                options = options.WithChangedOption(CSharpFormattingOptions.WrappingKeepStatementsOnSingleLine, false);
-                adhocWorkspace.Options = options;
-
                 // Format the compilation unit.
                 syntaxNode = Formatter.Format(compilationUnit.Syntax, adhocWorkspace);
             }
