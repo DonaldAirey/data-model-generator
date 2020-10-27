@@ -56,9 +56,6 @@ namespace GammaFour.VisualStudioPackage
 
                 // A workspace is needed in order to turn the compilation unit into code.
                 AdhocWorkspace adhocWorkspace = new AdhocWorkspace();
-                OptionSet options = adhocWorkspace.Options;
-                options = options.WithChangedOption(CSharpFormattingOptions.WrappingKeepStatementsOnSingleLine, false);
-                adhocWorkspace.Options = options;
 
                 // Format the compilation unit.
                 SyntaxNode syntaxNode = Formatter.Format(compilationUnit.Syntax, adhocWorkspace);

@@ -64,7 +64,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Indicates that the type information has been initialized.
         /// </summary>
-        private bool isTypeInfoInitialized = false;
+        private bool isTypeInfoInitialized;
 
         /// <summary>
         /// A value indicating whether the column is part of a parent primary key.

@@ -41,10 +41,6 @@ namespace RestApiCompiler
             byte[] buffer = null;
             using (AdhocWorkspace adhocWorkspace = new AdhocWorkspace())
             {
-                OptionSet options = adhocWorkspace.Options;
-                options = options.WithChangedOption(CSharpFormattingOptions.WrappingKeepStatementsOnSingleLine, false);
-                adhocWorkspace.Options = options;
-
                 // Format the compilation unit.
                 SyntaxNode syntaxNode = Formatter.Format(compilationUnit.Syntax, adhocWorkspace);
 
