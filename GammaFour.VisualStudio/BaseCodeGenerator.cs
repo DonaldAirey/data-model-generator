@@ -1,5 +1,5 @@
-﻿// <copyright file="BaseCodeGenerator.cs" company="Dark Bond, Inc.">
-//    Copyright © 2016-2017 - Dark Bond, Inc.  All Rights Reserved.
+﻿// <copyright file="BaseCodeGenerator.cs" company="Gamma Four, Inc.">
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.VisualStudio
@@ -37,7 +37,7 @@ namespace GammaFour.VisualStudio
         public int DefaultExtension(out string pbstrDefaultExtension)
         {
             pbstrDefaultExtension = this.GetDefaultExtension();
-            return VSConstants.S_OK;
+            return VSConstants.SOK;
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace GammaFour.VisualStudio
             {
                 // This indicates that the file generation has failed.  Set the output parameters accordingly.
                 pcbOutput = 0;
-                return VSConstants.E_FAIL;
+                return VSConstants.EFAIL;
             }
 
             // The contract between IVsSingleFileGenerator implementors and consumers is that the output from the code generation is returned through
@@ -93,7 +93,7 @@ namespace GammaFour.VisualStudio
             pcbOutput = (uint)outputLength;
 
             // This indicates that we're done generating code and it was successful.
-            return VSConstants.S_OK;
+            return VSConstants.SOK;
         }
 
         /// <summary>

@@ -1,5 +1,5 @@
 // <copyright file="OnRecordChangingMethod.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Common.RecordSet
@@ -18,7 +18,7 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableElement tableElement;
+        private readonly TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OnRecordChangingMethod"/> class.

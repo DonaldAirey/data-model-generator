@@ -1,5 +1,5 @@
 ﻿// <copyright file="ColumnReferenceElement.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Common
@@ -17,17 +17,17 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Used to parse the XPath specification from constraints.
         /// </summary>
-        private static Regex xPath = new Regex(@"(\w+:|@)?(\w+)");
+        private static readonly Regex XPath = new Regex(@"(\w+:|@)?(\w+)");
+
+        /// <summary>
+        /// The name of the underlying column.
+        /// </summary>
+        private readonly string name;
 
         /// <summary>
         /// The column element that this class references.
         /// </summary>
         private ColumnElement columnElement;
-
-        /// <summary>
-        /// The name of the underlying column.
-        /// </summary>
-        private string name;
 
         /// <summary>
         /// The parent column.
@@ -42,7 +42,7 @@ namespace GammaFour.DataModelGenerator.Common
             : base(xElement)
         {
             // Pull the column name out of the XPath.
-            Match match = ColumnReferenceElement.xPath.Match(this.Attribute(XmlSchemaDocument.XPathName).Value);
+            Match match = ColumnReferenceElement.XPath.Match(this.Attribute(XmlSchemaDocument.XPathName).Value);
             this.name = match.Groups[match.Groups.Count - 1].Value;
         }
 

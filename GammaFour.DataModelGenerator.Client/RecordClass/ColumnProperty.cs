@@ -1,5 +1,5 @@
 // <copyright file="ColumnProperty.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Client.RecordClass
@@ -19,7 +19,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private ColumnElement columnElement;
+        private readonly ColumnElement columnElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ColumnProperty"/> class.

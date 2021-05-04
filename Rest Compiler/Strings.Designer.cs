@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GammaFour.VisualStudio {
+namespace GammaFour.DataModelGenerator.RestCompiler {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace GammaFour.VisualStudio {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GammaFour.VisualStudio.Strings", typeof(Strings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GammaFour.DataModelGenerator.RestCompiler.Strings", typeof(Strings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,20 +61,11 @@ namespace GammaFour.VisualStudio {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Site does not support requested interface.
+        ///   Looks up a localized string similar to Unable to generate file..
         /// </summary>
-        internal static string InterfaceNotSupportedError {
+        internal static string UnableToGenerateFileError {
             get {
-                return ResourceManager.GetString("InterfaceNotSupportedError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Object is not sited.
-        /// </summary>
-        internal static string ObjectNotSitedError {
-            get {
-                return ResourceManager.GetString("ObjectNotSitedError", resourceCulture);
+                return ResourceManager.GetString("UnableToGenerateFileError", resourceCulture);
             }
         }
     }

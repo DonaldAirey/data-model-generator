@@ -1,5 +1,5 @@
 // <copyright file="PostMethod.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
@@ -20,7 +20,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableElement tableElement;
+        private readonly TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PostMethod"/> class.
@@ -324,7 +324,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]{
+                                    new SyntaxNodeOrToken[]
+                                    {
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
@@ -332,7 +333,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.IdentifierName("EnlistmentOptions"),
-                                                SyntaxFactory.IdentifierName("None")))})))));
+                                                SyntaxFactory.IdentifierName("None"))),
+                                    })))));
 
                 //                        disposables.Add(await account.Lock.WriteLockAsync());
                 statements.Add(
@@ -486,6 +488,104 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
+            }
+        }
+
+        /// <summary>
+        /// Gets a block of code.
+        /// </summary>
+        /// <returns>A block of statements.</returns>
+        private SyntaxList<StatementSyntax> EvaluateSingleItem
+        {
+            get
+            {
+                // This is used to collect the statements.
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                // We want to find all the relations to parent records in order to pull apart the JSON structure.  We can address different indices
+                // using different parameters in the JSON.  (e.g.  "countryCode" will reference the CountryCode
+                Dictionary<ColumnReferenceElement, List<UniqueKeyElement>> columnResolutionKeys =
+                    new Dictionary<ColumnReferenceElement, List<UniqueKeyElement>>();
+                foreach (ForeignKeyElement parentKeyElement in this.tableElement.ParentKeys)
+                {
+                    foreach (ColumnReferenceElement columnReferenceElement in parentKeyElement.Columns)
+                    {
+                        ColumnElement columnElement = columnReferenceElement.Column;
+                        foreach (UniqueKeyElement additionalUniqueKeyElement in parentKeyElement.UniqueKey.Table.UniqueKeys)
+                        {
+                            if (!additionalUniqueKeyElement.IsPrimaryKey)
+                            {
+                                if (!columnResolutionKeys.TryGetValue(columnReferenceElement, out List<UniqueKeyElement> uniqueKeyElements))
+                                {
+                                    uniqueKeyElements = new List<UniqueKeyElement>();
+                                    columnResolutionKeys.Add(columnReferenceElement, uniqueKeyElements);
+                                }
+
+                                uniqueKeyElements.Add(additionalUniqueKeyElement);
+                            }
+                        }
+                    }
+                }
+
+                // This constructs code that attempts to resolve a column from the input parameters.  Sometimes a primary key index isn't available
+                // to the outside world because the data comes from an external system or is kept in a script file.  This makes use of the fact that
+                // a relationship may exist between a child and parent table.
+                foreach (var columnKeyPair in columnResolutionKeys)
+                {
+                    ColumnReferenceElement columnReferenceElement = columnKeyPair.Key;
+                    ColumnElement columnElement = columnReferenceElement.Column;
+
+                    //                        var childIdObject = jObject.GetValue("childId", StringComparison.InvariantCulture) as JObject;
+                    statements.Add(
+                        SyntaxFactory.LocalDeclarationStatement(
+                            SyntaxFactory.VariableDeclaration(
+                                SyntaxFactory.IdentifierName("var"))
+                            .WithVariables(
+                                SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                    SyntaxFactory.VariableDeclarator(
+                                        SyntaxFactory.Identifier($"{columnElement.Name.ToCamelCase()}Object"))
+                                    .WithInitializer(
+                                        SyntaxFactory.EqualsValueClause(
+                                            SyntaxFactory.BinaryExpression(
+                                                SyntaxKind.AsExpression,
+                                                SyntaxFactory.InvocationExpression(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.IdentifierName("jObject"),
+                                                        SyntaxFactory.IdentifierName("GetValue")))
+                                                .WithArgumentList(
+                                                    SyntaxFactory.ArgumentList(
+                                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                            new SyntaxNodeOrToken[]
+                                                            {
+                                                                SyntaxFactory.Argument(
+                                                                    SyntaxFactory.LiteralExpression(
+                                                                        SyntaxKind.StringLiteralExpression,
+                                                                        SyntaxFactory.Literal(columnElement.Name.ToVariableName()))),
+                                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                                SyntaxFactory.Argument(
+                                                                    SyntaxFactory.MemberAccessExpression(
+                                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                                        SyntaxFactory.IdentifierName("StringComparison"),
+                                                                        SyntaxFactory.IdentifierName("OrdinalIgnoreCase"))),
+                                                            }))),
+                                                SyntaxFactory.IdentifierName("JObject"))))))));
+
+                    //                        if (childIdObject != null)
+                    //                        {
+                    //                            <ResolveColumnFromParent>
+                    //                        }
+                    statements.Add(SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
+                            SyntaxFactory.IdentifierName($"{columnElement.Name.ToCamelCase()}Object"),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression)),
+                        SyntaxFactory.Block(PostMethod.ResolveColumnFromParent(columnReferenceElement, columnKeyPair.Value))));
+                }
+
+                // This is the complete block.
+                return SyntaxFactory.List(statements);
             }
         }
 
@@ -662,7 +762,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             .WithArgumentList(
                                                 SyntaxFactory.ArgumentList(
                                                     SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                        new SyntaxNodeOrToken[]{
+                                                        new SyntaxNodeOrToken[]
+                                                        {
                                                             SyntaxFactory.Argument(
                                                                 SyntaxFactory.LiteralExpression(
                                                                     SyntaxKind.StringLiteralExpression,
@@ -672,7 +773,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                                 SyntaxFactory.MemberAccessExpression(
                                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                                     SyntaxFactory.IdentifierName("StringComparison"),
-                                                                    SyntaxFactory.IdentifierName("OrdinalIgnoreCase")))}))))))))));
+                                                                    SyntaxFactory.IdentifierName("OrdinalIgnoreCase"))),
+                                                        }))))))))));
             }
 
             //                    region = this.domain.Regions.RegionExternalKey.Find((regionExternalKeyName, regionExternalKeyCountryCode));
@@ -824,7 +926,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
                                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                    new SyntaxNodeOrToken[]{
+                                                    new SyntaxNodeOrToken[]
+                                                    {
                                                         SyntaxFactory.Argument(
                                                             SyntaxFactory.LiteralExpression(
                                                                 SyntaxKind.StringLiteralExpression,
@@ -834,7 +937,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.IdentifierName("StringComparison"),
-                                                                SyntaxFactory.IdentifierName("OrdinalIgnoreCase")))}))),
+                                                                SyntaxFactory.IdentifierName("OrdinalIgnoreCase"))),
+                                                    }))),
                                         SyntaxFactory.IdentifierName("JObject"))))))));
 
                 //                if (countryCountryCodeKey != null)
@@ -980,7 +1084,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             .WithArgumentList(
                                                 SyntaxFactory.ArgumentList(
                                                     SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                        new SyntaxNodeOrToken[]{
+                                                        new SyntaxNodeOrToken[]
+                                                        {
                                                             SyntaxFactory.Argument(
                                                                 SyntaxFactory.LiteralExpression(
                                                                     SyntaxKind.StringLiteralExpression,
@@ -990,7 +1095,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                                 SyntaxFactory.MemberAccessExpression(
                                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                                     SyntaxFactory.IdentifierName("StringComparison"),
-                                                                    SyntaxFactory.IdentifierName("OrdinalIgnoreCase")))}))),
+                                                                    SyntaxFactory.IdentifierName("OrdinalIgnoreCase"))),
+                                                        }))),
                                             SyntaxFactory.IdentifierName("JObject"))))))));
 
                 //                if (countryCountryCodeKey != null)
@@ -1022,104 +1128,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 
             // This is the complete block.
             return SyntaxFactory.List(statements);
-        }
-
-        /// <summary>
-        /// Gets a block of code.
-        /// </summary>
-        /// <returns>A block of statements.</returns>
-        private SyntaxList<StatementSyntax> EvaluateSingleItem
-        {
-            get
-            {
-                // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                // We want to find all the relations to parent records in order to pull apart the JSON structure.  We can address different indices
-                // using different parameters in the JSON.  (e.g.  "countryCode" will reference the CountryCode
-                Dictionary<ColumnReferenceElement, List<UniqueKeyElement>> columnResolutionKeys =
-                    new Dictionary<ColumnReferenceElement, List<UniqueKeyElement>>();
-                foreach (ForeignKeyElement parentKeyElement in this.tableElement.ParentKeys)
-                {
-                    foreach (ColumnReferenceElement columnReferenceElement in parentKeyElement.Columns)
-                    {
-                        ColumnElement columnElement = columnReferenceElement.Column;
-                        foreach (UniqueKeyElement additionalUniqueKeyElement in parentKeyElement.UniqueKey.Table.UniqueKeys)
-                        {
-                            if (!additionalUniqueKeyElement.IsPrimaryKey)
-                            {
-                                if (!columnResolutionKeys.TryGetValue(columnReferenceElement, out List<UniqueKeyElement> uniqueKeyElements))
-                                {
-                                    uniqueKeyElements = new List<UniqueKeyElement>();
-                                    columnResolutionKeys.Add(columnReferenceElement, uniqueKeyElements);
-                                }
-
-                                uniqueKeyElements.Add(additionalUniqueKeyElement);
-                            }
-                        }
-                    }
-                }
-
-                // This constructs code that attempts to resolve a column from the input parameters.  Sometimes a primary key index isn't available
-                // to the outside world because the data comes from an external system or is kept in a script file.  This makes use of the fact that
-                // a relationship may exist between a child and parent table.
-                foreach (var columnKeyPair in columnResolutionKeys)
-                {
-                    ColumnReferenceElement columnReferenceElement = columnKeyPair.Key;
-                    ColumnElement columnElement = columnReferenceElement.Column;
-
-                    //                        var childIdObject = jObject.GetValue("childId", StringComparison.InvariantCulture) as JObject;
-                    statements.Add(
-                        SyntaxFactory.LocalDeclarationStatement(
-                            SyntaxFactory.VariableDeclaration(
-                                SyntaxFactory.IdentifierName("var"))
-                            .WithVariables(
-                                SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                    SyntaxFactory.VariableDeclarator(
-                                        SyntaxFactory.Identifier($"{columnElement.Name.ToCamelCase()}Object"))
-                                    .WithInitializer(
-                                        SyntaxFactory.EqualsValueClause(
-                                            SyntaxFactory.BinaryExpression(
-                                                SyntaxKind.AsExpression,
-                                                SyntaxFactory.InvocationExpression(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.IdentifierName("jObject"),
-                                                        SyntaxFactory.IdentifierName("GetValue")))
-                                                .WithArgumentList(
-                                                    SyntaxFactory.ArgumentList(
-                                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                            new SyntaxNodeOrToken[]
-                                                            {
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.LiteralExpression(
-                                                                        SyntaxKind.StringLiteralExpression,
-                                                                        SyntaxFactory.Literal(columnElement.Name.ToVariableName()))),
-                                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.MemberAccessExpression(
-                                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                                        SyntaxFactory.IdentifierName("StringComparison"),
-                                                                        SyntaxFactory.IdentifierName("OrdinalIgnoreCase"))),
-                                                            }))),
-                                                SyntaxFactory.IdentifierName("JObject"))))))));
-
-                    //                        if (childIdObject != null)
-                    //                        {
-                    //                            <ResolveColumnFromParent>
-                    //                        }
-                    statements.Add(SyntaxFactory.IfStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.NotEqualsExpression,
-                            SyntaxFactory.IdentifierName($"{columnElement.Name.ToCamelCase()}Object"),
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.NullLiteralExpression)),
-                        SyntaxFactory.Block(PostMethod.ResolveColumnFromParent(columnReferenceElement, columnKeyPair.Value))));
-                }
-
-                // This is the complete block.
-                return SyntaxFactory.List(statements);
-            }
         }
     }
 }

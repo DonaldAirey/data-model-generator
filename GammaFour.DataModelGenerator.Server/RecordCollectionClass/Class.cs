@@ -1,5 +1,5 @@
 // <copyright file="Class.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.RecordSetClass
@@ -22,17 +22,17 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// The type of the row.
         /// </summary>
-        private string rowType;
+        private readonly string rowType;
 
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private TableElement tableElement;
+        private readonly TableElement tableElement;
 
         /// <summary>
         /// The XML Schema document.
         /// </summary>
-        private XmlSchemaDocument xmlSchemaDocument;
+        private readonly XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Class"/> class.
@@ -214,7 +214,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         }
 
         /// <summary>
-        /// Create the private instance fields.
+        /// Create the constructors.
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The structure members with the fields added.</returns>
@@ -236,6 +236,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
+            fields.Add(new JoinableTaskContextField());
             fields.Add(new PrimaryKeyFunctionField(this.tableElement.PrimaryKey));
             fields.Add(new CollectionField(this.tableElement));
             fields.Add(new DeletedCollectionField(this.tableElement));

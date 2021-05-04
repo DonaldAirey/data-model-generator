@@ -1,18 +1,16 @@
 ﻿// <copyright file="Generator.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace ServerCompiler
+namespace GammaFour.DataModelGenerator.ClientCompiler
 {
     using System.IO;
     using System.Text;
-    using GammaFour.DataModelGenerator.Common;
     using GammaFour.DataModelGenerator.Client;
+    using GammaFour.DataModelGenerator.Common;
     using GammaFour.VisualStudio;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp.Formatting;
     using Microsoft.CodeAnalysis.Formatting;
-    using Microsoft.CodeAnalysis.Options;
 
     /// <summary>
     /// The data model generator for the service.

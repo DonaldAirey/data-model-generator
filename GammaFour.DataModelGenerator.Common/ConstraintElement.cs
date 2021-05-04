@@ -1,5 +1,5 @@
 ﻿// <copyright file="ConstraintElement.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Common
@@ -18,7 +18,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Used to parse the XPath specification from constraints.
         /// </summary>
-        private static Regex xPath = new Regex(@"(\.//)?(\w+:)?(\w+)");
+        private static readonly Regex XPath = new Regex(@"(\.//)?(\w+:)?(\w+)");
 
         /// <summary>
         /// The columns in this constraint.
@@ -143,7 +143,7 @@ namespace GammaFour.DataModelGenerator.Common
                     // specification, but we can pull it apart to get the table name for which this constraint is intended.
                     XElement selectorElement = this.Element(XmlSchemaDocument.SelectorName);
                     XAttribute xPathAttribute = selectorElement.Attribute(XmlSchemaDocument.XPathName);
-                    Match match = ConstraintElement.xPath.Match(xPathAttribute.Value);
+                    Match match = ConstraintElement.XPath.Match(xPathAttribute.Value);
                     if (!match.Success)
                     {
                         throw new InvalidOperationException($"Unique Constraint {this.Name} can't parse expression '{xPathAttribute.Value}'");
@@ -151,8 +151,8 @@ namespace GammaFour.DataModelGenerator.Common
 
                     // Select the table from the name in the XPath specification.
                     this.tableElement = (from te in this.XmlSchemaDocument.Tables
-                                        where te.Name == match.Groups[match.Groups.Count - 1].Value
-                                        select te).FirstOrDefault();
+                                         where te.Name == match.Groups[match.Groups.Count - 1].Value
+                                         select te).FirstOrDefault();
                     if (this.tableElement == null)
                     {
                         throw new InvalidOperationException($"Constraint {this.Name} can't find referenced table {match.Groups[match.Groups.Count - 1]}");

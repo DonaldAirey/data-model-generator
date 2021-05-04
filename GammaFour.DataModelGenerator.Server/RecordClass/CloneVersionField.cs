@@ -1,5 +1,5 @@
 // <copyright file="CloneVersionField.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.RecordClass
@@ -19,7 +19,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableElement tableElement;
+        private readonly TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CloneVersionField"/> class.
@@ -175,7 +175,8 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                 .WithTypeArgumentList(
                                     SyntaxFactory.TypeArgumentList(
                                         SyntaxFactory.SeparatedList<TypeSyntax>(
-                                            new SyntaxNodeOrToken[]{
+                                            new SyntaxNodeOrToken[]
+                                            {
                                                 SyntaxFactory.IdentifierName("RecordVersion"),
                                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                 SyntaxFactory.GenericName(
@@ -183,7 +184,8 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 .WithTypeArgumentList(
                                                     SyntaxFactory.TypeArgumentList(
                                                         SyntaxFactory.SeparatedList<TypeSyntax>(
-                                                            new SyntaxNodeOrToken[]{
+                                                            new SyntaxNodeOrToken[]
+                                                            {
                                                                 SyntaxFactory.IdentifierName(this.tableElement.Name),
                                                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                                 SyntaxFactory.ArrayType(
@@ -193,7 +195,9 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                                     SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
                                                                         SyntaxFactory.ArrayRankSpecifier(
                                                                             SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
-                                                                                SyntaxFactory.OmittedArraySizeExpression()))))})))}))))
+                                                                                SyntaxFactory.OmittedArraySizeExpression())))),
+                                                            }))),
+                                            }))))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList()))));
             }

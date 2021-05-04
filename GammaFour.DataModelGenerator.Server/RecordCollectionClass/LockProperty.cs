@@ -1,5 +1,5 @@
 // <copyright file="LockProperty.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.RecordSetClass
@@ -33,9 +33,8 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 SyntaxFactory.Identifier(this.Name))
                 .WithModifiers(LockProperty.Modifiers)
                 .WithAccessorList(LockProperty.AccessorList)
-                .WithInitializer(LockProperty.Initializer)
-                .WithLeadingTrivia(LockProperty.DocumentationComment)
-                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+                .WithAttributeLists(LockProperty.Attributes)
+                .WithLeadingTrivia(LockProperty.DocumentationComment);
         }
 
         /// <summary>
@@ -51,6 +50,28 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                             SyntaxKind.GetAccessorDeclaration)
                         .WithSemicolonToken(
                             SyntaxFactory.Token(SyntaxKind.SemicolonToken))));
+            }
+        }
+
+        /// <summary>
+        /// Gets the data contract attribute syntax.
+        /// </summary>
+        private static SyntaxList<AttributeListSyntax> Attributes
+        {
+            get
+            {
+                // This collects all the attributes.
+                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
+
+                //        [JsonConverter(typeof(StringEnumConverter))]
+                attributes.Add(
+                    SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                SyntaxFactory.IdentifierName("JsonIgnore")))));
+
+                // The collection of attributes.
+                return SyntaxFactory.List<AttributeListSyntax>(attributes);
             }
         }
 
@@ -111,21 +132,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the initializer.
-        /// </summary>
-        private static EqualsValueClauseSyntax Initializer
-        {
-            get
-            {
-                return SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.ObjectCreationExpression(
-                        SyntaxFactory.IdentifierName("AsyncReaderWriterLock"))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList()));
             }
         }
 

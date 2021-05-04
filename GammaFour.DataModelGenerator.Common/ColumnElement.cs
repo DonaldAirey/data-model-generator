@@ -1,5 +1,5 @@
 ﻿// <copyright file="ColumnElement.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Common
@@ -19,7 +19,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Maps the full name of the type to a function that parses a default value for that type.
         /// </summary>
-        private static Dictionary<string, Func<string, object>> conversionFunctions = new Dictionary<string, Func<string, object>>
+        private static readonly Dictionary<string, Func<string, object>> ConversionFunctions = new Dictionary<string, Func<string, object>>
         {
             { "System.Boolean", (v) => bool.Parse(v) },
             { "System.DateTime", (v) => DateTime.Parse(v, CultureInfo.InvariantCulture) },
@@ -39,7 +39,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// The type for this column.
         /// </summary>
-        private ColumnType columnType = new ColumnType();
+        private readonly ColumnType columnType = new ColumnType();
 
         /// <summary>
         /// The default, if any, for this column.
@@ -475,7 +475,7 @@ namespace GammaFour.DataModelGenerator.Common
             XAttribute defaultAttribute = this.Attribute(XmlSchemaDocument.DefaultName);
             this.hasDefault = defaultAttribute != null;
             Func<string, object> defaultFunction = null;
-            if (defaultAttribute != null && ColumnElement.conversionFunctions.TryGetValue(this.columnType.FullName, out defaultFunction))
+            if (defaultAttribute != null && ColumnElement.ConversionFunctions.TryGetValue(this.columnType.FullName, out defaultFunction))
             {
                 this.defaultValue = defaultFunction(defaultAttribute.Value);
             }

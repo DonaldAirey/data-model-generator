@@ -1,5 +1,5 @@
 // <copyright file="DictionaryField.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Common.UniqueKeyIndexClass
@@ -19,7 +19,7 @@ namespace GammaFour.DataModelGenerator.Common.UniqueKeyIndexClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private UniqueKeyElement uniqueKeyElement;
+        private readonly UniqueKeyElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DictionaryField"/> class.

@@ -1,5 +1,5 @@
 // <copyright file="SimpleForeignKeyIndexProperty.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Client.RecordSetClass
@@ -19,7 +19,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
         /// <summary>
         /// The foreign key description.
         /// </summary>
-        private ForeignKeyElement foreignKeyElement;
+        private readonly ForeignKeyElement foreignKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SimpleForeignKeyIndexProperty"/> class.

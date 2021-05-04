@@ -1,5 +1,5 @@
 // <copyright file="ConstructorDataModelName.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.RecordSetClass
@@ -20,7 +20,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableElement tableElement;
+        private readonly TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstructorDataModelName"/> class.
@@ -96,6 +96,26 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName("Name")),
                             SyntaxFactory.IdentifierName("name"))));
+
+                //            this.Lock = new AsyncReaderWriterLock(this.joinableTaskContext);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("Lock")),
+                            SyntaxFactory.ObjectCreationExpression(
+                                SyntaxFactory.IdentifierName("AsyncReaderWriterLock"))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName("joinableTaskContext")))))))));
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));

@@ -1,5 +1,5 @@
-// <copyright file="BaseCodeGeneratorWithSite.cs" company="Dark Bond, Inc.">
-//    Copyright © 2016-2017 - Dark Bond, Inc.  All Rights Reserved.
+// <copyright file="BaseCodeGeneratorWithSite.cs" company="Gamma Four, Inc.">
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.VisualStudio
@@ -29,7 +29,7 @@ namespace GammaFour.VisualStudio
         {
             if (this.site == null)
             {
-                throw new COMException(Strings.ObjectNotSitedError, VSConstants.E_FAIL);
+                throw new COMException(Strings.ObjectNotSitedError, VSConstants.EFAIL);
             }
 
             var pUnknownPointer = Marshal.GetIUnknownForObject(this.site);
@@ -38,7 +38,7 @@ namespace GammaFour.VisualStudio
 
             if (intPointer == IntPtr.Zero)
             {
-                throw new COMException(Strings.InterfaceNotSupportedError, VSConstants.E_NOINTERFACE);
+                throw new COMException(Strings.InterfaceNotSupportedError, VSConstants.ENOINTERFACE);
             }
 
             // The address of the caller's void* variable.

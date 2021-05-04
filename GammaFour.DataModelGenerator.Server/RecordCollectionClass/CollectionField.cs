@@ -1,5 +1,5 @@
 // <copyright file="CollectionField.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.RecordSetClass
@@ -19,7 +19,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// The description of the table.
         /// </summary>
-        private TableElement tableElement;
+        private readonly TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CollectionField"/> class.

@@ -1,5 +1,5 @@
-﻿// <copyright file="EnlistStatements.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+﻿// <copyright file="EnlistTableStatements.cs" company="Gamma Four, Inc.">
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.RestService
@@ -43,7 +43,8 @@ namespace GammaFour.DataModelGenerator.RestService
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList(
                             SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                new SyntaxNodeOrToken[]{
+                                new SyntaxNodeOrToken[]
+                                {
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
@@ -57,7 +58,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.IdentifierName("EnlistmentOptions"),
-                                            SyntaxFactory.IdentifierName("None")))})))));
+                                            SyntaxFactory.IdentifierName("None"))),
+                                })))));
 
             // Enlist each of the unique key indices in this transaction.
             foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
@@ -73,7 +75,8 @@ namespace GammaFour.DataModelGenerator.RestService
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]{
+                                    new SyntaxNodeOrToken[]
+                                    {
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -90,7 +93,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.IdentifierName("EnlistmentOptions"),
-                                                SyntaxFactory.IdentifierName("None")))})))));
+                                                SyntaxFactory.IdentifierName("None"))),
+                                    })))));
             }
 
             // Enlist each of the foreign key indices in this transaction.
@@ -107,7 +111,8 @@ namespace GammaFour.DataModelGenerator.RestService
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]{
+                                    new SyntaxNodeOrToken[]
+                                    {
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -124,7 +129,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.IdentifierName("EnlistmentOptions"),
-                                                SyntaxFactory.IdentifierName("None")))})))));
+                                                SyntaxFactory.IdentifierName("None"))),
+                                    })))));
             }
 
             // This set of statement will enlist the indices and tables in the current transaction and acquire an exclusive lock.

@@ -1,5 +1,5 @@
 // <copyright file="StaticConstructor.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.RecordClass
@@ -19,7 +19,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private TableElement tableElement;
+        private readonly TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StaticConstructor"/> class.
@@ -85,7 +85,8 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]{
+                                    new SyntaxNodeOrToken[]
+                                    {
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -99,7 +100,8 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.IdentifierName("c"),
-                                                    SyntaxFactory.IdentifierName("currentData"))))})))));
+                                                    SyntaxFactory.IdentifierName("currentData")))),
+                                    })))));
 
                 //            Account.cloneVersions.Add(RecordVersion.Original, c => c.originalData);
                 statements.Add(
@@ -115,7 +117,8 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]{
+                                    new SyntaxNodeOrToken[]
+                                    {
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -129,7 +132,8 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.IdentifierName("c"),
-                                                    SyntaxFactory.IdentifierName("originalData"))))})))));
+                                                    SyntaxFactory.IdentifierName("originalData")))),
+                                    })))));
 
                 //            Account.cloneVersions.Add(RecordVersion.Previous, c => c.previousData);
                 statements.Add(
@@ -145,7 +149,8 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]{
+                                    new SyntaxNodeOrToken[]
+                                    {
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -159,7 +164,8 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.IdentifierName("c"),
-                                                    SyntaxFactory.IdentifierName("previousData"))))})))));
+                                                    SyntaxFactory.IdentifierName("previousData")))),
+                                    })))));
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));

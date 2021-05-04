@@ -1,5 +1,5 @@
 // <copyright file="Class.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.DbContextClass
@@ -20,7 +20,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private XmlSchemaDocument xmlSchemaDocument;
+        private readonly XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Class"/> class.

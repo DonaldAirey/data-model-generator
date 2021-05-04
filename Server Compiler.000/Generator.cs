@@ -1,14 +1,13 @@
 ﻿// <copyright file="Generator.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace RestApiCompiler
+namespace ServerCompiler
 {
-    using System.Globalization;
     using System.IO;
     using System.Text;
     using GammaFour.DataModelGenerator.Common;
-    using GammaFour.DataModelGenerator.RestService;
+    using GammaFour.DataModelGenerator.Server;
     using GammaFour.VisualStudio;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Formatting;
@@ -38,18 +37,19 @@ namespace RestApiCompiler
             CompilationUnit compilationUnit = new CompilationUnit(xmlSchemaDocument, this.CustomToolNamespace);
 
             // A workspace is needed in order to turn the compilation unit into code.
-            byte[] buffer = null;
+            SyntaxNode syntaxNode = null;
             using (AdhocWorkspace adhocWorkspace = new AdhocWorkspace())
             {
                 // Format the compilation unit.
-                SyntaxNode syntaxNode = Formatter.Format(compilationUnit.Syntax, adhocWorkspace);
+                syntaxNode = Formatter.Format(compilationUnit.Syntax, adhocWorkspace);
+            }
 
-                // This performs the work of outputting the formatted code to a file.
-                using (StringWriter stringWriter = new StringWriter(new StringBuilder(), CultureInfo.InvariantCulture))
-                {
-                    syntaxNode.WriteTo(stringWriter);
-                    buffer = Encoding.UTF8.GetBytes(stringWriter.ToString());
-                }
+            // This performs the work of outputting the formatted code to a file.
+            byte[] buffer = null;
+            using (StringWriter stringWriter = new StringWriter(new StringBuilder()))
+            {
+                syntaxNode.WriteTo(stringWriter);
+                buffer = Encoding.UTF8.GetBytes(stringWriter.ToString());
             }
 
             return buffer;

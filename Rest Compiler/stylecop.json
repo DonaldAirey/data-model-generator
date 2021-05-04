@@ -8,8 +8,8 @@
   "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
   "settings": {
     "documentationRules": {
-      "companyName": "Dark Bond, Inc.",
-      "copyrightText": "Copyright © 2016-2017 - Dark Bond, Inc.  All Rights Reserved."
+      "companyName": "Gamma Four, Inc.",
+      "copyrightText": "Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved."
     }
   }
 }

@@ -1,5 +1,5 @@
 // <copyright file="DeleteMethod.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
@@ -19,7 +19,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private UniqueKeyElement uniqueKeyElement;
+        private readonly UniqueKeyElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DeleteMethod"/> class.
@@ -54,6 +54,23 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             .WithParameterList(this.Parameters)
             .WithBody(this.Body)
             .WithLeadingTrivia(this.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // public async
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                        SyntaxFactory.Token(SyntaxKind.AsyncKeyword),
+                    });
+            }
         }
 
         /// <summary>
@@ -94,23 +111,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 
                 // The collection of attributes.
                 return SyntaxFactory.List<AttributeListSyntax>(attributes);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public async
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                        SyntaxFactory.Token(SyntaxKind.AsyncKeyword),
-                    });
             }
         }
 
@@ -293,7 +293,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]{
+                                    new SyntaxNodeOrToken[]
+                                    {
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToVariableName())),
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
@@ -301,7 +302,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.IdentifierName("EnlistmentOptions"),
-                                                SyntaxFactory.IdentifierName("None")))})))));
+                                                SyntaxFactory.IdentifierName("None"))),
+                                    })))));
 
                 //                        if ($"\"{taxLot.RowVersion}\"" != this.Request.Headers["If-None-Match"])
                 //                        {
@@ -315,7 +317,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                 SyntaxFactory.Token(SyntaxKind.InterpolatedStringStartToken))
                             .WithContents(
                                 SyntaxFactory.List<InterpolatedStringContentSyntax>(
-                                    new InterpolatedStringContentSyntax[]{
+                                    new InterpolatedStringContentSyntax[]
+                                    {
                                         SyntaxFactory.InterpolatedStringText()
                                         .WithTextToken(
                                             SyntaxFactory.Token(
@@ -336,7 +339,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxKind.InterpolatedStringTextToken,
                                                 "\\\"",
                                                 "\\\"",
-                                                SyntaxFactory.TriviaList()))})),
+                                                SyntaxFactory.TriviaList())),
+                                    })),
                             SyntaxFactory.ElementAccessExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,

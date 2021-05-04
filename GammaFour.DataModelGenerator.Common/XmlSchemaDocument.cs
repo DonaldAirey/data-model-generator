@@ -1,5 +1,5 @@
 ﻿// <copyright file="XmlSchemaDocument.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Common
@@ -55,7 +55,7 @@ namespace GammaFour.DataModelGenerator.Common
             {
                 string[] domainParts = domainAttribute.Value.Split('.');
                 this.Domain = domainParts[domainParts.Length - 1];
-                this.DomainNamespace = String.Join(".", domainParts, 0, domainParts.Length - 1);
+                this.DomainNamespace = string.Join(".", domainParts, 0, domainParts.Length - 1);
             }
 
             // The data model description is found on the first element of the first complex type in the module.

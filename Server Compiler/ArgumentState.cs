@@ -1,8 +1,8 @@
 ﻿// <copyright file="ArgumentState.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace ServerCompiler
+namespace GammaFour.DataModelGenerator.ServerCompiler
 {
     /// <summary>
     /// These are the parsing states used to read the arguments on the command line.

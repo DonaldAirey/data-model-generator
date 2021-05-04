@@ -1,5 +1,5 @@
 // <copyright file="LockProperty.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.RecordClass
@@ -33,10 +33,8 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 SyntaxFactory.Identifier(this.Name))
                 .WithModifiers(LockProperty.Modifiers)
                 .WithAccessorList(LockProperty.AccessorList)
-                .WithInitializer(LockProperty.Initializer)
                 .WithAttributeLists(LockProperty.Attributes)
-                .WithLeadingTrivia(LockProperty.DocumentationComment)
-                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+                .WithLeadingTrivia(LockProperty.DocumentationComment);
         }
 
         /// <summary>
@@ -134,21 +132,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the initializer.
-        /// </summary>
-        private static EqualsValueClauseSyntax Initializer
-        {
-            get
-            {
-                return SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.ObjectCreationExpression(
-                        SyntaxFactory.IdentifierName("AsyncReaderWriterLock"))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList()));
             }
         }
 

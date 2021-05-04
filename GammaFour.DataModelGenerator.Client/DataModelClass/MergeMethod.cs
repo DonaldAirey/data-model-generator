@@ -1,5 +1,5 @@
 // <copyright file="MergeMethod.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Client.DataModelClass
@@ -20,7 +20,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         /// <summary>
         /// The XML schema.
         /// </summary>
-        private XmlSchemaDocument xmlSchemaDocument;
+        private readonly XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MergeMethod"/> class.
@@ -132,7 +132,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         }
 
         /// <summary>
-        /// Generate code to empty the merge buckets.
+        /// Gets the 'empty the merge buckets' code.
         /// </summary>
         private static List<StatementSyntax> EmptyMergeBuckets
         {
@@ -165,7 +165,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         }
 
         /// <summary>
-        /// Generate code to empty the purge buckets.
+        /// Gets generate code to empty the purge buckets.
         /// </summary>
         private static List<StatementSyntax> EmptyPurgeBuckets
         {
@@ -198,7 +198,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         }
 
         /// <summary>
-        /// Generate code to merge a bucket.
+        /// Gets generate code to merge a bucket.
         /// </summary>
         private static List<StatementSyntax> MergeBucket
         {
@@ -280,7 +280,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         }
 
         /// <summary>
-        /// Generate code to purge a bucket.
+        /// Gets generate code to purge a bucket.
         /// </summary>
         private static List<StatementSyntax> PurgeBucket
         {
@@ -342,7 +342,8 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                             .WithTypeArgumentList(
                                 TypeArgumentList(
                                     SeparatedList<TypeSyntax>(
-                                        new SyntaxNodeOrToken[]{
+                                        new SyntaxNodeOrToken[]
+                                        {
                                             IdentifierName("IMergable"),
                                             Token(SyntaxKind.CommaToken),
                                             GenericName(
@@ -351,7 +352,8 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                 TypeArgumentList(
                                                     SingletonSeparatedList<TypeSyntax>(
                                                         PredefinedType(
-                                                            Token(SyntaxKind.ObjectKeyword)))))}))))
+                                                            Token(SyntaxKind.ObjectKeyword))))),
+                                        }))))
                         .WithVariables(
                             SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 VariableDeclarator(
@@ -364,7 +366,8 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                             .WithTypeArgumentList(
                                                 TypeArgumentList(
                                                     SeparatedList<TypeSyntax>(
-                                                        new SyntaxNodeOrToken[]{
+                                                        new SyntaxNodeOrToken[]
+                                                        {
                                                             IdentifierName("IMergable"),
                                                             Token(SyntaxKind.CommaToken),
                                                             GenericName(
@@ -373,7 +376,8 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                                 TypeArgumentList(
                                                                     SingletonSeparatedList<TypeSyntax>(
                                                                         PredefinedType(
-                                                                            Token(SyntaxKind.ObjectKeyword)))))}))))
+                                                                            Token(SyntaxKind.ObjectKeyword))))),
+                                                        }))))
                                         .WithArgumentList(
                                             ArgumentList())))))));
 
@@ -450,7 +454,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                             IdentifierName("Any")))))))),
                                 IdentifierName("Any"))),
                         Block(MergeMethod.EmptyMergeBuckets)));
-                
+
                 //            Dictionary<IPurgable, IEnumerable<object>> purgeBuckets = new Dictionary<IPurgable, IEnumerable<object>>();
                 statements.Add(
                     LocalDeclarationStatement(
@@ -460,7 +464,8 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                             .WithTypeArgumentList(
                                 TypeArgumentList(
                                     SeparatedList<TypeSyntax>(
-                                        new SyntaxNodeOrToken[]{
+                                        new SyntaxNodeOrToken[]
+                                        {
                                             IdentifierName("IPurgable"),
                                             Token(SyntaxKind.CommaToken),
                                             GenericName(
@@ -469,7 +474,8 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                 TypeArgumentList(
                                                     SingletonSeparatedList<TypeSyntax>(
                                                         PredefinedType(
-                                                            Token(SyntaxKind.ObjectKeyword)))))}))))
+                                                            Token(SyntaxKind.ObjectKeyword))))),
+                                        }))))
                         .WithVariables(
                             SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 VariableDeclarator(
@@ -482,7 +488,8 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                             .WithTypeArgumentList(
                                                 TypeArgumentList(
                                                     SeparatedList<TypeSyntax>(
-                                                        new SyntaxNodeOrToken[]{
+                                                        new SyntaxNodeOrToken[]
+                                                        {
                                                             IdentifierName("IPurgable"),
                                                             Token(SyntaxKind.CommaToken),
                                                             GenericName(
@@ -491,7 +498,8 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                                 TypeArgumentList(
                                                                     SingletonSeparatedList<TypeSyntax>(
                                                                         PredefinedType(
-                                                                            Token(SyntaxKind.ObjectKeyword)))))}))))
+                                                                            Token(SyntaxKind.ObjectKeyword))))),
+                                                        }))))
                                         .WithArgumentList(
                                             ArgumentList())))))));
 
@@ -628,7 +636,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                                             .WithTypeArgumentList(
                                                                                 TypeArgumentList(
                                                                                     SingletonSeparatedList<TypeSyntax>(
-                                                                                        IdentifierName(tableElement.Name))))))))))))))
+                                                                                        IdentifierName(tableElement.Name)))))))))))))),
                                 })))));
 
             // This is the syntax for the body of the method.
@@ -689,7 +697,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                                             .WithTypeArgumentList(
                                                                                 TypeArgumentList(
                                                                                     SingletonSeparatedList<TypeSyntax>(
-                                                                                        IdentifierName(tableElement.Name))))))))))))))
+                                                                                        IdentifierName(tableElement.Name)))))))))))))),
                                 })))));
 
             // This is the syntax for the body of the method.

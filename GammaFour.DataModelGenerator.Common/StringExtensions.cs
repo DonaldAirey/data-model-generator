@@ -1,5 +1,5 @@
 ﻿// <copyright file="StringExtensions.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Common
@@ -17,7 +17,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// C# Keywords.
         /// </summary>
-        private static HashSet<string> keywords = new HashSet<string>()
+        private static readonly HashSet<string> Keywords = new HashSet<string>()
         {
             "abstract", "as", "base", "bool", "break", "byte", "case", "catch", "char", "checked", "class", "const", "continue", "decimal", "default", "delegate", "do", "double",
             "else", "enum", "event", "explicit", "extern", "false", "finally", "fixed", "float", "for", "foreach", "goto", "if", "implicit", "in", "int", "interface", "internal",
@@ -29,7 +29,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Used to create plurals out of singles.
         /// </summary>
-        private static Pluralizer pluralizer = new Pluralizer();
+        private static readonly Pluralizer Pluralizer = new Pluralizer();
 
         /// <summary>
         /// Converts a string to have a lower case starting character.
@@ -63,7 +63,7 @@ namespace GammaFour.DataModelGenerator.Common
 
             // Convert the variable to its camel case equivalent.
             var name = text[0].ToString(CultureInfo.InvariantCulture).ToLower(CultureInfo.InvariantCulture) + text.Remove(0, 1);
-            return StringExtensions.keywords.Contains(name) ? "@" + name : name;
+            return StringExtensions.Keywords.Contains(name) ? "@" + name : name;
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <returns>The pluralized text.</returns>
         public static string ToPlural(this string text)
         {
-            return pluralizer.Pluralize(text);
+            return Pluralizer.Pluralize(text);
         }
     }
 }

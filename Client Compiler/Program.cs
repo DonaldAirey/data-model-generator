@@ -1,8 +1,8 @@
 ﻿// <copyright file="Program.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace ServerCompiler
+namespace GammaFour.DataModelGenerator.ClientCompiler
 {
     using System;
     using System.Collections.Generic;
@@ -19,7 +19,7 @@ namespace ServerCompiler
         /// <summary>
         /// Dictionary of command line parameter switches and the states they invoke in the parser.
         /// </summary>
-        private static Dictionary<string, ArgumentState> argumentStates = new Dictionary<string, ArgumentState>()
+        private static readonly Dictionary<string, ArgumentState> ArgumentStates = new Dictionary<string, ArgumentState>()
         {
             { "-i", ArgumentState.InputFileName },
             { "-ns", ArgumentState.TargetNamespace },
@@ -56,7 +56,7 @@ namespace ServerCompiler
                 {
                     // Use the dictionary to transition from one state to the next based on the input parameters.
                     ArgumentState nextArgumentState;
-                    if (Program.argumentStates.TryGetValue(argument, out nextArgumentState))
+                    if (Program.ArgumentStates.TryGetValue(argument, out nextArgumentState))
                     {
                         argumentState = nextArgumentState;
                         continue;

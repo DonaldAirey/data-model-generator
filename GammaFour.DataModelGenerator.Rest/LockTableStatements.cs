@@ -1,5 +1,5 @@
-﻿// <copyright file="LockTableStatements.cs" company="Theta Rex, Inc.">
-//    Copyright © 2020 - Theta Rex, Inc.  All Rights Reserved.
+﻿// <copyright file="LockTableStatements.cs" company="Gamma Four, Inc.">
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.RestService
@@ -111,8 +111,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
                                                     SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.Domain.ToVariableName())),
-                                            SyntaxFactory.IdentifierName(foreignKeyElement.Table.Name.ToPlural())),
-                                        SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
+                                                SyntaxFactory.IdentifierName(foreignKeyElement.Table.Name.ToPlural())),
+                                            SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
                                         SyntaxFactory.IdentifierName("Lock")),
                                     SyntaxFactory.IdentifierName("WriteLockAsync")))));
             }

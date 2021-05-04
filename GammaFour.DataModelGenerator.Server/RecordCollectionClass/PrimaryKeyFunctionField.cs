@@ -1,5 +1,5 @@
 // <copyright file="PrimaryKeyFunctionField.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.RecordSetClass
@@ -19,7 +19,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         /// <summary>
         /// The description of the table.
         /// </summary>
-        private UniqueKeyElement uniqueKeyElement;
+        private readonly UniqueKeyElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PrimaryKeyFunctionField"/> class.
@@ -168,7 +168,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                     SyntaxFactory.ParenthesizedExpression(
                                         UniqueKeyExpression.GetUniqueKey(this.uniqueKeyElement)))),
                             SyntaxFactory.IdentifierName("Compile"))));
-                }
+            }
         }
     }
 }

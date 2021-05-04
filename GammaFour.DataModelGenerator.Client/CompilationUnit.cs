@@ -1,5 +1,5 @@
 ﻿// <copyright file="CompilationUnit.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Client
@@ -17,12 +17,12 @@ namespace GammaFour.DataModelGenerator.Client
         /// <summary>
         /// The namespace for the generated module.
         /// </summary>
-        private string customToolNamespace;
+        private readonly string customToolNamespace;
 
         /// <summary>
         /// The data model schema.
         /// </summary>
-        private XmlSchemaDocument xmlSchemaDocument;
+        private readonly XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CompilationUnit"/> class.

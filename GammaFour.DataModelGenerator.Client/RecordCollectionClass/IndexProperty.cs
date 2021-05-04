@@ -1,5 +1,5 @@
 // <copyright file="IndexProperty.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Client.RecordSetClass
@@ -20,6 +20,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
         /// <summary>
         /// Initializes a new instance of the <see cref="IndexProperty"/> class.
         /// </summary>
+        /// <param name="tableElement">The table element.</param>
         public IndexProperty(TableElement tableElement)
         {
             // Validate the argument.

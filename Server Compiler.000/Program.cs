@@ -1,12 +1,11 @@
 ﻿// <copyright file="Program.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace RestApiCompiler
+namespace ServerCompiler
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.IO;
     using System.Runtime.InteropServices;
     using System.Text;
@@ -20,7 +19,7 @@ namespace RestApiCompiler
         /// <summary>
         /// Dictionary of command line parameter switches and the states they invoke in the parser.
         /// </summary>
-        private static Dictionary<string, ArgumentState> argumentStates = new Dictionary<string, ArgumentState>()
+        private static readonly Dictionary<string, ArgumentState> ArgumentStates = new Dictionary<string, ArgumentState>()
         {
             { "-i", ArgumentState.InputFileName },
             { "-ns", ArgumentState.TargetNamespace },
@@ -35,7 +34,7 @@ namespace RestApiCompiler
         [STAThread]
         public static int Main(string[] args)
         {
-            // Validate the args parameter.
+            // Validate the argument.
             if (args == null)
             {
                 throw new ArgumentNullException(nameof(args));
@@ -57,7 +56,7 @@ namespace RestApiCompiler
                 {
                     // Use the dictionary to transition from one state to the next based on the input parameters.
                     ArgumentState nextArgumentState;
-                    if (Program.argumentStates.TryGetValue(argument, out nextArgumentState))
+                    if (Program.ArgumentStates.TryGetValue(argument, out nextArgumentState))
                     {
                         argumentState = nextArgumentState;
                         continue;
@@ -72,7 +71,7 @@ namespace RestApiCompiler
                             inputFilePath = Environment.ExpandEnvironmentVariables(argument);
 
                             // The output name defaults to the input file name with a new extension.
-                            outputFileName = string.Format(CultureInfo.InvariantCulture, "{0}.cs", Path.GetFileNameWithoutExtension(inputFilePath));
+                            outputFileName = $"{Path.GetFileNameWithoutExtension(inputFilePath)}.cs";
 
                             break;
 
@@ -107,10 +106,7 @@ namespace RestApiCompiler
                 uint bufferSize;
                 Generator generator = new Generator();
                 IVsSingleFileGenerator ivsSingleFileGenerator = generator as IVsSingleFileGenerator;
-                if (ivsSingleFileGenerator.Generate(inputFilePath, fileContents, targetNamespace, buffer, out bufferSize, null) != 0)
-                {
-                    throw new InvalidOperationException(Strings.UnableToGenerateFileError);
-                }
+                ivsSingleFileGenerator.Generate(inputFilePath, fileContents, targetNamespace, buffer, out bufferSize, null);
 
                 // Once the buffer of source code is generated, it is copied back out of the unmanaged buffers and written to the output file.
                 byte[] outputBuffer = new byte[bufferSize];
@@ -120,10 +116,10 @@ namespace RestApiCompiler
                     streamWriter.Write(Encoding.UTF8.GetString(outputBuffer));
                 }
             }
-            catch (InvalidOperationException exception)
+            catch (ArgumentException argumentException)
             {
                 // This will catch any generic errors and dump them to the console.
-                Console.WriteLine(exception.Message);
+                Console.WriteLine(argumentException.Message);
             }
 
             // The execution at this point was a success.
