@@ -1,5 +1,5 @@
 // <copyright file="Class.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.DataModelClass
@@ -137,29 +137,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         }
 
         /// <summary>
-        /// Create the private instance fields.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The structure members with the fields added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // This will create the private instance fields.
-            List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new DbContextField(this.xmlSchemaDocument));
-            fields.Add(new LoggerField());
-            fields.Add(new RowVersionField());
-
-            // Alphabetize and add the fields as members of the class.
-            foreach (SyntaxElement syntaxElement in fields.OrderBy(f => f.Name))
-            {
-                members = members.Add(syntaxElement.Syntax);
-            }
-
-            // Return the new collection of members.
-            return members;
-        }
-
-        /// <summary>
         /// Create the public instance methods.
         /// </summary>
         /// <param name="members">The structure members.</param>
@@ -233,6 +210,29 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
+            }
+
+            // Return the new collection of members.
+            return members;
+        }
+
+        /// <summary>
+        /// Create the private instance fields.
+        /// </summary>
+        /// <param name="members">The structure members.</param>
+        /// <returns>The structure members with the fields added.</returns>
+        private SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            // This will create the private instance fields.
+            List<SyntaxElement> fields = new List<SyntaxElement>();
+            fields.Add(new DbContextField(this.xmlSchemaDocument));
+            fields.Add(new LoggerField());
+            fields.Add(new RowVersionField());
+
+            // Alphabetize and add the fields as members of the class.
+            foreach (SyntaxElement syntaxElement in fields.OrderBy(f => f.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }

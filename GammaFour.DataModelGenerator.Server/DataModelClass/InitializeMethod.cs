@@ -1,5 +1,5 @@
-// <copyright file="MergeMethod.cs" company="Gamma Four, Inc.">
-//    Copyright © 2019 - Gamma Four, Inc.  All Rights Reserved.
+// <copyright file="InitializeMethod.cs" company="Gamma Four, Inc.">
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.DataModelClass
@@ -42,6 +42,119 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             .WithModifiers(InitializeMethod.Modifiers)
             .WithBody(this.Body)
             .WithLeadingTrivia(InitializeMethod.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the documentation comment.
+        /// </summary>
+        private static SyntaxTriviaList DocumentationComment
+        {
+            get
+            {
+                // The document comment trivia is collected in this list.
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
+
+                //        /// <inheritdoc/>
+                comments.Add(
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                SyntaxFactory.XmlText()
+                                .WithTextTokens(
+                                    SyntaxFactory.TokenList(
+                                        new[]
+                                        {
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                " <inheritdoc/>",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                        }))))));
+
+                // This is the complete document comment.
+                return SyntaxFactory.TriviaList(comments);
+            }
+        }
+
+        /// <summary>
+        /// Gets the statements that load a domain from a DbContext.
+        /// </summary>
+        private static List<StatementSyntax> LockAndEnlistRecord
+        {
+            get
+            {
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //                    transaction.EnlistVolatile(record, EnlistmentOptions.None);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("transaction"),
+                                SyntaxFactory.IdentifierName("EnlistVolatile")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("record")),
+                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.IdentifierName("EnlistmentOptions"),
+                                            SyntaxFactory.IdentifierName("None"))),
+                                    })))));
+
+                //                    disposables.Add(await record.Lock.WriteLockAsync());
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("disposables"),
+                                SyntaxFactory.IdentifierName("Add")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.AwaitExpression(
+                                            SyntaxFactory.InvocationExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.IdentifierName("record"),
+                                                        SyntaxFactory.IdentifierName("Lock")),
+                                                    SyntaxFactory.IdentifierName("WriteLockAsync"))))))))));
+
+                return statements;
+            }
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // private
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                        SyntaxFactory.Token(SyntaxKind.AsyncKeyword),
+                    });
+            }
         }
 
         /// <summary>
@@ -107,100 +220,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
-            }
-        }
-
-        /// <summary>
-        /// Gets the documentation comment.
-        /// </summary>
-        private static SyntaxTriviaList DocumentationComment
-        {
-            get
-            {
-                // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <inheritdoc/>
-                comments.Add(
-                    SyntaxFactory.Trivia(
-                        SyntaxFactory.DocumentationCommentTrivia(
-                            SyntaxKind.SingleLineDocumentationCommentTrivia,
-                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                SyntaxFactory.XmlText()
-                                .WithTextTokens(
-                                    SyntaxFactory.TokenList(
-                                        new[]
-                                        {
-                                            SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " <inheritdoc/>",
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                            SyntaxFactory.XmlTextNewLine(
-                                                SyntaxFactory.TriviaList(),
-                                                Environment.NewLine,
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                        }))))));
-
-                // This is the complete document comment.
-                return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the statements that load a domain from a DbContext.
-        /// </summary>
-        private static List<StatementSyntax> LockAndEnlistRecord
-        {
-            get
-            {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                    transaction.EnlistVolatile(record, EnlistmentOptions.None);
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("transaction"),
-                                SyntaxFactory.IdentifierName("EnlistVolatile")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]{
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("record")),
-                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName("EnlistmentOptions"),
-                                            SyntaxFactory.IdentifierName("None")))})))));
-
-                //                    disposables.Add(await record.Lock.WriteLockAsync());
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("disposables"),
-                                SyntaxFactory.IdentifierName("Add")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.AwaitExpression(
-                                            SyntaxFactory.InvocationExpression(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.IdentifierName("record"),
-                                                        SyntaxFactory.IdentifierName("Lock")),
-                                                    SyntaxFactory.IdentifierName("WriteLockAsync"))))))))));
-
-                return statements;
             }
         }
 
@@ -338,7 +357,8 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                        new SyntaxNodeOrToken[]{
+                                        new SyntaxNodeOrToken[]
+                                        {
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
@@ -349,7 +369,8 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.IdentifierName("EnlistmentOptions"),
-                                                    SyntaxFactory.IdentifierName("None")))})))));
+                                                    SyntaxFactory.IdentifierName("None"))),
+                                        })))));
 
                     // Enlist each of the unique key indices in this transaction.
                     foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
@@ -365,7 +386,8 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
                                         SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                            new SyntaxNodeOrToken[]{
+                                            new SyntaxNodeOrToken[]
+                                            {
                                                 SyntaxFactory.Argument(
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
@@ -379,7 +401,8 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.IdentifierName("EnlistmentOptions"),
-                                                        SyntaxFactory.IdentifierName("None")))})))));
+                                                        SyntaxFactory.IdentifierName("None"))),
+                                            })))));
                     }
 
                     // Enlist each of the foreign key indices in this transaction.
@@ -396,7 +419,8 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
                                         SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                            new SyntaxNodeOrToken[]{
+                                            new SyntaxNodeOrToken[]
+                                            {
                                                 SyntaxFactory.Argument(
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
@@ -410,7 +434,8 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.IdentifierName("EnlistmentOptions"),
-                                                        SyntaxFactory.IdentifierName("None")))})))));
+                                                        SyntaxFactory.IdentifierName("None"))),
+                                            })))));
                     }
                 }
 
@@ -483,7 +508,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
                                                     SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToVariableName()}Context")),
-                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
+                                                SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                                             SyntaxFactory.IdentifierName("ForEachAsync")))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
@@ -507,7 +532,8 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                        new SyntaxNodeOrToken[]{
+                                        new SyntaxNodeOrToken[]
+                                        {
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
@@ -521,7 +547,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
+                                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                                                         SyntaxFactory.IdentifierName("Merge")))
                                                 .WithArgumentList(
                                                     SyntaxFactory.ArgumentList(
@@ -533,7 +559,8 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                                         SyntaxFactory.ThisExpression(),
                                                                         SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context")),
-                                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))))})))));
+                                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural()))))))),
+                                        })))));
                 }
 
                 //                while (bucket.Values.Where(v => v.Any()).Any())
@@ -578,23 +605,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                 SyntaxFactory.IdentifierName("Complete")))));
 
                 return statements;
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                        SyntaxFactory.Token(SyntaxKind.AsyncKeyword)
-                    });
             }
         }
 

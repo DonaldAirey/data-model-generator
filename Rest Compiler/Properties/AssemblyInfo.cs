@@ -1,5 +1,8 @@
-﻿using System.Reflection;
-using System.Runtime.CompilerServices;
+﻿// <copyright file="AssemblyInfo.cs" company="Gamma Four, Inc.">
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
+// </copyright>
+// <author>Donald Roy Airey</author>
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following

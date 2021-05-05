@@ -1,4 +1,8 @@
-﻿using System.Reflection;
+﻿// <copyright file="AssemblyInfo.cs" company="Gamma Four, Inc.">
+//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
+// </copyright>
+// <author>Donald Roy Airey</author>
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
