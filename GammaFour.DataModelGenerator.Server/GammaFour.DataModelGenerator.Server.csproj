@@ -1,154 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.CodeAnalysis.NetAnalyzers.5.0.3\build\Microsoft.CodeAnalysis.NetAnalyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.NetAnalyzers.5.0.3\build\Microsoft.CodeAnalysis.NetAnalyzers.props')" />
-  <Import Project="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.props')" />
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5378E335-95C4-4B5D-9F68-BF013F30EFDF}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GammaFour.DataModelGenerator.Server</RootNamespace>
-    <AssemblyName>GammaFour.DataModelGenerator.Server</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn>SA1005</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CodeAnalysis, Version=3.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.3.9.0\lib\netstandard2.0\Microsoft.CodeAnalysis.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=3.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.3.9.0\lib\netstandard2.0\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Collections.Immutable, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Collections.Immutable.5.0.0\lib\net461\System.Collections.Immutable.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core" />
-    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reflection.Metadata, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reflection.Metadata.5.0.0\lib\net461\System.Reflection.Metadata.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Text.Encoding.CodePages, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Text.Encoding.CodePages.5.0.0\lib\net461\System.Text.Encoding.CodePages.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="3.9.0" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CompilationUnit.cs" />
-    <Compile Include="DataModelClass\Class.cs" />
-    <Compile Include="DataModelClass\Constructor.cs" />
-    <Compile Include="DataModelClass\ConstructorDbContext.cs" />
-    <Compile Include="DataModelClass\DbContextField.cs" />
-    <Compile Include="DataModelClass\IncrementRowVersionMethod.cs" />
-    <Compile Include="DataModelClass\InitializeMethod.cs" />
-    <Compile Include="DataModelClass\LoggerField.cs" />
-    <Compile Include="DataModelClass\RecordCollectionProperty.cs" />
-    <Compile Include="DataModelClass\RowVersionField.cs" />
-    <Compile Include="DataModelClass\RowVersionProperty.cs" />
-    <Compile Include="DbContextClass\Class.cs" />
-    <Compile Include="DbContextClass\ConstructorDbContextOptions.cs" />
-    <Compile Include="DbContextClass\DbSetProperty.cs" />
-    <Compile Include="DbContextClass\OnModelCreatingMethod.cs" />
-    <Compile Include="ForeignKeyExpression.cs" />
-    <Compile Include="Namespace.cs" />
-    <Compile Include="NullableKeyFilterExpression.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RecordClass\ChildrenProperty.cs" />
-    <Compile Include="RecordClass\Class.cs" />
-    <Compile Include="RecordClass\CloneVersionField.cs" />
-    <Compile Include="RecordClass\ColumnProperty.cs" />
-    <Compile Include="RecordClass\CommitMethod.cs" />
-    <Compile Include="RecordClass\Constructor.cs" />
-    <Compile Include="RecordClass\ConstructorRecordVersion.cs" />
-    <Compile Include="RecordClass\CurrentDataField.cs" />
-    <Compile Include="RecordClass\DefaultChildrenField.cs" />
-    <Compile Include="RecordClass\GetChildrenFunctionField.cs" />
-    <Compile Include="RecordClass\GetVersionMethod.cs" />
-    <Compile Include="RecordClass\InDoubtMethod.cs" />
-    <Compile Include="RecordClass\JoinableTaskContextField.cs" />
-    <Compile Include="RecordClass\LockProperty.cs" />
-    <Compile Include="RecordClass\MarkMethod.cs" />
-    <Compile Include="RecordClass\OriginalDataField.cs" />
-    <Compile Include="RecordClass\ParentProperty.cs" />
-    <Compile Include="RecordClass\PrepareMethod.cs" />
-    <Compile Include="RecordClass\PreviousDataField.cs" />
-    <Compile Include="RecordClass\RecordStateProperty.cs" />
-    <Compile Include="RecordClass\RollbackMethod.cs" />
-    <Compile Include="RecordClass\SetOwnerMethod.cs" />
-    <Compile Include="RecordClass\StaticConstructor.cs" />
-    <Compile Include="RecordCollectionClass\AddMethod.cs" />
-    <Compile Include="RecordCollectionClass\AutoIncrementField.cs" />
-    <Compile Include="RecordCollectionClass\Class.cs" />
-    <Compile Include="RecordCollectionClass\CollectionField.cs" />
-    <Compile Include="RecordCollectionClass\CommitMethod.cs" />
-    <Compile Include="RecordCollectionClass\ConstructorDataModelName.cs" />
-    <Compile Include="RecordCollectionClass\DataModelProperty.cs" />
-    <Compile Include="RecordCollectionClass\DeletedCollectionField.cs" />
-    <Compile Include="RecordCollectionClass\DeletedItemsProperty.cs" />
-    <Compile Include="RecordCollectionClass\ForeignKeyIndexField.cs" />
-    <Compile Include="RecordCollectionClass\ForeignKeyIndexProperty.cs" />
-    <Compile Include="RecordCollectionClass\GenericGetEnumeratorMethod.cs" />
-    <Compile Include="RecordCollectionClass\GetEnumeratorMethod.cs" />
-    <Compile Include="RecordCollectionClass\InDoubtMethod.cs" />
-    <Compile Include="RecordCollectionClass\JoinableTaskContextField.cs" />
-    <Compile Include="RecordCollectionClass\LockProperty.cs" />
-    <Compile Include="RecordCollectionClass\MergeMethod.cs" />
-    <Compile Include="RecordCollectionClass\NameProperty.cs" />
-    <Compile Include="RecordCollectionClass\PrepareMethod.cs" />
-    <Compile Include="RecordCollectionClass\PrimaryKeyFunctionField.cs" />
-    <Compile Include="RecordCollectionClass\RemoveMethod.cs" />
-    <Compile Include="RecordCollectionClass\RollbackMethod.cs" />
-    <Compile Include="RecordCollectionClass\UndoStackField.cs" />
-    <Compile Include="RecordCollectionClass\UniqueKeyIndexProperty.cs" />
-    <Compile Include="RecordCollectionClass\UpdateMethod.cs" />
-    <Compile Include="UniqueKeyExpression.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
     <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
   <ItemGroup>
@@ -157,24 +20,4 @@
       <Name>GammaFour.DataModelGenerator.Common</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.NetAnalyzers.5.0.3\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.NetAnalyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.NetAnalyzers.5.0.3\analyzers\dotnet\cs\Microsoft.CodeAnalysis.NetAnalyzers.dll" />
-    <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
-    <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.NetAnalyzers.5.0.3\build\Microsoft.CodeAnalysis.NetAnalyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.NetAnalyzers.5.0.3\build\Microsoft.CodeAnalysis.NetAnalyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.NetAnalyzers.5.0.3\build\Microsoft.CodeAnalysis.NetAnalyzers.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.NetAnalyzers.5.0.3\build\Microsoft.CodeAnalysis.NetAnalyzers.targets'))" />
-  </Target>
-  <Import Project="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.targets" Condition="Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.targets')" />
-  <Import Project="..\packages\Microsoft.CodeAnalysis.NetAnalyzers.5.0.3\build\Microsoft.CodeAnalysis.NetAnalyzers.targets" Condition="Exists('..\packages\Microsoft.CodeAnalysis.NetAnalyzers.5.0.3\build\Microsoft.CodeAnalysis.NetAnalyzers.targets')" />
 </Project>

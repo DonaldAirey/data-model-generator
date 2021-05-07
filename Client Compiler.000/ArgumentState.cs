@@ -2,7 +2,7 @@
 //    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace ServerCompiler
+namespace GammaFour.DataModelGenerator.ClientCompiler
 {
     /// <summary>
     /// These are the parsing states used to read the arguments on the command line.

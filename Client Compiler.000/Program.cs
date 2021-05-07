@@ -2,7 +2,7 @@
 //    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace ServerCompiler
+namespace GammaFour.DataModelGenerator.ClientCompiler
 {
     using System;
     using System.Collections.Generic;

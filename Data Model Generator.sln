@@ -3,23 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GammaFour.DataModelGenerator.Common", "GammaFour.DataModelGenerator.Common\GammaFour.DataModelGenerator.Common.csproj", "{94E24A81-77A0-4645-80C2-DBD18309A289}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.Common", "GammaFour.DataModelGenerator.Common\GammaFour.DataModelGenerator.Common.csproj", "{94E24A81-77A0-4645-80C2-DBD18309A289}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GammaFour.DataModelGenerator.Client", "GammaFour.DataModelGenerator.Client\GammaFour.DataModelGenerator.Client.csproj", "{6AED174F-83AF-4339-B602-736BF018E7E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.Client", "GammaFour.DataModelGenerator.Client\GammaFour.DataModelGenerator.Client.csproj", "{6AED174F-83AF-4339-B602-736BF018E7E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GammaFour.DataModelGenerator.Rest", "GammaFour.DataModelGenerator.Rest\GammaFour.DataModelGenerator.Rest.csproj", "{F304CDAB-ADFC-4409-BA1D-43D0AB80CDAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.Rest", "GammaFour.DataModelGenerator.Rest\GammaFour.DataModelGenerator.Rest.csproj", "{F304CDAB-ADFC-4409-BA1D-43D0AB80CDAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GammaFour.DataModelGenerator.Server", "GammaFour.DataModelGenerator.Server\GammaFour.DataModelGenerator.Server.csproj", "{5378E335-95C4-4B5D-9F68-BF013F30EFDF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GammaFour.VisualStudio", "GammaFour.VisualStudio\GammaFour.VisualStudio.csproj", "{447C46F2-3F92-4BD0-A37F-252AD7F5516A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.Server", "GammaFour.DataModelGenerator.Server\GammaFour.DataModelGenerator.Server.csproj", "{5378E335-95C4-4B5D-9F68-BF013F30EFDF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visual Studio Package", "Visual Studio Package\Visual Studio Package.csproj", "{CB339A75-25C3-4049-9435-9CF553D0CC35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client Compiler", "Client Compiler\Client Compiler.csproj", "{B1D8106A-1128-4E4D-8FA2-2DCAF2BBE10D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client Compiler", "Client Compiler\Client Compiler.csproj", "{8986F46D-8176-4941-AA2C-55D019DFB6A4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server Compiler", "Server Compiler\Server Compiler.csproj", "{51B11726-E189-44E6-807A-237217E190DD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.VisualStudio", "GammaFour.VisualStudio\GammaFour.VisualStudio.csproj", "{46E68DAE-A9BC-462B-8147-503E45E52884}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rest Compiler", "Rest Compiler\Rest Compiler.csproj", "{CD631E26-439A-4B4F-B046-91B8C864DCC3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server Compiler", "Server Compiler\Server Compiler.csproj", "{0D6DFD0F-EE06-443A-916F-27F08F821F67}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,26 +43,26 @@ Global
 		{5378E335-95C4-4B5D-9F68-BF013F30EFDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5378E335-95C4-4B5D-9F68-BF013F30EFDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5378E335-95C4-4B5D-9F68-BF013F30EFDF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{447C46F2-3F92-4BD0-A37F-252AD7F5516A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{447C46F2-3F92-4BD0-A37F-252AD7F5516A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{447C46F2-3F92-4BD0-A37F-252AD7F5516A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{447C46F2-3F92-4BD0-A37F-252AD7F5516A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CB339A75-25C3-4049-9435-9CF553D0CC35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CB339A75-25C3-4049-9435-9CF553D0CC35}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB339A75-25C3-4049-9435-9CF553D0CC35}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CB339A75-25C3-4049-9435-9CF553D0CC35}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B1D8106A-1128-4E4D-8FA2-2DCAF2BBE10D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B1D8106A-1128-4E4D-8FA2-2DCAF2BBE10D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B1D8106A-1128-4E4D-8FA2-2DCAF2BBE10D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B1D8106A-1128-4E4D-8FA2-2DCAF2BBE10D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8986F46D-8176-4941-AA2C-55D019DFB6A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8986F46D-8176-4941-AA2C-55D019DFB6A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8986F46D-8176-4941-AA2C-55D019DFB6A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8986F46D-8176-4941-AA2C-55D019DFB6A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51B11726-E189-44E6-807A-237217E190DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51B11726-E189-44E6-807A-237217E190DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51B11726-E189-44E6-807A-237217E190DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51B11726-E189-44E6-807A-237217E190DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46E68DAE-A9BC-462B-8147-503E45E52884}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46E68DAE-A9BC-462B-8147-503E45E52884}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46E68DAE-A9BC-462B-8147-503E45E52884}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46E68DAE-A9BC-462B-8147-503E45E52884}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CD631E26-439A-4B4F-B046-91B8C864DCC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CD631E26-439A-4B4F-B046-91B8C864DCC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD631E26-439A-4B4F-B046-91B8C864DCC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD631E26-439A-4B4F-B046-91B8C864DCC3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0D6DFD0F-EE06-443A-916F-27F08F821F67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0D6DFD0F-EE06-443A-916F-27F08F821F67}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0D6DFD0F-EE06-443A-916F-27F08F821F67}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0D6DFD0F-EE06-443A-916F-27F08F821F67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
