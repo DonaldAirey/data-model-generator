@@ -24,6 +24,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         /// <summary>
         /// Initializes a new instance of the <see cref="DbContextField"/> class.
         /// </summary>
+        /// <param name="xmlSchemaDocument">The XML Schema document.</param>
         public DbContextField(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
