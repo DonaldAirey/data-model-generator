@@ -270,7 +270,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // The volatile data model doesn't try to load the data from a DbContext, the non-volatile data model does.
-            if (this.xmlSchemaDocument.IsVolatile)
+            if (this.xmlSchemaDocument.IsVolatile.HasValue && this.xmlSchemaDocument.IsVolatile.Value)
             {
                 members = members.Add(new Constructor(this.xmlSchemaDocument).Syntax);
             }

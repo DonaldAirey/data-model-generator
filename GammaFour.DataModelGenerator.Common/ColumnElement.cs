@@ -49,7 +49,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// The number of fractional digits in a fix-precision number.
         /// </summary>
-        private int fractionDigits = 2;
+        private int fractionDigits = 6;
 
         /// <summary>
         /// Indicates that the column has a default value.
@@ -77,6 +77,11 @@ namespace GammaFour.DataModelGenerator.Common
         private bool? isInParentKey;
 
         /// <summary>
+        /// Indicates the element has a simple type declaration.
+        /// </summary>
+        private bool hasSimpleType;
+
+        /// <summary>
         /// The maximum length of a variable length data type.
         /// </summary>
         private int maximumLength;
@@ -84,7 +89,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// The total number of digits in a fixed-precision datatype.
         /// </summary>
-        private int totalDigits = 18;
+        private int totalDigits = 21;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ColumnElement"/> class.
@@ -247,6 +252,23 @@ namespace GammaFour.DataModelGenerator.Common
         /// Gets a value indicating whether gets a indication of whether the column contains the row's version.
         /// </summary>
         public bool IsRowVersion { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether the element has a simple type description.
+        /// </summary>
+        public bool HasSimpleType
+        {
+            get
+            {
+                // Make sure the type information has been extracted.
+                if (!this.isTypeInfoInitialized)
+                {
+                    this.InitializeTypeInfo();
+                }
+
+                return this.hasSimpleType;
+            }
+        }
 
         /// <summary>
         /// Gets the maximum length of the data in a column.
@@ -461,6 +483,7 @@ namespace GammaFour.DataModelGenerator.Common
         private void InitializeTypeInfo()
         {
             // The code below will work out the maximum length based on either the default values or the explicit values.
+            this.hasSimpleType = false;
             this.maximumLength = int.MaxValue;
 
             // This section will determine the datatype of the column.  There are three basic flavors.  The first is a simple type which is extracted
@@ -469,6 +492,9 @@ namespace GammaFour.DataModelGenerator.Common
             XAttribute typeAttribute = this.Attribute(XmlSchemaDocument.TypeName);
             if (typeAttribute == null)
             {
+                // Indicates that an explcit element describing the type is present.
+                this.hasSimpleType = true;
+
                 // This section will parse a predefined datatype with a restriction.  The 'base' attribute of the 'restriction' element contains the
                 // predefined datatype specification.
                 XElement simpleElement = this.Element(XmlSchemaDocument.SimpleTypeName);

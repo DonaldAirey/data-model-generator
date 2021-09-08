@@ -142,7 +142,7 @@ namespace GammaFour.DataModelGenerator.Client
 
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq.Expressions")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.Data")));
-                if (!this.xmlSchemaDocument.IsVolatile)
+                if (!this.xmlSchemaDocument.IsVolatile.HasValue || !this.xmlSchemaDocument.IsVolatile.Value)
                 {
                     usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")));
                 }

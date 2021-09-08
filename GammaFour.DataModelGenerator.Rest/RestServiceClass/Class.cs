@@ -117,7 +117,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                 SyntaxFactory.IdentifierName("ApiController")))));
 
                 //        [Authorize]
-                if (this.tableElement.XmlSchemaDocument.IsSecure)
+                if (this.tableElement.XmlSchemaDocument.IsSecure.HasValue && this.tableElement.XmlSchemaDocument.IsSecure.Value)
                 {
                     attributes.Add(
                     SyntaxFactory.AttributeList(
