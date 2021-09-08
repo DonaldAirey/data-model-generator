@@ -135,7 +135,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                                 SyntaxFactory.IdentifierName("MaxValue"))),
                                                     })))))))));
 
-                //            this.lockTimeout = timespan == TimeSpan.MaxValue ? Timeout.Infinite : Convert.ToInt32(timespan);
+                //            this.lockTimeout = timespan == TimeSpan.MaxValue ? System.Threading.Timeout.Infinite : Convert.ToInt32(timespan);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
@@ -153,9 +153,15 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.IdentifierName("TimeSpan"),
                                         SyntaxFactory.IdentifierName("MaxValue"))),
                                 SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("Timeout"),
-                                    SyntaxFactory.IdentifierName("Infinite")),
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName("System"),
+                                        SyntaxFactory.IdentifierName("Threading")),
+                                    SyntaxFactory.IdentifierName("Timeout")),
+                                SyntaxFactory.IdentifierName("Infinite")),
                                 SyntaxFactory.InvocationExpression(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,

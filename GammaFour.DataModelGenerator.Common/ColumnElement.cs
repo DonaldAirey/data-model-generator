@@ -47,6 +47,11 @@ namespace GammaFour.DataModelGenerator.Common
         private object defaultValue;
 
         /// <summary>
+        /// The number of fractional digits in a fix-precision number.
+        /// </summary>
+        private int fractionDigits = 2;
+
+        /// <summary>
         /// Indicates that the column has a default value.
         /// </summary>
         private bool hasDefault;
@@ -75,6 +80,11 @@ namespace GammaFour.DataModelGenerator.Common
         /// The maximum length of a variable length data type.
         /// </summary>
         private int maximumLength;
+
+        /// <summary>
+        /// The total number of digits in a fixed-precision datatype.
+        /// </summary>
+        private int totalDigits = 18;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ColumnElement"/> class.
@@ -131,6 +141,23 @@ namespace GammaFour.DataModelGenerator.Common
                 }
 
                 return this.defaultValue;
+            }
+        }
+
+        /// <summary>
+        /// Gets the number of fractional digits in a fixed-precision number.
+        /// </summary>
+        public int FractionDigits
+        {
+            get
+            {
+                // Make sure the type information has been extracted.
+                if (!this.isTypeInfoInitialized)
+                {
+                    this.InitializeTypeInfo();
+                }
+
+                return this.fractionDigits;
             }
         }
 
@@ -251,6 +278,23 @@ namespace GammaFour.DataModelGenerator.Common
             get
             {
                 return this.Parent.Parent.Parent as TableElement;
+            }
+        }
+
+        /// <summary>
+        /// Gets the total digits in a fixed-precision number.
+        /// </summary>
+        public int TotalDigits
+        {
+            get
+            {
+                // Make sure the type information has been extracted.
+                if (!this.isTypeInfoInitialized)
+                {
+                    this.InitializeTypeInfo();
+                }
+
+                return this.totalDigits;
             }
         }
 
@@ -441,9 +485,26 @@ namespace GammaFour.DataModelGenerator.Common
                 this.columnType.IsPredefined = true;
                 this.columnType.IsValueType = type.GetTypeInfo().IsValueType;
 
+                // Extract the number of fractional digits in a fixed precision number.
+                XElement fractionDigitsElement = restrictionElement.Element(XmlSchemaDocument.FractionDigitsName);
+                if (fractionDigitsElement != null)
+                {
+                    this.fractionDigits = Convert.ToInt32(fractionDigitsElement.Attribute(XmlSchemaDocument.ValueName).Value, CultureInfo.InvariantCulture);
+                }
+
                 // Extract the maximum length for this column's data.
                 XElement maxLengthElement = restrictionElement.Element(XmlSchemaDocument.MaxLengthName);
-                this.maximumLength = Convert.ToInt32(maxLengthElement.Attribute(XmlSchemaDocument.ValueName).Value, CultureInfo.InvariantCulture);
+                if (maxLengthElement != null)
+                {
+                    this.maximumLength = Convert.ToInt32(maxLengthElement.Attribute(XmlSchemaDocument.ValueName).Value, CultureInfo.InvariantCulture);
+                }
+
+                // Extract the total number of digits in a fixed precision number.
+                XElement totalDigitsElement = restrictionElement.Element(XmlSchemaDocument.TotalDigitsName);
+                if (totalDigitsElement != null)
+                {
+                    this.totalDigits = Convert.ToInt32(totalDigitsElement.Attribute(XmlSchemaDocument.ValueName).Value, CultureInfo.InvariantCulture);
+                }
             }
             else
             {

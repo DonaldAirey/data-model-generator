@@ -114,10 +114,8 @@ namespace GammaFour.DataModelGenerator.Common
             {
                 if (!this.isNullable.HasValue)
                 {
-                    // If all the columns of a given constraint can contain null, then the constraint is nullable.
-                    this.isNullable = (from cre in this.Columns
-                                       where cre.Column.ColumnType.IsNullable
-                                       select cre).Count() == this.Columns.Count;
+                    // If any of the columns of a given constraint can contain null, then the constraint is nullable.
+                    this.isNullable = this.Columns.Select(cre => cre).Where(cre => cre.Column.ColumnType.IsNullable).Any();
                 }
 
                 return this.isNullable.Value;

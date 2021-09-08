@@ -175,8 +175,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                 SyntaxFactory.Argument(UniqueKeyExpression.GetUniqueKey(this.uniqueKeyElement)))));
 
                 // This allows for unique indices that also allow nulls.
-                // [TODO] make this work on compound nullable indices.
-                if (this.uniqueKeyElement.IsNullable && this.uniqueKeyElement.Columns.Count == 1)
+                if (this.uniqueKeyElement.IsNullable)
                 {
                     // .HasFilter(s => s.Figi != null)
                     invocationExpressionSyntax = SyntaxFactory.InvocationExpression(

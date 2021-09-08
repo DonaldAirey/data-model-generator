@@ -182,6 +182,11 @@ namespace GammaFour.DataModelGenerator.Common
         public static XName FieldName { get; } = XName.Get("field", XmlSchemaDocument.XmlSchemaNamespace);
 
         /// <summary>
+        /// Gets the FactionDigits element.
+        /// </summary>
+        public static XName FractionDigitsName { get; } = XName.Get("fractionDigits", XmlSchemaDocument.XmlSchemaNamespace);
+
+        /// <summary>
         /// Gets the IsSecure attribute.
         /// </summary>
         public static XName IsSecureName { get; } = XName.Get("isSecure", XmlSchemaDocument.GammaFourDataNamespace);
@@ -250,6 +255,11 @@ namespace GammaFour.DataModelGenerator.Common
         /// Gets the SimpleType element.
         /// </summary>
         public static XName SimpleTypeName { get; } = XName.Get("simpleType", XmlSchemaDocument.XmlSchemaNamespace);
+
+        /// <summary>
+        /// Gets the TotalDigits element.
+        /// </summary>
+        public static XName TotalDigitsName { get; } = XName.Get("totalDigits", XmlSchemaDocument.XmlSchemaNamespace);
 
         /// <summary>
         /// Gets the Type attribute.

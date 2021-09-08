@@ -430,7 +430,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                     {
                         //                if (entity.EntityId > this.entityId)
                         //                {
-                        //                    Interlocked.Exchange(ref this.entityId, entity.EntityId + 1);
+                        //                    System.Threading.Interlocked.Exchange(ref this.entityId, entity.EntityId + 1);
                         //                }
                         statements.Add(
                             SyntaxFactory.IfStatement(
@@ -450,31 +450,37 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                             SyntaxFactory.InvocationExpression(
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.IdentifierName("Interlocked"),
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.IdentifierName("System"),
+                                                            SyntaxFactory.IdentifierName("Threading")),
+                                                        SyntaxFactory.IdentifierName("Interlocked")),
                                                     SyntaxFactory.IdentifierName("Exchange")))
                                             .WithArgumentList(
                                                 SyntaxFactory.ArgumentList(
                                                     SyntaxFactory.SeparatedList<ArgumentSyntax>(
                                                         new SyntaxNodeOrToken[]
                                                         {
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase())))
-                                                    .WithRefKindKeyword(
-                                                        SyntaxFactory.Token(SyntaxKind.RefKeyword)),
-                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.BinaryExpression(
-                                                            SyntaxKind.AddExpression,
-                                                            SyntaxFactory.MemberAccessExpression(
-                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                                                                SyntaxFactory.IdentifierName(columnElement.Name)),
-                                                            SyntaxFactory.LiteralExpression(
-                                                                SyntaxKind.NumericLiteralExpression,
-                                                                SyntaxFactory.Literal(1)))),
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxFactory.ThisExpression(),
+                                                                    SyntaxFactory.IdentifierName(columnElement.Name.ToCamelCase())))
+                                                            .WithRefOrOutKeyword(
+                                                                SyntaxFactory.Token(SyntaxKind.RefKeyword)),
+                                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.BinaryExpression(
+                                                                    SyntaxKind.AddExpression,
+                                                                    SyntaxFactory.MemberAccessExpression(
+                                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                                                        SyntaxFactory.IdentifierName(columnElement.Name)),
+                                                                    SyntaxFactory.LiteralExpression(
+                                                                        SyntaxKind.NumericLiteralExpression,
+                                                                        SyntaxFactory.Literal(1)))),
                                                         }))))))));
                     }
                 }

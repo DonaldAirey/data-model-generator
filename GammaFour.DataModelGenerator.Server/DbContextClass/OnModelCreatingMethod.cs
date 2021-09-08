@@ -201,7 +201,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.LiteralExpression(
                                                     SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal("decimal(18,2)"))))));
+                                                    SyntaxFactory.Literal($"decimal({columnElement.TotalDigits},{columnElement.FractionDigits})"))))));
                             hasModification = true;
                         }
 

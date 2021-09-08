@@ -48,13 +48,19 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            return Interlocked.Increment(ref this.rowVersion);
+                //            return System.Threading.Interlocked.Increment(ref this.rowVersion);
                 statements.Add(
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("Interlocked"),
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName("System"),
+                                        SyntaxFactory.IdentifierName("Threading")),
+                                    SyntaxFactory.IdentifierName("Interlocked")),
                                 SyntaxFactory.IdentifierName("Increment")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -64,7 +70,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
                                             SyntaxFactory.IdentifierName("rowVersion")))
-                                    .WithRefKindKeyword(
+                                    .WithRefOrOutKeyword(
                                         SyntaxFactory.Token(SyntaxKind.RefKeyword)))))));
 
                 // This is the syntax for the body of the method.

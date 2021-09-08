@@ -64,7 +64,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             {
                 //            get
                 //            {
-                //                return Interlocked.Read(ref this.rowVersion);
+                //                return System.Threading.Interlocked.Read(ref this.rowVersion);
                 //            }
                 return SyntaxFactory.AccessorDeclaration(
                     SyntaxKind.GetAccessorDeclaration)
@@ -75,7 +75,13 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                 SyntaxFactory.InvocationExpression(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("Interlocked"),
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("System"),
+                                                SyntaxFactory.IdentifierName("Threading")),
+                                            SyntaxFactory.IdentifierName("Interlocked")),
                                         SyntaxFactory.IdentifierName("Read")))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
@@ -85,7 +91,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
                                                     SyntaxFactory.IdentifierName("rowVersion")))
-                                            .WithRefKindKeyword(
+                                            .WithRefOrOutKeyword(
                                                 SyntaxFactory.Token(SyntaxKind.RefKeyword)))))))));
             }
         }
@@ -115,7 +121,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             {
                 //            set
                 //            {
-                //                Interlocked.Exchange(ref this.rowVersion, value);
+                //                System.Threading.Interlocked.Exchange(ref this.rowVersion, value);
                 //            }
                 return SyntaxFactory.AccessorDeclaration(
                     SyntaxKind.SetAccessorDeclaration)
@@ -126,7 +132,13 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                 SyntaxFactory.InvocationExpression(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("Interlocked"),
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("System"),
+                                                SyntaxFactory.IdentifierName("Threading")),
+                                            SyntaxFactory.IdentifierName("Interlocked")),
                                         SyntaxFactory.IdentifierName("Exchange")))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
@@ -138,7 +150,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.ThisExpression(),
                                                         SyntaxFactory.IdentifierName("rowVersion")))
-                                                .WithRefKindKeyword(
+                                                .WithRefOrOutKeyword(
                                                     SyntaxFactory.Token(SyntaxKind.RefKeyword)),
                                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                 SyntaxFactory.Argument(
