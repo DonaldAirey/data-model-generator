@@ -39,9 +39,14 @@ namespace GammaFour.DataModelGenerator.Common
             this.Name = this.Root.Element(XmlSchemaDocument.ElementName).Attribute("name").Value;
             this.TargetNamespace = this.Root.Attribute("targetNamespace").Value;
 
-            // This specifies the data domain used by the REST generated code.
+            // This tells us where the data domain when compiling the REST API.
             XAttribute domainAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.DomainName);
-            this.Domain = domainAttribute == null ? null : domainAttribute.Value;
+            if (domainAttribute != null)
+            {
+                string[] domainParts = domainAttribute.Value.Split('.');
+                this.Domain = domainParts[domainParts.Length - 1];
+                this.DomainNamespace = string.Join(".", domainParts, 0, domainParts.Length - 1);
+            }
 
             // This tells us whether the generated controllers should require authorization.
             XAttribute isSecureAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.IsSecureName);
