@@ -383,78 +383,28 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
 
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
-                    //            JToken listsToken = null;
-                    statements.Add(SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName("JToken"))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier($"{tableElement.Name.ToPlural().ToCamelCase()}Token"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.NullLiteralExpression)))))));
-
-                    //            if (jObject.Type == JTokenType.Object)
-                    //            {
-                    //                listsToken = new JArray(jObject);
-                    //            }
-                    statements.Add(SyntaxFactory.IfStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.EqualsExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("jObject"),
-                                SyntaxFactory.IdentifierName("Type")),
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("JTokenType"),
-                                SyntaxFactory.IdentifierName("Object"))),
-                        SyntaxFactory.Block(
-                            SyntaxFactory.SingletonList<StatementSyntax>(
-                                SyntaxFactory.ExpressionStatement(
-                                    SyntaxFactory.AssignmentExpression(
-                                        SyntaxKind.SimpleAssignmentExpression,
-                                        SyntaxFactory.IdentifierName($"{tableElement.Name.ToPlural().ToCamelCase()}Token"),
-                                        SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName("JArray"))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.IdentifierName("jObject")))))))))));
-
                     //            JToken accountsToken = jObject["accounts"];
                     //            JToken canonsToken = jObject["canons"];
                     //            JToken entitiesToken = jObject["entities"];
                     statements.Add(
-                        SyntaxFactory.IfStatement(
-                            SyntaxFactory.BinaryExpression(
-                                SyntaxKind.EqualsExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("jObject"),
-                                    SyntaxFactory.IdentifierName("Type")),
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("JTokenType"),
-                                    SyntaxFactory.IdentifierName("Array"))),
-                            SyntaxFactory.Block(
-                                SyntaxFactory.SingletonList<StatementSyntax>(
-                                    SyntaxFactory.ExpressionStatement(
-                                        SyntaxFactory.AssignmentExpression(
-                                            SyntaxKind.SimpleAssignmentExpression,
-                                            SyntaxFactory.IdentifierName($"{tableElement.Name.ToPlural().ToCamelCase()}Token"),
-                                            SyntaxFactory.ElementAccessExpression(
-                                                SyntaxFactory.IdentifierName("jObject"))
+                        LocalDeclarationStatement(
+                            VariableDeclaration(
+                                IdentifierName("JToken"))
+                            .WithVariables(
+                                SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                    VariableDeclarator(
+                                        Identifier($"{tableElement.Name.ToPlural().ToCamelCase()}Token"))
+                                    .WithInitializer(
+                                        EqualsValueClause(
+                                            ElementAccessExpression(
+                                                IdentifierName("jObject"))
                                             .WithArgumentList(
-                                                SyntaxFactory.BracketedArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                        SyntaxFactory.Argument(
-                                                            SyntaxFactory.LiteralExpression(
+                                                BracketedArgumentList(
+                                                    SingletonSeparatedList<ArgumentSyntax>(
+                                                        Argument(
+                                                            LiteralExpression(
                                                                 SyntaxKind.StringLiteralExpression,
-                                                                SyntaxFactory.Literal($"{tableElement.Name.ToPlural().ToCamelCase()}"))))))))))));
+                                                                Literal($"{tableElement.Name.ToPlural().ToCamelCase()}"))))))))))));
                 }
 
                 //            if (accountsToken != null)
