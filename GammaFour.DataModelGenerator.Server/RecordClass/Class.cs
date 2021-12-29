@@ -77,8 +77,18 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                     SyntaxFactory.SimpleBaseType(
                         SyntaxFactory.IdentifierName("IEnlistmentNotification")));
 
-                // , IVersionable<Buyer>
+                // ,
                 baseList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+
+                // ILockable
+                baseList.Add(
+                    SyntaxFactory.SimpleBaseType(
+                        SyntaxFactory.IdentifierName("ILockable")));
+
+                // ,
+                baseList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+
+                // IVersionable<Buyer>
                 baseList.Add(
                     SyntaxFactory.SimpleBaseType(
                         SyntaxFactory.GenericName(
@@ -158,6 +168,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
                 members = this.CreatePrivateStaticReadonlyFields(members);
                 members = this.CreatePrivateStaticFields(members);
+                members = Class.CreatePrivateReadonlyInstanceFields(members);
                 members = this.CreatePrivateInstanceFields(members);
                 members = this.CreateConstructors(members);
                 members = this.CreatePublicInstanceProperties(members);
@@ -189,6 +200,27 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         }
 
         /// <summary>
+        /// Create the private instance fields.
+        /// </summary>
+        /// <param name="members">The structure members.</param>
+        /// <returns>The syntax for creating the internal instance properties.</returns>
+        private static SyntaxList<MemberDeclarationSyntax> CreatePrivateReadonlyInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            // This will create the private instance fields.
+            List<SyntaxElement> fields = new List<SyntaxElement>();
+            fields.Add(new SemaphoreSlimField());
+
+            // Alphabetize and add the fields as members of the class.
+            foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
+            }
+
+            // Return the new collection of members.
+            return members;
+        }
+
+        /// <summary>
         /// Create the public instance methods.
         /// </summary>
         /// <param name="members">The structure members.</param>
@@ -200,7 +232,9 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
             methods.Add(new CommitMethod());
             methods.Add(new InDoubtMethod());
             methods.Add(new PrepareMethod());
+            methods.Add(new ReleaseMethod());
             methods.Add(new RollbackMethod());
+            methods.Add(new WaitAsyncMethod());
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
@@ -290,7 +324,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new JoinableTaskContextField());
             fields.Add(new CloneVersionField(this.tableElement));
 
             // Alphabetize and add the fields as members of the class.
@@ -338,7 +371,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new LockProperty());
             properties.Add(new RecordCollectionProperty(this.tableElement));
             properties.Add(new RecordStateProperty());
 

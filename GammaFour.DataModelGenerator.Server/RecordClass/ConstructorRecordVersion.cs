@@ -127,26 +127,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                 SyntaxFactory.IdentifierName("RecordState"),
                                 SyntaxFactory.IdentifierName("Detached")))));
 
-                //            this.Lock = new AsyncReaderWriterLock(this.joinableTaskContext);
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("Lock")),
-                            SyntaxFactory.ObjectCreationExpression(
-                                SyntaxFactory.IdentifierName("AsyncReaderWriterLock"))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName("joinableTaskContext")))))))));
-
                 //            this.getBuyers = () => Country.defaultBuyers;
                 //            this.getProvinces = () => Country.defaultProvinces;
                 //            this.getRegions = () => Country.defaultRegions;

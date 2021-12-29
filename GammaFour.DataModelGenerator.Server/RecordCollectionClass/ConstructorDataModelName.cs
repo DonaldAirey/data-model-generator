@@ -97,26 +97,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                 SyntaxFactory.IdentifierName("Name")),
                             SyntaxFactory.IdentifierName("name"))));
 
-                //            this.Lock = new AsyncReaderWriterLock(this.joinableTaskContext);
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("Lock")),
-                            SyntaxFactory.ObjectCreationExpression(
-                                SyntaxFactory.IdentifierName("AsyncReaderWriterLock"))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName("joinableTaskContext")))))))));
-
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
             }

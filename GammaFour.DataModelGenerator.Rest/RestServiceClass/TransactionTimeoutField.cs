@@ -45,6 +45,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                     new[]
                     {
                         SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
                     });
             }
         }

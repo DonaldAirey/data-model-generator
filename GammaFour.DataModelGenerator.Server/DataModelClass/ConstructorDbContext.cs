@@ -96,6 +96,37 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                 SyntaxFactory.IdentifierName($"logger")),
                             SyntaxFactory.IdentifierName($"logger"))));
 
+                //            this.transactionTimeout = configuration.GetValue("TransactionTimeout", Timeout.InfiniteTimeSpan);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("transactionTimeout")),
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("configuration"),
+                                    SyntaxFactory.IdentifierName("GetValue")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                        new SyntaxNodeOrToken[]
+                                        {
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.LiteralExpression(
+                                                    SyntaxKind.StringLiteralExpression,
+                                                    SyntaxFactory.Literal("TransactionTimeout"))),
+                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName("Timeout"),
+                                                    SyntaxFactory.IdentifierName("InfiniteTimeSpan"))),
+                                        }))))));
+
                 // Initialize each of the record sets.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
@@ -185,6 +216,29 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))));
 
+                //        /// <param name="configuration">Configuration settings.</param>
+                comments.Add(
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                    SyntaxFactory.XmlText()
+                                    .WithTextTokens(
+                                        SyntaxFactory.TokenList(
+                                            new[]
+                                            {
+                                                SyntaxFactory.XmlTextLiteral(
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                    $" <param name=\"configuration\">Configuration settings.</param>",
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                                SyntaxFactory.XmlTextNewLine(
+                                                    SyntaxFactory.TriviaList(),
+                                                    Environment.NewLine,
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                            }))))));
+
                 //        /// <param name="domainContext">The domain dabase context.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -245,6 +299,13 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             {
                 // Create a list of parameters from the columns in the unique constraint.
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
+
+                // DomainContext domainContext
+                parameters.Add(
+                    SyntaxFactory.Parameter(
+                        SyntaxFactory.Identifier("configuration"))
+                    .WithType(
+                        SyntaxFactory.IdentifierName("IConfiguration")));
 
                 // DomainContext domainContext
                 parameters.Add(

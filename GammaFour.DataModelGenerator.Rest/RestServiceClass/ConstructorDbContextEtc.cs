@@ -37,6 +37,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             //        /// <param name="configuration">Configuration settings.</param>
             //        /// <param name="domain">The data model.</param>
             //        /// <param name="domainContext">The data model.</param>
+            //        /// <param name="logger">The log device.</param>
             //        public CountriesController(IConfiguration configuration, Domain domain, DomainContext domainContext)
             //        {
             //            <Body>
@@ -97,45 +98,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                 SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.Domain.ToCamelCase()}Context")),
                             SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.Domain.ToCamelCase()}Context"))));
 
-                //            var timespan = configuration.GetValue<TimeSpan>("Rest:LockTimeout", TimeSpan.MaxValue);
-                statements.Add(
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName("var"))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("timespan"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.InvocationExpression(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("configuration"),
-                                                SyntaxFactory.GenericName(
-                                                    SyntaxFactory.Identifier("GetValue"))
-                                                .WithTypeArgumentList(
-                                                    SyntaxFactory.TypeArgumentList(
-                                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                            SyntaxFactory.IdentifierName("TimeSpan"))))))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                    new SyntaxNodeOrToken[]
-                                                    {
-                                                        SyntaxFactory.Argument(
-                                                            SyntaxFactory.LiteralExpression(
-                                                                SyntaxKind.StringLiteralExpression,
-                                                                SyntaxFactory.Literal($"{this.tableElement.XmlSchemaDocument.Name}:LockTimeout"))),
-                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                        SyntaxFactory.Argument(
-                                                            SyntaxFactory.MemberAccessExpression(
-                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.IdentifierName("TimeSpan"),
-                                                                SyntaxFactory.IdentifierName("MaxValue"))),
-                                                    })))))))));
-
-                //            this.lockTimeout = timespan == TimeSpan.MaxValue ? System.Threading.Timeout.Infinite : Convert.ToInt32(timespan);
+                //            this.logger = logger;
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
@@ -143,37 +106,10 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("lockTimeout")),
-                            SyntaxFactory.ConditionalExpression(
-                                SyntaxFactory.BinaryExpression(
-                                    SyntaxKind.EqualsExpression,
-                                    SyntaxFactory.IdentifierName("timespan"),
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("TimeSpan"),
-                                        SyntaxFactory.IdentifierName("MaxValue"))),
-                                SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("System"),
-                                        SyntaxFactory.IdentifierName("Threading")),
-                                    SyntaxFactory.IdentifierName("Timeout")),
-                                SyntaxFactory.IdentifierName("Infinite")),
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("Convert"),
-                                        SyntaxFactory.IdentifierName("ToInt32")))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName("timespan")))))))));
+                                SyntaxFactory.IdentifierName("logger")),
+                            SyntaxFactory.IdentifierName("logger"))));
 
-                //            this.transactionTimeout = configuration.GetValue<TimeSpan>("Rest:TransactionTimeout", TimeSpan.FromSeconds(int.MaxValue));
+                //            this.transactionTimeout = configuration.GetValue("TransactionTimeout", Timeout.InfiniteTimeSpan);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
@@ -186,12 +122,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.IdentifierName("configuration"),
-                                    SyntaxFactory.GenericName(
-                                        SyntaxFactory.Identifier("GetValue"))
-                                    .WithTypeArgumentList(
-                                        SyntaxFactory.TypeArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                SyntaxFactory.IdentifierName("TimeSpan"))))))
+                                    SyntaxFactory.IdentifierName("GetValue")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SeparatedList<ArgumentSyntax>(
@@ -200,23 +131,13 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.LiteralExpression(
                                                     SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal($"{this.tableElement.XmlSchemaDocument.Name}:TransactionTimeout"))),
+                                                    SyntaxFactory.Literal("TransactionTimeout"))),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.Argument(
-                                                SyntaxFactory.InvocationExpression(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.IdentifierName("TimeSpan"),
-                                                        SyntaxFactory.IdentifierName("FromSeconds")))
-                                                .WithArgumentList(
-                                                    SyntaxFactory.ArgumentList(
-                                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                            SyntaxFactory.Argument(
-                                                                SyntaxFactory.MemberAccessExpression(
-                                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                                    SyntaxFactory.PredefinedType(
-                                                                        SyntaxFactory.Token(SyntaxKind.IntKeyword)),
-                                                                    SyntaxFactory.IdentifierName("MaxValue"))))))),
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName("Timeout"),
+                                                    SyntaxFactory.IdentifierName("InfiniteTimeSpan"))),
                                         }))))));
 
                 //            this.domainContext.Database.SetCommandTimeout(this.transactionTimeout);
@@ -371,6 +292,29 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     SyntaxFactory.TriviaList()),
                                             }))))));
 
+                //        /// <param name="domainContext">The DbContext for the domain.</param>
+                comments.Add(
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                    SyntaxFactory.XmlText()
+                                    .WithTextTokens(
+                                        SyntaxFactory.TokenList(
+                                            new[]
+                                            {
+                                                SyntaxFactory.XmlTextLiteral(
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                    $" <param name=\"logger\">The log device.</param>",
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                                SyntaxFactory.XmlTextNewLine(
+                                                    SyntaxFactory.TriviaList(),
+                                                    Environment.NewLine,
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                            }))))));
+
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
             }
@@ -393,21 +337,40 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                     .WithType(
                         SyntaxFactory.IdentifierName("IConfiguration")));
 
-                // , Domain domain
+                // ,
                 parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+
+                // Domain domain
                 parameters.Add(
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier(this.tableElement.XmlSchemaDocument.Domain.ToVariableName()))
                     .WithType(
                         SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Domain)));
 
-                // , DomainContext domainContext
+                // ,
                 parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+
+                // DomainContext domainContext
                 parameters.Add(
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier($"{this.tableElement.XmlSchemaDocument.Domain.ToCamelCase()}Context"))
                     .WithType(
                         SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.Domain}Context")));
+
+                // ,
+                parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+
+                // IConfiguration<AccountsController> configuration
+                parameters.Add(
+                    SyntaxFactory.Parameter(
+                    SyntaxFactory.Identifier("logger"))
+                .WithType(
+                    SyntaxFactory.GenericName(
+                        SyntaxFactory.Identifier("ILogger"))
+                    .WithTypeArgumentList(
+                        SyntaxFactory.TypeArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                SyntaxFactory.IdentifierName($"{this.tableElement.Name.ToPlural()}Controller"))))));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

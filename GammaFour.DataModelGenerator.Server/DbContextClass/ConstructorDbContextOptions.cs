@@ -377,13 +377,13 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                 SyntaxFactory.IdentifierName("Any"))),
                         SyntaxFactory.Block(this.MergeTables)));
 
-                //                transactionScope.Complete();
+                //                lockingTransaction.Complete();
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("transactionScope"),
+                                SyntaxFactory.IdentifierName("lockingTransaction"),
                                 SyntaxFactory.IdentifierName("Complete")))));
 
                 return statements;

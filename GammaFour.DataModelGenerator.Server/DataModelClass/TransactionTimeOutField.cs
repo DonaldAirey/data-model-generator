@@ -1,8 +1,8 @@
-// <copyright file="JoinableTaskContextField.cs" company="Gamma Four, Inc.">
+// <copyright file="TransactionTimeoutField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.RecordSetClass
+namespace GammaFour.DataModelGenerator.Server.DataModelClass
 {
     using System;
     using System.Collections.Generic;
@@ -14,43 +14,32 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
     /// <summary>
     /// Creates a field to hold the current contents of the row.
     /// </summary>
-    public class JoinableTaskContextField : SyntaxElement
+    public class TransactionTimeoutField : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="JoinableTaskContextField"/> class.
+        /// Initializes a new instance of the <see cref="TransactionTimeoutField"/> class.
         /// </summary>
-        public JoinableTaskContextField()
+        public TransactionTimeoutField()
         {
             // Initialize the object.
-            this.Name = "joinableTaskContext";
+            this.Name = "transactionTimeout";
 
             //        /// <summary>
-            //        /// Context for starting tasks.
+            //        /// The time to wait for the transaction to complete.
             //        /// </summary>
-            //        private JoinableTaskContext joinableTaskContext = new JoinableTaskContext();
+            //        private TimeSpan transactionTimeout;
             this.Syntax = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
-                    SyntaxFactory.IdentifierName("JoinableTaskContext"))
-                .WithVariables(JoinableTaskContextField.Variables))
-                .WithModifiers(JoinableTaskContextField.Modifiers)
-                .WithLeadingTrivia(DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
-                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
-                    });
-            }
+                    SyntaxFactory.IdentifierName("TimeSpan"))
+                .WithVariables(
+                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                        SyntaxFactory.VariableDeclarator(
+                            SyntaxFactory.Identifier(this.Name)))))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
+                .WithModifiers(TransactionTimeoutField.Modifiers)
+                .WithLeadingTrivia(TransactionTimeoutField.DocumentationComment);
         }
 
         /// <summary>
@@ -64,7 +53,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Default Buyers.
+                //        /// The master row version.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -88,7 +77,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " Context for starting tasks.",
+                                                " The time to wait for the transaction to complete.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -114,30 +103,18 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         }
 
         /// <summary>
-        /// Gets the initialization list.
+        /// Gets the modifiers.
         /// </summary>
-        private static SeparatedSyntaxList<VariableDeclaratorSyntax> Variables
+        private static SyntaxTokenList Modifiers
         {
             get
             {
-                // joinableTaskContext = new JoinableTaskContext()
-                return SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                    SyntaxFactory.VariableDeclarator(
-                        SyntaxFactory.Identifier("joinableTaskContext"))
-                    .WithInitializer(
-                        SyntaxFactory.EqualsValueClause(
-                            SyntaxFactory.ObjectCreationExpression(
-                                SyntaxFactory.IdentifierName("JoinableTaskContext"))
-                            .WithNewKeyword(
-                                SyntaxFactory.Token(SyntaxKind.NewKeyword))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList()
-                                .WithOpenParenToken(
-                                    SyntaxFactory.Token(SyntaxKind.OpenParenToken))
-                                .WithCloseParenToken(
-                                    SyntaxFactory.Token(SyntaxKind.CloseParenToken))))
-                        .WithEqualsToken(
-                            SyntaxFactory.Token(SyntaxKind.EqualsToken))));
+                // private
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                    });
             }
         }
     }

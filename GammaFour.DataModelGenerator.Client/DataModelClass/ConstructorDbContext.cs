@@ -102,7 +102,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                             }))))));
                 }
 
-                //            using (TransactionScope transactionScope = new TransactionScope())
+                //            using (TransactionScope lockingTransaction = new TransactionScope())
                 //            {
                 //                <LoadDomain>
                 //            }
@@ -115,7 +115,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("transactionScope"))
+                                    SyntaxFactory.Identifier("lockingTransaction"))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
                                         SyntaxFactory.ObjectCreationExpression(
@@ -396,13 +396,13 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                 SyntaxFactory.IdentifierName("Any"))),
                         SyntaxFactory.Block(this.MergeTables)));
 
-                //                transactionScope.Complete();
+                //                lockingTransaction.Complete();
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("transactionScope"),
+                                SyntaxFactory.IdentifierName("lockingTransaction"),
                                 SyntaxFactory.IdentifierName("Complete")))));
 
                 return statements;

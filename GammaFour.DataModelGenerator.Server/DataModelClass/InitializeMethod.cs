@@ -83,64 +83,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         }
 
         /// <summary>
-        /// Gets the statements that load a domain from a DbContext.
-        /// </summary>
-        private static List<StatementSyntax> LockAndEnlistRecord
-        {
-            get
-            {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                    transaction.EnlistVolatile(record, EnlistmentOptions.None);
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("transaction"),
-                                SyntaxFactory.IdentifierName("EnlistVolatile")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]
-                                    {
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("record")),
-                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName("EnlistmentOptions"),
-                                            SyntaxFactory.IdentifierName("None"))),
-                                    })))));
-
-                //                    disposables.Add(await record.Lock.WriteLockAsync());
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("disposables"),
-                                SyntaxFactory.IdentifierName("Add")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.AwaitExpression(
-                                            SyntaxFactory.InvocationExpression(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.IdentifierName("record"),
-                                                        SyntaxFactory.IdentifierName("Lock")),
-                                                    SyntaxFactory.IdentifierName("WriteLockAsync"))))))))));
-
-                return statements;
-            }
-        }
-
-        /// <summary>
         /// Gets the modifiers.
         /// </summary>
         private static SyntaxTokenList Modifiers
@@ -167,76 +109,39 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            using (var disposables = new DisposableList())
-                //            using (var transactionScope = new TransactionScope(TransactionScopeOption.RequiresNew, TransactionScopeAsyncFlowOption.Enabled))
-                //            {
-                //                <LoadDomain>
-                //            }
+                //            using var lockingTransaction = new LockingTransaction(this.transactionTimeout);
                 statements.Add(
-                    SyntaxFactory.UsingStatement(
-                        SyntaxFactory.UsingStatement(
-                            SyntaxFactory.Block(this.LoadDomain))
-                        .WithDeclaration(
-                            SyntaxFactory.VariableDeclaration(
-                                SyntaxFactory.IdentifierName("var"))
-                            .WithVariables(
-                                SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                    SyntaxFactory.VariableDeclarator(
-                                        SyntaxFactory.Identifier("transactionScope"))
-                                    .WithInitializer(
-                                        SyntaxFactory.EqualsValueClause(
-                                            SyntaxFactory.ObjectCreationExpression(
-                                                SyntaxFactory.IdentifierName("TransactionScope"))
-                                            .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                new SyntaxNodeOrToken[]
-                                                {
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.IdentifierName("TransactionScopeOption"),
-                                                            SyntaxFactory.IdentifierName("RequiresNew"))),
-                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.IdentifierName("TransactionScopeAsyncFlowOption"),
-                                                            SyntaxFactory.IdentifierName("Enabled"))),
-                                                })))))))))
-                    .WithDeclaration(
+                    SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName("var"))
+                            SyntaxFactory.IdentifierName(
+                                SyntaxFactory.Identifier(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.VarKeyword,
+                                    "var",
+                                    "var",
+                                    SyntaxFactory.TriviaList())))
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("disposables"))
+                                    SyntaxFactory.Identifier("lockingTransaction"))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
                                         SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName("DisposableList"))
+                                            SyntaxFactory.IdentifierName("LockingTransaction"))
                                         .WithArgumentList(
-                                            SyntaxFactory.ArgumentList())))))));
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.ThisExpression(),
+                                                            SyntaxFactory.IdentifierName("transactionTimeout")))))))))))
+                    .WithUsingKeyword(
+                        SyntaxFactory.Token(SyntaxKind.UsingKeyword)));
 
-                // This is the syntax for the body of the method.
-                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
-            }
-        }
-
-        /// <summary>
-        /// Gets the statements that load a domain from a DbContext.
-        /// </summary>
-        private List<StatementSyntax> LoadDomain
-        {
-            get
-            {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            using (await this.Accounts.Lock.WriteLockAsync())
-                //            using (await this.Accounts.AccountExternalKey.Lock.WriteLockAsync())
-                //            using (await this.Accounts.AccountKey.Lock.WriteLockAsync())
-                //            using (await this.Accounts.EntityAccountKey.Lock.WriteLockAsync())
-                //            using (await this.AccountCanonMaps.Lock.WriteLockAsync())
+                //            await lockingTransaction.WaitAsync(this.Accounts.ItemAccountKey);
+                //            await lockingTransaction.WaitAsync(this.Accounts.AccountKey);
+                //            await lockingTransaction.WaitAsync(this.Accounts.AccountSymbolKey);
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
                     // Lock each of the foreign key indices.
@@ -244,183 +149,15 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                     {
                         statements.Add(
                             SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("disposables"),
-                                        SyntaxFactory.IdentifierName("Add")))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.AwaitExpression(
-                                                    SyntaxFactory.InvocationExpression(
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.MemberAccessExpression(
-                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.MemberAccessExpression(
-                                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                                    SyntaxFactory.MemberAccessExpression(
-                                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                                        SyntaxFactory.ThisExpression(),
-                                                                        SyntaxFactory.IdentifierName(foreignKeyElement.Table.Name.ToPlural())),
-                                                                    SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
-                                                                SyntaxFactory.IdentifierName("Lock")),
-                                                            SyntaxFactory.IdentifierName("WriteLockAsync"))))))))));
-                    }
-
-                    // Lock each of the unique key indices
-                    foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
-                    {
-                        statements.Add(
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("disposables"),
-                                        SyntaxFactory.IdentifierName("Add")))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.AwaitExpression(
-                                                    SyntaxFactory.InvocationExpression(
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.MemberAccessExpression(
-                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.MemberAccessExpression(
-                                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                                    SyntaxFactory.MemberAccessExpression(
-                                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                                        SyntaxFactory.ThisExpression(),
-                                                                        SyntaxFactory.IdentifierName(uniqueKeyElement.Table.Name.ToPlural())),
-                                                                    SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
-                                                                SyntaxFactory.IdentifierName("Lock")),
-                                                            SyntaxFactory.IdentifierName("WriteLockAsync"))))))))));
-                    }
-
-                    //            using (await this.Accounts.Lock.WriteLockAsync())
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("disposables"),
-                                    SyntaxFactory.IdentifierName("Add")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.AwaitExpression(
-                                                SyntaxFactory.InvocationExpression(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.MemberAccessExpression(
-                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.ThisExpression(),
-                                                                SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                                            SyntaxFactory.IdentifierName("Lock")),
-                                                        SyntaxFactory.IdentifierName("WriteLockAsync"))))))))));
-                }
-
-                //                Transaction transaction = Transaction.Current;
-                statements.Add(
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName("Transaction"))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("transaction"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
+                                SyntaxFactory.AwaitExpression(
+                                    SyntaxFactory.InvocationExpression(
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName("Transaction"),
-                                            SyntaxFactory.IdentifierName("Current"))))))));
-
-                // Enlist each of the tables and it's indices into the current transaction.
-                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
-                {
-                    //                transaction.EnlistVolatile(this.Accounts, EnlistmentOptions.None);
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("transaction"),
-                                    SyntaxFactory.IdentifierName("EnlistVolatile")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                        new SyntaxNodeOrToken[]
-                                        {
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural()))),
-                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.IdentifierName("EnlistmentOptions"),
-                                                    SyntaxFactory.IdentifierName("None"))),
-                                        })))));
-
-                    // Enlist each of the unique key indices in this transaction.
-                    foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
-                    {
-                        //                transaction.EnlistVolatile(this.Accounts.AccountExternalKey, EnlistmentOptions.None);
-                        statements.Add(
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("transaction"),
-                                        SyntaxFactory.IdentifierName("EnlistVolatile")))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                            new SyntaxNodeOrToken[]
-                                            {
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(uniqueKeyElement.Table.Name.ToPlural())),
-                                                        SyntaxFactory.IdentifierName(uniqueKeyElement.Name))),
-                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.IdentifierName("EnlistmentOptions"),
-                                                        SyntaxFactory.IdentifierName("None"))),
-                                            })))));
-                    }
-
-                    // Enlist each of the foreign key indices in this transaction.
-                    foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys)
-                    {
-                        //                transaction.EnlistVolatile(this.Accounts.EntityAccountKey, EnlistmentOptions.None);
-                        statements.Add(
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("transaction"),
-                                        SyntaxFactory.IdentifierName("EnlistVolatile")))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                            new SyntaxNodeOrToken[]
-                                            {
+                                            SyntaxFactory.IdentifierName("lockingTransaction"),
+                                            SyntaxFactory.IdentifierName("WaitAsync")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                 SyntaxFactory.Argument(
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
@@ -428,15 +165,50 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.ThisExpression(),
                                                             SyntaxFactory.IdentifierName(foreignKeyElement.Table.Name.ToPlural())),
-                                                        SyntaxFactory.IdentifierName(foreignKeyElement.Name))),
-                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                        SyntaxFactory.IdentifierName(foreignKeyElement.Name)))))))));
+                    }
+
+                    // Lock each of the unique key indices
+                    foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
+                    {
+                        statements.Add(
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.AwaitExpression(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.IdentifierName("lockingTransaction"),
+                                            SyntaxFactory.IdentifierName("WaitAsync")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                 SyntaxFactory.Argument(
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.IdentifierName("EnlistmentOptions"),
-                                                        SyntaxFactory.IdentifierName("None"))),
-                                            })))));
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.ThisExpression(),
+                                                            SyntaxFactory.IdentifierName(uniqueKeyElement.Table.Name.ToPlural())),
+                                                        SyntaxFactory.IdentifierName(uniqueKeyElement.Name)))))))));
                     }
+
+                    //            await lockingTransaction.WaitAsync(this.Accounts);
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AwaitExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName("lockingTransaction"),
+                                        SyntaxFactory.IdentifierName("WaitAsync")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))))));
                 }
 
                 //                Dictionary<IMergable, IEnumerable<object>> bucket = new Dictionary<IMergable, IEnumerable<object>>();
@@ -490,36 +262,42 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 // Merge each of the tables.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
-                    //                await this.domainContext.Accounts.ForEachAsync(
-                    //                    async record =>
-                    //                    {
-                    //                        transaction.EnlistVolatile(record, EnlistmentOptions.None);
-                    //                        disposables.Add(await record.Lock.WriteLockAsync());
-                    //                    });
+                    //            await this.domainContext.Accounts.ForEachAsync(async a => await lockingTransaction.WaitAsync(a));
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.AwaitExpression(
-                                    SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToVariableName()}Context")),
-                                                SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                            SyntaxFactory.IdentifierName("ForEachAsync")))
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName("domainContext")),
+                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
+                                        SyntaxFactory.IdentifierName("ForEachAsync")))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
                                         SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.SimpleLambdaExpression(
                                                     SyntaxFactory.Parameter(
-                                                        SyntaxFactory.Identifier("record")),
-                                                    SyntaxFactory.Block(InitializeMethod.LockAndEnlistRecord))
+                                                        SyntaxFactory.Identifier(tableElement.Name[0].ToString().ToLower())))
                                                 .WithAsyncKeyword(
-                                                    SyntaxFactory.Token(SyntaxKind.AsyncKeyword)))))))));
+                                                    SyntaxFactory.Token(SyntaxKind.AsyncKeyword))
+                                                .WithExpressionBody(
+                                                    SyntaxFactory.AwaitExpression(
+                                                        SyntaxFactory.InvocationExpression(
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.IdentifierName("lockingTransaction"),
+                                                                SyntaxFactory.IdentifierName("WaitAsync")))
+                                                        .WithArgumentList(
+                                                            SyntaxFactory.ArgumentList(
+                                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                                    SyntaxFactory.Argument(
+                                                                        SyntaxFactory.IdentifierName(tableElement.Name[0].ToString().ToLower()))))))))))))));
 
                     //                bucket.Add(this.Accounts, this.Accounts.Merge(this.domainContext.Accounts));
                     statements.Add(
@@ -595,16 +373,18 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                 SyntaxFactory.IdentifierName("Any"))),
                         SyntaxFactory.Block(this.MergeTables)));
 
-                //                transactionScope.Complete();
+                //                lockingTransaction.Complete();
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("transactionScope"),
+                                SyntaxFactory.IdentifierName("lockingTransaction"),
                                 SyntaxFactory.IdentifierName("Complete")))));
 
-                return statements;
+
+                // This is the syntax for the body of the method.
+                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
             }
         }
 

@@ -1,4 +1,4 @@
-// <copyright file="LockTimeoutField.cs" company="Gamma Four, Inc.">
+// <copyright file="LoggerField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,26 +12,25 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
     /// <summary>
     /// Creates a field to hold a buffer for creating transaction log items.
     /// </summary>
-    public class LockTimeoutField : SyntaxElement
+    public class LoggerField : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="LockTimeoutField"/> class.
+        /// Initializes a new instance of the <see cref="LoggerField"/> class.
         /// </summary>
-        public LockTimeoutField()
+        public LoggerField()
         {
             // Initialize the object.
-            this.Name = "lockTimeout";
+            this.Name = "logger";
 
-            //        private int lockTimeout;
+            //        private TimeSpan transactionTimeout;
             this.Syntax = SyntaxFactory.FieldDeclaration(
-                SyntaxFactory.VariableDeclaration(
-                    SyntaxFactory.PredefinedType(
-                        SyntaxFactory.Token(SyntaxKind.IntKeyword)))
-                .WithVariables(
-                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                        SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier(this.Name)))))
-                .WithModifiers(LockTimeoutField.Modifiers);
+                    SyntaxFactory.VariableDeclaration(
+                        SyntaxFactory.IdentifierName("ILogger"))
+                    .WithVariables(
+                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                            SyntaxFactory.VariableDeclarator(
+                                SyntaxFactory.Identifier(this.Name)))))
+                .WithModifiers(LoggerField.Modifiers);
         }
 
         /// <summary>
@@ -46,6 +45,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                     new[]
                     {
                         SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
                     });
             }
         }

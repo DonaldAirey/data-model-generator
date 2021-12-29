@@ -20,19 +20,9 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
     public class Class : SyntaxElement
     {
         /// <summary>
-        /// The type of the row.
-        /// </summary>
-        private readonly string rowType;
-
-        /// <summary>
         /// The unique constraint schema.
         /// </summary>
         private readonly TableElement tableElement;
-
-        /// <summary>
-        /// The XML Schema document.
-        /// </summary>
-        private readonly XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Class"/> class.
@@ -42,9 +32,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         {
             // Initialize the object.
             this.tableElement = tableElement ?? throw new ArgumentNullException(nameof(tableElement));
-            this.xmlSchemaDocument = this.tableElement.XmlSchemaDocument;
             this.Name = tableElement.Name + "Collection";
-            this.rowType = this.tableElement.Name;
 
             //    /// <summary>
             //    /// The Configuration table.
@@ -89,6 +77,14 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 baseList.Add(
                     SyntaxFactory.SimpleBaseType(
                         SyntaxFactory.IdentifierName("IEnlistmentNotification")));
+
+                // ,
+                baseList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+
+                // ILockable
+                baseList.Add(
+                    SyntaxFactory.SimpleBaseType(
+                        SyntaxFactory.IdentifierName("ILockable")));
 
                 // ,
                 baseList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
@@ -182,6 +178,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
+                members = Class.CreatePrivateReadonlyInstanceFields(members);
                 members = this.CreatePrivateInstanceFields(members);
                 members = this.CreateConstructors(members);
                 members = this.CreatePublicEvents(members);
@@ -191,6 +188,27 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 members = Class.CreatePrivateInstanceMethods(members);
                 return members;
             }
+        }
+
+        /// <summary>
+        /// Create the private instance fields.
+        /// </summary>
+        /// <param name="members">The structure members.</param>
+        /// <returns>The syntax for creating the internal instance properties.</returns>
+        private static SyntaxList<MemberDeclarationSyntax> CreatePrivateReadonlyInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            // This will create the private instance fields.
+            List<SyntaxElement> fields = new List<SyntaxElement>();
+            fields.Add(new SemaphoreSlimField());
+
+            // Alphabetize and add the fields as members of the class.
+            foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
+            }
+
+            // Return the new collection of members.
+            return members;
         }
 
         /// <summary>
@@ -236,7 +254,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new JoinableTaskContextField());
             fields.Add(new PrimaryKeyFunctionField(this.tableElement.PrimaryKey));
             fields.Add(new CollectionField(this.tableElement));
             fields.Add(new DeletedCollectionField(this.tableElement));
@@ -278,7 +295,6 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             List<SyntaxElement> properties = new List<SyntaxElement>();
             properties.Add(new DataModelProperty(this.tableElement.XmlSchemaDocument));
             properties.Add(new DeletedItemsProperty(this.tableElement));
-            properties.Add(new LockProperty());
             properties.Add(new NameProperty());
 
             // Add a property for each of the unique keys indices.
@@ -361,9 +377,11 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             methods.Add(new GenericGetEnumeratorMethod(this.tableElement));
             methods.Add(new MergeMethod(this.tableElement));
             methods.Add(new PrepareMethod());
+            methods.Add(new ReleaseMethod());
             methods.Add(new RemoveMethod(this.tableElement));
             methods.Add(new RollbackMethod());
             methods.Add(new UpdateMethod(this.tableElement));
+            methods.Add(new WaitAsyncMethod());
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))

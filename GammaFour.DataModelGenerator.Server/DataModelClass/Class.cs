@@ -230,6 +230,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             fields.Add(new DbContextField(this.xmlSchemaDocument));
             fields.Add(new LoggerField());
             fields.Add(new RowVersionField());
+            fields.Add(new TransactionTimeoutField());
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(f => f.Name))

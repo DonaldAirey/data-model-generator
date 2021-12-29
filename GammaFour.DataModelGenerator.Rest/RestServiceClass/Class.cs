@@ -194,7 +194,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = this.CreatePrivateInstanceFields(members);
+                members = this.CreatePrivateReadonlyInstanceFields(members);
                 members = this.CreateConstructors(members);
                 members = this.CreatePublicInstanceMethods(members);
                 return members;
@@ -206,13 +206,13 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The syntax for creating the internal instance properties.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
+        private SyntaxList<MemberDeclarationSyntax> CreatePrivateReadonlyInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
             fields.Add(new DbContextField(this.tableElement.XmlSchemaDocument));
             fields.Add(new DomainField(this.tableElement.XmlSchemaDocument));
-            fields.Add(new LockTimeoutField());
+            fields.Add(new LoggerField());
             fields.Add(new TransactionTimeoutField());
 
             // Alphabetize and add the fields as members of the class.

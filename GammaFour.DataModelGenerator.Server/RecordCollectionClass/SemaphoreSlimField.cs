@@ -1,8 +1,8 @@
-// <copyright file="LockProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="SemaphoreSlimField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
-// <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.RecordClass
+// <author>Donald Airey</author>
+namespace GammaFour.DataModelGenerator.Server.RecordSetClass
 {
     using System;
     using System.Collections.Generic;
@@ -14,65 +14,48 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
     /// <summary>
     /// Creates a field that holds the column.
     /// </summary>
-    public class LockProperty : SyntaxElement
+    public class SemaphoreSlimField : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="LockProperty"/> class.
+        /// Initializes a new instance of the <see cref="SemaphoreSlimField"/> class.
         /// </summary>
-        public LockProperty()
+        public SemaphoreSlimField()
         {
             // Initialize the object.
-            this.Name = "Lock";
+            this.Name = "semaphoreSlim";
 
             //        /// <summary>
-            //        /// Gets the lock used to manage multithreaded access to this record.
+            //        /// Locks this resource for the duration of a transaction.
             //        /// </summary>
-            //        public AsyncReaderWriterLock Lock { get; } = new AsyncReaderWriterLock();
-            this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.IdentifierName("AsyncReaderWriterLock"),
-                SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(LockProperty.Modifiers)
-                .WithAccessorList(LockProperty.AccessorList)
-                .WithAttributeLists(LockProperty.Attributes)
-                .WithLeadingTrivia(LockProperty.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the list of accessors.
-        /// </summary>
-        private static AccessorListSyntax AccessorList
-        {
-            get
-            {
-                return SyntaxFactory.AccessorList(
-                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
-                        SyntaxFactory.AccessorDeclaration(
-                            SyntaxKind.GetAccessorDeclaration)
-                        .WithSemicolonToken(
-                            SyntaxFactory.Token(SyntaxKind.SemicolonToken))));
-            }
-        }
-
-        /// <summary>
-        /// Gets the data contract attribute syntax.
-        /// </summary>
-        private static SyntaxList<AttributeListSyntax> Attributes
-        {
-            get
-            {
-                // This collects all the attributes.
-                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
-
-                //        [JsonConverter(typeof(StringEnumConverter))]
-                attributes.Add(
-                    SyntaxFactory.AttributeList(
-                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
-                            SyntaxFactory.Attribute(
-                                SyntaxFactory.IdentifierName("JsonIgnore")))));
-
-                // The collection of attributes.
-                return SyntaxFactory.List<AttributeListSyntax>(attributes);
-            }
+            //        private readonly SemaphoreSlim Lock = new SemaphoreSlim(1, 1);
+            this.Syntax = this.Syntax = SyntaxFactory.FieldDeclaration(
+                SyntaxFactory.VariableDeclaration(
+                    SyntaxFactory.IdentifierName("SemaphoreSlim"))
+                .WithVariables(
+                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                        SyntaxFactory.VariableDeclarator(
+                            SyntaxFactory.Identifier(this.Name))
+                        .WithInitializer(
+                            SyntaxFactory.EqualsValueClause(
+                                SyntaxFactory.ObjectCreationExpression(
+                                    SyntaxFactory.IdentifierName("SemaphoreSlim"))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                            new SyntaxNodeOrToken[]
+                                            {
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        SyntaxKind.NumericLiteralExpression,
+                                                        SyntaxFactory.Literal(1))),
+                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        SyntaxKind.NumericLiteralExpression,
+                                                        SyntaxFactory.Literal(1))),
+                                            }))))))))
+                .WithModifiers(SemaphoreSlimField.Modifiers)
+                .WithLeadingTrivia(SemaphoreSlimField.DocumentationComment);
         }
 
         /// <summary>
@@ -86,7 +69,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Gets the lock used to manage multithreaded access to this record.
+                //        /// Locks this resource for the duration of a transaction.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -110,7 +93,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Gets the lock used to manage multithreaded access to this record.",
+                                                $" Locks this resource for the duration of a transaction.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -146,7 +129,8 @@ namespace GammaFour.DataModelGenerator.Server.RecordClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
                     });
             }
         }
