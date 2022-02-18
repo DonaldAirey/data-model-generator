@@ -1,5 +1,5 @@
 // <copyright file="OnModelCreatingMethod.cs" company="Gamma Four, Inc.">
-//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.DbContextClass
@@ -133,6 +133,22 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
             {
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //            modelBuilder.UseCollation("SQL_Latin1_General_CP1_CS_AS");
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("modelBuilder"),
+                                SyntaxFactory.IdentifierName("UseCollation")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.StringLiteralExpression,
+                                            SyntaxFactory.Literal("SQL_Latin1_General_CP1_CS_AS"))))))));
 
                 // This will configure each of the tables and their indices.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)

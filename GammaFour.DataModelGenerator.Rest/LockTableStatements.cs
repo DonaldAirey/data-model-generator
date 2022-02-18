@@ -1,5 +1,5 @@
 ﻿// <copyright file="LockTableStatements.cs" company="Gamma Four, Inc.">
-//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.RestService
@@ -17,7 +17,7 @@ namespace GammaFour.DataModelGenerator.RestService
     public static class LockTableStatements
     {
         /// <summary>
-        /// Gets the syntax for the creation of an anonymous type.
+        /// Gets the syntax for the locking the resources of a table for a write operation.
         /// </summary>
         /// <param name="tableElement">The description of a table.</param>
         /// <returns>An expression that locks all the resources related to the given table element.</returns>
@@ -62,7 +62,7 @@ namespace GammaFour.DataModelGenerator.RestService
                 .WithUsingKeyword(
                     SyntaxFactory.Token(SyntaxKind.UsingKeyword)));
 
-            //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts).ConfigureAwait(false);
+            //            await lockingTransaction.WaitWriterAsync(this.domain.Accounts).ConfigureAwait(false);
             statements.Add(
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AwaitExpression(
@@ -73,7 +73,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.IdentifierName("lockingTransaction"),
-                                        SyntaxFactory.IdentifierName("WaitReaderAsync")))
+                                        SyntaxFactory.IdentifierName("WaitWriterAsync")))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
                                         SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
@@ -93,7 +93,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                         SyntaxFactory.LiteralExpression(
                                             SyntaxKind.FalseLiteralExpression))))))));
 
-            //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts.ItemAccountKey).ConfigureAwait(false);
+            //            await lockingTransaction.WaitWriterAsync(this.domain.Accounts.ItemAccountKey).ConfigureAwait(false);
             foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys.AsEnumerable().Reverse())
             {
                 statements.Add(
@@ -106,7 +106,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.IdentifierName("lockingTransaction"),
-                                            SyntaxFactory.IdentifierName("WaitReaderAsync")))
+                                            SyntaxFactory.IdentifierName("WaitWriterAsync")))
                                     .WithArgumentList(
                                         SyntaxFactory.ArgumentList(
                                             SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
@@ -144,7 +144,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.IdentifierName("lockingTransaction"),
-                                            SyntaxFactory.IdentifierName("WaitReaderAsync")))
+                                            SyntaxFactory.IdentifierName("WaitWriterAsync")))
                                     .WithArgumentList(
                                         SyntaxFactory.ArgumentList(
                                             SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
@@ -236,7 +236,7 @@ namespace GammaFour.DataModelGenerator.RestService
             // The elements of the body are added to this collection as they are assembled.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 
-            //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts).ConfigureAwait(false);
+            //            await lockingTransaction.WaitWriterAsync(this.domain.Accounts).ConfigureAwait(false);
             statements.Add(
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AwaitExpression(
@@ -247,7 +247,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.IdentifierName("lockingTransaction"),
-                                        SyntaxFactory.IdentifierName("WaitReaderAsync")))
+                                        SyntaxFactory.IdentifierName("WaitWriterAsync")))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
                                         SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
@@ -267,7 +267,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                         SyntaxFactory.LiteralExpression(
                                             SyntaxKind.FalseLiteralExpression))))))));
 
-            //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts.ItemAccountKey).ConfigureAwait(false);
+            //            await lockingTransaction.WaitWriterAsync(this.domain.Accounts.ItemAccountKey).ConfigureAwait(false);
             foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys.AsEnumerable().Reverse())
             {
                 statements.Add(
@@ -280,7 +280,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.IdentifierName("lockingTransaction"),
-                                            SyntaxFactory.IdentifierName("WaitReaderAsync")))
+                                            SyntaxFactory.IdentifierName("WaitWriterAsync")))
                                     .WithArgumentList(
                                         SyntaxFactory.ArgumentList(
                                             SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
@@ -304,8 +304,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                                 SyntaxKind.FalseLiteralExpression))))))));
             }
 
-            //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts.AccountKey).ConfigureAwait(false);
-            //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts.AccountSymbolKey).ConfigureAwait(false);
+            //            await lockingTransaction.WaitWriterAsync(this.domain.Accounts.AccountKey).ConfigureAwait(false);
+            //            await lockingTransaction.WaitWriterAsync(this.domain.Accounts.AccountSymbolKey).ConfigureAwait(false);
             foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys.AsEnumerable().Reverse())
             {
                 statements.Add(
@@ -318,7 +318,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.IdentifierName("lockingTransaction"),
-                                            SyntaxFactory.IdentifierName("WaitReaderAsync")))
+                                            SyntaxFactory.IdentifierName("WaitWriterAsync")))
                                     .WithArgumentList(
                                         SyntaxFactory.ArgumentList(
                                             SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(

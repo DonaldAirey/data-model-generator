@@ -1,5 +1,5 @@
 // <copyright file="PutMethod.cs" company="Gamma Four, Inc.">
-//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
@@ -226,7 +226,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                                                     SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name)))))))));
 
-                    //            await lockingTransaction.WaitReaderAsync(account).ConfigureAwait(false);
+                    //            await lockingTransaction.WaitWriterAsync(account).ConfigureAwait(false);
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.AwaitExpression(
@@ -237,7 +237,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.IdentifierName("lockingTransaction"),
-                                                SyntaxFactory.IdentifierName("WaitReaderAsync")))
+                                                SyntaxFactory.IdentifierName("WaitWriterAsync")))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
                                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(

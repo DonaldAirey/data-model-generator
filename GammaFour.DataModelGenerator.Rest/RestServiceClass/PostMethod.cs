@@ -1,5 +1,5 @@
 // <copyright file="PostMethod.cs" company="Gamma Four, Inc.">
-//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
@@ -407,7 +407,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                                                             SyntaxFactory.IdentifierName(this.tableElement.Name))))))))))));
 
-                //                    await lockingTransaction.WaitReaderAsync(account).ConfigureAwait(false);
+                //                    await lockingTransaction.WaitWriterAsync(account).ConfigureAwait(false);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
@@ -418,7 +418,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.IdentifierName("lockingTransaction"),
-                                            SyntaxFactory.IdentifierName("WaitReaderAsync")))
+                                            SyntaxFactory.IdentifierName("WaitWriterAsync")))
                                     .WithArgumentList(
                                         SyntaxFactory.ArgumentList(
                                             SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
@@ -610,10 +610,10 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                                  SyntaxFactory.IdentifierName("transactionTimeout"))))))))))));
                 }
 
-                //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts).ConfigureAwait(false);
-                //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts.ItemAccountKey).ConfigureAwait(false);
-                //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts.AccountSymbolKey).ConfigureAwait(false);
-                //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts.AccountKey).ConfigureAwait(false);
+                //            await lockingTransaction.WaitWriterAsync(this.domain.Accounts).ConfigureAwait(false);
+                //            await lockingTransaction.WaitWriterAsync(this.domain.Accounts.ItemAccountKey).ConfigureAwait(false);
+                //            await lockingTransaction.WaitWriterAsync(this.domain.Accounts.AccountSymbolKey).ConfigureAwait(false);
+                //            await lockingTransaction.WaitWriterAsync(this.domain.Accounts.AccountKey).ConfigureAwait(false);
                 statements.AddRange(LockTableStatements.GetUsingSyntax(this.tableElement, this.PostBody));
 
                 // This is the complete block.
@@ -769,7 +769,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 
-            //                        await lockingTransaction.WaitReaderAsync(account).ConfigureAwait(false);
+            //                        await lockingTransaction.WaitWriterAsync(account).ConfigureAwait(false);
             statements.Add(
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AwaitExpression(
@@ -780,7 +780,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.IdentifierName("lockingTransaction"),
-                                        SyntaxFactory.IdentifierName("WaitReaderAsync")))
+                                        SyntaxFactory.IdentifierName("WaitWriterAsync")))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
                                         SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(

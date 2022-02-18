@@ -1,5 +1,5 @@
 ﻿// <copyright file="NullableKeyFilterExpression.cs" company="Gamma Four, Inc.">
-//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server
@@ -22,12 +22,6 @@ namespace GammaFour.DataModelGenerator.Server
         /// <returns>An expression that creates a filter for an index.</returns>
         public static ExpressionSyntax GetNullableKeyFilter(UniqueKeyElement uniqueKeyElement)
         {
-            // Validate the parameter
-            if (uniqueKeyElement == null)
-            {
-                throw new ArgumentNullException(nameof(uniqueKeyElement));
-            }
-
             // Used as a variable when constructing the lambda expression.
             string abbreviation = uniqueKeyElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
 
@@ -59,6 +53,53 @@ namespace GammaFour.DataModelGenerator.Server
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.IdentifierName(abbreviation),
                             SyntaxFactory.IdentifierName(uniqueKeyElement.Columns[index].Column.Name)),
+                        SyntaxFactory.LiteralExpression(
+                            SyntaxKind.NullLiteralExpression)));
+                }
+            }
+
+            //            this.BuyerKey = new UniqueKeyIndex<Buyer>("BuyerKey").HasIndex(b => b.BuyerId);
+            return SyntaxFactory.SimpleLambdaExpression(SyntaxFactory.Parameter(SyntaxFactory.Identifier(abbreviation)), syntaxNode);
+        }
+
+        /// <summary>
+        /// Creates an argument that creates a lambda expression for extracting the key from a class.
+        /// </summary>
+        /// <param name="foreignKeyElement">The unique key element.</param>
+        /// <returns>An expression that creates a filter for an index.</returns>
+        public static ExpressionSyntax GetNullableKeyFilter(ForeignKeyElement foreignKeyElement)
+        {
+            // Used as a variable when constructing the lambda expression.
+            string abbreviation = foreignKeyElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
+
+            // .HasFilter(s => s.Figi != null)
+            // .HasFilter(p => p.BaseCurrencyCode != null && p.CurrencyCode != null)
+            BinaryExpressionSyntax syntaxNode = default;
+            for (int index = 0; index < foreignKeyElement.Columns.Count; index++)
+            {
+                if (index == 0)
+                {
+                    syntaxNode = SyntaxFactory.BinaryExpression(
+                        SyntaxKind.NotEqualsExpression,
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName(abbreviation),
+                            SyntaxFactory.IdentifierName(foreignKeyElement.Columns[0].Column.Name)),
+                        SyntaxFactory.LiteralExpression(
+                            SyntaxKind.NullLiteralExpression));
+                }
+                else
+                {
+                    BinaryExpressionSyntax oldNode = syntaxNode;
+                    syntaxNode = SyntaxFactory.BinaryExpression(
+                        SyntaxKind.LogicalAndExpression,
+                        oldNode,
+                        SyntaxFactory.BinaryExpression(
+                        SyntaxKind.NotEqualsExpression,
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName(abbreviation),
+                            SyntaxFactory.IdentifierName(foreignKeyElement.Columns[index].Column.Name)),
                         SyntaxFactory.LiteralExpression(
                             SyntaxKind.NullLiteralExpression)));
                 }

@@ -1,5 +1,5 @@
 // <copyright file="ConstructorDbContext.cs" company="Gamma Four, Inc.">
-//    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.DataModelClass
@@ -160,6 +160,22 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                         SyntaxKind.StringLiteralExpression,
                                                         SyntaxFactory.Literal(tableElement.Name.ToPlural()))),
                                             }))))));
+                }
+
+                // Initialize each of the record sets.
+                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
+                {
+                    //            this.Buyers.BuildForeignIndices();
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
+                                    SyntaxFactory.IdentifierName("BuildForeignIndices")))));
                 }
 
                 // This is the syntax for the body of the constructor.
