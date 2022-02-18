@@ -1,4 +1,4 @@
-// <copyright file="SemaphoreSlimField.cs" company="Gamma Four, Inc.">
+// <copyright file="AsyncReaderWriterLockField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Airey</author>
@@ -14,48 +14,32 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
     /// <summary>
     /// Creates a field that holds the column.
     /// </summary>
-    public class SemaphoreSlimField : SyntaxElement
+    public class AsyncReaderWriterLockField : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SemaphoreSlimField"/> class.
+        /// Initializes a new instance of the <see cref="AsyncReaderWriterLockField"/> class.
         /// </summary>
-        public SemaphoreSlimField()
+        public AsyncReaderWriterLockField()
         {
-            // Initialize the object.
-            this.Name = "semaphoreSlim";
-
             //        /// <summary>
             //        /// Locks this resource for the duration of a transaction.
             //        /// </summary>
-            //        private readonly SemaphoreSlim Lock = new SemaphoreSlim(1, 1);
-            this.Syntax = this.Syntax = SyntaxFactory.FieldDeclaration(
+            //        private readonly AsyncReaderWriterLock Lock = new AsyncReaderWriterLock();
+            this.Syntax = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
-                    SyntaxFactory.IdentifierName("SemaphoreSlim"))
+                    SyntaxFactory.IdentifierName("AsyncReaderWriterLock"))
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                         SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier(this.Name))
+                            SyntaxFactory.Identifier("asyncReaderWriterLock"))
                         .WithInitializer(
                             SyntaxFactory.EqualsValueClause(
                                 SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.IdentifierName("SemaphoreSlim"))
+                                    SyntaxFactory.IdentifierName("AsyncReaderWriterLock"))
                                 .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                            new SyntaxNodeOrToken[]
-                                            {
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.LiteralExpression(
-                                                        SyntaxKind.NumericLiteralExpression,
-                                                        SyntaxFactory.Literal(1))),
-                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.LiteralExpression(
-                                                        SyntaxKind.NumericLiteralExpression,
-                                                        SyntaxFactory.Literal(1))),
-                                            }))))))))
-                .WithModifiers(SemaphoreSlimField.Modifiers)
-                .WithLeadingTrivia(SemaphoreSlimField.DocumentationComment);
+                                    SyntaxFactory.ArgumentList()))))))
+            .WithModifiers(AsyncReaderWriterLockField.Modifiers)
+            .WithLeadingTrivia(AsyncReaderWriterLockField.DocumentationComment);
         }
 
         /// <summary>

@@ -48,7 +48,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            this.semaphoreSlim.Release();
+                //            this.asyncReaderWriterLock.Release();
                 statements.Add(SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.InvocationExpression(
                         SyntaxFactory.MemberAccessExpression(
@@ -56,7 +56,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("semaphoreSlim")),
+                                SyntaxFactory.IdentifierName("asyncReaderWriterLock")),
                             SyntaxFactory.IdentifierName("Release")))));
 
                 // This is the syntax for the body of the method.

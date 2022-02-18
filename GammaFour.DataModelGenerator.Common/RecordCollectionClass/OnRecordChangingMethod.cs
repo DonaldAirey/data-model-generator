@@ -103,25 +103,18 @@ namespace GammaFour.DataModelGenerator.Common.RecordSet
                                                         SyntaxFactory.TypeArgumentList(
                                                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                                                                 SyntaxFactory.IdentifierName(this.tableElement.Name)))))
-                                                .WithInitializer(
-                                                    SyntaxFactory.InitializerExpression(
-                                                        SyntaxKind.ObjectInitializerExpression,
-                                                        SyntaxFactory.SeparatedList<ExpressionSyntax>(
+                                                .WithArgumentList(
+                                                    SyntaxFactory.ArgumentList(
+                                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
                                                             new SyntaxNodeOrToken[]
                                                             {
-                                                                SyntaxFactory.AssignmentExpression(
-                                                                    SyntaxKind.SimpleAssignmentExpression,
-                                                                    SyntaxFactory.IdentifierName("DataAction"),
+                                                                SyntaxFactory.Argument(
                                                                     SyntaxFactory.IdentifierName("dataAction")),
                                                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                                SyntaxFactory.AssignmentExpression(
-                                                                    SyntaxKind.SimpleAssignmentExpression,
-                                                                    SyntaxFactory.IdentifierName("Previous"),
+                                                                SyntaxFactory.Argument(
                                                                     SyntaxFactory.IdentifierName("previous")),
                                                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                                SyntaxFactory.AssignmentExpression(
-                                                                    SyntaxKind.SimpleAssignmentExpression,
-                                                                    SyntaxFactory.IdentifierName("Current"),
+                                                                SyntaxFactory.Argument(
                                                                     SyntaxFactory.IdentifierName("current")),
                                                             })))),
                                         }))))));

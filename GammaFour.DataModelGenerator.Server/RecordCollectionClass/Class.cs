@@ -199,7 +199,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new SemaphoreSlimField());
+            fields.Add(new AsyncReaderWriterLockField());
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
@@ -381,7 +381,8 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
             methods.Add(new RemoveMethod(this.tableElement));
             methods.Add(new RollbackMethod());
             methods.Add(new UpdateMethod(this.tableElement));
-            methods.Add(new WaitAsyncMethod());
+            methods.Add(new WaitReaderAsyncMethod());
+            methods.Add(new WaitWriterAsyncMethod());
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))

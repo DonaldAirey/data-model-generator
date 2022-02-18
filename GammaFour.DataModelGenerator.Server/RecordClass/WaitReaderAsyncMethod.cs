@@ -1,8 +1,8 @@
-// <copyright file="WaitAsyncMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="WaitReaderAsyncMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2021 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.RecordSetClass
+namespace GammaFour.DataModelGenerator.Server.RecordClass
 {
     using System;
     using System.Collections.Generic;
@@ -14,28 +14,28 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
     /// <summary>
     /// Creates a method to acquire a reader lock.
     /// </summary>
-    public class WaitAsyncMethod : SyntaxElement
+    public class WaitReaderAsyncMethod : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="WaitAsyncMethod"/> class.
+        /// Initializes a new instance of the <see cref="WaitReaderAsyncMethod"/> class.
         /// </summary>
-        public WaitAsyncMethod()
+        public WaitReaderAsyncMethod()
         {
             // Initialize the object.
-            this.Name = "WaitAsync";
+            this.Name = "WaitReaderAsync";
 
             //        /// <inheritdoc/>
-            //        public void WaitAsync(Enlistment enlistment)
+            //        public void WaitReaderAsync(Enlistment enlistment)
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
                 SyntaxFactory.IdentifierName("Task"),
-                SyntaxFactory.Identifier("WaitAsync"))
-            .WithModifiers(WaitAsyncMethod.Modifiers)
-            .WithParameterList(WaitAsyncMethod.Parameters)
-            .WithBody(WaitAsyncMethod.Body)
-            .WithLeadingTrivia(WaitAsyncMethod.DocumentationComment);
+                SyntaxFactory.Identifier("WaitReaderAsync"))
+            .WithModifiers(WaitReaderAsyncMethod.Modifiers)
+            .WithParameterList(WaitReaderAsyncMethod.Parameters)
+            .WithBody(WaitReaderAsyncMethod.Body)
+            .WithLeadingTrivia(WaitReaderAsyncMethod.DocumentationComment);
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            await this.semaphoreSlim.WaitAsync(cancellationToken);
+                //            await this.asyncReaderWriterLock.WaitReaderAsync(cancellationToken);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
@@ -58,8 +58,8 @@ namespace GammaFour.DataModelGenerator.Server.RecordSetClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("semaphoreSlim")),
-                                    SyntaxFactory.IdentifierName("WaitAsync")))
+                                        SyntaxFactory.IdentifierName("asyncReaderWriterLock")),
+                                    SyntaxFactory.IdentifierName("EnterReadLockAsync")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(

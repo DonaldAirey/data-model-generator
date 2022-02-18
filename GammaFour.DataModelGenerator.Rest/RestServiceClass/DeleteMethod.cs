@@ -413,10 +413,10 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 //            using var lockingTransaction = new LockingTransaction(this.transactionTimeout);
-                //            await lockingTransaction.WaitAsync(this.domain.Accounts);
-                //            await lockingTransaction.WaitAsync(this.domain.Accounts.AccountKey);
-                //            await lockingTransaction.WaitAsync(this.domain.Accounts.AccountSymbolKey);
-                //            await lockingTransaction.WaitAsync(this.domain.Accounts.ItemAccountKey);
+                //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts);
+                //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts.AccountKey);
+                //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts.AccountSymbolKey);
+                //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts.ItemAccountKey);
                 statements.AddRange(LockTableStatements.GetSyntax(this.uniqueKeyElement.Table));
 
                 //                Province province = this.domain.Provinces.ProvinceKey.Find(provinceId);
@@ -467,7 +467,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxFactory.ThisExpression(),
                                             SyntaxFactory.IdentifierName("NotFound"))))))));
 
-                //            await lockingTransaction.WaitAsync(account).ConfigureAwait(false);
+                //            await lockingTransaction.WaitReaderAsync(account).ConfigureAwait(false);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
@@ -478,7 +478,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.IdentifierName("lockingTransaction"),
-                                            SyntaxFactory.IdentifierName("WaitAsync")))
+                                            SyntaxFactory.IdentifierName("WaitReaderAsync")))
                                     .WithArgumentList(
                                         SyntaxFactory.ArgumentList(
                                             SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(

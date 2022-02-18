@@ -96,7 +96,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                 SyntaxFactory.IdentifierName($"logger")),
                             SyntaxFactory.IdentifierName($"logger"))));
 
-                //            this.transactionTimeout = configuration.GetValue("TransactionTimeout", Timeout.InfiniteTimeSpan);
+                //            this.transactionTimeout = configuration.GetValue("TransactionTimeout", System.Timeout.InfiniteTimeSpan);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
@@ -123,7 +123,13 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.IdentifierName("Timeout"),
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.IdentifierName("System"),
+                                                            SyntaxFactory.IdentifierName("Threading")),
+                                                        SyntaxFactory.IdentifierName("Timeout")),
                                                     SyntaxFactory.IdentifierName("InfiniteTimeSpan"))),
                                         }))))));
 
