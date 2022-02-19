@@ -95,7 +95,7 @@ namespace GammaFour.DataModelGenerator.Client
                 }
             }
 
-            //            this.BuyerKey = new SimpleUniqueKeyIndex<Buyer>("BuyerKey").HasIndex(b => b.BuyerId);
+            //            this.BuyerKey = new UniqueKeyIndex<Buyer>("BuyerKey").HasIndex(b => b.BuyerId);
             return SyntaxFactory.SimpleLambdaExpression(SyntaxFactory.Parameter(SyntaxFactory.Identifier(abbreviation)), syntaxNode);
         }
     }

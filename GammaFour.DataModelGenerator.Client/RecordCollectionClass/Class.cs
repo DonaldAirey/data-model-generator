@@ -242,7 +242,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
             // Add a field for each of the foreign indices.
             foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
             {
-                fields.Add(new SimpleForeignKeyIndexField(foreignKeyElement));
+                fields.Add(new ForeignKeyIndexField(foreignKeyElement));
             }
 
             // Alphabetize and add the fields as members of the class.
@@ -271,13 +271,13 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
             // Add a property for each of the unique keys indices.
             foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
             {
-                properties.Add(new SimpleUniqueKeyIndexProperty(uniqueKeyElement));
+                properties.Add(new UniqueKeyIndexProperty(uniqueKeyElement));
             }
 
             // Add a property for each of the foreign key indices.
             foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
             {
-                properties.Add(new SimpleForeignKeyIndexProperty(foreignKeyElement));
+                properties.Add(new ForeignKeyIndexProperty(foreignKeyElement));
             }
 
             // Alphabetize and add the properties as members of the class.

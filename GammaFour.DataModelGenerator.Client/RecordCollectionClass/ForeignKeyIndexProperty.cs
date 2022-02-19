@@ -1,4 +1,4 @@
-// <copyright file="SimpleForeignKeyIndexProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="ForeignKeyIndexProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,7 +14,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
     /// <summary>
     /// Creates a property gives access to the foreign index.
     /// </summary>
-    public class SimpleForeignKeyIndexProperty : SyntaxElement
+    public class ForeignKeyIndexProperty : SyntaxElement
     {
         /// <summary>
         /// The foreign key description.
@@ -22,10 +22,10 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
         private readonly ForeignKeyElement foreignKeyElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SimpleForeignKeyIndexProperty"/> class.
+        /// Initializes a new instance of the <see cref="ForeignKeyIndexProperty"/> class.
         /// </summary>
         /// <param name="foreignKeyElement">The column schema.</param>
-        public SimpleForeignKeyIndexProperty(ForeignKeyElement foreignKeyElement)
+        public ForeignKeyIndexProperty(ForeignKeyElement foreignKeyElement)
         {
             // Initialize the object.
             this.foreignKeyElement = foreignKeyElement ?? throw new ArgumentNullException(nameof(foreignKeyElement));
@@ -34,13 +34,13 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
             //        /// <summary>
             //        /// Gets the CountryBuyerCountryIdKey foreign index.
             //        /// </summary>
-            //        public SimpleForeignKeyIndex<Buyer, Country> CountryBuyerCountryIdKey
+            //        public ForeignKeyIndex<Buyer, Country> CountryBuyerCountryIdKey
             //        {
             //            <Get>
             //        }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
                 SyntaxFactory.GenericName(
-                    SyntaxFactory.Identifier("SimpleForeignKeyIndex"))
+                    SyntaxFactory.Identifier("ForeignKeyIndex"))
                 .WithTypeArgumentList(
                     SyntaxFactory.TypeArgumentList(
                         SyntaxFactory.SeparatedList<TypeSyntax>(
@@ -52,7 +52,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
                             }))),
                 SyntaxFactory.Identifier(this.foreignKeyElement.Name))
                 .WithAccessorList(this.AccessorList)
-                .WithModifiers(SimpleForeignKeyIndexProperty.Modifiers)
+                .WithModifiers(ForeignKeyIndexProperty.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
 
@@ -155,7 +155,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
         {
             get
             {
-                //                    this.countryBuyerCountryIdKey = new SimpleForeignKeyIndex<Buyer, Country>("CountryBuyerCountryIdKey", this.Domain.Countries.CountryKey).HasIndex(b => b.CountryId);
+                //                    this.countryBuyerCountryIdKey = new ForeignKeyIndex<Buyer, Country>("CountryBuyerCountryIdKey", this.Domain.Countries.CountryKey).HasIndex(b => b.CountryId);
                 return SyntaxFactory.SingletonList<StatementSyntax>(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
@@ -169,7 +169,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ObjectCreationExpression(
                                         SyntaxFactory.GenericName(
-                                            SyntaxFactory.Identifier("SimpleForeignKeyIndex"))
+                                            SyntaxFactory.Identifier("ForeignKeyIndex"))
                                         .WithTypeArgumentList(
                                             SyntaxFactory.TypeArgumentList(
                                                 SyntaxFactory.SeparatedList<TypeSyntax>(
