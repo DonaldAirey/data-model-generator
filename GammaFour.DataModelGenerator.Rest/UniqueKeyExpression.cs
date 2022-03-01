@@ -30,8 +30,8 @@ namespace GammaFour.DataModelGenerator.RestService
                 throw new ArgumentNullException(nameof(uniqueKeyElement));
             }
 
-            //                    country = this.domain.Countries.CountryCountryCodeKey.Find(countryCountryCodeKeyCountryCode);
-            //                    region = this.domain.Regions.RegionExternalKey.Find((regionExternalKeyName, regionExternalKeyCountryCode));
+            //                    country = this.dataModel.Countries.CountryCountryCodeKey.Find(countryCountryCodeKeyCountryCode);
+            //                    region = this.dataModel.Regions.RegionExternalKey.Find((regionExternalKeyName, regionExternalKeyCountryCode));
             SeparatedSyntaxList<ArgumentSyntax> findParameters;
             if (uniqueKeyElement.Columns.Count == 1)
             {

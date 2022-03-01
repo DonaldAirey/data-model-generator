@@ -34,7 +34,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             //        /// <summary>
             //        /// The data context for the persistent store.
             //        /// </summary>
-            //        private DomainContext domainContext;
+            //        private DataModelContext dataModelContext;
             this.Syntax = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
                     SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name}Context"))

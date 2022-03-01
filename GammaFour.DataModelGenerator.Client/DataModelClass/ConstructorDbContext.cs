@@ -34,8 +34,8 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             //        /// <summary>
             //        /// Initializes a new instance of the <see cref="DataModel"/> class.
             //        /// </summary>
-            //        /// <param name="domainContext">The domain dabase context.</param>
-            //        public Domain(DomainContext domainContext)
+            //        /// <param name="dataModelContext">The dataModel dabase context.</param>
+            //        public DataModel(DataModelContext dataModelContext)
             //        {
             //            <Body>
             //        }
@@ -104,11 +104,11 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
 
                 //            using (TransactionScope lockingTransaction = new TransactionScope())
                 //            {
-                //                <LoadDomain>
+                //                <LoadDataModel>
                 //            }
                 statements.Add(
                     SyntaxFactory.UsingStatement(
-                        SyntaxFactory.Block(this.LoadDomain))
+                        SyntaxFactory.Block(this.LoadDataModel))
                     .WithDeclaration(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName("TransactionScope"))
@@ -183,7 +183,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))));
 
-                //        /// <param name="domainContext">The domain dabase context.</param>
+                //        /// <param name="dataModelContext">The dataModel dabase context.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -212,9 +212,9 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         }
 
         /// <summary>
-        /// Gets the statements that load a domain from a DbContext.
+        /// Gets the statements that load a dataModel from a DbContext.
         /// </summary>
-        private List<StatementSyntax> LoadDomain
+        private List<StatementSyntax> LoadDataModel
         {
             get
             {
@@ -325,7 +325,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                 // Merge each of the tables.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
-                    //                bucket.Add(this.Buyers, this.Buyers.Merge(domainContext.Buyers));
+                    //                bucket.Add(this.Buyers, this.Buyers.Merge(dataModelContext.Buyers));
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.InvocationExpression(
@@ -410,7 +410,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         }
 
         /// <summary>
-        /// Gets the statements that load a domain from a DbContext.
+        /// Gets the statements that load a dataModel from a DbContext.
         /// </summary>
         private List<StatementSyntax> MergeTables
         {
@@ -473,7 +473,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                 // Create a list of parameters from the columns in the unique constraint.
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
 
-                // DomainContext domainContext
+                // DataModelContext dataModelContext
                 parameters.Add(
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context"))

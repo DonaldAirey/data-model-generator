@@ -10,22 +10,22 @@ namespace GammaFour.DataModelGenerator.Common
     public enum Verb
     {
         /// <summary>
-        /// Delete a resource from the domain.
+        /// Delete a resource from the dataModel.
         /// </summary>
         Delete,
 
         /// <summary>
-        /// Get one or more resources from the domain.
+        /// Get one or more resources from the dataModel.
         /// </summary>
         Get,
 
         /// <summary>
-        /// Put a resource in the domain.
+        /// Put a resource in the dataModel.
         /// </summary>
         Put,
 
         /// <summary>
-        /// Post a resource to the domain.
+        /// Post a resource to the dataModel.
         /// </summary>
         Post,
     }

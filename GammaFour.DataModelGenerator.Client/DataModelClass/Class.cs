@@ -53,7 +53,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             get
             {
                 //    /// <summary>
-                //    /// A thread-safe, transaction-oriented data domain.
+                //    /// A thread-safe, transaction-oriented data dataModel.
                 //    /// </summary>
                 return SyntaxFactory.TriviaList(
                     SyntaxFactory.Trivia(
@@ -77,7 +77,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " A thread-safe, transaction-oriented data domain.",
+                                                " A thread-safe, transaction-oriented data dataModel.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

@@ -33,7 +33,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             this.Name = $"Put{this.uniqueKeyElement.Table.Name}" + (uniqueKeyElement.IsPrimaryKey ? string.Empty : "By" + uniqueKeyElement.Name);
 
             //        /// <summary>
-            //        /// Put the <see cref="Province"/> record into the domain.
+            //        /// Put the <see cref="Province"/> record into the dataModel.
             //        /// </summary>
             //        /// <param name="name">The Name identifier.</param>
             //        /// <param name="countryCode">The CountryCode identifier.</param>
@@ -238,7 +238,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxFactory.LiteralExpression(
                                                 SyntaxKind.FalseLiteralExpression))))))));
 
-                //                        this.domain.Countries.Add(country);
+                //                        this.dataModel.Countries.Add(country);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -249,7 +249,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.Domain.ToVariableName())),
+                                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.DataModel.ToVariableName())),
                                     SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
                                 SyntaxFactory.IdentifierName("Add")))
                         .WithArgumentList(
@@ -258,7 +258,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToVariableName())))))));
 
-                //                            await this.domainContext.Countries.AddAsync(country);
+                //                            await this.dataModelContext.Countries.AddAsync(country);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
@@ -270,7 +270,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName($"{this.uniqueKeyElement.XmlSchemaDocument.Domain.ToCamelCase()}Context")),
+                                            SyntaxFactory.IdentifierName($"{this.uniqueKeyElement.XmlSchemaDocument.DataModel.ToCamelCase()}Context")),
                                         SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
                                     SyntaxFactory.IdentifierName("AddAsync")))
                             .WithArgumentList(
@@ -279,7 +279,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToVariableName()))))))));
 
-                //                    await this.domainContext.SaveChangesAsync();
+                //                    await this.dataModelContext.SaveChangesAsync();
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
@@ -289,7 +289,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName($"{this.uniqueKeyElement.XmlSchemaDocument.Domain.ToCamelCase()}Context")),
+                                        SyntaxFactory.IdentifierName($"{this.uniqueKeyElement.XmlSchemaDocument.DataModel.ToCamelCase()}Context")),
                                     SyntaxFactory.IdentifierName("SaveChangesAsync"))))));
 
                 // This is the complete block.
@@ -378,7 +378,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Put the <see cref="Province"/> record into the domain.
+                //        /// Put the <see cref="Province"/> record into the dataModel.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -402,7 +402,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Put the <see cref=\"{this.uniqueKeyElement.Table.Name}\"/> record into the domain.",
+                                                $" Put the <see cref=\"{this.uniqueKeyElement.Table.Name}\"/> record into the dataModel.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -624,10 +624,10 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                                  SyntaxFactory.IdentifierName("transactionTimeout"))))))))))));
                 }
 
-                //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts);
-                //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts.ItemAccountKey);
-                //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts.AccountSymbolKey);
-                //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts.AccountKey);
+                //            await lockingTransaction.WaitReaderAsync(this.dataModel.Accounts);
+                //            await lockingTransaction.WaitReaderAsync(this.dataModel.Accounts.ItemAccountKey);
+                //            await lockingTransaction.WaitReaderAsync(this.dataModel.Accounts.AccountSymbolKey);
+                //            await lockingTransaction.WaitReaderAsync(this.dataModel.Accounts.AccountKey);
                 statements.AddRange(LockTableStatements.GetUsingSyntax(this.uniqueKeyElement.Table, this.PutBody));
 
                 // This is the complete block.
@@ -645,7 +645,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                    var country = this.domain.Countries.CountryCountryCodeKey.Find(countryCode);
+                //                    var country = this.dataModel.Countries.CountryCountryCodeKey.Find(countryCode);
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
@@ -666,7 +666,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.Domain.ToVariableName())),
+                                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.DataModel.ToVariableName())),
                                                         SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
                                                     SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name)),
                                                 SyntaxFactory.IdentifierName("Find")))
@@ -872,7 +872,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.IdentifierName(columnElement.Name)))));
                 }
 
-                //                        this.domain.Countries.Update(country);
+                //                        this.dataModel.Countries.Update(country);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -883,7 +883,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.Domain.ToVariableName())),
+                                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.DataModel.ToVariableName())),
                                     SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
                                 SyntaxFactory.IdentifierName("Update")))
                         .WithArgumentList(
@@ -892,7 +892,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToVariableName())))))));
 
-                //                            this.domainContext.Countries.Update(country);
+                //                            this.dataModelContext.Countries.Update(country);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -903,7 +903,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName($"{this.uniqueKeyElement.XmlSchemaDocument.Domain.ToCamelCase()}Context")),
+                                        SyntaxFactory.IdentifierName($"{this.uniqueKeyElement.XmlSchemaDocument.DataModel.ToCamelCase()}Context")),
                                     SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
                                 SyntaxFactory.IdentifierName("Update")))
                         .WithArgumentList(
@@ -912,7 +912,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToVariableName())))))));
 
-                //                            await this.domainContext.SaveChangesAsync();
+                //                            await this.dataModelContext.SaveChangesAsync();
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
@@ -922,7 +922,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName($"{this.uniqueKeyElement.XmlSchemaDocument.Domain.ToCamelCase()}Context")),
+                                        SyntaxFactory.IdentifierName($"{this.uniqueKeyElement.XmlSchemaDocument.DataModel.ToCamelCase()}Context")),
                                     SyntaxFactory.IdentifierName("SaveChangesAsync"))))));
 
                 // This is the complete block.
@@ -980,7 +980,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         }))))))))));
             }
 
-            //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts.AccountSymbolKey).ConfigureAwait(false);
+            //            await lockingTransaction.WaitReaderAsync(this.dataModel.Accounts.AccountSymbolKey).ConfigureAwait(false);
             statements.Add(
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AwaitExpression(
@@ -1003,7 +1003,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(uniqueKeyElement.XmlSchemaDocument.Domain.ToVariableName())),
+                                                            SyntaxFactory.IdentifierName(uniqueKeyElement.XmlSchemaDocument.DataModel.ToVariableName())),
                                                         SyntaxFactory.IdentifierName(uniqueKeyElement.Table.Name.ToPlural())),
                                                     SyntaxFactory.IdentifierName(uniqueKeyElement.Name)))))),
                                 SyntaxFactory.IdentifierName("ConfigureAwait")))
@@ -1014,7 +1014,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.LiteralExpression(
                                             SyntaxKind.FalseLiteralExpression))))))));
 
-            //                    country = this.domain.Countries.CountryCountryCodeKey.Find(countryCountryCodeKeyCountryCode);
+            //                    country = this.dataModel.Countries.CountryCountryCodeKey.Find(countryCountryCodeKeyCountryCode);
             statements.Add(
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AssignmentExpression(
@@ -1030,7 +1030,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(uniqueKeyElement.XmlSchemaDocument.Domain.ToVariableName())),
+                                            SyntaxFactory.IdentifierName(uniqueKeyElement.XmlSchemaDocument.DataModel.ToVariableName())),
                                         SyntaxFactory.IdentifierName(uniqueKeyElement.Table.Name.ToPlural())),
                                     SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
                                 SyntaxFactory.IdentifierName("Find")))

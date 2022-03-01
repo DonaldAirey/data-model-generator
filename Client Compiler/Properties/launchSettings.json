@@ -2,7 +2,7 @@
   "profiles": {
     "Client Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\openbook-desktop\\ThetaRex.OpenBook.Desktop.Common\\Domains\\AlertDomain.xsd\" -out \"..\\..\\..\\..\\..\\openbook-desktop\\ThetaRex.OpenBook.Desktop.Common\\Domains\\AlertDomain.Designer.cs\" -ns \"ThetaRex.OpenBook.Desktop.Common.Domains.Alert\""
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\openbook-desktop\\ThetaRex.OpenBook.Desktop.Common\\DataModels\\AlertDataModel.xsd\" -out \"..\\..\\..\\..\\..\\openbook-desktop\\ThetaRex.OpenBook.Desktop.Common\\DataModels\\AlertDataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Desktop.Common.DataModels.Alert\""
     }
   }
 }

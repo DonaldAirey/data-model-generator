@@ -128,9 +128,9 @@ namespace GammaFour.DataModelGenerator.RestService
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Configuration")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Logging")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Newtonsoft.Json.Linq")));
-                if (!string.IsNullOrEmpty(this.xmlSchemaDocument.DomainNamespace))
+                if (!string.IsNullOrEmpty(this.xmlSchemaDocument.DataModelNamespace))
                 {
-                    usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName(this.xmlSchemaDocument.DomainNamespace)));
+                    usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName(this.xmlSchemaDocument.DataModelNamespace)));
                 }
 
                 // This sorts and concatenates the two lists.  The 'System' namespace comes before the rest.

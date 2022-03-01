@@ -2,7 +2,7 @@
   "profiles": {
     "Server Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\openbook\\ThetaRex.OpenBook.ServerDomain\\Domain.xsd\" -out \"..\\..\\..\\..\\..\\openbook\\ThetaRex.OpenBook.ServerDomain\\Domain.Designer.cs\" -ns \"ThetaRex.OpenBook.ServerDomain\""
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\openbook\\ThetaRex.OpenBook.Data\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\openbook\\ThetaRex.OpenBook.Data\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Data\""
     }
   }
 }

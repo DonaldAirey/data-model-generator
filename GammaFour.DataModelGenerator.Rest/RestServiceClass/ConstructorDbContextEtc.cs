@@ -35,10 +35,10 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             //        /// Initializes a new instance of the <see cref="CountriesController"/> class.
             //        /// </summary>
             //        /// <param name="configuration">Configuration settings.</param>
-            //        /// <param name="domain">The data model.</param>
-            //        /// <param name="domainContext">The data model.</param>
+            //        /// <param name="dataModel">The data model.</param>
+            //        /// <param name="dataModelContext">The data model.</param>
             //        /// <param name="logger">The log device.</param>
-            //        public CountriesController(IConfiguration configuration, Domain domain, DomainContext domainContext)
+            //        public CountriesController(IConfiguration configuration, DataModel dataModel, DataModelContext dataModelContext)
             //        {
             //            <Body>
             //        }
@@ -76,7 +76,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            this.domain = domain;
+                //            this.dataModel = dataModel;
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
@@ -84,10 +84,10 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Domain.ToVariableName())),
-                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Domain.ToVariableName()))));
+                                SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
+                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToVariableName()))));
 
-                //            this.domainContext = domainContext;
+                //            this.dataModelContext = dataModelContext;
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
@@ -95,8 +95,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.Domain.ToCamelCase()}Context")),
-                            SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.Domain.ToCamelCase()}Context"))));
+                                SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase()}Context")),
+                            SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase()}Context"))));
 
                 //            this.logger = logger;
                 statements.Add(
@@ -140,7 +140,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     SyntaxFactory.IdentifierName("InfiniteTimeSpan"))),
                                         }))))));
 
-                //            this.domainContext.Database.SetCommandTimeout(this.transactionTimeout);
+                //            this.dataModelContext.Database.SetCommandTimeout(this.transactionTimeout);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -151,7 +151,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.Domain.ToCamelCase()}Context")),
+                                        SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase()}Context")),
                                     SyntaxFactory.IdentifierName("Database")),
                                 SyntaxFactory.IdentifierName("SetCommandTimeout")))
                         .WithArgumentList(
@@ -246,7 +246,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     SyntaxFactory.TriviaList()),
                                             }))))));
 
-                //        /// <param name="domain">The data model.</param>
+                //        /// <param name="dataModel">The data model.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -259,7 +259,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <param name=\"domain\">The data model.</param>",
+                                                    $" <param name=\"{this.tableElement.XmlSchemaDocument.DataModel.ToVariableName()}\">The data model.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -269,7 +269,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     SyntaxFactory.TriviaList()),
                                             }))))));
 
-                //        /// <param name="domainContext">The DbContext for the domain.</param>
+                //        /// <param name="dataModelContext">The DbContext for the dataModel.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -282,7 +282,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <param name=\"domainContext\">The DbContext for the domain.</param>",
+                                                    $" <param name=\"{this.tableElement.XmlSchemaDocument.DataModel.ToVariableName()}Context\">The DbContext for the data model.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -292,7 +292,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     SyntaxFactory.TriviaList()),
                                             }))))));
 
-                //        /// <param name="domainContext">The DbContext for the domain.</param>
+                //        /// <param name="dataModelContext">The DbContext for the dataModel.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -340,22 +340,22 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 // ,
                 parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
 
-                // Domain domain
+                // DataModel dataModel
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(this.tableElement.XmlSchemaDocument.Domain.ToVariableName()))
+                        SyntaxFactory.Identifier(this.tableElement.XmlSchemaDocument.DataModel.ToVariableName()))
                     .WithType(
-                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Domain)));
+                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel)));
 
                 // ,
                 parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
 
-                // DomainContext domainContext
+                // DataModelContext dataModelContext
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier($"{this.tableElement.XmlSchemaDocument.Domain.ToCamelCase()}Context"))
+                        SyntaxFactory.Identifier($"{this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase()}Context"))
                     .WithType(
-                        SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.Domain}Context")));
+                        SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.DataModel}Context")));
 
                 // ,
                 parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));

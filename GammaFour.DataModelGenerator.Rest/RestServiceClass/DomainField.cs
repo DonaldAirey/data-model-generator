@@ -1,4 +1,4 @@
-// <copyright file="DomainField.cs" company="Gamma Four, Inc.">
+// <copyright file="DataModelField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -13,13 +13,13 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
     /// <summary>
     /// Creates a field to hold a buffer for creating transaction log items.
     /// </summary>
-    public class DomainField : SyntaxElement
+    public class DataModelField : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DomainField"/> class.
+        /// Initializes a new instance of the <see cref="DataModelField"/> class.
         /// </summary>
         /// <param name="xmlSchemaDocument">The XML Schema document.</param>
-        public DomainField(XmlSchemaDocument xmlSchemaDocument)
+        public DataModelField(XmlSchemaDocument xmlSchemaDocument)
         {
             // Validate the argument.
             if (xmlSchemaDocument == null)
@@ -28,17 +28,17 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             }
 
             // Initialize the object.
-            this.Name = xmlSchemaDocument.Domain.ToVariableName();
+            this.Name = xmlSchemaDocument.DataModel.ToVariableName();
 
-            //        private Domain domain;
+            //        private DataModel dataModel;
             this.Syntax = SyntaxFactory.FieldDeclaration(
                     SyntaxFactory.VariableDeclaration(
-                        SyntaxFactory.IdentifierName(xmlSchemaDocument.Domain))
+                        SyntaxFactory.IdentifierName(xmlSchemaDocument.DataModel))
                     .WithVariables(
                         SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                             SyntaxFactory.VariableDeclarator(
                                 SyntaxFactory.Identifier(this.Name)))))
-                .WithModifiers(DomainField.Modifiers);
+                .WithModifiers(DataModelField.Modifiers);
         }
 
         /// <summary>

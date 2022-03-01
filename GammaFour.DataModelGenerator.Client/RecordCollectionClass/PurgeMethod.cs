@@ -280,7 +280,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
             {
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                ProposedOrder proposedOrder = this.PortfolioDomain.ProposedOrders.ProposedOrderKey.Find(oldProposedOrder.ProposedOrderId);
+                //                ProposedOrder proposedOrder = this.PortfolioDataModel.ProposedOrders.ProposedOrderKey.Find(oldProposedOrder.ProposedOrderId);
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
@@ -327,7 +327,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
                                 SyntaxKind.NullLiteralExpression)),
                         SyntaxFactory.Block(this.CheckAndRemove)));
 
-                //                if (entity.RowVersion > this.AlertDomain.RowVersion)
+                //                if (entity.RowVersion > this.AlertDataModel.RowVersion)
                 //                {
                 //                    <UpdateRowVersion>
                 //                }
@@ -361,7 +361,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
             {
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                    this.AlertDomain.RowVersion = entity.RowVersion;
+                //                    this.AlertDataModel.RowVersion = entity.RowVersion;
                 statements.Add(
                     ExpressionStatement(
                         AssignmentExpression(

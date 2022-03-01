@@ -34,8 +34,8 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             //        /// <summary>
             //        /// Initializes a new instance of the <see cref="DataModel"/> class.
             //        /// </summary>
-            //        /// <param name="domainContext">The domain dabase context.</param>
-            //        public Domain()
+            //        /// <param name="dataModelContext">The dataModel dabase context.</param>
+            //        public DataModel()
             //        {
             //            <Body>
             //        }

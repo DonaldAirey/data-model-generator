@@ -1,4 +1,4 @@
-// <copyright file="TransactionTimeoutField.cs" company="Gamma Four, Inc.">
+// <copyright file="TransactionTimeOutField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>

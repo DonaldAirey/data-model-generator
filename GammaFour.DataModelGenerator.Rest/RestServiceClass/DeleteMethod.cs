@@ -413,13 +413,13 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 //            using var lockingTransaction = new LockingTransaction(this.transactionTimeout);
-                //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts);
-                //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts.AccountKey);
-                //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts.AccountSymbolKey);
-                //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts.ItemAccountKey);
+                //            await lockingTransaction.WaitReaderAsync(this.dataModel.Accounts);
+                //            await lockingTransaction.WaitReaderAsync(this.dataModel.Accounts.AccountKey);
+                //            await lockingTransaction.WaitReaderAsync(this.dataModel.Accounts.AccountSymbolKey);
+                //            await lockingTransaction.WaitReaderAsync(this.dataModel.Accounts.ItemAccountKey);
                 statements.AddRange(LockTableStatements.GetSyntax(this.uniqueKeyElement.Table));
 
-                //                Province province = this.domain.Provinces.ProvinceKey.Find(provinceId);
+                //                Province province = this.dataModel.Provinces.ProvinceKey.Find(provinceId);
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
@@ -440,7 +440,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.Domain.ToVariableName())),
+                                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.XmlSchemaDocument.DataModel.ToVariableName())),
                                                         SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
                                                     SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name)),
                                                 SyntaxFactory.IdentifierName("Find")))
@@ -560,7 +560,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxFactory.IdentifierName("StatusCodes"),
                                                         SyntaxFactory.IdentifierName("Status412PreconditionFailed")))))))))));
 
-                //            this.domain.Provinces.Remove(province);
+                //            this.dataModel.Provinces.Remove(province);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -571,7 +571,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.XmlSchemaDocument.Domain.ToVariableName())),
+                                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.XmlSchemaDocument.DataModel.ToVariableName())),
                                     SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
                                 SyntaxFactory.IdentifierName("Remove")))
                         .WithArgumentList(
@@ -580,7 +580,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToVariableName())))))));
 
-                //                this.domainContext.Provinces.Remove(province);
+                //                this.dataModelContext.Provinces.Remove(province);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -591,7 +591,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName($"{this.uniqueKeyElement.Table.XmlSchemaDocument.Domain.ToCamelCase()}Context")),
+                                        SyntaxFactory.IdentifierName($"{this.uniqueKeyElement.Table.XmlSchemaDocument.DataModel.ToCamelCase()}Context")),
                                     SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
                                 SyntaxFactory.IdentifierName("Remove")))
                         .WithArgumentList(
@@ -600,7 +600,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToVariableName())))))));
 
-                //                            await this.domainContext.SaveChangesAsync();
+                //                            await this.dataModelContext.SaveChangesAsync();
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
@@ -610,7 +610,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName($"{this.uniqueKeyElement.Table.XmlSchemaDocument.Domain.ToCamelCase()}Context")),
+                                        SyntaxFactory.IdentifierName($"{this.uniqueKeyElement.Table.XmlSchemaDocument.DataModel.ToCamelCase()}Context")),
                                     SyntaxFactory.IdentifierName("SaveChangesAsync"))))));
 
                 //                            lockingTransaction.Complete();

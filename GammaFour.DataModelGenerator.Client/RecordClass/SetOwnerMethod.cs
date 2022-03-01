@@ -396,9 +396,9 @@ namespace GammaFour.DataModelGenerator.Client.RecordClass
             {
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                this.getBuyers = () => this.Countries.Domain.Buyers.CountryBuyerCountryIdKey.GetChildren(this);
-                //                this.getProvinces = () => this.Countries.Domain.Provinces.CountryProvinceKey.GetChildren(this);
-                //                this.getRegions = () => this.Countries.Domain.Regions.CountryRegionKey.GetChildren(this);
+                //                this.getBuyers = () => this.Countries.DataModel.Buyers.CountryBuyerCountryIdKey.GetChildren(this);
+                //                this.getProvinces = () => this.Countries.DataModel.Provinces.CountryProvinceKey.GetChildren(this);
+                //                this.getRegions = () => this.Countries.DataModel.Regions.CountryRegionKey.GetChildren(this);
                 foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ChildKeys)
                 {
                     statements.Add(

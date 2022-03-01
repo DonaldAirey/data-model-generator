@@ -62,7 +62,7 @@ namespace GammaFour.DataModelGenerator.RestService
                 .WithUsingKeyword(
                     SyntaxFactory.Token(SyntaxKind.UsingKeyword)));
 
-            //            await lockingTransaction.WaitWriterAsync(this.domain.Accounts).ConfigureAwait(false);
+            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts).ConfigureAwait(false);
             statements.Add(
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AwaitExpression(
@@ -83,7 +83,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.ThisExpression(),
-                                                        SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.Domain.ToVariableName())),
+                                                        SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
                                                     SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))),
                                 SyntaxFactory.IdentifierName("ConfigureAwait")))
                         .WithArgumentList(
@@ -93,7 +93,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                         SyntaxFactory.LiteralExpression(
                                             SyntaxKind.FalseLiteralExpression))))))));
 
-            //            await lockingTransaction.WaitWriterAsync(this.domain.Accounts.ItemAccountKey).ConfigureAwait(false);
+            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.ItemAccountKey).ConfigureAwait(false);
             foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys.AsEnumerable().Reverse())
             {
                 statements.Add(
@@ -118,7 +118,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.ThisExpression(),
-                                                                SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.Domain.ToVariableName())),
+                                                                SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
                                                             SyntaxFactory.IdentifierName(foreignKeyElement.Table.Name.ToPlural())),
                                                         SyntaxFactory.IdentifierName(foreignKeyElement.Name)))))),
                                     SyntaxFactory.IdentifierName("ConfigureAwait")))
@@ -130,8 +130,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                                 SyntaxKind.FalseLiteralExpression))))))));
             }
 
-            //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts.AccountKey).ConfigureAwait(false);
-            //            await lockingTransaction.WaitReaderAsync(this.domain.Accounts.AccountSymbolKey).ConfigureAwait(false);
+            //            await lockingTransaction.WaitReaderAsync(this.dataModel.Accounts.AccountKey).ConfigureAwait(false);
+            //            await lockingTransaction.WaitReaderAsync(this.dataModel.Accounts.AccountSymbolKey).ConfigureAwait(false);
             foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys.AsEnumerable().Reverse())
             {
                 statements.Add(
@@ -156,7 +156,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.ThisExpression(),
-                                                                SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.Domain.ToVariableName())),
+                                                                SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
                                                             SyntaxFactory.IdentifierName(uniqueKeyElement.Table.Name.ToPlural())),
                                                         SyntaxFactory.IdentifierName(uniqueKeyElement.Name)))))),
                                     SyntaxFactory.IdentifierName("ConfigureAwait")))
@@ -236,7 +236,7 @@ namespace GammaFour.DataModelGenerator.RestService
             // The elements of the body are added to this collection as they are assembled.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 
-            //            await lockingTransaction.WaitWriterAsync(this.domain.Accounts).ConfigureAwait(false);
+            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts).ConfigureAwait(false);
             statements.Add(
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AwaitExpression(
@@ -257,7 +257,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.ThisExpression(),
-                                                        SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.Domain.ToVariableName())),
+                                                        SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
                                                     SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))),
                                 SyntaxFactory.IdentifierName("ConfigureAwait")))
                         .WithArgumentList(
@@ -267,7 +267,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                         SyntaxFactory.LiteralExpression(
                                             SyntaxKind.FalseLiteralExpression))))))));
 
-            //            await lockingTransaction.WaitWriterAsync(this.domain.Accounts.ItemAccountKey).ConfigureAwait(false);
+            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.ItemAccountKey).ConfigureAwait(false);
             foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys.AsEnumerable().Reverse())
             {
                 statements.Add(
@@ -292,7 +292,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.ThisExpression(),
-                                                                SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.Domain.ToVariableName())),
+                                                                SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
                                                             SyntaxFactory.IdentifierName(foreignKeyElement.Table.Name.ToPlural())),
                                                         SyntaxFactory.IdentifierName(foreignKeyElement.Name)))))),
                                     SyntaxFactory.IdentifierName("ConfigureAwait")))
@@ -304,8 +304,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                                 SyntaxKind.FalseLiteralExpression))))))));
             }
 
-            //            await lockingTransaction.WaitWriterAsync(this.domain.Accounts.AccountKey).ConfigureAwait(false);
-            //            await lockingTransaction.WaitWriterAsync(this.domain.Accounts.AccountSymbolKey).ConfigureAwait(false);
+            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountKey).ConfigureAwait(false);
+            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountSymbolKey).ConfigureAwait(false);
             foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys.AsEnumerable().Reverse())
             {
                 statements.Add(
@@ -330,7 +330,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.ThisExpression(),
-                                                                SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.Domain.ToVariableName())),
+                                                                SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
                                                             SyntaxFactory.IdentifierName(uniqueKeyElement.Table.Name.ToPlural())),
                                                         SyntaxFactory.IdentifierName(uniqueKeyElement.Name)))))),
                                     SyntaxFactory.IdentifierName("ConfigureAwait")))

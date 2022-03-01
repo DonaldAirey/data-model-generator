@@ -262,7 +262,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 // Merge each of the tables.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
-                    //            await this.domainContext.Accounts.ForEachAsync(async a => await lockingTransaction.WaitReaderAsync(a));
+                    //            await this.dataModelContext.Accounts.ForEachAsync(async a => await lockingTransaction.WaitReaderAsync(a));
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.AwaitExpression(
@@ -274,7 +274,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName("domainContext")),
+                                                SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToVariableName()}Context")),
                                             SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                                         SyntaxFactory.IdentifierName("ForEachAsync")))
                                 .WithArgumentList(
@@ -299,7 +299,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                                     SyntaxFactory.Argument(
                                                                         SyntaxFactory.IdentifierName(tableElement.Name[0].ToString().ToLower()))))))))))))));
 
-                    //                bucket.Add(this.Accounts, this.Accounts.Merge(this.domainContext.Accounts));
+                    //                bucket.Add(this.Accounts, this.Accounts.Merge(this.dataModelContext.Accounts));
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.InvocationExpression(
@@ -388,7 +388,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         }
 
         /// <summary>
-        /// Gets the statements that load a domain from a DbContext.
+        /// Gets the statements that load a dataModel from a DbContext.
         /// </summary>
         private List<StatementSyntax> MergeTables
         {

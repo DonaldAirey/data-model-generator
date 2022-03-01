@@ -28,12 +28,12 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             }
 
             // Initialize the object.
-            this.Name = $"{xmlSchemaDocument.Domain.ToCamelCase()}Context";
+            this.Name = $"{xmlSchemaDocument.DataModel.ToCamelCase()}Context";
 
-            //        private DomainContext domainContext;
+            //        private DataModelContext dataModelContext;
             this.Syntax = SyntaxFactory.FieldDeclaration(
                     SyntaxFactory.VariableDeclaration(
-                        SyntaxFactory.IdentifierName($"{xmlSchemaDocument.Domain}Context"))
+                        SyntaxFactory.IdentifierName($"{xmlSchemaDocument.DataModel}Context"))
                     .WithVariables(
                         SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                             SyntaxFactory.VariableDeclarator(

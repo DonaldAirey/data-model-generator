@@ -358,7 +358,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
                         ElseClause(
                             Block(this.UpdateRecord))));
 
-                //                if (entity.RowVersion > this.AlertDomain.RowVersion)
+                //                if (entity.RowVersion > this.AlertDataModel.RowVersion)
                 //                {
                 //                    <UpdateRowVersion>
                 //                }
@@ -438,7 +438,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
             {
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                    this.AlertDomain.RowVersion = entity.RowVersion;
+                //                    this.AlertDataModel.RowVersion = entity.RowVersion;
                 statements.Add(
                     ExpressionStatement(
                         AssignmentExpression(

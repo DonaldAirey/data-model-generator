@@ -155,7 +155,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
         {
             get
             {
-                //                    this.countryBuyerCountryIdKey = new ForeignKeyIndex<Buyer, Country>("CountryBuyerCountryIdKey", this.Domain.Countries.CountryKey).HasIndex(b => b.CountryId);
+                //                    this.countryBuyerCountryIdKey = new ForeignKeyIndex<Buyer, Country>("CountryBuyerCountryIdKey", this.DataModel.Countries.CountryKey).HasIndex(b => b.CountryId);
                 return SyntaxFactory.SingletonList<StatementSyntax>(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(

@@ -33,9 +33,9 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
             this.Name = $"{xmlSchemaDocument.Name}Context";
 
             //    /// <summary>
-            //    /// The DbContext for the Domain domain.
+            //    /// The DbContext for the DataModel dataModel.
             //    /// </summary>
-            //    public class DomainContext : DbContext
+            //    public class DataModelContext : DbContext
             //    {
             //        <Members>
             //    }
@@ -87,7 +87,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
             get
             {
                 //    /// <summary>
-                //    /// The DbContext for the Domain domain.
+                //    /// The DbContext for the DataModel dataModel.
                 //    /// </summary>
                 return SyntaxFactory.TriviaList(
                     SyntaxFactory.Trivia(
@@ -111,7 +111,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" The DbContext used to access the persistent store for the {this.xmlSchemaDocument.Name} domain.",
+                                                $" The DbContext used to access the persistent store for the {this.xmlSchemaDocument.Name} dataModel.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

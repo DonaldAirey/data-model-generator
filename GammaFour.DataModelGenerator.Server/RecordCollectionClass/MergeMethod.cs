@@ -232,7 +232,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordCollectionClass
             {
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                    this.Domain.RowVersion = assetClass.RowVersion;
+                //                    this.DataModel.RowVersion = assetClass.RowVersion;
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
@@ -242,7 +242,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordCollectionClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("Domain")),
+                                    SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
                                 SyntaxFactory.IdentifierName("RowVersion")),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -485,7 +485,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordCollectionClass
                     }
                 }
 
-                //                if (assetClass.RowVersion > this.Domain.RowVersion)
+                //                if (assetClass.RowVersion > this.DataModel.RowVersion)
                 //                {
                 //                    <UpdateMasterRowVersion>
                 //                }
@@ -502,7 +502,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordCollectionClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("Domain")),
+                                    SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
                                 SyntaxFactory.IdentifierName("RowVersion"))),
                         SyntaxFactory.Block(this.UpdateMasterRowVersion)));
 

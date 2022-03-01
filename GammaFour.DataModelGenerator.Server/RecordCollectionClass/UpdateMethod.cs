@@ -240,7 +240,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordCollectionClass
                                             SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
                                     })))));
 
-                //            assetClass.RowVersion = this.Domain.IncrementRowVersion();
+                //            assetClass.RowVersion = this.DataModel.IncrementRowVersion();
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
@@ -255,7 +255,7 @@ namespace GammaFour.DataModelGenerator.Server.RecordCollectionClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("Domain")),
+                                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
                                     SyntaxFactory.IdentifierName("IncrementRowVersion"))))));
 
                 //            buyer.Mark();

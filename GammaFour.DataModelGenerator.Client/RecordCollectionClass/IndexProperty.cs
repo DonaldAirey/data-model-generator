@@ -176,7 +176,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
                 // Create a list of parameters from the columns in the unique constraint.
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
 
-                // DomainContext domainContext
+                // DataModelContext dataModelContext
                 parameters.Add(
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("index"))
