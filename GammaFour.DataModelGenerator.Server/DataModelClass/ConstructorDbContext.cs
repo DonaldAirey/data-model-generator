@@ -34,9 +34,9 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             //        /// <summary>
             //        /// Initializes a new instance of the <see cref="DataModel"/> class.
             //        /// </summary>
-            //        /// <param name="domainContext">The domain dabase context.</param>
+            //        /// <param name="dataModelContext">The dataModel dabase context.</param>
             //        /// <param name="logger">The log device.</param>
-            //        public Domain(DomainContext domainContext, ILogger<Domain> logger)
+            //        public DataModel(DataModelContext dataModelContext, ILogger<DataModel> logger)
             //        {
             //            <Body>
             //        }
@@ -74,7 +74,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            this.domainContext = domainContext;
+                //            this.dataModelContext = dataModelContext;
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
@@ -261,7 +261,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                     SyntaxFactory.TriviaList()),
                                             }))))));
 
-                //        /// <param name="domainContext">The domain dabase context.</param>
+                //        /// <param name="dataModelContext">The dataModel dabase context.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -284,7 +284,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                     SyntaxFactory.TriviaList()),
                                             }))))));
 
-                //        /// <param name="domainContext">The domain dabase context.</param>
+                //        /// <param name="dataModelContext">The dataModel dabase context.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -322,21 +322,21 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 // Create a list of parameters from the columns in the unique constraint.
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
 
-                // DomainContext domainContext
+                // DataModelContext dataModelContext
                 parameters.Add(
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("configuration"))
                     .WithType(
                         SyntaxFactory.IdentifierName("IConfiguration")));
 
-                // DomainContext domainContext
+                // DataModelContext dataModelContext
                 parameters.Add(
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context"))
                     .WithType(
                         SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name}Context")));
 
-                // DomainContext domainContext
+                // DataModelContext dataModelContext
                 parameters.Add(
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier($"logger"))

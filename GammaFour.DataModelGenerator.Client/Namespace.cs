@@ -141,7 +141,7 @@ namespace GammaFour.DataModelGenerator.Client
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")));
 
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq.Expressions")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.Data")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.Data.Legacy")));
                 if (!this.xmlSchemaDocument.IsVolatile.HasValue || !this.xmlSchemaDocument.IsVolatile.Value)
                 {
                     usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")));

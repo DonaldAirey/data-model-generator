@@ -34,8 +34,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             //        /// <summary>
             //        /// Initializes a new instance of the <see cref="DataModel"/> class.
             //        /// </summary>
-            //        /// <param name="domainContext">The domain dabase context.</param>
-            //        public Domain()
+            //        public DataModel()
             //        {
             //            <Body>
             //        }
@@ -99,6 +98,22 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                         SyntaxKind.StringLiteralExpression,
                                                         SyntaxFactory.Literal(tableElement.Name.ToPlural()))),
                                             }))))));
+                }
+
+                // Initialize each of the record sets.
+                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
+                {
+                    //            this.Buyers.BuildForeignIndices();
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
+                                    SyntaxFactory.IdentifierName("BuildForeignIndices")))));
                 }
 
                 // This is the syntax for the body of the constructor.

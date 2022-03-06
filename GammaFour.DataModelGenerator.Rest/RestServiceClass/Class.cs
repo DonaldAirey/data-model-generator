@@ -211,7 +211,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
             fields.Add(new DbContextField(this.tableElement.XmlSchemaDocument));
-            fields.Add(new DomainField(this.tableElement.XmlSchemaDocument));
+            fields.Add(new DataModelField(this.tableElement.XmlSchemaDocument));
             fields.Add(new LoggerField());
             fields.Add(new TransactionTimeoutField());
 

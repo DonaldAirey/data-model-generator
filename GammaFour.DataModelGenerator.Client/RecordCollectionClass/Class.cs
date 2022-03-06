@@ -239,12 +239,6 @@ namespace GammaFour.DataModelGenerator.Client.RecordCollectionClass
             fields.Add(new PrimaryKeyFunctionField(this.tableElement.PrimaryKey));
             fields.Add(new CollectionField(this.tableElement));
 
-            // Add a field for each of the foreign indices.
-            foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
-            {
-                fields.Add(new ForeignKeyIndexField(foreignKeyElement));
-            }
-
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(f => f.Name))
             {
@@ -342,6 +336,7 @@ namespace GammaFour.DataModelGenerator.Client.RecordCollectionClass
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
             methods.Add(new AddMethod(this.tableElement));
+            methods.Add(new BuildForeignIndicesMethod(this.tableElement));
             methods.Add(new GetEnumeratorMethod(this.tableElement));
             methods.Add(new GenericGetEnumeratorMethod(this.tableElement));
             methods.Add(new MergeMethod(this.tableElement));

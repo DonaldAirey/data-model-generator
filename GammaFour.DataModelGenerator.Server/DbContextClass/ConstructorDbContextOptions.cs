@@ -32,10 +32,10 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
             this.Name = this.xmlSchemaDocument.Name;
 
             //        /// <summary>
-            //        /// Initializes a new instance of the <see cref="DomainContext"/> class.
+            //        /// Initializes a new instance of the <see cref="DataModelContext"/> class.
             //        /// </summary>
             //        /// <param name="contextOptions">The options for bulding the DbContext.</param>
-            //        public DomainContext(DbContextOptions<DomainContext> contextOptions)
+            //        public DataModelContext(DbContextOptions<DataModelContext> contextOptions)
             //            : base(contextOptions)
             //        {
             //            <Body>
@@ -108,7 +108,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Initializes a new instance of the <see cref="DomainContext"/> class.
+                //        /// Initializes a new instance of the <see cref="DataModelContext"/> class.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -181,9 +181,9 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
         }
 
         /// <summary>
-        /// Gets the statements that load a domain from a DbContext.
+        /// Gets the statements that load a dataModel from a DbContext.
         /// </summary>
-        private List<StatementSyntax> LoadDomain
+        private List<StatementSyntax> LoadDataModel
         {
             get
             {
@@ -303,7 +303,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                 // Merge each of the tables.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
-                    //                bucket.Add(this.Buyers, this.Buyers.Merge(this.domainContext.Buyers));
+                    //                bucket.Add(this.Buyers, this.Buyers.Merge(this.dataModelContext.Buyers));
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.InvocationExpression(
@@ -391,7 +391,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
         }
 
         /// <summary>
-        /// Gets the statements that load a domain from a DbContext.
+        /// Gets the statements that load a dataModel from a DbContext.
         /// </summary>
         private List<StatementSyntax> MergeTables
         {
@@ -454,7 +454,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                 // Create a list of parameters from the columns in the unique constraint.
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
 
-                // DomainContext domainContext
+                // DataModelContext dataModelContext
                 parameters.Add(
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("contextOptions"))

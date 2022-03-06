@@ -39,13 +39,13 @@ namespace GammaFour.DataModelGenerator.Common
             this.Name = this.Root.Element(XmlSchemaDocument.ElementName).Attribute("name").Value;
             this.TargetNamespace = this.Root.Attribute("targetNamespace").Value;
 
-            // This tells us where the data domain when compiling the REST API.
-            XAttribute domainAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.DomainName);
-            if (domainAttribute != null)
+            // This tells us where the data dataModel when compiling the REST API.
+            XAttribute dataModelAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.DataModelName);
+            if (dataModelAttribute != null)
             {
-                string[] domainParts = domainAttribute.Value.Split('.');
-                this.Domain = domainParts[domainParts.Length - 1];
-                this.DomainNamespace = string.Join(".", domainParts, 0, domainParts.Length - 1);
+                string[] dataModelParts = dataModelAttribute.Value.Split('.');
+                this.DataModel = dataModelParts[dataModelParts.Length - 1];
+                this.DataModelNamespace = string.Join(".", dataModelParts, 0, dataModelParts.Length - 1);
             }
 
             // This tells us whether the generated controllers should require authorization.
@@ -165,9 +165,9 @@ namespace GammaFour.DataModelGenerator.Common
         public static XName DeleteRuleName { get; } = XName.Get("deleteRule", XmlSchemaDocument.GammaFourDataNamespace);
 
         /// <summary>
-        /// Gets the Domain attribute.
+        /// Gets the DataModel attribute.
         /// </summary>
-        public static XName DomainName { get; } = XName.Get("domain", XmlSchemaDocument.GammaFourDataNamespace);
+        public static XName DataModelName { get; } = XName.Get("dataModel", XmlSchemaDocument.GammaFourDataNamespace);
 
         /// <summary>
         /// Gets the Element element.
@@ -290,14 +290,14 @@ namespace GammaFour.DataModelGenerator.Common
         public static XName XPathName { get; } = XName.Get("xpath", string.Empty);
 
         /// <summary>
-        /// Gets the name of the data domain.
+        /// Gets the name of the data dataModel.
         /// </summary>
-        public string Domain { get; private set; }
+        public string DataModel { get; private set; }
 
         /// <summary>
-        /// Gets the namespace of the data domain.
+        /// Gets the namespace of the data dataModel.
         /// </summary>
-        public string DomainNamespace { get; private set; }
+        public string DataModelNamespace { get; private set; }
 
         /// <summary>
         /// Gets the constraint elements.
