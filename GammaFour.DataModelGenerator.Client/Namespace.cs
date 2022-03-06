@@ -189,14 +189,14 @@ namespace GammaFour.DataModelGenerator.Client
             }
 
             // Create the record set classes.
-            List<RecordSetClass.Class> recordSetClasses = new List<RecordSetClass.Class>();
+            List<RecordCollectionClass.Class> recordCollectionClasses = new List<RecordCollectionClass.Class>();
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                recordSetClasses.Add(new RecordSetClass.Class(tableElement));
+                recordCollectionClasses.Add(new RecordCollectionClass.Class(tableElement));
             }
 
             // Alphabetize the list of record sets and add them to the structure.
-            foreach (RecordSetClass.Class @class in recordSetClasses.OrderBy(c => c.Name))
+            foreach (RecordCollectionClass.Class @class in recordCollectionClasses.OrderBy(c => c.Name))
             {
                 members = members.Add(@class.Syntax);
             }

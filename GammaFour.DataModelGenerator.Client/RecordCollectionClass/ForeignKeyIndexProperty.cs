@@ -2,7 +2,7 @@
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Client.RecordSetClass
+namespace GammaFour.DataModelGenerator.Client.RecordCollectionClass
 {
     using System;
     using System.Collections.Generic;
@@ -51,9 +51,35 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
                                 SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Table.Name),
                             }))),
                 SyntaxFactory.Identifier(this.foreignKeyElement.Name))
-                .WithAccessorList(this.AccessorList)
-                .WithModifiers(ForeignKeyIndexProperty.Modifiers)
-                .WithLeadingTrivia(this.DocumentationComment);
+            .WithModifiers(ForeignKeyIndexProperty.Modifiers)
+            .WithAccessorList(ForeignKeyIndexProperty.AccessorList)
+            .WithLeadingTrivia(this.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the list of accessors.
+        /// </summary>
+        private static AccessorListSyntax AccessorList
+        {
+            get
+            {
+                return SyntaxFactory.AccessorList(
+                    SyntaxFactory.List<AccessorDeclarationSyntax>(
+                        new AccessorDeclarationSyntax[]
+                        {
+                            SyntaxFactory.AccessorDeclaration(
+                                SyntaxKind.GetAccessorDeclaration)
+                            .WithSemicolonToken(
+                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                            SyntaxFactory.AccessorDeclaration(
+                                SyntaxKind.SetAccessorDeclaration)
+                            .WithModifiers(
+                                SyntaxFactory.TokenList(
+                                    SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
+                            .WithSemicolonToken(
+                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                        }));
+            }
         }
 
         /// <summary>
@@ -69,22 +95,6 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
                     {
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                     });
-            }
-        }
-
-        /// <summary>
-        /// Gets the list of accessors.
-        /// </summary>
-        private AccessorListSyntax AccessorList
-        {
-            get
-            {
-                return SyntaxFactory.AccessorList(
-                    SyntaxFactory.List(
-                        new AccessorDeclarationSyntax[]
-                        {
-                            this.GetAccessor,
-                        }));
             }
         }
 
@@ -145,114 +155,6 @@ namespace GammaFour.DataModelGenerator.Client.RecordSetClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets a block of code that creates the foreign key.
-        /// </summary>
-        private IEnumerable<StatementSyntax> CreateForeignKey
-        {
-            get
-            {
-                //                    this.countryBuyerCountryIdKey = new ForeignKeyIndex<Buyer, Country>("CountryBuyerCountryIdKey", this.Domain.Countries.CountryKey).HasIndex(b => b.CountryId);
-                return SyntaxFactory.SingletonList<StatementSyntax>(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Name.ToVariableName())),
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ObjectCreationExpression(
-                                        SyntaxFactory.GenericName(
-                                            SyntaxFactory.Identifier("ForeignKeyIndex"))
-                                        .WithTypeArgumentList(
-                                            SyntaxFactory.TypeArgumentList(
-                                                SyntaxFactory.SeparatedList<TypeSyntax>(
-                                                    new SyntaxNodeOrToken[]
-                                                    {
-                                                        SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name),
-                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                        SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Table.Name),
-                                                    }))))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                new SyntaxNodeOrToken[]
-                                                {
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.LiteralExpression(
-                                                            SyntaxKind.StringLiteralExpression,
-                                                            SyntaxFactory.Literal(this.foreignKeyElement.Name))),
-                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.MemberAccessExpression(
-                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.MemberAccessExpression(
-                                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                                    SyntaxFactory.ThisExpression(),
-                                                                    SyntaxFactory.IdentifierName(this.foreignKeyElement.XmlSchemaDocument.Name)),
-                                                                SyntaxFactory.IdentifierName(
-                                                                    this.foreignKeyElement.UniqueKey.Table.Name.ToPlural())),
-                                                            SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Name))),
-                                                }))),
-                                    SyntaxFactory.IdentifierName("HasIndex")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            ForeignKeyExpression.GetForeignKey(this.foreignKeyElement))))))));
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Get' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax GetAccessor
-        {
-            get
-            {
-                // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                if (this.countryBuyerCountryIdKey == null)
-                //                {
-                //                    <CreateForeignKey>
-                //                }
-                statements.Add(
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.EqualsExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Name.ToVariableName())),
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.NullLiteralExpression)),
-                        SyntaxFactory.Block(this.CreateForeignKey)));
-
-                //                return this.countryBuyerCountryIdKey;
-                statements.Add(
-                    SyntaxFactory.ReturnStatement(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.ThisExpression(),
-                            SyntaxFactory.IdentifierName(this.foreignKeyElement.Name.ToVariableName()))));
-
-                //            get
-                //            {
-                //            }
-                return SyntaxFactory.AccessorDeclaration(
-                    SyntaxKind.GetAccessorDeclaration,
-                    SyntaxFactory.Block(
-                        SyntaxFactory.List(statements)))
-                    .WithKeyword(SyntaxFactory.Token(SyntaxKind.GetKeyword));
             }
         }
     }

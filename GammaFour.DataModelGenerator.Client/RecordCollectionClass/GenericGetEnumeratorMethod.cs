@@ -2,7 +2,7 @@
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Client.RecordSetClass
+namespace GammaFour.DataModelGenerator.Client.RecordCollectionClass
 {
     using System;
     using System.Collections.Generic;
