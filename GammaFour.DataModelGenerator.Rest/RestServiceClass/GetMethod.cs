@@ -390,7 +390,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                     .WithUsingKeyword(
                         SyntaxFactory.Token(SyntaxKind.UsingKeyword)));
 
-                //            await lockingTransaction.WaitReaderAsync(this.dataModel.AccountsKey).ConfigureAwait(false);
+                //                await lockingTransaction.WaitReaderAsync(this.dataModel.ItemTrees.ItemTreeChildParentKey).ConfigureAwait(false);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
@@ -410,9 +410,12 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.XmlSchemaDocument.DataModel.ToVariableName())),
-                                                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())))))),
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.ThisExpression(),
+                                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.XmlSchemaDocument.DataModel.ToVariableName())),
+                                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name.ToPlural())),
+                                                        SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name)))))),
                                     SyntaxFactory.IdentifierName("ConfigureAwait")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
