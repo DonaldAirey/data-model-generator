@@ -423,37 +423,64 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                             Block(MergeMethod.GetMergeTable(tableElement))));
                 }
 
-                //            while (mergeBuckets.Values.Where(v => v.Any()).Any())
+                //            int count = 0;
+                statements.Add(
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.PredefinedType(
+                                SyntaxFactory.Token(SyntaxKind.IntKeyword)))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("count"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.NumericLiteralExpression,
+                                            SyntaxFactory.Literal(0))))))));
+
+                //            while (mergeBuckets.Values.Where(v => v.Any()).Any() && count++ < 10)
                 //            {
                 //                <EmptyMergeBuckets>
                 //            }
                 statements.Add(
-                    WhileStatement(
-                        InvocationExpression(
-                            MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                InvocationExpression(
-                                    MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        MemberAccessExpression(
+                    SyntaxFactory.WhileStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.LogicalAndExpression,
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
-                                            IdentifierName("mergeBuckets"),
-                                            IdentifierName("Values")),
-                                        IdentifierName("Where")))
-                                .WithArgumentList(
-                                    ArgumentList(
-                                        SingletonSeparatedList<ArgumentSyntax>(
-                                            Argument(
-                                                SimpleLambdaExpression(
-                                                    Parameter(
-                                                        Identifier("v")),
-                                                    InvocationExpression(
-                                                        MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            IdentifierName("v"),
-                                                            IdentifierName("Any")))))))),
-                                IdentifierName("Any"))),
-                        Block(MergeMethod.EmptyMergeBuckets)));
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("mergeBuckets"),
+                                                SyntaxFactory.IdentifierName("Values")),
+                                            SyntaxFactory.IdentifierName("Where")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.SimpleLambdaExpression(
+                                                        SyntaxFactory.Parameter(
+                                                            SyntaxFactory.Identifier("v")))
+                                                    .WithExpressionBody(
+                                                        SyntaxFactory.InvocationExpression(
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.IdentifierName("v"),
+                                                                SyntaxFactory.IdentifierName("Any")))))))),
+                                    SyntaxFactory.IdentifierName("Any"))),
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.LessThanExpression,
+                                SyntaxFactory.PostfixUnaryExpression(
+                                    SyntaxKind.PostIncrementExpression,
+                                    SyntaxFactory.IdentifierName("count")),
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.NumericLiteralExpression,
+                                    SyntaxFactory.Literal(10)))),
+                        SyntaxFactory.Block(MergeMethod.EmptyMergeBuckets)));
 
                 //            Dictionary<IPurgable, IEnumerable<object>> purgeBuckets = new Dictionary<IPurgable, IEnumerable<object>>();
                 statements.Add(

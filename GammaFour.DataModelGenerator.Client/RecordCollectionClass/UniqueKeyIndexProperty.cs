@@ -62,8 +62,8 @@ namespace GammaFour.DataModelGenerator.Client.RecordCollectionClass
                         SyntaxFactory.AccessorDeclaration(
                             SyntaxKind.GetAccessorDeclaration)
                         .WithSemicolonToken(
-                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
-                            SyntaxFactory.AccessorDeclaration(
+                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                        SyntaxFactory.AccessorDeclaration(
                                 SyntaxKind.SetAccessorDeclaration)
                             .WithModifiers(
                                 SyntaxFactory.TokenList(
