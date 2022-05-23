@@ -29,7 +29,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         public Class(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.xmlSchemaDocument = xmlSchemaDocument ?? throw new ArgumentNullException(nameof(xmlSchemaDocument));
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = xmlSchemaDocument.Name;
 
             //    /// <summary>
@@ -297,7 +297,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             // Create a property for each of the tables.
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                properties.Add(new RecordCollectionProperty(tableElement));
+                properties.Add(new TableProperty(tableElement));
             }
 
             // Alphabetize and add the fields as members of the class.

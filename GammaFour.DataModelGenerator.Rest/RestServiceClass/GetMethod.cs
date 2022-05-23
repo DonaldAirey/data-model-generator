@@ -28,7 +28,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         public GetMethod(UniqueKeyElement uniqueKeyElement)
         {
             // Initialize the object.  Note that we decorate the name of every method that's not the primary key to prevent ambiguous signatures.
-            this.uniqueKeyElement = uniqueKeyElement ?? throw new ArgumentNullException(nameof(uniqueKeyElement));
+            this.uniqueKeyElement = uniqueKeyElement;
             this.Name = $"Get{this.uniqueKeyElement.Table.Name}" + (uniqueKeyElement.IsPrimaryKey ? string.Empty : "By" + uniqueKeyElement.Name);
 
             //        /// <summary>

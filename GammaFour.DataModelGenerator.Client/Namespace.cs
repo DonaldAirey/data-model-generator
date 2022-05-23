@@ -139,17 +139,21 @@ namespace GammaFour.DataModelGenerator.Client
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")));
-
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq.Expressions")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Net.Http.Headers")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.Data.Legacy")));
                 if (!this.xmlSchemaDocument.IsVolatile.HasValue || !this.xmlSchemaDocument.IsVolatile.Value)
                 {
                     usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")));
                 }
 
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.DependencyInjection")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Localization")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Logging")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Newtonsoft.Json")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Newtonsoft.Json.Converters")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Newtonsoft.Json.Linq")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("ThetaRex.Common")));
                 return usingStatements;
             }
         }
@@ -176,33 +180,34 @@ namespace GammaFour.DataModelGenerator.Client
         private SyntaxList<MemberDeclarationSyntax> CreatePublicClasses(SyntaxList<MemberDeclarationSyntax> members)
         {
             // Create the record classes.
-            List<RecordClass.Class> recordClasses = new List<RecordClass.Class>();
+            List<RowClass.Class> recordClasses = new List<RowClass.Class>();
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                recordClasses.Add(new RecordClass.Class(tableElement));
+                recordClasses.Add(new RowClass.Class(tableElement));
             }
 
             // Alphabetize the list of record classes and add them to the structure.
-            foreach (RecordClass.Class recordClass in recordClasses.OrderBy(c => c.Name))
+            foreach (RowClass.Class recordClass in recordClasses.OrderBy(c => c.Name))
             {
                 members = members.Add(recordClass.Syntax);
             }
 
-            // Create the record set classes.
-            List<RecordCollectionClass.Class> recordCollectionClasses = new List<RecordCollectionClass.Class>();
+            // Create the tables.
+            List<TableClass.Class> recordCollectionClasses = new List<TableClass.Class>();
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                recordCollectionClasses.Add(new RecordCollectionClass.Class(tableElement));
+                recordCollectionClasses.Add(new TableClass.Class(tableElement));
             }
 
             // Alphabetize the list of record sets and add them to the structure.
-            foreach (RecordCollectionClass.Class @class in recordCollectionClasses.OrderBy(c => c.Name))
+            foreach (TableClass.Class @class in recordCollectionClasses.OrderBy(c => c.Name))
             {
                 members = members.Add(@class.Syntax);
             }
 
-            // The actual data model class.
+            // The actual data model class and an extension class to add the classes to the dependency injection container.
             members = members.Add(new DataModelClass.Class(this.xmlSchemaDocument).Syntax);
+            members = members.Add(new ServiceCollectionExtensionClass.Class(this.xmlSchemaDocument).Syntax);
 
             // This is the collection of alphabetized fields.
             return members;

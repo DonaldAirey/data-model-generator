@@ -29,7 +29,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         public Class(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement ?? throw new ArgumentNullException(nameof(tableElement));
+            this.tableElement = tableElement;
 
             // The name of this structure.
             this.Name = tableElement.Name.ToPlural() + "Controller";
@@ -249,45 +249,13 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
 
-            // Generate support for the DELETE verb.
-            if (this.tableElement.Verbs.Contains(Verb.Delete))
-            {
-                // Delete a record using a unique key.
-                foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
-                {
-                    methods.Add(new DeleteMethod(uniqueKeyElement));
-                }
-            }
-
-            // Generate support for the GET verb.
-            if (this.tableElement.Verbs.Contains(Verb.Get))
-            {
-                // Get everything.
-                methods.Add(new GetAllMethod(this.tableElement));
-
-                // Get a record using a unique key.
-                foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
-                {
-                    methods.Add(new GetMethod(uniqueKeyElement));
-                }
-            }
-
-            // Generate support for the POST verb.
-            if (this.tableElement.Verbs.Contains(Verb.Post))
-            {
-                // POST using the message body.
-                methods.Add(new PostMethod(this.tableElement));
-            }
-
-            // Generate support for the PUT verb.
-            if (this.tableElement.Verbs.Contains(Verb.Put))
-            {
-                // PUT a record using the unique key.
-                foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
-                {
-                    methods.Add(new PutMethod(uniqueKeyElement));
-                }
-            }
+            // Generate support for the HTTP verbs.
+            methods.Add(new DeleteMethod(this.tableElement));
+            methods.Add(new DeleteRangeMethod(this.tableElement));
+            methods.Add(new GetAllMethod(this.tableElement));
+            methods.Add(new PostMethod(this.tableElement));
+            methods.Add(new PutMethod(this.tableElement));
+            methods.Add(new PatchMethod(this.tableElement));
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))

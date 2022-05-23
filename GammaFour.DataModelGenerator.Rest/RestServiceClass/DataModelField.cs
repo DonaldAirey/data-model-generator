@@ -21,12 +21,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <param name="xmlSchemaDocument">The XML Schema document.</param>
         public DataModelField(XmlSchemaDocument xmlSchemaDocument)
         {
-            // Validate the argument.
-            if (xmlSchemaDocument == null)
-            {
-                throw new ArgumentNullException(nameof(xmlSchemaDocument));
-            }
-
             // Initialize the object.
             this.Name = xmlSchemaDocument.DataModel.ToVariableName();
 

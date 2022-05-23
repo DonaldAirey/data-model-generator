@@ -72,8 +72,8 @@ namespace GammaFour.VisualStudio
             }
 
             // Initialize the object.
-            this.InputFilePath = wszInputFilePath ?? throw new ArgumentNullException(nameof(wszInputFilePath));
-            this.CustomToolNamespace = wszDefaultNamespace ?? throw new ArgumentNullException(nameof(wszDefaultNamespace));
+            this.InputFilePath = wszInputFilePath;
+            this.CustomToolNamespace = wszDefaultNamespace;
             this.generateProgress = pGenerateProgress;
 
             // Generate the file using the input contents.

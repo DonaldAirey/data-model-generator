@@ -28,7 +28,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
         public DbSetProperty(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement ?? throw new ArgumentNullException(nameof(tableElement));
+            this.tableElement = tableElement;
             this.Name = this.tableElement.Name.ToPlural();
 
             //        /// <summary>

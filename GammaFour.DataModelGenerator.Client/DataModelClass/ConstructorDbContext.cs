@@ -28,7 +28,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         public ConstructorDbContext(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.xmlSchemaDocument = xmlSchemaDocument ?? throw new ArgumentNullException(nameof(xmlSchemaDocument));
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = this.xmlSchemaDocument.Name;
 
             //        /// <summary>
@@ -86,7 +86,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                                 SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.IdentifierName($"{tableElement.Name}Collection"))
+                                    SyntaxFactory.IdentifierName($"{tableElement.Name.ToPlural()}"))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
                                         SyntaxFactory.SeparatedList<ArgumentSyntax>(

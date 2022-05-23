@@ -24,12 +24,6 @@ namespace GammaFour.DataModelGenerator.RestService
         /// <returns>An expression that builds an anonymous type from a table description.</returns>
         public static SeparatedSyntaxList<ArgumentSyntax> GetSyntax(UniqueKeyElement uniqueKeyElement, bool isDecorated = false)
         {
-            // Validate the argument.
-            if (uniqueKeyElement == null)
-            {
-                throw new ArgumentNullException(nameof(uniqueKeyElement));
-            }
-
             //                    country = this.dataModel.Countries.CountryCountryCodeKey.Find(countryCountryCodeKeyCountryCode);
             //                    region = this.dataModel.Regions.RegionExternalKey.Find((regionExternalKeyName, regionExternalKeyCountryCode));
             SeparatedSyntaxList<ArgumentSyntax> findParameters;
@@ -56,6 +50,58 @@ namespace GammaFour.DataModelGenerator.RestService
                     keys.Add(
                         SyntaxFactory.Argument(
                             SyntaxFactory.IdentifierName(attributeName)));
+                }
+
+                findParameters = SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                    SyntaxFactory.Argument(
+                        SyntaxFactory.TupleExpression(
+                            SyntaxFactory.SeparatedList<ArgumentSyntax>(keys))));
+            }
+
+            // This is either the parameter or a tuple that can be used as parameters to a 'Find' operation.
+            return findParameters;
+        }
+
+        /// <summary>
+        /// Gets the syntax for the creation of an anonymous type.
+        /// </summary>
+        /// <param name="uniqueKeyElement">The description of a unique key.</param>
+        /// <param name="variableName">The name of the variable holding the keys.</param>
+        /// <returns>An expression that builds an anonymous type from a table description.</returns>
+        public static SeparatedSyntaxList<ArgumentSyntax> GetMemberSyntax(UniqueKeyElement uniqueKeyElement, string variableName)
+        {
+            SeparatedSyntaxList<ArgumentSyntax> findParameters;
+            if (uniqueKeyElement.Columns.Count == 1)
+            {
+                //                    country = this.dataModel.Countries.CountryCountryCodeKey.Find(countryCountryCodeKeyCountryCode);
+                ColumnElement columnElement = uniqueKeyElement.Columns[0].Column;
+                string propertyName = columnElement.Name;
+                findParameters = SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                    SyntaxFactory.Argument(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName(variableName),
+                            SyntaxFactory.IdentifierName(propertyName))));
+            }
+            else
+            {
+                //                    region = this.dataModel.Regions.RegionExternalKey.Find((regionExternalKeyName, regionExternalKeyCountryCode));
+                List<SyntaxNodeOrToken> keys = new List<SyntaxNodeOrToken>();
+                foreach (ColumnReferenceElement columnReferenceElement in uniqueKeyElement.Columns)
+                {
+                    if (keys.Count != 0)
+                    {
+                        keys.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                    }
+
+                    ColumnElement columnElement = columnReferenceElement.Column;
+                    string attributeName = columnElement.Name.ToVariableName();
+                    keys.Add(
+                        SyntaxFactory.Argument(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(variableName),
+                                SyntaxFactory.IdentifierName(attributeName))));
                 }
 
                 findParameters = SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(

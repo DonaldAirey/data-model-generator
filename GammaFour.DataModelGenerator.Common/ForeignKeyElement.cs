@@ -36,12 +36,6 @@ namespace GammaFour.DataModelGenerator.Common
         public ForeignKeyElement(XElement xElement)
             : base(xElement)
         {
-            // Validate the parameter
-            if (xElement == null)
-            {
-                throw new ArgumentNullException(nameof(xElement));
-            }
-
             // Initialize the object.
             this.Refer = this.Attribute(XmlSchemaDocument.ReferName).Value;
 

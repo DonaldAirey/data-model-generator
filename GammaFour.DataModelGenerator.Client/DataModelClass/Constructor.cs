@@ -6,6 +6,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -28,7 +29,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         public Constructor(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.xmlSchemaDocument = xmlSchemaDocument ?? throw new ArgumentNullException(nameof(xmlSchemaDocument));
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = this.xmlSchemaDocument.Name;
 
             //        /// <summary>
@@ -41,6 +42,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
                     SyntaxFactory.Identifier(this.Name))
                 .WithModifiers(Constructor.Modifiers)
+                .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -71,10 +73,44 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                // Initialize each of the record sets.
+                //            this.logger = logger;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("logger")),
+                            SyntaxFactory.IdentifierName("logger"))));
+
+                //            this.serviceProvider = serviceProvider;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("serviceProvider")),
+                            SyntaxFactory.IdentifierName("serviceProvider")))
+                    .NormalizeWhitespace());
+
+                //            this.stringLocalizer = stringLocalizer;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("stringLocalizer")),
+                            SyntaxFactory.IdentifierName("stringLocalizer"))));
+
+                // Initialize each of the tables.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
-                    //            this.Buyers = new BuyerSet(this, "Buyers");
+                    //            this.Accounts = this.serviceProvider.GetRequiredService<Accounts>();
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.AssignmentExpression(
@@ -83,21 +119,33 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.IdentifierName($"{tableElement.Name}Collection"))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                            new SyntaxNodeOrToken[]
-                                            {
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.ThisExpression()),
-                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.LiteralExpression(
-                                                        SyntaxKind.StringLiteralExpression,
-                                                        SyntaxFactory.Literal(tableElement.Name.ToPlural()))),
-                                            }))))));
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName("serviceProvider")),
+                                        SyntaxFactory.GenericName(
+                                            SyntaxFactory.Identifier("GetRequiredService"))
+                                        .WithTypeArgumentList(
+                                            SyntaxFactory.TypeArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))))));
+
+                    //            this.Accounts.DataModel = this;
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
+                                    SyntaxFactory.IdentifierName("DataModel")),
+                                SyntaxFactory.ThisExpression())));
                 }
 
                 // Initialize each of the record sets.
@@ -118,6 +166,57 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
+            }
+        }
+
+        /// <summary>
+        /// Gets the list of parameters.
+        /// </summary>
+        private ParameterListSyntax Parameters
+        {
+            get
+            {
+                // Create a list of parameters from the columns in the unique constraint.
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
+
+                // ILogger logger
+                parameters.Add(
+                    SyntaxFactory.Parameter(
+                        SyntaxFactory.Identifier("logger"))
+                    .WithType(
+                        SyntaxFactory.IdentifierName($"ILogger<{this.xmlSchemaDocument.Name}>")));
+
+                // IServiceProvider serviceProvider
+                parameters.Add(
+                    SyntaxFactory.Parameter(
+                        SyntaxFactory.Identifier("serviceProvider"))
+                    .WithType(
+                        SyntaxFactory.IdentifierName("IServiceProvider")));
+
+                // IStringLocalizer<DataModel> stringLocalizer
+                parameters.Add(
+                    SyntaxFactory.Parameter(
+                SyntaxFactory.Identifier("stringLocalizer"))
+            .WithType(
+                SyntaxFactory.GenericName(
+                    SyntaxFactory.Identifier("IStringLocalizer"))
+                .WithTypeArgumentList(
+                    SyntaxFactory.TypeArgumentList(
+                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                            SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name))))));
+
+                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
+                {
+                    // Accounts accounts,
+                    parameters.Add(
+                        SyntaxFactory.Parameter(
+                            SyntaxFactory.Identifier(tableElement.Name.ToCamelCase().ToPlural()))
+                        .WithType(
+                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())));
+                }
+
+                // This is the complete parameter specification for this constructor.
+                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters.ToList().OrderBy(p => p.Identifier.Text)));
             }
         }
 

@@ -29,7 +29,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         public Class(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.xmlSchemaDocument = xmlSchemaDocument ?? throw new ArgumentNullException(nameof(xmlSchemaDocument));
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = xmlSchemaDocument.Name;
 
             //    /// <summary>
@@ -163,18 +163,10 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         /// <returns>The structure members with the fields added.</returns>
         private static SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
         {
-            // This will create the private instance fields.
-            List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new RowVersionField());
-
-            // Alphabetize and add the fields as members of the class.
-            foreach (SyntaxElement syntaxElement in fields.OrderBy(f => f.Name))
-            {
-                members = members.Add(syntaxElement.Syntax);
-            }
-
-            // Return the new collection of members.
-            return members;
+            members = members.Add(new LoggerField().Syntax);
+            members = members.Add(new ServiceProviderField().Syntax);
+            members = members.Add(new StringLocalizerField().Syntax);
+            return members.Add(new RowVersionField().Syntax);
         }
 
         /// <summary>
@@ -293,7 +285,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             // Create a property for each of the tables.
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                properties.Add(new RecordCollectionProperty(tableElement));
+                properties.Add(new TableProperty(tableElement));
             }
 
             // Alphabetize and add the fields as members of the class.

@@ -28,7 +28,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         public PostMethod(TableElement tableElement)
         {
             // Initialize the object.  Note that we decorate the name of every method that's not the primary key to prevent ambiguous signatures.
-            this.tableElement = tableElement ?? throw new ArgumentNullException(nameof(tableElement));
+            this.tableElement = tableElement;
             this.Name = $"Post{this.tableElement.Name}";
 
             //        /// <summary>

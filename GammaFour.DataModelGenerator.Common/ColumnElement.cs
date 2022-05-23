@@ -462,12 +462,6 @@ namespace GammaFour.DataModelGenerator.Common
         /// <returns>A value that indicates the relative order of the objects being compared.</returns>
         public int CompareTo(ColumnElement other)
         {
-            // Validate the parameter
-            if (other == null)
-            {
-                throw new ArgumentNullException(nameof(other));
-            }
-
             return string.Compare(this.Name, other.Name, StringComparison.InvariantCulture);
         }
 

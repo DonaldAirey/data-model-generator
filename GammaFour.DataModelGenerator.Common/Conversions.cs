@@ -41,12 +41,6 @@ namespace GammaFour.DataModelGenerator.Common
         /// <returns>A Roslyn type syntax corresponding to the CLR type.</returns>
         public static TypeSyntax FromType(ColumnType columnType)
         {
-            // Validate the parameter
-            if (columnType == null)
-            {
-                throw new ArgumentNullException(nameof(columnType));
-            }
-
             if (columnType.IsNullable && columnType.IsValueType)
             {
                 TypeSyntax nullableTypeSyntax = null;

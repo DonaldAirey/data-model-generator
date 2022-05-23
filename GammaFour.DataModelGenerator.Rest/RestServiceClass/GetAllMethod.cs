@@ -28,7 +28,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         public GetAllMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement ?? throw new ArgumentNullException(nameof(tableElement));
+            this.tableElement = tableElement;
             this.Name = $"Get{this.tableElement.Name.ToPlural()}";
 
             //        /// <summary>

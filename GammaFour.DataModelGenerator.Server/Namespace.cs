@@ -183,27 +183,27 @@ namespace GammaFour.DataModelGenerator.Server
         private SyntaxList<MemberDeclarationSyntax> CreatePublicClasses(SyntaxList<MemberDeclarationSyntax> members)
         {
             // Create the record classes.
-            List<RecordClass.Class> recordClasses = new List<RecordClass.Class>();
+            List<RowClass.Class> recordClasses = new List<RowClass.Class>();
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                recordClasses.Add(new RecordClass.Class(tableElement));
+                recordClasses.Add(new RowClass.Class(tableElement));
             }
 
             // Alphabetize the list of record classes and add them to the structure.
-            foreach (RecordClass.Class recordClass in recordClasses.OrderBy(c => c.Name))
+            foreach (RowClass.Class recordClass in recordClasses.OrderBy(c => c.Name))
             {
                 members = members.Add(recordClass.Syntax);
             }
 
             // Create the record set classes.
-            List<RecordCollectionClass.Class> recordCollectionClasses = new List<RecordCollectionClass.Class>();
+            List<TableClass.Class> recordCollectionClasses = new List<TableClass.Class>();
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                recordCollectionClasses.Add(new RecordCollectionClass.Class(tableElement));
+                recordCollectionClasses.Add(new TableClass.Class(tableElement));
             }
 
             // Alphabetize the list of record sets and add them to the structure.
-            foreach (RecordCollectionClass.Class @class in recordCollectionClasses.OrderBy(c => c.Name))
+            foreach (TableClass.Class @class in recordCollectionClasses.OrderBy(c => c.Name))
             {
                 members = members.Add(@class.Syntax);
             }

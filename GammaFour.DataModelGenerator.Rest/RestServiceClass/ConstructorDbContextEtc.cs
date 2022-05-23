@@ -28,7 +28,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         public ConstructorDbContextEtc(TableElement tableElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement ?? throw new ArgumentNullException(nameof(tableElement));
+            this.tableElement = tableElement;
             this.Name = tableElement.Name.ToPlural() + "Controller";
 
             //        /// <summary>

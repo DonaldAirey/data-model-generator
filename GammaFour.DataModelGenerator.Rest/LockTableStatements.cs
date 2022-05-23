@@ -23,12 +23,6 @@ namespace GammaFour.DataModelGenerator.RestService
         /// <returns>An expression that locks all the resources related to the given table element.</returns>
         public static List<StatementSyntax> GetSyntax(TableElement tableElement)
         {
-            // Validate the argument.
-            if (tableElement == null)
-            {
-                throw new ArgumentNullException(nameof(tableElement));
-            }
-
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 
@@ -180,12 +174,6 @@ namespace GammaFour.DataModelGenerator.RestService
         /// <returns>An expression that locks all the resources related to the given table element.</returns>
         public static List<StatementSyntax> GetUsingSyntax(TableElement tableElement, List<StatementSyntax> usingBlock)
         {
-            // Validate the argument.
-            if (tableElement == null)
-            {
-                throw new ArgumentNullException(nameof(tableElement));
-            }
-
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 

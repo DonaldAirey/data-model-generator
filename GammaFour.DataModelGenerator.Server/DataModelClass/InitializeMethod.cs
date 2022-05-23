@@ -28,7 +28,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         public InitializeMethod(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.xmlSchemaDocument = xmlSchemaDocument ?? throw new ArgumentNullException(nameof(xmlSchemaDocument));
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "Initialize";
 
             //        /// <inheritdoc/>

@@ -20,6 +20,11 @@ namespace GammaFour.DataModelGenerator.Common
         Get,
 
         /// <summary>
+        /// Changes an existing item.
+        /// </summary>
+        Patch,
+
+        /// <summary>
         /// Put a resource in the dataModel.
         /// </summary>
         Put,

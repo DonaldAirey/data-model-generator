@@ -28,7 +28,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
         public ConstructorDbContextOptions(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.xmlSchemaDocument = xmlSchemaDocument ?? throw new ArgumentNullException(nameof(xmlSchemaDocument));
+            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = this.xmlSchemaDocument.Name;
 
             //        /// <summary>

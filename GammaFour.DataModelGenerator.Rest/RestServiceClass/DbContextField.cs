@@ -21,12 +21,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <param name="xmlSchemaDocument">The XML Schema document.</param>
         public DbContextField(XmlSchemaDocument xmlSchemaDocument)
         {
-            // Validate the parameter
-            if (xmlSchemaDocument == null)
-            {
-                throw new ArgumentNullException(nameof(xmlSchemaDocument));
-            }
-
             // Initialize the object.
             this.Name = $"{xmlSchemaDocument.DataModel.ToCamelCase()}Context";
 
