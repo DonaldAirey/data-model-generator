@@ -22,7 +22,7 @@ namespace GammaFour.DataModelGenerator.RestService
         /// <param name="uniqueKeyElement">The description of a unique key.</param>
         /// <param name="isDecorated">Indicates that the argument name should be prefixed with the index name.</param>
         /// <returns>An expression that builds an anonymous type from a table description.</returns>
-        public static SeparatedSyntaxList<ArgumentSyntax> GetSyntax(UniqueKeyElement uniqueKeyElement, bool isDecorated = false)
+        public static SeparatedSyntaxList<ArgumentSyntax> GetSyntax(UniqueElement uniqueKeyElement, bool isDecorated = false)
         {
             //                    country = this.dataModel.Countries.CountryCountryCodeKey.Find(countryCountryCodeKeyCountryCode);
             //                    region = this.dataModel.Regions.RegionExternalKey.Find((regionExternalKeyName, regionExternalKeyCountryCode));
@@ -68,7 +68,7 @@ namespace GammaFour.DataModelGenerator.RestService
         /// <param name="uniqueKeyElement">The description of a unique key.</param>
         /// <param name="variableName">The name of the variable holding the keys.</param>
         /// <returns>An expression that builds an anonymous type from a table description.</returns>
-        public static SeparatedSyntaxList<ArgumentSyntax> GetMemberSyntax(UniqueKeyElement uniqueKeyElement, string variableName)
+        public static SeparatedSyntaxList<ArgumentSyntax> GetMemberSyntax(UniqueElement uniqueKeyElement, string variableName)
         {
             SeparatedSyntaxList<ArgumentSyntax> findParameters;
             if (uniqueKeyElement.Columns.Count == 1)

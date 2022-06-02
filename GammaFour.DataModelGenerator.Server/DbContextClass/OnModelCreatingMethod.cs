@@ -307,7 +307,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
 
                     // Add an Ignore invocation for each of the owner (record set) navigation properties.
                     // .Ignore(b => b.Country)
-                    foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys)
+                    foreach (ForeignElement foreignKeyElement in tableElement.ParentKeys)
                     {
                         ignoredProperties = SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -329,7 +329,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
 
                     // Add an Ignore invocation for each of the child set navigation properties.
                     // .Ignore(b => b.Subscriptions)
-                    foreach (ForeignKeyElement foreignKeyElement in tableElement.ChildKeys)
+                    foreach (ForeignElement foreignKeyElement in tableElement.ChildKeys)
                     {
                         ignoredProperties = SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -353,7 +353,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                     statements.Add(SyntaxFactory.ExpressionStatement(ignoredProperties));
 
                     // Create a key for each index that is unique to the set.
-                    foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
+                    foreach (UniqueElement uniqueKeyElement in tableElement.UniqueKeys)
                     {
                         if (uniqueKeyElement.IsPrimaryKey)
                         {
@@ -409,7 +409,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                     }
 
                     // Create a foreign key index for every parent table.
-                    foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys)
+                    foreach (ForeignElement foreignKeyElement in tableElement.ParentKeys)
                     {
                         //            modelBuilder.Entity<Province>()
                         ExpressionSyntax indexProperties = SyntaxFactory.InvocationExpression(

@@ -23,14 +23,8 @@ namespace GammaFour.DataModelGenerator.Client
         /// <param name="uniqueKeyElement">The unique key element.</param>
         /// <param name="isAnonymous">Indicates we should create an anonymous key for Entity Framework.</param>
         /// <returns>An argument that extracts a key from an object.</returns>
-        public static ExpressionSyntax GetUniqueKey(UniqueKeyElement uniqueKeyElement, bool isAnonymous = false)
+        public static ExpressionSyntax GetUniqueKey(UniqueElement uniqueKeyElement, bool isAnonymous = false)
         {
-            // Validate the parameter
-            if (uniqueKeyElement == null)
-            {
-                throw new ArgumentNullException(nameof(uniqueKeyElement));
-            }
-
             // Used as a variable when constructing the lambda expression.
             string abbreviation = uniqueKeyElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
 
@@ -95,7 +89,7 @@ namespace GammaFour.DataModelGenerator.Client
                 }
             }
 
-            //            this.BuyerKey = new UniqueKeyIndex<Buyer>("BuyerKey").HasIndex(b => b.BuyerId);
+            //            this.BuyerKey = new UniqueIndex("BuyerKey").HasIndex(b => b.BuyerId);
             return SyntaxFactory.SimpleLambdaExpression(SyntaxFactory.Parameter(SyntaxFactory.Identifier(abbreviation)), syntaxNode);
         }
     }

@@ -1,8 +1,8 @@
-// <copyright file="ChildrenProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="UniqueIndexProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.RowClass
+namespace GammaFour.DataModelGenerator.Client.TableClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,62 +12,92 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a property that navigates to the parent record.
+    /// Creates a unique key for the set.
     /// </summary>
-    public class ChildrenProperty : SyntaxElement
+    public class UniqueIndexProperty : SyntaxElement
     {
         /// <summary>
-        /// The foreign key description.
+        /// Initializes a new instance of the <see cref="UniqueIndexProperty"/> class.
         /// </summary>
-        private readonly ForeignElement foreignKeyElement;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ChildrenProperty"/> class.
-        /// </summary>
-        /// <param name="foreignKeyElement">The column schema.</param>
-        public ChildrenProperty(ForeignElement foreignKeyElement)
+        public UniqueIndexProperty()
         {
             // Initialize the object.
-            this.foreignKeyElement = foreignKeyElement;
-            this.Name = this.foreignKeyElement.UniqueChildName;
+            this.Name = "UniqueIndex";
 
             //        /// <summary>
-            //        /// Gets the child <see cref="Buyer"/> records.
+            //        /// Gets the unique index by name.
             //        /// </summary>
-            //        public IEnumerable<Buyer> Buyers < Get >
+            //        public Dictionary<string, IUniqueIndex> UniqueIndex { get; } = new Dictionary<string, IUniqueIndex>();
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                    SyntaxFactory.GenericName(
-                        SyntaxFactory.Identifier("IEnumerable"))
-                    .WithTypeArgumentList(
-                        SyntaxFactory.TypeArgumentList(
-                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name)))),
-                    SyntaxFactory.Identifier(this.Name))
-                .WithAccessorList(this.AccessorList)
-                .WithModifiers(ChildrenProperty.Modifiers)
-                .WithAttributeLists(ChildrenProperty.Attributes)
-                .WithLeadingTrivia(this.DocumentationComment);
+                SyntaxFactory.GenericName(
+                    SyntaxFactory.Identifier("Dictionary"))
+                .WithTypeArgumentList(
+                    SyntaxFactory.TypeArgumentList(
+                        SyntaxFactory.SeparatedList<TypeSyntax>(
+                            new SyntaxNodeOrToken[]
+                            {
+                                SyntaxFactory.PredefinedType(
+                                    SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                SyntaxFactory.IdentifierName("IUniqueIndex"),
+                            }))),
+                SyntaxFactory.Identifier(this.Name))
+                .WithModifiers(UniqueIndexProperty.Modifiers)
+                .WithAccessorList(UniqueIndexProperty.AccessorList)
+                .WithInitializer(UniqueIndexProperty.Initializer)
+                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+            .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
-        /// Gets the data contract attribute syntax.
+        /// Gets the list of accessors.
         /// </summary>
-        private static SyntaxList<AttributeListSyntax> Attributes
+        private static AccessorListSyntax AccessorList
         {
             get
             {
-                // This collects all the attributes.
-                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
+                return SyntaxFactory.AccessorList(
+                    SyntaxFactory.List<AccessorDeclarationSyntax>(
+                        new AccessorDeclarationSyntax[]
+                        {
+                            SyntaxFactory.AccessorDeclaration(
+                                SyntaxKind.GetAccessorDeclaration)
+                            .WithSemicolonToken(
+                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                        }));
+            }
+        }
 
-                //        [JsonConverter(typeof(StringEnumConverter))]
-                attributes.Add(
-                    SyntaxFactory.AttributeList(
-                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
-                            SyntaxFactory.Attribute(
-                                SyntaxFactory.IdentifierName("JsonIgnore")))));
-
-                // The collection of attributes.
-                return SyntaxFactory.List<AttributeListSyntax>(attributes);
+        /// <summary>
+        /// Gets the initializer.
+        /// </summary>
+        private static EqualsValueClauseSyntax Initializer
+        {
+            get
+            {
+                // = new Dictionary<string, IUniqueIndex>();
+                return SyntaxFactory.EqualsValueClause(
+                    SyntaxFactory.ObjectCreationExpression(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("Dictionary"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SeparatedList<TypeSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.PredefinedType(
+                                            SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.IdentifierName("IUniqueIndex"),
+                                    }))))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName("StringComparer"),
+                                        SyntaxFactory.IdentifierName("OrdinalIgnoreCase")))))));
             }
         }
 
@@ -88,22 +118,6 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         }
 
         /// <summary>
-        /// Gets the list of accessors.
-        /// </summary>
-        private AccessorListSyntax AccessorList
-        {
-            get
-            {
-                return SyntaxFactory.AccessorList(
-                    SyntaxFactory.List(
-                        new AccessorDeclarationSyntax[]
-                        {
-                            this.GetAccessor,
-                        }));
-            }
-        }
-
-        /// <summary>
         /// Gets the documentation comment.
         /// </summary>
         private SyntaxTriviaList DocumentationComment
@@ -114,7 +128,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Gets the child <see cref="Buyer"/> records.
+                //        /// Gets the BuyerExternalId0Key unique index.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -138,7 +152,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Gets the child <see cref=\"{this.foreignKeyElement.Table.Name}\"/> records.",
+                                                $" Gets the unique index by name.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -160,36 +174,6 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Get' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax GetAccessor
-        {
-            get
-            {
-                // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                return this.getRegions();
-                statements.Add(
-                    SyntaxFactory.ReturnStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName($"get{this.foreignKeyElement.UniqueChildName}")))));
-
-                //            get
-                //            {
-                //            }
-                return SyntaxFactory.AccessorDeclaration(
-                        SyntaxKind.GetAccessorDeclaration,
-                        SyntaxFactory.Block(
-                            SyntaxFactory.List(statements)))
-                    .WithKeyword(SyntaxFactory.Token(SyntaxKind.GetKeyword));
             }
         }
     }

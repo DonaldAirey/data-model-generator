@@ -649,19 +649,19 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 // We want to find all the relations to parent records in order to resolve symbolic references.
-                Dictionary<ColumnElement, List<UniqueKeyElement>> columnResolutionKeys = new Dictionary<ColumnElement, List<UniqueKeyElement>>();
-                foreach (ForeignKeyElement parentKeyElement in this.tableElement.ParentKeys)
+                Dictionary<ColumnElement, List<UniqueElement>> columnResolutionKeys = new Dictionary<ColumnElement, List<UniqueElement>>();
+                foreach (ForeignElement parentKeyElement in this.tableElement.ParentKeys)
                 {
                     foreach (ColumnReferenceElement columnReferenceElement in parentKeyElement.Columns)
                     {
                         ColumnElement columnElement = columnReferenceElement.Column;
-                        foreach (UniqueKeyElement additionalUniqueKeyElement in parentKeyElement.UniqueKey.Table.UniqueKeys)
+                        foreach (UniqueElement additionalUniqueKeyElement in parentKeyElement.UniqueKey.Table.UniqueKeys)
                         {
                             if (!additionalUniqueKeyElement.IsPrimaryKey)
                             {
-                                if (!columnResolutionKeys.TryGetValue(columnElement, out List<UniqueKeyElement> uniqueKeyElements))
+                                if (!columnResolutionKeys.TryGetValue(columnElement, out List<UniqueElement> uniqueKeyElements))
                                 {
-                                    uniqueKeyElements = new List<UniqueKeyElement>();
+                                    uniqueKeyElements = new List<UniqueElement>();
                                     columnResolutionKeys.Add(columnElement, uniqueKeyElements);
                                 }
 
@@ -681,10 +681,10 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 //                    await lockingTransaction.WaitReaderAsync(this.dataModel.Issuers.IssuerCikKey).ConfigureAwait(false);
                 //                    await lockingTransaction.WaitReaderAsync(this.dataModel.Issuers.IssuerLeiKey).ConfigureAwait(false);
                 //                    await lockingTransaction.WaitReaderAsync(this.dataModel.Issuers.IssuerSymbolKey).ConfigureAwait(false);
-                HashSet<UniqueKeyElement> distinctKeys = new HashSet<UniqueKeyElement>();
+                HashSet<UniqueElement> distinctKeys = new HashSet<UniqueElement>();
                 foreach (var columnKeyPair in columnResolutionKeys)
                 {
-                    foreach (UniqueKeyElement uniqueKeyElement in columnKeyPair.Value)
+                    foreach (UniqueElement uniqueKeyElement in columnKeyPair.Value)
                     {
                         if (!distinctKeys.Contains(uniqueKeyElement))
                         {
@@ -733,7 +733,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 HashSet<TableElement> distinctTables = new HashSet<TableElement>();
                 foreach (var columnKeyPair in columnResolutionKeys)
                 {
-                    foreach (UniqueKeyElement uniqueKeyElement in columnKeyPair.Value)
+                    foreach (UniqueElement uniqueKeyElement in columnKeyPair.Value)
                     {
                         TableElement tableElement = uniqueKeyElement.Table;
                         if (!distinctTables.Contains(tableElement))
@@ -1021,7 +1021,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// </summary>
         /// <param name="uniqueKeyElement">The unique key element.</param>
         /// <returns>A block of statements.</returns>
-        private static List<StatementSyntax> FindParentRecord(UniqueKeyElement uniqueKeyElement)
+        private static List<StatementSyntax> FindParentRecord(UniqueElement uniqueKeyElement)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -1207,7 +1207,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        private List<StatementSyntax> ProcessExternalKeysBlock(Dictionary<ColumnElement, List<UniqueKeyElement>> columnResolutionKeys)
+        private List<StatementSyntax> ProcessExternalKeysBlock(Dictionary<ColumnElement, List<UniqueElement>> columnResolutionKeys)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -1217,7 +1217,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             foreach (var columnKeyPair in columnResolutionKeys)
             {
                 ColumnElement columnElement = columnKeyPair.Key;
-                List<UniqueKeyElement> uniqueKeys = columnKeyPair.Value;
+                List<UniqueElement> uniqueKeys = columnKeyPair.Value;
 
                 //                        var childIdObject = jObject.GetValue("childId", StringComparison.OrdinalIgnoreCase) as JObject;
                 statements.Add(
@@ -1278,7 +1278,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <param name="columnElement">The column element.</param>
         /// <param name="uniqueKeyElements">The unique key used to resolve the given column.</param>
         /// <returns>A block of statements.</returns>
-        private List<StatementSyntax> ResolveColumnFromParent(ColumnElement columnElement, List<UniqueKeyElement> uniqueKeyElements)
+        private List<StatementSyntax> ResolveColumnFromParent(ColumnElement columnElement, List<UniqueElement> uniqueKeyElements)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -1297,7 +1297,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.LiteralExpression(
                                         SyntaxKind.NullLiteralExpression)))))));
 
-            foreach (UniqueKeyElement uniqueKeyElement in uniqueKeyElements)
+            foreach (UniqueElement uniqueKeyElement in uniqueKeyElements)
             {
                 //                    var accountExternalKey = accountIdObject.GetValue("accountExternalKey", StringComparison.OrdinalIgnoreCase) as JObject;
                 statements.Add(

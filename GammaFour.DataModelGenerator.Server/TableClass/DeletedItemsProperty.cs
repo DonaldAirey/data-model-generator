@@ -130,7 +130,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                     SyntaxFactory.MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
                         SyntaxFactory.ThisExpression(),
-                        SyntaxFactory.IdentifierName("deletedCollection")));
+                        SyntaxFactory.IdentifierName("deletedRows")));
             }
         }
 

@@ -1,8 +1,8 @@
-// <copyright file="UniqueKeyIndexProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="UniqueIndexProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.TableClass
+namespace GammaFour.DataModelGenerator.Common.TableClass
 {
     using System;
     using System.Collections.Generic;
@@ -14,37 +14,38 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
     /// <summary>
     /// Creates a unique key for the set.
     /// </summary>
-    public class UniqueKeyIndexProperty : SyntaxElement
+    public class UniqueIndexProperty : SyntaxElement
     {
         /// <summary>
-        /// The unique key element.
+        /// Initializes a new instance of the <see cref="UniqueIndexProperty"/> class.
         /// </summary>
-        private readonly UniqueKeyElement uniqueKeyElement;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UniqueKeyIndexProperty"/> class.
-        /// </summary>
-        /// <param name="uniqueKeyElement">The unique key element.</param>
-        public UniqueKeyIndexProperty(UniqueKeyElement uniqueKeyElement)
+        public UniqueIndexProperty()
         {
             // Initialize the object.
-            this.uniqueKeyElement = uniqueKeyElement;
-            this.Name = this.uniqueKeyElement.Name;
+            this.Name = "UniqueIndex";
 
             //        /// <summary>
-            //        /// Gets the BuyerExternalId0Key unique index.
+            //        /// Gets the unique index by name.
             //        /// </summary>
-            //        public UniqueKeyIndex<Buyer> BuyerExternalId0Key { get; } = new UniqueKeyIndex<Buyer>("BuyerExternalId0Key").HasIndex(b => b.ExternalId0);
+            //        public Dictionary<string, IUniqueIndex> UniqueIndex { get; } = new Dictionary<string, IUniqueIndex>();
             this.Syntax = SyntaxFactory.PropertyDeclaration(
                 SyntaxFactory.GenericName(
-                    SyntaxFactory.Identifier("UniqueKeyIndex"))
+                    SyntaxFactory.Identifier("Dictionary"))
                 .WithTypeArgumentList(
                     SyntaxFactory.TypeArgumentList(
-                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name)))),
-                SyntaxFactory.Identifier(this.uniqueKeyElement.Name))
-            .WithModifiers(UniqueKeyIndexProperty.Modifiers)
-            .WithAccessorList(UniqueKeyIndexProperty.AccessorList)
+                        SyntaxFactory.SeparatedList<TypeSyntax>(
+                            new SyntaxNodeOrToken[]
+                            {
+                                SyntaxFactory.PredefinedType(
+                                    SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                SyntaxFactory.IdentifierName("IUniqueIndex"),
+                            }))),
+                SyntaxFactory.Identifier(this.Name))
+                .WithModifiers(UniqueIndexProperty.Modifiers)
+                .WithAccessorList(UniqueIndexProperty.AccessorList)
+                .WithInitializer(UniqueIndexProperty.Initializer)
+                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))
             .WithLeadingTrivia(this.DocumentationComment);
         }
 
@@ -63,14 +64,40 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                 SyntaxKind.GetAccessorDeclaration)
                             .WithSemicolonToken(
                                 SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
-                            SyntaxFactory.AccessorDeclaration(
-                                SyntaxKind.SetAccessorDeclaration)
-                            .WithModifiers(
-                                SyntaxFactory.TokenList(
-                                    SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
-                            .WithSemicolonToken(
-                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
                         }));
+            }
+        }
+
+        /// <summary>
+        /// Gets the initializer.
+        /// </summary>
+        private static EqualsValueClauseSyntax Initializer
+        {
+            get
+            {
+                // = new Dictionary<string, IUniqueIndex>();
+                return SyntaxFactory.EqualsValueClause(
+                    SyntaxFactory.ObjectCreationExpression(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("Dictionary"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SeparatedList<TypeSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.PredefinedType(
+                                            SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.IdentifierName("IUniqueIndex"),
+                                    }))))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName("StringComparer"),
+                                        SyntaxFactory.IdentifierName("OrdinalIgnoreCase")))))));
             }
         }
 
@@ -125,7 +152,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Gets the {this.uniqueKeyElement.Name} unique index.",
+                                                $" Gets the unique index by name.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

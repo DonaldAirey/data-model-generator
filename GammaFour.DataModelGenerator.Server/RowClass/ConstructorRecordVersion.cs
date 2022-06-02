@@ -130,7 +130,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 //            this.getBuyers = () => Country.defaultBuyers;
                 //            this.getProvinces = () => Country.defaultProvinces;
                 //            this.getRegions = () => Country.defaultRegions;
-                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ChildKeys)
+                foreach (ForeignElement foreignKeyElement in this.tableElement.ChildKeys)
                 {
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(

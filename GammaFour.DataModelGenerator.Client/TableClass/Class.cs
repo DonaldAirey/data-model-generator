@@ -9,7 +9,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
     using System.Globalization;
     using System.Linq;
     using GammaFour.DataModelGenerator.Common;
-    using GammaFour.DataModelGenerator.Common.RecordSet;
+    using GammaFour.DataModelGenerator.Common.TableClass;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -79,31 +79,10 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 // A list of base classes or interfaces.
                 List<SyntaxNodeOrToken> baseList = new List<SyntaxNodeOrToken>();
 
-                // IEnumerable<Buyer>
+                // ITable
                 baseList.Add(
                     SyntaxFactory.SimpleBaseType(
-                        SyntaxFactory.GenericName(
-                            SyntaxFactory.Identifier("IEnumerable"))
-                        .WithTypeArgumentList(
-                            SyntaxFactory.TypeArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name))))));
-
-                // ,
-                baseList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
-
-                // IMergable
-                baseList.Add(
-                    SyntaxFactory.SimpleBaseType(
-                        SyntaxFactory.IdentifierName("IMergable")));
-
-                // ,
-                baseList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
-
-                // IMergable
-                baseList.Add(
-                    SyntaxFactory.SimpleBaseType(
-                        SyntaxFactory.IdentifierName("IPurgable")));
+                        SyntaxFactory.IdentifierName("ITable")));
 
                 return SyntaxFactory.BaseList(
                       SyntaxFactory.SeparatedList<BaseTypeSyntax>(baseList.ToArray()));
@@ -182,7 +161,6 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 members = this.CreatePublicInstanceProperties(members);
                 members = this.CreatePublicInstanceMethods(members);
                 members = this.CreateInternalInstanceMethods(members);
-                members = this.CreatePrivateStaticMethods(members);
                 members = Class.CreatePrivateInstanceMethods(members);
                 return members;
             }
@@ -247,19 +225,21 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
             properties.Add(new DataModelProperty(this.tableElement.XmlSchemaDocument));
+            properties.Add(new ForeignIndexProperty());
             properties.Add(new IndexProperty(this.tableElement));
             properties.Add(new NameProperty());
+            properties.Add(new UniqueIndexProperty());
 
             // Add a property for each of the unique keys indices.
-            foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
+            foreach (UniqueElement uniqueKeyElement in this.tableElement.UniqueKeys)
             {
-                properties.Add(new UniqueKeyIndexProperty(uniqueKeyElement));
+                properties.Add(new GenericUniqueIndexProperty(uniqueKeyElement));
             }
 
             // Add a property for each of the foreign key indices.
-            foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
+            foreach (ForeignElement foreignKeyElement in this.tableElement.ParentKeys)
             {
-                properties.Add(new ForeignKeyIndexProperty(foreignKeyElement));
+                properties.Add(new GenericForeignIndexProperty(foreignKeyElement));
             }
 
             // Alphabetize and add the properties as members of the class.
@@ -319,34 +299,15 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The structure members with the methods added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePrivateStaticMethods(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // This will create the public instance properties.
-            List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new CreateContentMethod(this.tableElement));
-
-            // Alphabetize and add the methods as members of the class.
-            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
-            {
-                members = members.Add(syntaxElement.Syntax);
-            }
-
-            // Return the new collection of members.
-            return members;
-        }
-
-        /// <summary>
-        /// Create the public instance methods.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The structure members with the methods added.</returns>
         private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new AddMethod(this.tableElement));
+            methods.Add(new AddRowMethod(this.tableElement));
+            methods.Add(new AddUniqueIndexMethod(this.tableElement));
             methods.Add(new BuildForeignIndicesMethod(this.tableElement));
             methods.Add(new DeleteAsyncMethod(this.tableElement));
+            methods.Add(new DeserializeMethod(this.tableElement));
             methods.Add(new GetAsyncMethod(this.tableElement));
             methods.Add(new GetEnumeratorMethod(this.tableElement));
             methods.Add(new GenericGetEnumeratorMethod(this.tableElement));

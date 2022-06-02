@@ -1,4 +1,4 @@
-﻿// <copyright file="UniqueKeyElement.cs" company="Gamma Four, Inc.">
+﻿// <copyright file="UniqueElement.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -9,7 +9,7 @@ namespace GammaFour.DataModelGenerator.Common
     /// <summary>
     /// Describes a set of columns that must be unique in a table.
     /// </summary>
-    public class UniqueKeyElement : ConstraintElement
+    public class UniqueElement : ConstraintElement
     {
         /// <summary>
         /// A value indicating whether gets an indication of whether the constraint is the primary key on a table.
@@ -17,10 +17,10 @@ namespace GammaFour.DataModelGenerator.Common
         private readonly bool isPrimaryKey;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UniqueKeyElement"/> class.
+        /// Initializes a new instance of the <see cref="UniqueElement"/> class.
         /// </summary>
         /// <param name="uniqueElement">The description of the unique constraint.</param>
-        public UniqueKeyElement(XElement uniqueElement)
+        public UniqueElement(XElement uniqueElement)
             : base(uniqueElement)
         {
             // Parse out the primary key attribute.

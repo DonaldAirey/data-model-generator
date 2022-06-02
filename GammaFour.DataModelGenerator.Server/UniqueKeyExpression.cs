@@ -23,7 +23,7 @@ namespace GammaFour.DataModelGenerator.Server
         /// <param name="uniqueKeyElement">The unique key element.</param>
         /// <param name="isAnonymous">Indicates we should create an anonymous key for Entity Framework.</param>
         /// <returns>An argument that extracts a key from an object.</returns>
-        public static ExpressionSyntax GetUniqueKey(UniqueKeyElement uniqueKeyElement, bool isAnonymous = false)
+        public static ExpressionSyntax GetUniqueKey(UniqueElement uniqueKeyElement, bool isAnonymous = false)
         {
             // Validate the parameter
             if (uniqueKeyElement == null)
@@ -95,7 +95,7 @@ namespace GammaFour.DataModelGenerator.Server
                 }
             }
 
-            //            this.BuyerKey = new UniqueKeyIndex<Buyer>("BuyerKey").HasIndex(b => b.BuyerId);
+            //            this.BuyerKey = new UniqueIndex<Buyer>("BuyerKey").HasIndex(b => b.BuyerId);
             return SyntaxFactory.SimpleLambdaExpression(SyntaxFactory.Parameter(SyntaxFactory.Identifier(abbreviation)), syntaxNode);
         }
     }

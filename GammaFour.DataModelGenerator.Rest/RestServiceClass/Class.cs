@@ -253,6 +253,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             methods.Add(new DeleteMethod(this.tableElement));
             methods.Add(new DeleteRangeMethod(this.tableElement));
             methods.Add(new GetAllMethod(this.tableElement));
+            methods.Add(new GetMethod(this.tableElement.PrimaryKey));
             methods.Add(new PostMethod(this.tableElement));
             methods.Add(new PutMethod(this.tableElement));
             methods.Add(new PatchMethod(this.tableElement));

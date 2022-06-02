@@ -88,7 +88,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                             SyntaxKind.FalseLiteralExpression))))))));
 
             //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.ItemAccountKey).ConfigureAwait(false);
-            foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys.AsEnumerable().Reverse())
+            foreach (ForeignElement foreignKeyElement in tableElement.ParentKeys.AsEnumerable().Reverse())
             {
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
@@ -126,7 +126,7 @@ namespace GammaFour.DataModelGenerator.RestService
 
             //            await lockingTransaction.WaitReaderAsync(this.dataModel.Accounts.AccountKey).ConfigureAwait(false);
             //            await lockingTransaction.WaitReaderAsync(this.dataModel.Accounts.AccountSymbolKey).ConfigureAwait(false);
-            foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys.AsEnumerable().Reverse())
+            foreach (UniqueElement uniqueKeyElement in tableElement.UniqueKeys.AsEnumerable().Reverse())
             {
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
@@ -256,7 +256,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                             SyntaxKind.FalseLiteralExpression))))))));
 
             //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.ItemAccountKey).ConfigureAwait(false);
-            foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys.AsEnumerable().Reverse())
+            foreach (ForeignElement foreignKeyElement in tableElement.ParentKeys.AsEnumerable().Reverse())
             {
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
@@ -294,7 +294,7 @@ namespace GammaFour.DataModelGenerator.RestService
 
             //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountKey).ConfigureAwait(false);
             //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountSymbolKey).ConfigureAwait(false);
-            foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys.AsEnumerable().Reverse())
+            foreach (UniqueElement uniqueKeyElement in tableElement.UniqueKeys.AsEnumerable().Reverse())
             {
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(

@@ -281,6 +281,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         {
             // This will create the internal instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
+            properties.Add(new TablesProperty());
 
             // Create a property for each of the tables.
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)

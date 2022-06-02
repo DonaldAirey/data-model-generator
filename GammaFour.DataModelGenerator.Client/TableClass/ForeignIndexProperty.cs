@@ -1,8 +1,8 @@
-// <copyright file="ForeignKeyIndexProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="ForeignIndexProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.TableClass
+namespace GammaFour.DataModelGenerator.Client.TableClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,47 +12,40 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a property gives access to the foreign index.
+    /// Creates a unique key for the set.
     /// </summary>
-    public class ForeignKeyIndexProperty : SyntaxElement
+    public class ForeignIndexProperty : SyntaxElement
     {
         /// <summary>
-        /// The foreign key description.
+        /// Initializes a new instance of the <see cref="ForeignIndexProperty"/> class.
         /// </summary>
-        private readonly ForeignKeyElement foreignKeyElement;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ForeignKeyIndexProperty"/> class.
-        /// </summary>
-        /// <param name="foreignKeyElement">The column schema.</param>
-        public ForeignKeyIndexProperty(ForeignKeyElement foreignKeyElement)
+        public ForeignIndexProperty()
         {
             // Initialize the object.
-            this.foreignKeyElement = foreignKeyElement;
-            this.Name = this.foreignKeyElement.Name;
+            this.Name = "ForeignIndex";
 
             //        /// <summary>
-            //        /// Gets the CountryBuyerCountryIdKey foreign index.
+            //        /// Gets the unique index by name.
             //        /// </summary>
-            //        public ForeignKeyIndex<Buyer, Country> CountryBuyerCountryIdKey
-            //        {
-            //            <Get>
-            //        }
+            //        public Dictionary<string, IForeignIndex> ForeignIndex { get; } = new Dictionary<string, IForeignIndex>();
             this.Syntax = SyntaxFactory.PropertyDeclaration(
                 SyntaxFactory.GenericName(
-                    SyntaxFactory.Identifier("ForeignKeyIndex"))
+                    SyntaxFactory.Identifier("Dictionary"))
                 .WithTypeArgumentList(
                     SyntaxFactory.TypeArgumentList(
                         SyntaxFactory.SeparatedList<TypeSyntax>(
                             new SyntaxNodeOrToken[]
                             {
-                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name),
+                                SyntaxFactory.PredefinedType(
+                                    SyntaxFactory.Token(SyntaxKind.StringKeyword)),
                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Table.Name),
+                                SyntaxFactory.IdentifierName("IForeignIndex"),
                             }))),
-                SyntaxFactory.Identifier(this.foreignKeyElement.Name))
-            .WithModifiers(ForeignKeyIndexProperty.Modifiers)
-            .WithAccessorList(ForeignKeyIndexProperty.AccessorList)
+                SyntaxFactory.Identifier(this.Name))
+                .WithModifiers(ForeignIndexProperty.Modifiers)
+                .WithAccessorList(ForeignIndexProperty.AccessorList)
+                .WithInitializer(ForeignIndexProperty.Initializer)
+                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))
             .WithLeadingTrivia(this.DocumentationComment);
         }
 
@@ -71,14 +64,40 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                 SyntaxKind.GetAccessorDeclaration)
                             .WithSemicolonToken(
                                 SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
-                            SyntaxFactory.AccessorDeclaration(
-                                SyntaxKind.SetAccessorDeclaration)
-                            .WithModifiers(
-                                SyntaxFactory.TokenList(
-                                    SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
-                            .WithSemicolonToken(
-                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
                         }));
+            }
+        }
+
+        /// <summary>
+        /// Gets the initializer.
+        /// </summary>
+        private static EqualsValueClauseSyntax Initializer
+        {
+            get
+            {
+                // = new Dictionary<string, IForeignIndex>();
+                return SyntaxFactory.EqualsValueClause(
+                    SyntaxFactory.ObjectCreationExpression(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("Dictionary"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SeparatedList<TypeSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.PredefinedType(
+                                            SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.IdentifierName("IForeignIndex"),
+                                    }))))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName("StringComparer"),
+                                        SyntaxFactory.IdentifierName("OrdinalIgnoreCase")))))));
             }
         }
 
@@ -109,7 +128,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Gets the CountryBuyerCountryIdKey foregn index.
+                //        /// Gets the BuyerExternalId0Key unique index.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -133,7 +152,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Gets the {this.foreignKeyElement.Name} foreign index.",
+                                                $" Gets the foreign index by name.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

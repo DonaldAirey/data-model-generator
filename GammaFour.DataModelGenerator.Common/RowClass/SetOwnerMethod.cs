@@ -2,10 +2,11 @@
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.RowClass
+namespace GammaFour.DataModelGenerator.Common.RowClass
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -111,25 +112,30 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                 SyntaxFactory.IdentifierName("Detached"))),
                         SyntaxFactory.Block(this.DetachedStateChange)));
 
-                //            if (countries == null)
-                //            {
-                //                <UseDefaultChildren>
-                //            }
-                //            else
-                //            {
-                //                <UseOwnerChildren>
-                //            }
-                statements.Add(
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.EqualsExpression,
-                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase().ToPlural()),
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.NullLiteralExpression)),
-                        SyntaxFactory.Block(this.UseDefaultChildren))
-                    .WithElse(
-                        SyntaxFactory.ElseClause(
-                            SyntaxFactory.Block(this.UseOwnerChildren))));
+                // If there are any child rows, add either a default link or an actual link to the collection.  The default link to an empty set
+                // allows for iteration without having to check for 'null' each time you want to see the children.
+                if (this.tableElement.ChildKeys.Any())
+                {
+                    //            if (countries == null)
+                    //            {
+                    //                <UseDefaultChildren>
+                    //            }
+                    //            else
+                    //            {
+                    //                <UseOwnerChildren>
+                    //            }
+                    statements.Add(
+                        SyntaxFactory.IfStatement(
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.EqualsExpression,
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase().ToPlural()),
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.NullLiteralExpression)),
+                            SyntaxFactory.Block(this.UseDefaultChildren))
+                        .WithElse(
+                            SyntaxFactory.ElseClause(
+                                SyntaxFactory.Block(this.UseOwnerChildren))));
+                }
 
                 //            this.countries = countries;
                 statements.Add(
@@ -392,7 +398,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 //            this.getBuyers = () => Country.defaultBuyers;
                 //            this.getProvinces = () => Country.defaultProvinces;
                 //            this.getRegions = () => Country.defaultRegions;
-                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ChildKeys)
+                foreach (ForeignElement foreignKeyElement in this.tableElement.ChildKeys)
                 {
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
@@ -423,10 +429,10 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             {
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                this.getBuyers = () => this.Countries.DataModel.Buyers.CountryBuyerCountryIdKey.GetChildren(this);
-                //                this.getProvinces = () => this.Countries.DataModel.Provinces.CountryProvinceKey.GetChildren(this);
-                //                this.getRegions = () => this.Countries.DataModel.Regions.CountryRegionKey.GetChildren(this);
-                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ChildKeys)
+                //                this.getAccountCanonMaps = () => this.Accounts.DataModel.AccountCanonMaps.AccountAccountCanonMapIndex.GetChildren(this);
+                //                this.getAccountGroups = () => this.Accounts.DataModel.AccountGroups.AccountAccountGroupIndex.GetChildren(this);
+                //                this.getAlerts = () => this.Accounts.DataModel.Alerts.AccountAlertIndex.GetChildren(this);
+                foreach (ForeignElement foreignKeyElement in this.tableElement.ChildKeys)
                 {
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
@@ -436,8 +442,8 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName($"get{foreignKeyElement.UniqueChildName}")),
-                                SyntaxFactory.ParenthesizedLambdaExpression(
-                                    SyntaxFactory.ParameterList(),
+                                SyntaxFactory.ParenthesizedLambdaExpression()
+                                .WithExpressionBody(
                                     SyntaxFactory.InvocationExpression(
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,

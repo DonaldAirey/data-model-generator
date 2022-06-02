@@ -6,7 +6,6 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -23,12 +22,6 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         /// <param name="tableElement">The table element.</param>
         public IndexProperty(TableElement tableElement)
         {
-            // Validate the argument.
-            if (tableElement == null)
-            {
-                throw new ArgumentNullException(nameof(tableElement));
-            }
-
             //        /// <summary>
             //        /// Gets the <see cref="Allocation"/> at the given index.
             //        /// </summary>

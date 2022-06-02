@@ -9,7 +9,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
     using System.Globalization;
     using System.Linq;
     using GammaFour.DataModelGenerator.Common;
-    using GammaFour.DataModelGenerator.Common.RecordSet;
+    using GammaFour.DataModelGenerator.Common.TableClass;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -73,23 +73,15 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 // A list of base classes or interfaces.
                 List<SyntaxNodeOrToken> baseList = new List<SyntaxNodeOrToken>();
 
-                // IEnlistmentNotification
+                // ITable
                 baseList.Add(
                     SyntaxFactory.SimpleBaseType(
-                        SyntaxFactory.IdentifierName("IEnlistmentNotification")));
+                        SyntaxFactory.IdentifierName("ITable")));
 
                 // ,
                 baseList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
 
-                // ILockable
-                baseList.Add(
-                    SyntaxFactory.SimpleBaseType(
-                        SyntaxFactory.IdentifierName("ILockable")));
-
-                // ,
-                baseList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
-
-                // IEnumerable<Buyer>
+                // IEnumerable<Fungible>
                 baseList.Add(
                     SyntaxFactory.SimpleBaseType(
                         SyntaxFactory.GenericName(
@@ -98,14 +90,6 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                             SyntaxFactory.TypeArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                                     SyntaxFactory.IdentifierName(this.tableElement.Name))))));
-
-                // ,
-                baseList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
-
-                // IMergable
-                baseList.Add(
-                    SyntaxFactory.SimpleBaseType(
-                        SyntaxFactory.IdentifierName("IMergable")));
 
                 return SyntaxFactory.BaseList(
                       SyntaxFactory.SeparatedList<BaseTypeSyntax>(baseList.ToArray()));
@@ -289,18 +273,20 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             List<SyntaxElement> properties = new List<SyntaxElement>();
             properties.Add(new DataModelProperty(this.tableElement.XmlSchemaDocument));
             properties.Add(new DeletedItemsProperty(this.tableElement));
+            properties.Add(new ForeignIndexProperty());
             properties.Add(new NameProperty());
+            properties.Add(new UniqueIndexProperty());
 
             // Add a property for each of the unique keys indices.
-            foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
+            foreach (UniqueElement uniqueKeyElement in this.tableElement.UniqueKeys)
             {
-                properties.Add(new UniqueKeyIndexProperty(uniqueKeyElement));
+                properties.Add(new GenericUniqueIndexProperty(uniqueKeyElement));
             }
 
             // Add a property for each of the foreign key indices.
-            foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
+            foreach (ForeignElement foreignKeyElement in this.tableElement.ParentKeys)
             {
-                properties.Add(new ForeignKeyIndexProperty(foreignKeyElement));
+                properties.Add(new GenericForeignIndexProperty(foreignKeyElement));
             }
 
             // Alphabetize and add the properties as members of the class.

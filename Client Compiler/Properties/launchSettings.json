@@ -2,7 +2,7 @@
   "profiles": {
     "Client Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\loader\\loader\\Data\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\loader\\loader\\Data\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Loader.Data\""
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\loader\\loader\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\loader\\loader\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Loader\""
     }
   }
 }

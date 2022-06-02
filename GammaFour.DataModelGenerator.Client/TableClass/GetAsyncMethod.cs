@@ -35,7 +35,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             //        /// Gets the set of <see cref="Fungible"/> records from the shared data model.
             //        /// </summary>
             //        /// <returns>The active set of fungibles.</returns>
-            //        public async Task<IEnumerable<Fungible>> GetAsync()
+            //        public async Task<IEnumerable<IRow>> GetAsync()
             //        {
             //            <Body>
             //        }
@@ -50,7 +50,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                             .WithTypeArgumentList(
                                 SyntaxFactory.TypeArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name))))))),
+                                        SyntaxFactory.IdentifierName("IRow"))))))),
                 SyntaxFactory.Identifier("GetAsync"))
                 .WithModifiers(GetAsyncMethod.Modifiers)
                 .WithBody(this.Body)

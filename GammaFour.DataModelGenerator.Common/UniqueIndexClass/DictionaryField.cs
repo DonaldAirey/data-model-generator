@@ -2,7 +2,7 @@
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Common.UniqueKeyIndexClass
+namespace GammaFour.DataModelGenerator.Common.UniqueIndexClass
 {
     using System;
     using System.Collections.Generic;
@@ -19,13 +19,13 @@ namespace GammaFour.DataModelGenerator.Common.UniqueKeyIndexClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private readonly UniqueKeyElement uniqueKeyElement;
+        private readonly UniqueElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DictionaryField"/> class.
         /// </summary>
         /// <param name="uniqueKeyElement">The table schema.</param>
-        public DictionaryField(UniqueKeyElement uniqueKeyElement)
+        public DictionaryField(UniqueElement uniqueKeyElement)
         {
             // Initialize the object.
             this.uniqueKeyElement = uniqueKeyElement;

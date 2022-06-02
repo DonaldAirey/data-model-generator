@@ -2,7 +2,7 @@
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.RowClass
+namespace GammaFour.DataModelGenerator.Common.RowClass
 {
     using System;
     using System.Collections.Generic;
@@ -36,12 +36,12 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             //        /// </summary>
             //        /// <param name="recordVersion">The version to be produced.</param>
             //        /// <returns>A copy of the record from the selected version.</returns>
-            //        internal Buyer Clone(RecordVersion recordVersion = RecordVersion.Current)
+            //        public IRow GetVersion(RecordVersion recordVersion = RecordVersion.Current)
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
-                SyntaxFactory.IdentifierName(this.tableElement.Name),
+                SyntaxFactory.IdentifierName("IRow"),
                 SyntaxFactory.Identifier(this.Name))
             .WithModifiers(GetVersionMethod.Modifiers)
             .WithParameterList(GetVersionMethod.Parameters)

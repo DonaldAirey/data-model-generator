@@ -16,11 +16,6 @@ namespace GammaFour.DataModelGenerator.Common
     public class TableElement : XElement, IComparable<TableElement>
     {
         /// <summary>
-        /// The verbs that will be generated in the RESTApi for this table.
-        /// </summary>
-        private readonly List<Verb> verbs = new List<Verb>();
-
-        /// <summary>
         /// The columns.
         /// </summary>
         private List<ColumnElement> columnElements;
@@ -28,7 +23,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// The foreign key elements.
         /// </summary>
-        private List<ForeignKeyElement> foreignKeyElements;
+        private List<ForeignElement> foreignKeyElements;
 
         /// <summary>
         /// The index of the table.
@@ -38,22 +33,22 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// The child foreign key elements.
         /// </summary>
-        private List<ForeignKeyElement> childKeyElements;
+        private List<ForeignElement> childKeyElements;
 
         /// <summary>
         /// The parent key elements.
         /// </summary>
-        private List<ForeignKeyElement> parentKeyElements;
+        private List<ForeignElement> parentKeyElements;
 
         /// <summary>
         /// The primary key element.
         /// </summary>
-        private UniqueKeyElement primaryKeyElement;
+        private UniqueElement primaryKeyElement;
 
         /// <summary>
         /// The unique key elements.
         /// </summary>
-        private List<UniqueKeyElement> uniqueKeyElements;
+        private List<UniqueElement> uniqueKeyElements;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TableElement"/> class.
@@ -68,17 +63,6 @@ namespace GammaFour.DataModelGenerator.Common
             // This tells us whether the table is persisted in a database or not.
             XAttribute isVolatileAttribute = this.Attribute(XmlSchemaDocument.IsVolatileName);
             this.IsVolatile = isVolatileAttribute == null ? false : Convert.ToBoolean(isVolatileAttribute.Value, CultureInfo.InvariantCulture);
-
-            // The verbs tell us what actions to support in the controller when it's built.
-            XAttribute verbAttribute = this.Attribute(XmlSchemaDocument.VerbsName);
-            string verbStrings = verbAttribute == null ? string.Empty : verbAttribute.Value;
-            foreach (string verbString in verbStrings.Split(','))
-            {
-                if (Enum.TryParse<Verb>(verbString, out Verb verb))
-                {
-                    this.verbs.Add(verb);
-                }
-            }
 
             // This will navigate to the sequence of columns.
             XElement complexType = this.Element(XmlSchemaDocument.ComplexTypeName);
@@ -122,7 +106,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the ForeignKey constraints.
         /// </summary>
-        public List<ForeignKeyElement> ForeignKeys
+        public List<ForeignElement> ForeignKeys
         {
             get
             {
@@ -166,7 +150,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the foreign keys which are children of this table.
         /// </summary>
-        public List<ForeignKeyElement> ChildKeys
+        public List<ForeignElement> ChildKeys
         {
             get
             {
@@ -185,7 +169,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the foreign keys which are the parents of this table.
         /// </summary>
-        public List<ForeignKeyElement> ParentKeys
+        public List<ForeignElement> ParentKeys
         {
             get
             {
@@ -204,7 +188,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the primary key on this table.
         /// </summary>
-        public UniqueKeyElement PrimaryKey
+        public UniqueElement PrimaryKey
         {
             get
             {
@@ -222,7 +206,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the unique constraints.
         /// </summary>
-        public List<UniqueKeyElement> UniqueKeys
+        public List<UniqueElement> UniqueKeys
         {
             get
             {
@@ -246,17 +230,6 @@ namespace GammaFour.DataModelGenerator.Common
             get
             {
                 return this.Document as XmlSchemaDocument;
-            }
-        }
-
-        /// <summary>
-        /// Gets the verbs supported by the controller.
-        /// </summary>
-        public IEnumerable<Verb> Verbs
-        {
-            get
-            {
-                return this.verbs;
             }
         }
 

@@ -98,9 +98,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                             SyntaxFactory.IdentifierName("name"))));
 
                 // Initialize the unique index properties.
-                foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
+                foreach (UniqueElement uniqueKeyElement in this.tableElement.UniqueKeys)
                 {
-                    //            this.CountryCodeKey = new UniqueKeyIndex<Country>("CountryCodeKey").HasIndex(c => c.Code);
+                    //            this.CountryCodeKey = new UniqueIndex<Country>("CountryCodeKey").HasIndex(c => c.Code);
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.AssignmentExpression(
@@ -154,7 +154,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 string.Format(
                                                     CultureInfo.InvariantCulture,
-                                                    " Initializes a new instance of the <see cref=\"{0}Collection\"/> class.",
+                                                    $" Initializes a new instance of the <see cref=\"{this.tableElement.Name.ToPlural()}\"/> class.",
                                                     this.tableElement.Name),
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -262,12 +262,12 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         /// </summary>
         /// <param name="uniqueKeyElement">The unique index description.</param>
         /// <returns>Code to initialize a unique index.</returns>
-        private static ExpressionSyntax GetUniqueKeyInitializer(UniqueKeyElement uniqueKeyElement)
+        private static ExpressionSyntax GetUniqueKeyInitializer(UniqueElement uniqueKeyElement)
         {
-            //        new ForeignKeyIndex<Account,Item>("AccountSymbolKey")
+            //        new ForeignIndex<Account,Item>("AccountSymbolKey")
             ExpressionSyntax expressionSyntax = SyntaxFactory.ObjectCreationExpression(
                 SyntaxFactory.GenericName(
-                    SyntaxFactory.Identifier("UniqueKeyIndex"))
+                    SyntaxFactory.Identifier("UniqueIndex"))
                 .WithTypeArgumentList(
                     SyntaxFactory.TypeArgumentList(
                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(

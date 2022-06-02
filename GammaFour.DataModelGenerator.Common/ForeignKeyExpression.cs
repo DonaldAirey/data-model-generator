@@ -2,12 +2,10 @@
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Client
+namespace GammaFour.DataModelGenerator.Common
 {
-    using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -22,14 +20,8 @@ namespace GammaFour.DataModelGenerator.Client
         /// </summary>
         /// <param name="foreignKeyElement">The unique key element.</param>
         /// <returns>An argument that extracts a key from an object.</returns>
-        public static ExpressionSyntax GetForeignKey(ForeignKeyElement foreignKeyElement)
+        public static ExpressionSyntax GetForeignKey(ForeignElement foreignKeyElement)
         {
-            // Validate the parameter
-            if (foreignKeyElement == null)
-            {
-                throw new ArgumentNullException(nameof(foreignKeyElement));
-            }
-
             // Used as a variable when constructing the lambda expression.
             string abbreviation = foreignKeyElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
 
@@ -67,7 +59,7 @@ namespace GammaFour.DataModelGenerator.Client
                         SyntaxFactory.SeparatedList<AnonymousObjectMemberDeclaratorSyntax>(keyElements.ToArray()));
             }
 
-            //            this.BuyerKey = new ForeignKeyIndex<Buyer>("BuyerKey").HasIndex(b => b.BuyerId);
+            //            this.BuyerKey = new ForeignIndex<Buyer>("BuyerKey").HasIndex(b => b.BuyerId);
             return SyntaxFactory.SimpleLambdaExpression(SyntaxFactory.Parameter(SyntaxFactory.Identifier(abbreviation)), syntaxNode);
         }
     }

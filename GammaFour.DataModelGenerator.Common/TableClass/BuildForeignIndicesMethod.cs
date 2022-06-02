@@ -2,7 +2,7 @@
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.TableClass
+namespace GammaFour.DataModelGenerator.Common.TableClass
 {
     using System;
     using System.Collections.Generic;
@@ -110,9 +110,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 // Initialize the foreign index properties.
-                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
+                foreach (ForeignElement foreignKeyElement in this.tableElement.ParentKeys)
                 {
-                    //            this.CountryCodeKey = new UniqueKeyIndex<Country>("CountryCodeKey").HasIndex(c => c.Code);
+                    //            this.CountryCodeKey = new UniqueIndex<Country>("CountryCodeKey").HasIndex(c => c.Code);
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.AssignmentExpression(
@@ -122,6 +122,38 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
                                 BuildForeignIndicesMethod.GetForeignKeyInitializer(foreignKeyElement))));
+
+                    //            this.ForeignIndex.Add(this.AccountAccountCanonMapKey.Name, this.AccountAccountCanonMapKey);
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName("ForeignIndex")),
+                                        SyntaxFactory.IdentifierName("Add")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                            new SyntaxNodeOrToken[]
+                                            {
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.ThisExpression(),
+                                                            SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
+                                                        SyntaxFactory.IdentifierName("Name"))),
+                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName(foreignKeyElement.Name))),
+                                            })))));
                 }
 
                 // This is the syntax for the body of the method.
@@ -134,20 +166,20 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         /// </summary>
         /// <param name="foreignKeyElement">The foreign index description.</param>
         /// <returns>Code to initialize a unique index.</returns>
-        private static ExpressionSyntax GetForeignKeyInitializer(ForeignKeyElement foreignKeyElement)
+        private static ExpressionSyntax GetForeignKeyInitializer(ForeignElement foreignKeyElement)
         {
-            //        new ForeignKeyIndex<Account,Item>("AccountSymbolKey")
+            //        new ForeignIndex<Account,Item>("AccountSymbolKey")
             ExpressionSyntax expressionSyntax = SyntaxFactory.ObjectCreationExpression(
                 SyntaxFactory.GenericName(
-                    SyntaxFactory.Identifier("ForeignKeyIndex"))
+                    SyntaxFactory.Identifier("ForeignIndex"))
                 .WithTypeArgumentList(
                     SyntaxFactory.TypeArgumentList(
                         SyntaxFactory.SeparatedList<TypeSyntax>(
                             new SyntaxNodeOrToken[]
                             {
-                                    SyntaxFactory.IdentifierName(foreignKeyElement.Table.Name),
-                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
                                     SyntaxFactory.IdentifierName(foreignKeyElement.UniqueKey.Table.Name),
+                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                    SyntaxFactory.IdentifierName(foreignKeyElement.Table.Name),
                             }))))
             .WithArgumentList(
                 SyntaxFactory.ArgumentList(
@@ -198,58 +230,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                 SyntaxFactory.Argument(NullableKeyFilterExpression.GetNullableKeyFilter(foreignKeyElement)))));
             }
 
-            // = new UniqueKeyIndex<Security>("SecurityFigiKey").HasIndex(s => s.Figi).HasFilter(s => s.Figi != null);
-            return expressionSyntax;
-        }
-
-        /// <summary>
-        /// Constructs an initializer for a unique index.
-        /// </summary>
-        /// <param name="uniqueKeyElement">The unique index description.</param>
-        /// <returns>Code to initialize a unique index.</returns>
-        private static ExpressionSyntax GetUniqueKeyInitializer(UniqueKeyElement uniqueKeyElement)
-        {
-            //        new ForeignKeyIndex<Account,Item>("AccountSymbolKey")
-            ExpressionSyntax expressionSyntax = SyntaxFactory.ObjectCreationExpression(
-                SyntaxFactory.GenericName(
-                    SyntaxFactory.Identifier("UniqueKeyIndex"))
-                .WithTypeArgumentList(
-                    SyntaxFactory.TypeArgumentList(
-                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                            SyntaxFactory.IdentifierName(uniqueKeyElement.Table.Name)))))
-            .WithArgumentList(
-                SyntaxFactory.ArgumentList(
-                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                        SyntaxFactory.Argument(
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.StringLiteralExpression,
-                                SyntaxFactory.Literal(uniqueKeyElement.Name))))));
-
-            // .HasIndex(a => a.ItemId)
-            expressionSyntax = SyntaxFactory.InvocationExpression(
-                SyntaxFactory.MemberAccessExpression(
-                    SyntaxKind.SimpleMemberAccessExpression,
-                    expressionSyntax,
-                    SyntaxFactory.IdentifierName("HasIndex")))
-             .WithArgumentList(
-                    SyntaxFactory.ArgumentList(
-                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                            SyntaxFactory.Argument(UniqueKeyExpression.GetUniqueKey(uniqueKeyElement)))));
-
-            //  .HasFilter(a => a.Symbol != null)
-            if (uniqueKeyElement.IsNullable)
-            {
-                expressionSyntax = SyntaxFactory.InvocationExpression(
-                    SyntaxFactory.MemberAccessExpression(
-                        SyntaxKind.SimpleMemberAccessExpression,
-                        expressionSyntax,
-                        SyntaxFactory.IdentifierName("HasFilter")))
-                .WithArgumentList(
-                    SyntaxFactory.ArgumentList(
-                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                            SyntaxFactory.Argument(NullableKeyFilterExpression.GetNullableKeyFilter(uniqueKeyElement)))));
-            }
-
+            // = new UniqueIndex("SecurityFigiKey").HasIndex(s => s.Figi).HasFilter(s => s.Figi != null);
             return expressionSyntax;
         }
     }

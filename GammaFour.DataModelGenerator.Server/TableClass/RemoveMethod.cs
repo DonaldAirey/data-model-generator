@@ -195,7 +195,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                         }))))))))));
 
                 // Remove the record to each of the unique key indices on this set.
-                foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
+                foreach (UniqueElement uniqueKeyElement in this.tableElement.UniqueKeys)
                 {
                     //            this.BuyerKey.Remove(buyer);
                     statements.Add(
@@ -216,7 +216,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 }
 
                 // Remove the record to each of the foreign key indices on this set.
-                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
+                foreach (ForeignElement foreignKeyElement in this.tableElement.ParentKeys)
                 {
                     //            this.CountryBuyerCountryIdKey.Remove(buyer);
                     statements.Add(
@@ -263,7 +263,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("deletedCollection")),
+                                    SyntaxFactory.IdentifierName("deletedRows")),
                                 SyntaxFactory.IdentifierName("Insert")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(

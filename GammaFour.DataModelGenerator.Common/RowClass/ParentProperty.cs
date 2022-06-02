@@ -2,7 +2,7 @@
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.RowClass
+namespace GammaFour.DataModelGenerator.Common.RowClass
 {
     using System;
     using System.Collections.Generic;
@@ -19,13 +19,13 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         /// <summary>
         /// The foreign key description.
         /// </summary>
-        private readonly ForeignKeyElement foreignKeyElement;
+        private readonly ForeignElement foreignKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ParentProperty"/> class.
         /// </summary>
         /// <param name="foreignKeyElement">The column schema.</param>
-        public ParentProperty(ForeignKeyElement foreignKeyElement)
+        public ParentProperty(ForeignElement foreignKeyElement)
         {
             // Initialize the object.
             this.foreignKeyElement = foreignKeyElement;
@@ -34,7 +34,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             //        /// <summary>
             //        /// Gets the parent <see cref="Country"/> record.
             //        /// </summary>
-            //        public Country Country < Get >
+            //        public Country Country { get; }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
                 SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Table.Name),
                 SyntaxFactory.Identifier(this.Name))
@@ -171,22 +171,25 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 //                return this.Provinces?.CountryProvinceKey.GetParent(this);
                 statements.Add(
                     SyntaxFactory.ReturnStatement(
-                        SyntaxFactory.ConditionalAccessExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name.ToPlural())),
-                            SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.AsExpression,
+                            SyntaxFactory.ConditionalAccessExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberBindingExpression(
-                                    SyntaxFactory.IdentifierName(this.foreignKeyElement.Name)),
-                                    SyntaxFactory.IdentifierName("GetParent")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.ThisExpression())))))));
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name.ToPlural())),
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.MemberBindingExpression(
+                                            SyntaxFactory.IdentifierName(this.foreignKeyElement.Name)),
+                                        SyntaxFactory.IdentifierName("GetParent")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.ThisExpression()))))),
+                            SyntaxFactory.IdentifierName(this.foreignKeyElement.UniqueKey.Table.Name))));
 
                 //            get
                 //            {

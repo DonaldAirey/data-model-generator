@@ -36,7 +36,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             //        /// Gets the set of <see cref="Fungible"/> records from the shared data model.
             //        /// </summary>
             //        /// <returns>The active set of fungibles.</returns>
-            //        public async Task<IEnumerable<Fungible>> PatchAsync()
+            //        public async Task<IEnumerable<IRow>> PatchAsync()
             //        {
             //            <Body>
             //        }
@@ -51,7 +51,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                             .WithTypeArgumentList(
                                 SyntaxFactory.TypeArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name))))))),
+                                        SyntaxFactory.IdentifierName("IRow"))))))),
                 SyntaxFactory.Identifier("PatchAsync"))
                 .WithModifiers(PatchAsyncMethod.Modifiers)
                 .WithParameterList(this.Parameters)
@@ -357,7 +357,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                         .WithTypeArgumentList(
                             SyntaxFactory.TypeArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name))))));
+                                    SyntaxFactory.IdentifierName("IRow"))))));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters.ToList().OrderBy(p => p.Identifier.Text)));
@@ -374,11 +374,11 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                using (var request = new HttpRequestMessage(HttpMethod.Patch, "rest/modelWeights"))
-                //                using (request.Content = CreateContent(modelWeights))
-                //                using (HttpResponseMessage response = await this.httpClient.SendAsync(request).ConfigureAwait(false))
-                //                {
-                //                }
+                //                                using (var request = new HttpRequestMessage(HttpMethod.Put, "rest/accountCanonMaps"))
+                //                                using (request.Content = new StringContent(JsonConvert.SerializeObject(accountCanonMaps), Encoding.Default, "application/json"))
+                //                                using (HttpResponseMessage response = await this.httpClient.SendAsync(request).ConfigureAwait(false))
+                //                                {
+                //                                }
                 statements.Add(
                     SyntaxFactory.UsingStatement(
                         SyntaxFactory.UsingStatement(
@@ -417,20 +417,43 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                                 SyntaxFactory.Argument(
                                                                     SyntaxFactory.LiteralExpression(
                                                                         SyntaxKind.FalseLiteralExpression))))))))))))
-                        .WithExpression(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("request"),
-                                    SyntaxFactory.IdentifierName("Content")),
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.IdentifierName("CreateContent"))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase().ToPlural()))))))))
+                            .WithExpression(
+                                    SyntaxFactory.AssignmentExpression(
+                                        SyntaxKind.SimpleAssignmentExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.IdentifierName("request"),
+                                            SyntaxFactory.IdentifierName("Content")),
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.IdentifierName("StringContent"))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                    new SyntaxNodeOrToken[]
+                                                    {
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.InvocationExpression(
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxFactory.IdentifierName("JsonConvert"),
+                                                                    SyntaxFactory.IdentifierName("SerializeObject")))
+                                                            .WithArgumentList(
+                                                                SyntaxFactory.ArgumentList(
+                                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                                        SyntaxFactory.Argument(
+                                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase().ToPlural())))))),
+                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.IdentifierName("Encoding"),
+                                                                SyntaxFactory.IdentifierName("Default"))),
+                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.LiteralExpression(
+                                                                SyntaxKind.StringLiteralExpression,
+                                                                SyntaxFactory.Literal("application/json"))),
+                                                    }))))))
                     .WithDeclaration(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(

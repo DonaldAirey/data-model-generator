@@ -75,7 +75,7 @@ namespace GammaFour.DataModelGenerator.Common
             foreach (XElement xElement in uniqueElements)
             {
                 // This creates the unique constraints.
-                rootElement.Add(new UniqueKeyElement(xElement));
+                rootElement.Add(new UniqueElement(xElement));
                 xElement.Remove();
             }
 
@@ -84,7 +84,7 @@ namespace GammaFour.DataModelGenerator.Common
             foreach (XElement xElement in keyRefElements)
             {
                 // This will create the foreign key constraints.
-                rootElement.Add(new ForeignKeyElement(xElement));
+                rootElement.Add(new ForeignElement(xElement));
                 xElement.Remove();
             }
 
@@ -280,11 +280,6 @@ namespace GammaFour.DataModelGenerator.Common
         public static XName ValueName { get; } = XName.Get("value", string.Empty);
 
         /// <summary>
-        /// Gets the Verbs attribute.
-        /// </summary>
-        public static XName VerbsName { get; } = XName.Get("verbs", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
         /// Gets the XPath attribute.
         /// </summary>
         public static XName XPathName { get; } = XName.Get("xpath", string.Empty);
@@ -302,12 +297,12 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the constraint elements.
         /// </summary>
-        public List<ForeignKeyElement> ForeignKeys
+        public List<ForeignElement> ForeignKeys
         {
             get
             {
                 XElement rootElement = this.Root.Element(XmlSchemaDocument.ElementName);
-                return rootElement.Elements(XmlSchemaDocument.KeyrefName).Cast<ForeignKeyElement>().ToList();
+                return rootElement.Elements(XmlSchemaDocument.KeyrefName).Cast<ForeignElement>().ToList();
             }
         }
 
@@ -348,12 +343,12 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the unique key elements.
         /// </summary>
-        public List<UniqueKeyElement> UniqueKeys
+        public List<UniqueElement> UniqueKeys
         {
             get
             {
                 XElement rootElement = this.Root.Element(XmlSchemaDocument.ElementName);
-                return rootElement.Elements(XmlSchemaDocument.UniqueName).Cast<UniqueKeyElement>().ToList();
+                return rootElement.Elements(XmlSchemaDocument.UniqueName).Cast<UniqueElement>().ToList();
             }
         }
 

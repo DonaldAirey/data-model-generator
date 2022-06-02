@@ -236,7 +236,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                     SyntaxFactory.IdentifierName("Enlist")))));
 
                     // Enlist each of the unique key indices
-                    foreach (UniqueKeyElement uniqueKeyElement in tableElement.UniqueKeys)
+                    foreach (UniqueElement uniqueKeyElement in tableElement.UniqueKeys)
                     {
                         //                this.Buyers.BuyerKey.Enlist();
                         statements.Add(
@@ -255,7 +255,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                     }
 
                     // Enlist each of the foreign key indices.
-                    foreach (ForeignKeyElement foreignKeyElement in tableElement.ParentKeys)
+                    foreach (ForeignElement foreignKeyElement in tableElement.ParentKeys)
                     {
                         //                this.Buyers.CountryBuyerCountryIdKey.Enlist();
                         statements.Add(
@@ -274,7 +274,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                     }
                 }
 
-                //                Dictionary<IMergable, IEnumerable<object>> bucket = new Dictionary<IMergable, IEnumerable<object>>();
+                //                Dictionary<ITable, IEnumerable<object>> bucket = new Dictionary<ITable, IEnumerable<object>>();
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
@@ -285,7 +285,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                     SyntaxFactory.SeparatedList<TypeSyntax>(
                                         new SyntaxNodeOrToken[]
                                         {
-                                            SyntaxFactory.IdentifierName("IMergable"),
+                                            SyntaxFactory.IdentifierName("ITable"),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.GenericName(
                                                 SyntaxFactory.Identifier("IEnumerable"))
@@ -309,7 +309,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                     SyntaxFactory.SeparatedList<TypeSyntax>(
                                                         new SyntaxNodeOrToken[]
                                                         {
-                                                            SyntaxFactory.IdentifierName("IMergable"),
+                                                            SyntaxFactory.IdentifierName("ITable"),
                                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                             SyntaxFactory.GenericName(
                                                                 SyntaxFactory.Identifier("IEnumerable"))

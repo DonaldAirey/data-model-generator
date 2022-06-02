@@ -9,6 +9,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
     using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using GammaFour.DataModelGenerator.Common.RowClass;
+    using GammaFour.DataModelGenerator.Common.TableClass;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -72,31 +73,10 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 // A list of base classes or interfaces.
                 List<SyntaxNodeOrToken> baseList = new List<SyntaxNodeOrToken>();
 
-                // IIEnlistmentNotification
+                // IRow
                 baseList.Add(
                     SyntaxFactory.SimpleBaseType(
-                        SyntaxFactory.IdentifierName("IEnlistmentNotification")));
-
-                // ,
-                baseList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
-
-                // ILockable
-                baseList.Add(
-                    SyntaxFactory.SimpleBaseType(
-                        SyntaxFactory.IdentifierName("ILockable")));
-
-                // ,
-                baseList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
-
-                // IVersionable<Buyer>
-                baseList.Add(
-                    SyntaxFactory.SimpleBaseType(
-                        SyntaxFactory.GenericName(
-                            SyntaxFactory.Identifier("IVersionable"))
-                        .WithTypeArgumentList(
-                            SyntaxFactory.TypeArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name))))));
+                        SyntaxFactory.IdentifierName("IRow")));
 
                 return SyntaxFactory.BaseList(
                       SyntaxFactory.SeparatedList<BaseTypeSyntax>(baseList.ToArray()));
@@ -301,7 +281,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             fields.Add(new TableField(this.tableElement));
 
             // Create these fields for each child table.
-            foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ChildKeys)
+            foreach (ForeignElement foreignKeyElement in this.tableElement.ChildKeys)
             {
                 fields.Add(new GetChildrenFunctionField(foreignKeyElement));
             }
@@ -346,9 +326,10 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
+            fields.Add(new ColumnMapField(this.tableElement));
 
             // Create these fields for each child table.
-            foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ChildKeys)
+            foreach (ForeignElement foreignKeyElement in this.tableElement.ChildKeys)
             {
                 fields.Add(new DefaultChildrenField(foreignKeyElement));
             }
@@ -372,17 +353,18 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
+            properties.Add(new IndexProperty(this.tableElement));
             properties.Add(new TableProperty(this.tableElement));
             properties.Add(new RecordStateProperty());
 
             // Create a navigation property to each of the parent collections.
-            foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
+            foreach (ForeignElement foreignKeyElement in this.tableElement.ParentKeys)
             {
                 properties.Add(new ParentProperty(foreignKeyElement));
             }
 
             // Create a navigation property to each of the child records.
-            foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ChildKeys)
+            foreach (ForeignElement foreignKeyElement in this.tableElement.ChildKeys)
             {
                 properties.Add(new ChildrenProperty(foreignKeyElement));
             }

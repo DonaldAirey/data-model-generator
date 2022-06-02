@@ -1,4 +1,4 @@
-﻿// <copyright file="ForeignKeyElement.cs" company="Gamma Four, Inc.">
+﻿// <copyright file="ForeignElement.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,12 +12,12 @@ namespace GammaFour.DataModelGenerator.Common
     /// <summary>
     /// Creates foreign key constraint on a table.
     /// </summary>
-    public class ForeignKeyElement : ConstraintElement
+    public class ForeignElement : ConstraintElement
     {
         /// <summary>
         /// A unique key element.
         /// </summary>
-        private UniqueKeyElement uniqueKeyElement;
+        private UniqueElement uniqueKeyElement;
 
         /// <summary>
         /// The name of the parent table.
@@ -30,10 +30,10 @@ namespace GammaFour.DataModelGenerator.Common
         private string uniqueChildName;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ForeignKeyElement"/> class.
+        /// Initializes a new instance of the <see cref="ForeignElement"/> class.
         /// </summary>
         /// <param name="xElement">The description of the unique constraint.</param>
-        public ForeignKeyElement(XElement xElement)
+        public ForeignElement(XElement xElement)
             : base(xElement)
         {
             // Initialize the object.
@@ -74,7 +74,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the unique key that to whic this foreign key refers.
         /// </summary>
-        public UniqueKeyElement UniqueKey
+        public UniqueElement UniqueKey
         {
             get
             {
@@ -85,7 +85,7 @@ namespace GammaFour.DataModelGenerator.Common
                         this.uniqueKeyElement = (from uk in this.XmlSchemaDocument.UniqueKeys
                                                  where uk.Name == this.Refer
                                                  select uk).SingleOrDefault();
-                        if (this.uniqueKeyElement == default(UniqueKeyElement))
+                        if (this.uniqueKeyElement == default(UniqueElement))
                         {
                             throw new InvalidOperationException($"Foreign key constraint {this.Name} can't find referenced unique key constraint {this.Refer}");
                         }

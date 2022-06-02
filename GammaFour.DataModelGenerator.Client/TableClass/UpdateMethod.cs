@@ -74,7 +74,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            Buyer previousBuyer = buyer.GetVersion(RecordVersion.Previous);
+                //            Buyer previousBuyer = buyer.GetVersion(RecordVersion.Previous) as Buyer;
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
@@ -85,19 +85,22 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                     SyntaxFactory.Identifier($"previous{this.tableElement.Name}"))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.InvocationExpression(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                                                SyntaxFactory.IdentifierName("GetVersion")))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.IdentifierName("RecordVersion"),
-                                                            SyntaxFactory.IdentifierName("Previous"))))))))))));
+                                        SyntaxFactory.BinaryExpression(
+                                            SyntaxKind.AsExpression,
+                                            SyntaxFactory.InvocationExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                                    SyntaxFactory.IdentifierName("GetVersion")))
+                                            .WithArgumentList(
+                                                SyntaxFactory.ArgumentList(
+                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.IdentifierName("RecordVersion"),
+                                                                SyntaxFactory.IdentifierName("Previous")))))),
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name))))))));
 
                 //            object oldKey = this.primaryKeyFunction(previousBuyer);
                 statements.Add(
@@ -173,7 +176,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                         SyntaxFactory.Block(this.UpdatePrimaryKey)));
 
                 // Remove the record to each of the unique key indices on this set.
-                foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
+                foreach (UniqueElement uniqueKeyElement in this.tableElement.UniqueKeys)
                 {
                     //            this.BuyerKey.Remove(buyer);
                     statements.Add(
@@ -194,7 +197,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 }
 
                 // Remove the record to each of the foreign key indices on this set.
-                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
+                foreach (ForeignElement foreignKeyElement in this.tableElement.ParentKeys)
                 {
                     //            this.CountryBuyerCountryIdKey.Remove(buyer);
                     statements.Add(

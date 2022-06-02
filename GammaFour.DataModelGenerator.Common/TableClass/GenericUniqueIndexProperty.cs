@@ -1,8 +1,8 @@
-// <copyright file="UniqueKeyIndexProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="GenericUniqueIndexProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Client.TableClass
+namespace GammaFour.DataModelGenerator.Common.TableClass
 {
     using System;
     using System.Collections.Generic;
@@ -14,18 +14,18 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
     /// <summary>
     /// Creates a unique key for the set.
     /// </summary>
-    public class UniqueKeyIndexProperty : SyntaxElement
+    public class GenericUniqueIndexProperty : SyntaxElement
     {
         /// <summary>
         /// The unique key element.
         /// </summary>
-        private readonly UniqueKeyElement uniqueKeyElement;
+        private readonly UniqueElement uniqueKeyElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UniqueKeyIndexProperty"/> class.
+        /// Initializes a new instance of the <see cref="GenericUniqueIndexProperty"/> class.
         /// </summary>
         /// <param name="uniqueKeyElement">The unique key element.</param>
-        public UniqueKeyIndexProperty(UniqueKeyElement uniqueKeyElement)
+        public GenericUniqueIndexProperty(UniqueElement uniqueKeyElement)
         {
             // Initialize the object.
             this.uniqueKeyElement = uniqueKeyElement;
@@ -34,20 +34,18 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             //        /// <summary>
             //        /// Gets the BuyerExternalId0Key unique index.
             //        /// </summary>
-            //        public UniqueKeyIndex<Buyer> BuyerExternalId0Key { get; } = new UniqueKeyIndex<Buyer>("BuyerExternalId0Key").HasIndex(b => b.ExternalId0);
+            //        public UniqueIndex<Buyer> BuyerExternalId0Key { get; } = new UniqueIndex<Buyer>("BuyerExternalId0Key").HasIndex(b => b.ExternalId0);
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                    SyntaxFactory.GenericName(
-                        SyntaxFactory.Identifier("UniqueKeyIndex"))
-                    .WithTypeArgumentList(
-                        SyntaxFactory.TypeArgumentList(
-                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name)))),
-                    SyntaxFactory.Identifier(this.uniqueKeyElement.Name))
-                .WithModifiers(UniqueKeyIndexProperty.Modifiers)
-                .WithAccessorList(UniqueKeyIndexProperty.AccessorList)
-                .WithInitializer(this.Initializer)
-                .WithLeadingTrivia(this.DocumentationComment)
-                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+                SyntaxFactory.GenericName(
+                    SyntaxFactory.Identifier("UniqueIndex"))
+                .WithTypeArgumentList(
+                    SyntaxFactory.TypeArgumentList(
+                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name)))),
+                SyntaxFactory.Identifier(this.Name))
+                .WithModifiers(GenericUniqueIndexProperty.Modifiers)
+                .WithAccessorList(GenericUniqueIndexProperty.AccessorList)
+            .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
@@ -58,11 +56,21 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 return SyntaxFactory.AccessorList(
-                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
+                    SyntaxFactory.List<AccessorDeclarationSyntax>(
+                        new AccessorDeclarationSyntax[]
+                        {
                         SyntaxFactory.AccessorDeclaration(
                             SyntaxKind.GetAccessorDeclaration)
                         .WithSemicolonToken(
-                            SyntaxFactory.Token(SyntaxKind.SemicolonToken))));
+                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                        SyntaxFactory.AccessorDeclaration(
+                                SyntaxKind.SetAccessorDeclaration)
+                            .WithModifiers(
+                                SyntaxFactory.TokenList(
+                                    SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
+                            .WithSemicolonToken(
+                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                        }));
             }
         }
 
@@ -139,59 +147,6 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the initializer.
-        /// </summary>
-        private EqualsValueClauseSyntax Initializer
-        {
-            get
-            {
-                // .HasIndex(b => b.ExternalId0)
-                // .HasIndex(p => ValueTuple.Create(p.Name, p.CountryCode))
-                InvocationExpressionSyntax invocationExpressionSyntax = SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.ObjectCreationExpression(
-                                SyntaxFactory.GenericName(
-                                    SyntaxFactory.Identifier("UniqueKeyIndex"))
-                                .WithTypeArgumentList(
-                                    SyntaxFactory.TypeArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                            SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name)))))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.StringLiteralExpression,
-                                                SyntaxFactory.Literal(this.uniqueKeyElement.Name)))))),
-                            SyntaxFactory.IdentifierName("HasIndex")))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList(
-                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                SyntaxFactory.Argument(UniqueKeyExpression.GetUniqueKey(this.uniqueKeyElement)))));
-
-                // This allows for unique indices that also allow nulls.
-                // [TODO] make this work on compound nullable indices.
-                if (this.uniqueKeyElement.IsNullable && this.uniqueKeyElement.Columns.Count == 1)
-                {
-                    // .HasFilter(s => s.Figi != null)
-                    invocationExpressionSyntax = SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            invocationExpressionSyntax,
-                            SyntaxFactory.IdentifierName("HasFilter")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(NullableKeyFilterExpression.GetNullableKeyFilter(this.uniqueKeyElement)))));
-                }
-
-                // = new UniqueKeyIndex<Security>("SecurityFigiKey").HasIndex(s => s.Figi).HasFilter(s => s.Figi != null);
-                return SyntaxFactory.EqualsValueClause(invocationExpressionSyntax);
             }
         }
     }

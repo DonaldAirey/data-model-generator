@@ -36,7 +36,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             //    /// <summary>
             //    /// A row of data in the Configuration table.
             //    /// </summary>
-            //    public partial class ConfigurationRow
+            //    public class Account : IRow
             //    {
             //        <Members>
             //    }
@@ -72,15 +72,10 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                 // A list of base classes or interfaces.
                 List<SyntaxNodeOrToken> baseList = new List<SyntaxNodeOrToken>();
 
-                // IVersionable<Buyer>
+                // IVersionable
                 baseList.Add(
                     SyntaxFactory.SimpleBaseType(
-                        SyntaxFactory.GenericName(
-                            SyntaxFactory.Identifier("IVersionable"))
-                        .WithTypeArgumentList(
-                            SyntaxFactory.TypeArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name))))));
+                        SyntaxFactory.IdentifierName("IRow")));
 
                 return SyntaxFactory.BaseList(
                       SyntaxFactory.SeparatedList<BaseTypeSyntax>(baseList.ToArray()));
@@ -250,11 +245,12 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
             fields.Add(new CurrentDataField());
+            fields.Add(new OriginalDataField());
             fields.Add(new PreviousDataField());
             fields.Add(new TableField(this.tableElement));
 
             // Create these fields for each child table.
-            foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ChildKeys)
+            foreach (ForeignElement foreignKeyElement in this.tableElement.ChildKeys)
             {
                 fields.Add(new GetChildrenFunctionField(foreignKeyElement));
             }
@@ -279,6 +275,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>();
             fields.Add(new CloneVersionField(this.tableElement));
+            fields.Add(new ColumnMapField(this.tableElement));
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
@@ -301,7 +298,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             List<SyntaxElement> fields = new List<SyntaxElement>();
 
             // Create these fields for each child table.
-            foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ChildKeys)
+            foreach (ForeignElement foreignKeyElement in this.tableElement.ChildKeys)
             {
                 fields.Add(new DefaultChildrenField(foreignKeyElement));
             }
@@ -327,15 +324,16 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             List<SyntaxElement> properties = new List<SyntaxElement>();
             properties.Add(new TableProperty(this.tableElement));
             properties.Add(new RecordStateProperty());
+            properties.Add(new IndexProperty(this.tableElement));
 
             // Create a navigation property to each of the parent collections.
-            foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
+            foreach (ForeignElement foreignKeyElement in this.tableElement.ParentKeys)
             {
                 properties.Add(new ParentProperty(foreignKeyElement));
             }
 
             // Create a navigation property to each of the child records.
-            foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ChildKeys)
+            foreach (ForeignElement foreignKeyElement in this.tableElement.ChildKeys)
             {
                 properties.Add(new ChildrenProperty(foreignKeyElement));
             }

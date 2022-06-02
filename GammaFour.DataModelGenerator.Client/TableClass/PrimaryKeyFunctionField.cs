@@ -19,13 +19,13 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         /// <summary>
         /// The description of the table.
         /// </summary>
-        private readonly UniqueKeyElement uniqueKeyElement;
+        private readonly UniqueElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PrimaryKeyFunctionField"/> class.
         /// </summary>
         /// <param name="uniqueKeyElement">The table element.</param>
-        public PrimaryKeyFunctionField(UniqueKeyElement uniqueKeyElement)
+        public PrimaryKeyFunctionField(UniqueElement uniqueKeyElement)
         {
             // Initialize the object.
             this.Name = "primaryKeyFunction";

@@ -1,4 +1,4 @@
-// <copyright file="AddMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="AddRowMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,7 +14,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
     /// <summary>
     /// Creates a method to add a record to the set.
     /// </summary>
-    public class AddMethod : SyntaxElement
+    public class AddRowMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -22,19 +22,19 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AddMethod"/> class.
+        /// Initializes a new instance of the <see cref="AddRowMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public AddMethod(TableElement tableElement)
+        public AddRowMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
             this.Name = "Add";
 
             //        /// <summary>
-            //        /// Adds a <see cref="Buyer"/> to the set.
+            //        /// Adds a row to the table.
             //        /// </summary>
-            //        /// <param name="buyer">The buyer to be added.</param>
+            //        /// <param name="buyer">The row to be added.</param>
             //        public void Add(Buyer buyer)
             //        {
             //            <Body>
@@ -42,7 +42,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             this.Syntax = SyntaxFactory.MethodDeclaration(
                     SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                     SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(AddMethod.Modifiers)
+                .WithModifiers(AddRowMethod.Modifiers)
                 .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
@@ -73,34 +73,6 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             {
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            if (buyer == null)
-                //            {
-                //                throw new ArgumentNullException(nameof(buyer));
-                //            }
-                statements.Add(
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.EqualsExpression,
-                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.NullLiteralExpression)),
-                        SyntaxFactory.Block(
-                            SyntaxFactory.SingletonList<StatementSyntax>(
-                                SyntaxFactory.ThrowStatement(
-                                    SyntaxFactory.ObjectCreationExpression(
-                                        SyntaxFactory.IdentifierName("ArgumentNullException"))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.InvocationExpression(
-                                                        SyntaxFactory.IdentifierName("nameof"))
-                                                    .WithArgumentList(
-                                                        SyntaxFactory.ArgumentList(
-                                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))))))))))))));
 
                 //            object key = this.primaryKeyFunction(buyer);
                 statements.Add(
@@ -202,7 +174,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                 })))));
 
                 // Add the record to each of the unique key indices on this set.
-                foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
+                foreach (UniqueElement uniqueKeyElement in this.tableElement.UniqueKeys)
                 {
                     //            this.BuyerKey.Add(buyer);
                     statements.Add(
@@ -223,7 +195,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 }
 
                 // Add the record to each of the foreign key indices on this set.
-                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
+                foreach (ForeignElement foreignKeyElement in this.tableElement.ParentKeys)
                 {
                     //            this.CountryBuyerCountryIdKey.Add(buyer);
                     statements.Add(
@@ -319,7 +291,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Adds a <see cref=\"{this.tableElement.Name}\"/> to the set.",
+                                                $" Adds a row to the table.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -352,7 +324,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <param name=\"{this.tableElement.Name.ToCamelCase()}\">The {this.tableElement.Name.ToCamelCase()} to be added.</param>",
+                                                    $" <param name=\"{this.tableElement.Name.ToCamelCase()}\">The row to be added.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(

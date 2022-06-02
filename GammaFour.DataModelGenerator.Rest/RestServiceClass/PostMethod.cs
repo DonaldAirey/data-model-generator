@@ -546,19 +546,19 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 
                 // We want to find all the relations to parent records in order to pull apart the JSON structure.  We can address different indices
                 // using different parameters in the JSON.
-                Dictionary<ColumnElement, List<UniqueKeyElement>> columnResolutionKeys = new Dictionary<ColumnElement, List<UniqueKeyElement>>();
-                foreach (ForeignKeyElement parentKeyElement in this.tableElement.ParentKeys)
+                Dictionary<ColumnElement, List<UniqueElement>> columnResolutionKeys = new Dictionary<ColumnElement, List<UniqueElement>>();
+                foreach (ForeignElement parentKeyElement in this.tableElement.ParentKeys)
                 {
                     foreach (ColumnReferenceElement columnReferenceElement in parentKeyElement.Columns)
                     {
                         ColumnElement columnElement = columnReferenceElement.Column;
-                        foreach (UniqueKeyElement additionalUniqueKeyElement in parentKeyElement.UniqueKey.Table.UniqueKeys)
+                        foreach (UniqueElement additionalUniqueKeyElement in parentKeyElement.UniqueKey.Table.UniqueKeys)
                         {
                             if (!additionalUniqueKeyElement.IsPrimaryKey)
                             {
-                                if (!columnResolutionKeys.TryGetValue(columnElement, out List<UniqueKeyElement> uniqueKeyElements))
+                                if (!columnResolutionKeys.TryGetValue(columnElement, out List<UniqueElement> uniqueKeyElements))
                                 {
-                                    uniqueKeyElements = new List<UniqueKeyElement>();
+                                    uniqueKeyElements = new List<UniqueElement>();
                                     columnResolutionKeys.Add(columnElement, uniqueKeyElements);
                                 }
 
@@ -574,7 +574,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 foreach (var columnKeyPair in columnResolutionKeys)
                 {
                     ColumnElement columnElement = columnKeyPair.Key;
-                    List<UniqueKeyElement> uniqueKeys = columnKeyPair.Value;
+                    List<UniqueElement> uniqueKeys = columnKeyPair.Value;
 
                     //                using (var lockingTransaction = new LockingTransaction(this.transactionTimeout))
                     //                {
@@ -626,7 +626,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// </summary>
         /// <param name="uniqueKeyElement">The unique key element.</param>
         /// <returns>A block of statements.</returns>
-        private static List<StatementSyntax> FindParentRecord(UniqueKeyElement uniqueKeyElement)
+        private static List<StatementSyntax> FindParentRecord(UniqueElement uniqueKeyElement)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -652,7 +652,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// </summary>
         /// <param name="uniqueKeyElement">The unique constraint element.</param>
         /// <returns>A block of code to lock the record and replace the incoming JSON parameters with data from the record.</returns>
-        private static List<StatementSyntax> TranslateArgument(UniqueKeyElement uniqueKeyElement)
+        private static List<StatementSyntax> TranslateArgument(UniqueElement uniqueKeyElement)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -825,7 +825,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// Gets a block of code.
         /// </summary>
         /// <returns>A block of statements.</returns>
-        private static List<StatementSyntax> ResolveParentRecord(ColumnElement columnElement, List<UniqueKeyElement> uniqueKeys)
+        private static List<StatementSyntax> ResolveParentRecord(ColumnElement columnElement, List<UniqueElement> uniqueKeys)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -888,7 +888,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <param name="columnElement">The column element.</param>
         /// <param name="uniqueKeyElements">The unique key used to resolve the given column.</param>
         /// <returns>A block of statements.</returns>
-        private static List<StatementSyntax> ResolveColumnFromParent(ColumnElement columnElement, List<UniqueKeyElement> uniqueKeyElements)
+        private static List<StatementSyntax> ResolveColumnFromParent(ColumnElement columnElement, List<UniqueElement> uniqueKeyElements)
         {
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
@@ -910,7 +910,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.LiteralExpression(
                                         SyntaxKind.NullLiteralExpression)))))));
 
-            foreach (UniqueKeyElement uniqueKeyElement in uniqueKeyElements)
+            foreach (UniqueElement uniqueKeyElement in uniqueKeyElements)
             {
                 //                var countryCountryCodeKey = jObject.GetValue("countryCountryCodeKey");
                 statements.Add(

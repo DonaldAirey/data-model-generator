@@ -33,7 +33,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             this.Name = "Purge";
 
             //        /// <inheritdoc/>
-            //        public IEnumerable<object> Purge(IEnumerable<object> source)
+            //        public IEnumerable<IRow> Purge(IEnumerable<IRow> source)
             //        {
             //            <Body>
             //        }
@@ -43,8 +43,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 .WithTypeArgumentList(
                     TypeArgumentList(
                         SingletonSeparatedList<TypeSyntax>(
-                            PredefinedType(
-                                Token(SyntaxKind.ObjectKeyword))))),
+                            SyntaxFactory.IdentifierName("IRow")))),
                 Identifier(this.Name))
                 .WithModifiers(PurgeMethod.Modifiers)
                 .WithParameterList(PurgeMethod.Parameters)
@@ -126,8 +125,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                         .WithTypeArgumentList(
                             TypeArgumentList(
                                 SingletonSeparatedList<TypeSyntax>(
-                                    PredefinedType(
-                                        Token(SyntaxKind.ObjectKeyword)))))));
+                                    SyntaxFactory.IdentifierName("IRow"))))));
 
                 // This is the complete parameter specification for this constructor.
                 return ParameterList(SeparatedList<ParameterSyntax>(parameters));
@@ -175,7 +173,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            List<object> residuals = new List<object>();
+                //            List<IRow> residuals = new List<IRow>();
                 statements.Add(
                     LocalDeclarationStatement(
                         VariableDeclaration(
@@ -184,8 +182,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                             .WithTypeArgumentList(
                                 TypeArgumentList(
                                     SingletonSeparatedList<TypeSyntax>(
-                                        PredefinedType(
-                                            Token(SyntaxKind.ObjectKeyword))))))
+                                        SyntaxFactory.IdentifierName("IRow")))))
                         .WithVariables(
                             SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 VariableDeclarator(
@@ -198,8 +195,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                             .WithTypeArgumentList(
                                                 TypeArgumentList(
                                                     SingletonSeparatedList<TypeSyntax>(
-                                                        PredefinedType(
-                                                            Token(SyntaxKind.ObjectKeyword))))))
+                                                        SyntaxFactory.IdentifierName("IRow")))))
                                         .WithArgumentList(
                                             ArgumentList())))))));
 
@@ -234,7 +230,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 // For each parent table, include a check to make sure the parent exists before adding the record.
-                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ChildKeys)
+                foreach (ForeignElement foreignKeyElement in this.tableElement.ChildKeys)
                 {
                     //                if (entity.EntityTreesByChildId.Any())
                     //                {

@@ -32,7 +32,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             this.Name = this.tableElement.Name.ToPlural();
 
             //        /// <summary>
-            //        /// Gets the set of Buyer records.
+            //        /// Gets the <see cref="Fungibles"/> table.
             //        /// </summary>
             //        public BuyerSet Buyers { get; }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
@@ -101,7 +101,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Gets the set of Buyer records.
+                //        /// Gets the <see cref="Fungibles"/> table.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -125,7 +125,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Gets the set of {this.tableElement.Name} records.",
+                                                $" Gets the <see cref=\"{this.tableElement.Name.ToPlural()}\"/> table.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

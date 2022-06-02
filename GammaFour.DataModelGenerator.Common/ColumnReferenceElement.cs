@@ -79,7 +79,7 @@ namespace GammaFour.DataModelGenerator.Common
                 if (this.parentColumn == null)
                 {
                     // If this is a forieng index then return the column in the parent table that corresponds to this column reference.
-                    ForeignKeyElement foreignKeyElement = this.Parent as ForeignKeyElement;
+                    ForeignElement foreignKeyElement = this.Parent as ForeignElement;
                     if (foreignKeyElement != null)
                     {
                         this.parentColumn = foreignKeyElement.UniqueKey.Columns[foreignKeyElement.Columns.IndexOf(this)].Column;

@@ -263,7 +263,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 // For each parent table, include a check to make sure the parent exists before adding the record.
-                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
+                foreach (ForeignElement foreignKeyElement in this.tableElement.ParentKeys)
                 {
                     //                if (!this.CountryBuyerCountryIdKey.HasParent(buyer))
                     //                {
@@ -381,7 +381,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                             SyntaxFactory.IdentifierName("key"))))))))))));
 
                 // Add the record to each of the unique key indices on this set.
-                foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
+                foreach (UniqueElement uniqueKeyElement in this.tableElement.UniqueKeys)
                 {
                     //            this.BuyerKey.Add(buyer);
                     statements.Add(
@@ -402,7 +402,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 }
 
                 // Add the record to each of the foreign key indices on this set.
-                foreach (ForeignKeyElement foreignKeyElement in this.tableElement.ParentKeys)
+                foreach (ForeignElement foreignKeyElement in this.tableElement.ParentKeys)
                 {
                     //            this.CountryBuyerCountryIdKey.Add(buyer);
                     statements.Add(

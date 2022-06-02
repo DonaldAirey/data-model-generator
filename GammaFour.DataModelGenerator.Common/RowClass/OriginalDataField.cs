@@ -1,8 +1,8 @@
-// <copyright file="UniqueKeyIndexProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="OriginalDataField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Client.TableClass
+namespace GammaFour.DataModelGenerator.Common.RowClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,88 +12,44 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a unique key for the set.
+    /// Creates a field to hold the original contents of the record.
     /// </summary>
-    public class UniqueKeyIndexProperty : SyntaxElement
+    public class OriginalDataField : SyntaxElement
     {
         /// <summary>
-        /// The unique key element.
+        /// Initializes a new instance of the <see cref="OriginalDataField"/> class.
         /// </summary>
-        private readonly UniqueKeyElement uniqueKeyElement;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UniqueKeyIndexProperty"/> class.
-        /// </summary>
-        /// <param name="uniqueKeyElement">The unique key element.</param>
-        public UniqueKeyIndexProperty(UniqueKeyElement uniqueKeyElement)
+        public OriginalDataField()
         {
             // Initialize the object.
-            this.uniqueKeyElement = uniqueKeyElement;
-            this.Name = this.uniqueKeyElement.Name;
+            this.Name = "originalData";
 
             //        /// <summary>
-            //        /// Gets the BuyerExternalId0Key unique index.
+            //        /// The original contents of the record.
             //        /// </summary>
-            //        public UniqueKeyIndex<Buyer> BuyerExternalId0Key { get; } = new UniqueKeyIndex<Buyer>("BuyerExternalId0Key").HasIndex(b => b.ExternalId0);
-            this.Syntax = SyntaxFactory.PropertyDeclaration(
-                    SyntaxFactory.GenericName(
-                        SyntaxFactory.Identifier("UniqueKeyIndex"))
-                    .WithTypeArgumentList(
-                        SyntaxFactory.TypeArgumentList(
-                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name)))),
-                    SyntaxFactory.Identifier(this.uniqueKeyElement.Name))
-                .WithModifiers(UniqueKeyIndexProperty.Modifiers)
-                .WithAccessorList(UniqueKeyIndexProperty.AccessorList)
-            .WithLeadingTrivia(this.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the list of accessors.
-        /// </summary>
-        private static AccessorListSyntax AccessorList
-        {
-            get
-            {
-                return SyntaxFactory.AccessorList(
-                    SyntaxFactory.List<AccessorDeclarationSyntax>(
-                        new AccessorDeclarationSyntax[]
-                        {
-                        SyntaxFactory.AccessorDeclaration(
-                            SyntaxKind.GetAccessorDeclaration)
-                        .WithSemicolonToken(
-                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
-                        SyntaxFactory.AccessorDeclaration(
-                                SyntaxKind.SetAccessorDeclaration)
-                            .WithModifiers(
-                                SyntaxFactory.TokenList(
-                                    SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
-                            .WithSemicolonToken(
-                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
-                        }));
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                    });
-            }
+            //        private object[] originalData;
+            this.Syntax = SyntaxFactory.FieldDeclaration(
+                SyntaxFactory.VariableDeclaration(
+                    SyntaxFactory.ArrayType(
+                        SyntaxFactory.PredefinedType(
+                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
+                    .WithRankSpecifiers(
+                        SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
+                            SyntaxFactory.ArrayRankSpecifier(
+                                SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
+                                    SyntaxFactory.OmittedArraySizeExpression())))))
+                    .WithVariables(
+                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                            SyntaxFactory.VariableDeclarator(
+                                SyntaxFactory.Identifier("originalData")))))
+                .WithModifiers(OriginalDataField.Modifiers)
+                .WithLeadingTrivia(OriginalDataField.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -101,7 +57,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Gets the BuyerExternalId0Key unique index.
+                //        /// The original contents of the record.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -125,7 +81,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Gets the {this.uniqueKeyElement.Name} unique index.",
+                                                " The original contents of the record.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -147,6 +103,22 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
+            }
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // private
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                    });
             }
         }
     }

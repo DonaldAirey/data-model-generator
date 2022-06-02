@@ -112,9 +112,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                 SyntaxFactory.Literal(this.tableElement.Name.ToPlural())))));
 
                 // Initialize the unique index properties.
-                foreach (UniqueKeyElement uniqueKeyElement in this.tableElement.UniqueKeys)
+                foreach (UniqueElement uniqueKeyElement in this.tableElement.UniqueKeys)
                 {
-                    //            this.CountryCodeKey = new UniqueKeyIndex<Country>("CountryCodeKey").HasIndex(c => c.Code);
+                    //            this.CountryCodeKey = new UniqueIndex<Country>("CountryCodeKey").HasIndex(c => c.Code);
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.AssignmentExpression(
@@ -123,7 +123,24 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
-                                ConstructorIHttpClientLogger.GetUniqueKeyInitializer(uniqueKeyElement))));
+                                ConstructorIHttpClientLogger.GetUniqueInitializer(uniqueKeyElement))));
+
+                    //            this.Add(this.CountryCodeKey);
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("Add")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName(uniqueKeyElement.Name))))))));
                 }
 
                 // This is the syntax for the body of the constructor.
@@ -280,25 +297,25 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         /// <summary>
         /// Constructs an initializer for a unique index.
         /// </summary>
-        /// <param name="uniqueKeyElement">The unique index description.</param>
+        /// <param name="uniqueElement">The unique index description.</param>
         /// <returns>Code to initialize a unique index.</returns>
-        private static ExpressionSyntax GetUniqueKeyInitializer(UniqueKeyElement uniqueKeyElement)
+        private static ExpressionSyntax GetUniqueInitializer(UniqueElement uniqueElement)
         {
-            //        new ForeignKeyIndex<Account,Item>("AccountSymbolKey")
+            //        new ForeignIndex<Account,Item>("AccountSymbolKey")
             ExpressionSyntax expressionSyntax = SyntaxFactory.ObjectCreationExpression(
-                SyntaxFactory.GenericName(
-                    SyntaxFactory.Identifier("UniqueKeyIndex"))
-                .WithTypeArgumentList(
-                    SyntaxFactory.TypeArgumentList(
-                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                            SyntaxFactory.IdentifierName(uniqueKeyElement.Table.Name)))))
-            .WithArgumentList(
-                SyntaxFactory.ArgumentList(
-                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                        SyntaxFactory.Argument(
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.StringLiteralExpression,
-                                SyntaxFactory.Literal(uniqueKeyElement.Name))))));
+                    SyntaxFactory.GenericName(
+                        SyntaxFactory.Identifier("UniqueIndex"))
+                    .WithTypeArgumentList(
+                        SyntaxFactory.TypeArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                SyntaxFactory.IdentifierName(uniqueElement.Table.Name)))))
+                .WithArgumentList(
+                    SyntaxFactory.ArgumentList(
+                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                            SyntaxFactory.Argument(
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.StringLiteralExpression,
+                                    SyntaxFactory.Literal(uniqueElement.Name))))));
 
             // .HasIndex(a => a.ItemId)
             expressionSyntax = SyntaxFactory.InvocationExpression(
@@ -309,10 +326,10 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
              .WithArgumentList(
                     SyntaxFactory.ArgumentList(
                         SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                            SyntaxFactory.Argument(UniqueKeyExpression.GetUniqueKey(uniqueKeyElement)))));
+                            SyntaxFactory.Argument(UniqueKeyExpression.GetUniqueKey(uniqueElement)))));
 
             //  .HasFilter(a => a.Symbol != null)
-            if (uniqueKeyElement.IsNullable)
+            if (uniqueElement.IsNullable)
             {
                 expressionSyntax = SyntaxFactory.InvocationExpression(
                     SyntaxFactory.MemberAccessExpression(
@@ -322,7 +339,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 .WithArgumentList(
                     SyntaxFactory.ArgumentList(
                         SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                            SyntaxFactory.Argument(NullableKeyFilterExpression.GetNullableKeyFilter(uniqueKeyElement)))));
+                            SyntaxFactory.Argument(NullableKeyFilterExpression.GetNullableKeyFilter(uniqueElement)))));
             }
 
             return expressionSyntax;

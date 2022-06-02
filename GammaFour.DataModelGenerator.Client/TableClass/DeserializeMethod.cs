@@ -1,20 +1,21 @@
-// <copyright file="ConstructorRecordVersion.cs" company="Gamma Four, Inc.">
+// <copyright file="DeserializeMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Client.RowClass
+namespace GammaFour.DataModelGenerator.Client.TableClass
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a constructor.
+    /// Creates a method to add a record to the set.
     /// </summary>
-    public class ConstructorRecordVersion : SyntaxElement
+    public class DeserializeMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -22,28 +23,33 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConstructorRecordVersion"/> class.
+        /// Initializes a new instance of the <see cref="DeserializeMethod"/> class.
         /// </summary>
-        /// <param name="tableElement">The table schema.</param>
-        public ConstructorRecordVersion(TableElement tableElement)
+        /// <param name="tableElement">The unique constraint schema.</param>
+        public DeserializeMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = this.tableElement.Name;
+            this.Name = "Deserialize";
 
             //        /// <summary>
-            //        /// Initializes a new instance of the <see cref="Buyer"/> class.
+            //        /// Deserializes a JSON stream of tokens.
             //        /// </summary>
-            //        /// <param name="data">The data behind the properties.</param>
-            //        private Buyer(object[] data)
-            //        {
-            //             <Body>
-            //        }
-            this.Syntax = SyntaxFactory.ConstructorDeclaration(
-                SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(ConstructorRecordVersion.Modifiers)
-                .WithParameterList(ConstructorRecordVersion.Parameters)
-                .WithBody(this.Body)
+            //        /// <param name="source">The source text.</param>
+            //        /// <returns>The deserialized collection of rows.</returns>
+            //        public IEnumerable<T> Deserialize(string source) => JsonConvert.DeserializeObject<IEnumerable<Region>>(source);
+            this.Syntax = SyntaxFactory.MethodDeclaration(
+                SyntaxFactory.GenericName(
+                    SyntaxFactory.Identifier("IEnumerable"))
+                .WithTypeArgumentList(
+                    SyntaxFactory.TypeArgumentList(
+                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                            SyntaxFactory.IdentifierName("IRow")))),
+                SyntaxFactory.Identifier("Deserialize"))
+                .WithModifiers(DeserializeMethod.Modifiers)
+                .WithParameterList(DeserializeMethod.Parameters)
+                .WithExpressionBody(this.ExpressionBody)
+                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))
                 .WithLeadingTrivia(this.DocumentationComment);
         }
 
@@ -54,11 +60,11 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         {
             get
             {
-                // public
+                // private
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                     });
             }
         }
@@ -73,83 +79,16 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                 // Create a list of parameters from the columns in the unique constraint.
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
 
-                // object[] data
+                // IEnumerable<Fungible> fungibles
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier("data"))
+                        SyntaxFactory.Identifier("source"))
                     .WithType(
-                        SyntaxFactory.ArrayType(
-                            SyntaxFactory.PredefinedType(
-                                SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
-                        .WithRankSpecifiers(
-                            SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
-                                SyntaxFactory.ArrayRankSpecifier(
-                                    SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
-                                        SyntaxFactory.OmittedArraySizeExpression()))))));
+                        SyntaxFactory.PredefinedType(
+                            SyntaxFactory.Token(SyntaxKind.StringKeyword))));
 
                 // This is the complete parameter specification for this constructor.
-                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
-            }
-        }
-
-        /// <summary>
-        /// Gets the body.
-        /// </summary>
-        private BlockSyntax Body
-        {
-            get
-            {
-                // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            this.data = data;
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("currentData")),
-                            SyntaxFactory.IdentifierName("data"))));
-
-                //            this.State = RecordState.Detached;
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("RecordState")),
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("RecordState"),
-                                SyntaxFactory.IdentifierName("Detached")))));
-
-                //            this.getBuyers = () => Country.defaultBuyers;
-                //            this.getProvinces = () => Country.defaultProvinces;
-                //            this.getRegions = () => Country.defaultRegions;
-                foreach (ForeignElement foreignKeyElement in this.tableElement.ChildKeys)
-                {
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName($"get{foreignKeyElement.UniqueChildName}")),
-                                SyntaxFactory.ParenthesizedLambdaExpression(
-                                    SyntaxFactory.ParameterList(),
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name),
-                                        SyntaxFactory.IdentifierName($"Default{foreignKeyElement.UniqueChildName}"))))));
-                }
-
-                // This is the syntax for the body of the constructor.
-                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
+                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters.ToList().OrderBy(p => p.Identifier.Text)));
             }
         }
 
@@ -164,7 +103,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// Initializes a new instance of the <see cref="Buyer"/> class.
+                //        /// Adds a <see cref="Buyer"/> to the set.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -188,7 +127,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Initializes a new instance of the <see cref=\"{this.tableElement.Name}\"/> class.",
+                                                $" Gets the set of <see cref=\"{this.tableElement.Name}\"/> records from the shared data model.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -208,7 +147,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))));
 
-                //        /// <param name="data">The data behind the properties.</param>
+                //        /// <returns>The set of fungibles.</returns>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -221,7 +160,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    " <param name=\"data\">The data behind the properties.</param>",
+                                                    $" <returns>The set of {this.tableElement.Name.ToCamelCase().ToPlural()}.</returns>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -233,6 +172,37 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
+            }
+        }
+
+        /// <summary>
+        /// Gets the body.
+        /// </summary>
+        private ArrowExpressionClauseSyntax ExpressionBody
+        {
+            get
+            {
+                return SyntaxFactory.ArrowExpressionClause(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName("JsonConvert"),
+                            SyntaxFactory.GenericName(
+                                SyntaxFactory.Identifier("DeserializeObject"))
+                            .WithTypeArgumentList(
+                                SyntaxFactory.TypeArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                        SyntaxFactory.GenericName(
+                                            SyntaxFactory.Identifier("IEnumerable"))
+                                        .WithTypeArgumentList(
+                                            SyntaxFactory.TypeArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Name)))))))))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.IdentifierName("source"))))));
             }
         }
     }

@@ -2,7 +2,7 @@
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server
+namespace GammaFour.DataModelGenerator.Common
 {
     using System;
     using System.Globalization;
@@ -20,7 +20,7 @@ namespace GammaFour.DataModelGenerator.Server
         /// </summary>
         /// <param name="uniqueKeyElement">The unique key element.</param>
         /// <returns>An expression that creates a filter for an index.</returns>
-        public static ExpressionSyntax GetNullableKeyFilter(UniqueKeyElement uniqueKeyElement)
+        public static ExpressionSyntax GetNullableKeyFilter(UniqueElement uniqueKeyElement)
         {
             // Used as a variable when constructing the lambda expression.
             string abbreviation = uniqueKeyElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
@@ -58,7 +58,7 @@ namespace GammaFour.DataModelGenerator.Server
                 }
             }
 
-            //            this.BuyerKey = new UniqueKeyIndex<Buyer>("BuyerKey").HasIndex(b => b.BuyerId);
+            //            this.BuyerKey = new UniqueIndex("BuyerKey").HasIndex(b => b.BuyerId);
             return SyntaxFactory.SimpleLambdaExpression(SyntaxFactory.Parameter(SyntaxFactory.Identifier(abbreviation)), syntaxNode);
         }
 
@@ -67,7 +67,7 @@ namespace GammaFour.DataModelGenerator.Server
         /// </summary>
         /// <param name="foreignKeyElement">The unique key element.</param>
         /// <returns>An expression that creates a filter for an index.</returns>
-        public static ExpressionSyntax GetNullableKeyFilter(ForeignKeyElement foreignKeyElement)
+        public static ExpressionSyntax GetNullableKeyFilter(ForeignElement foreignKeyElement)
         {
             // Used as a variable when constructing the lambda expression.
             string abbreviation = foreignKeyElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
@@ -105,7 +105,7 @@ namespace GammaFour.DataModelGenerator.Server
                 }
             }
 
-            //            this.BuyerKey = new UniqueKeyIndex<Buyer>("BuyerKey").HasIndex(b => b.BuyerId);
+            //            this.BuyerKey = new UniqueIndex<Buyer>("BuyerKey").HasIndex(b => b.BuyerId);
             return SyntaxFactory.SimpleLambdaExpression(SyntaxFactory.Parameter(SyntaxFactory.Identifier(abbreviation)), syntaxNode);
         }
     }

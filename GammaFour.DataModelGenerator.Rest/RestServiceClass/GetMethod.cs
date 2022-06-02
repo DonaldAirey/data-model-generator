@@ -19,17 +19,17 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private readonly UniqueKeyElement uniqueKeyElement;
+        private readonly UniqueElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetMethod"/> class.
         /// </summary>
         /// <param name="uniqueKeyElement">The unique constraint schema.</param>
-        public GetMethod(UniqueKeyElement uniqueKeyElement)
+        public GetMethod(UniqueElement uniqueKeyElement)
         {
             // Initialize the object.  Note that we decorate the name of every method that's not the primary key to prevent ambiguous signatures.
             this.uniqueKeyElement = uniqueKeyElement;
-            this.Name = $"Get{this.uniqueKeyElement.Table.Name}" + (uniqueKeyElement.IsPrimaryKey ? string.Empty : "By" + uniqueKeyElement.Name);
+            this.Name = $"Get{this.uniqueKeyElement.Table.Name}";
 
             //        /// <summary>
             //        /// Gets a specific <see cref="Province"/> record.
@@ -140,8 +140,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 // This collects all the attributes.
                 List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
 
-                //        [HttpGet("provinceExternalKey/{name}/{countryCode}")]
-                string literal = this.uniqueKeyElement.Name.ToVariableName();
+                //        [HttpGet("{countryCode}")]
+                string literal = string.Empty;
                 foreach (ColumnReferenceElement columnReferenceElement in this.uniqueKeyElement.Columns)
                 {
                     if (!string.IsNullOrEmpty(literal))
