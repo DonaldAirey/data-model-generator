@@ -21,9 +21,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.OLE.Interop" Version="17.1.32210.191" />
-    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop" Version="17.1.32210.191" />
-    <PackageReference Include="Microsoft.VisualStudio.TextManager.Interop" Version="17.1.32210.191" />
+    <PackageReference Include="Microsoft.VisualStudio.OLE.Interop" Version="17.2.32505.113" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop" Version="17.2.32505.113" />
+    <PackageReference Include="Microsoft.VisualStudio.TextManager.Interop" Version="17.2.32505.113" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
