@@ -308,6 +308,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             methods.Add(new BuildForeignIndicesMethod(this.tableElement));
             methods.Add(new DeleteAsyncMethod(this.tableElement));
             methods.Add(new DeserializeMethod(this.tableElement));
+            methods.Add(new GetAllAsyncMethod(this.tableElement));
+            methods.Add(new GenericGetAllAsyncMethod(this.tableElement));
             methods.Add(new GetAsyncMethod(this.tableElement));
             methods.Add(new GetEnumeratorMethod(this.tableElement));
             methods.Add(new GenericGetEnumeratorMethod(this.tableElement));
