@@ -33,10 +33,10 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             this.Name = "PatchAsync";
 
             //        /// <summary>
-            //        /// Gets the set of <see cref="Fungible"/> records from the shared data model.
+            //        /// Patches a set of <see cref="Fungible"/> records in the shared data model.
             //        /// </summary>
             //        /// <returns>The active set of fungibles.</returns>
-            //        public async Task<IEnumerable<IRow>> PatchAsync()
+            //        public async Task<IEnumerable<AccountGroup>> PatchAsync(IEnumerable<AccountGroup> accountGroups)
             //        {
             //            <Body>
             //        }
@@ -51,8 +51,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                             .WithTypeArgumentList(
                                 SyntaxFactory.TypeArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                        SyntaxFactory.IdentifierName("IRow"))))))),
-                SyntaxFactory.Identifier("PatchAsync"))
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name))))))),
+                SyntaxFactory.Identifier(this.Name))
                 .WithModifiers(PatchAsyncMethod.Modifiers)
                 .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
@@ -88,7 +88,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
 
                 //            catch (Exception exception)
                 //            {
-                //                <HandleDbUpdateException>
+                //                <HandleException>
                 //            }
                 clauses.Add(
                     SyntaxFactory.CatchClause()
@@ -223,7 +223,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Gets the set of <see cref=\"{this.tableElement.Name}\"/> records from the shared data model.",
+                                                $" Patches a set of <see cref=\"{this.tableElement.Name}\"/> records in the shared data model.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -349,7 +349,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
 
                 // IEnumerable<Fungible> fungibles
                 parameters.Add(
-                    SyntaxFactory.Parameter(
+                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase().ToPlural()))
                     .WithType(
                         SyntaxFactory.GenericName(
@@ -357,7 +357,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                         .WithTypeArgumentList(
                             SyntaxFactory.TypeArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName("IRow"))))));
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name))))));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters.ToList().OrderBy(p => p.Identifier.Text)));

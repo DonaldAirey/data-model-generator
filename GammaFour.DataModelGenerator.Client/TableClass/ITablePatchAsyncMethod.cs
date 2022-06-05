@@ -1,4 +1,4 @@
-// <copyright file="PutAsyncMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="ITablePatchAsyncMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -15,7 +15,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
     /// <summary>
     /// Creates a method to add a record to the set.
     /// </summary>
-    public class PutAsyncMethod : SyntaxElement
+    public class ITablePatchAsyncMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -23,20 +23,20 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PutAsyncMethod"/> class.
+        /// Initializes a new instance of the <see cref="ITablePatchAsyncMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public PutAsyncMethod(TableElement tableElement)
+        public ITablePatchAsyncMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = "PutAsync";
+            this.Name = "PatchAsync";
 
             //        /// <summary>
             //        /// Gets the set of <see cref="Fungible"/> records from the shared data model.
             //        /// </summary>
             //        /// <returns>The active set of fungibles.</returns>
-            //        public async Task<Fungible> PutAsync(Fungible fungible)
+            //        async Task<IEnumerable<IRow>> ITable.PatchAsync(IEnumerable<IRow> rows)
             //        {
             //            <Body>
             //        }
@@ -46,9 +46,17 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 .WithTypeArgumentList(
                     SyntaxFactory.TypeArgumentList(
                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                            SyntaxFactory.IdentifierName(this.tableElement.Name)))),
+                            SyntaxFactory.GenericName(
+                                SyntaxFactory.Identifier("IEnumerable"))
+                            .WithTypeArgumentList(
+                                SyntaxFactory.TypeArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                        SyntaxFactory.IdentifierName("IRow"))))))),
                 SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(PutAsyncMethod.Modifiers)
+                .WithModifiers(ITablePatchAsyncMethod.Modifiers)
+                .WithExplicitInterfaceSpecifier(
+                    SyntaxFactory.ExplicitInterfaceSpecifier(
+                        SyntaxFactory.IdentifierName("ITable")))
                 .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
@@ -65,7 +73,6 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                         SyntaxFactory.Token(SyntaxKind.AsyncKeyword),
                     });
             }
@@ -83,7 +90,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
 
                 //            catch (Exception exception)
                 //            {
-                //                <HandleDbUpdateException>
+                //                <HandleException>
                 //            }
                 clauses.Add(
                     SyntaxFactory.CatchClause()
@@ -109,7 +116,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                logger.LogError(exception, "Error while processing {table}.PutAsync() from {host}", "AccountCanonMap", this.httpClient.BaseAddress);
+                //                logger.LogError(exception, "Error while processing {table}.ITablePatchAsync() from {host}", "AccountCanonMap", this.httpClient.BaseAddress);
                 statements.Add(
                      SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -128,7 +135,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.LiteralExpression(
                                                 SyntaxKind.StringLiteralExpression,
-                                                SyntaxFactory.Literal("Error while processing {table}.PutAsync() from {host}"))),
+                                                SyntaxFactory.Literal("Error while processing {table}.ITablePatchAsync() from {host}"))),
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.LiteralExpression(
@@ -218,7 +225,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Puts the <see cref=\"{this.tableElement.Name}\"/> records into the shared data model.",
+                                                $" Patches a set of <see cref=\"{this.tableElement.Name}\"/> records in the shared data model.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -238,7 +245,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))));
 
-                //        /// <returns>The realized <see cref="Account"/> record.</returns>
+                //        /// <returns>The set of fungibles.</returns>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -251,7 +258,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <returns>The realized <see cref=\"{this.tableElement.Name}\"/> record.</returns>",
+                                                    $" <returns>The set of {this.tableElement.Name.ToCamelCase().ToPlural()}.</returns>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -285,7 +292,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                 SyntaxFactory.IdentifierName("response"),
                                 SyntaxFactory.IdentifierName("EnsureSuccessStatusCode")))));
 
-                //                    return JsonConvert.DeserializeObject<ModelWeight>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                //                    return JsonConvert.DeserializeObject<List<ModelWeight>>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
                 statements.Add(
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
@@ -297,7 +304,12 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                 .WithTypeArgumentList(
                                     SyntaxFactory.TypeArgumentList(
                                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name))))))
+                                            SyntaxFactory.GenericName(
+                                                SyntaxFactory.Identifier("List"))
+                                            .WithTypeArgumentList(
+                                                SyntaxFactory.TypeArgumentList(
+                                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                        SyntaxFactory.IdentifierName(this.tableElement.Name)))))))))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
@@ -337,12 +349,17 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 // Create a list of parameters from the columns in the unique constraint.
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
 
-                // Fungible fungible
+                // IEnumerable<IRow> rows
                 parameters.Add(
-                    SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()))
+                     SyntaxFactory.Parameter(
+                        SyntaxFactory.Identifier("rows"))
                     .WithType(
-                        SyntaxFactory.IdentifierName(this.tableElement.Name)));
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("IEnumerable"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                    SyntaxFactory.IdentifierName("IRow"))))));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters.ToList().OrderBy(p => p.Identifier.Text)));
@@ -359,47 +376,11 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                // The URI for the POST verb contains the specification of the primary key.
-                // $"rest/accountGroups/{provinceId}/{regionId}"
-                List<InterpolatedStringContentSyntax> interpolatedStringContentSyntax = new List<InterpolatedStringContentSyntax>();
-                interpolatedStringContentSyntax.Add(
-                    SyntaxFactory.InterpolatedStringText()
-                    .WithTextToken(
-                        SyntaxFactory.Token(
-                            SyntaxFactory.TriviaList(),
-                            SyntaxKind.InterpolatedStringTextToken,
-                            $"rest/{this.tableElement.Name.ToCamelCase().ToPlural()}/",
-                            $"rest/{this.tableElement.Name.ToCamelCase().ToPlural()}/",
-                            SyntaxFactory.TriviaList())));
-                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
-                {
-                    if (interpolatedStringContentSyntax.Count > 1)
-                    {
-                        interpolatedStringContentSyntax.Add(
-                            SyntaxFactory.InterpolatedStringText()
-                            .WithTextToken(
-                                SyntaxFactory.Token(
-                                    SyntaxFactory.TriviaList(),
-                                    SyntaxKind.InterpolatedStringTextToken,
-                                    "/",
-                                    "/",
-                                    SyntaxFactory.TriviaList())));
-                    }
-
-                    interpolatedStringContentSyntax.Add(
-                        SyntaxFactory.Interpolation(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                                SyntaxFactory.IdentifierName(columnReferenceElement.Column.Name))));
-                }
-
-                //                using (var request = new HttpRequestMessage(HttpMethod.Put, $"rest/accountGroups/{row["AccountGroupId"]}"))
-                //                using (request.Content = new StringContent(JsonConvert.SerializeObject(row), Encoding.Default, "application/json"))
-                //                using (HttpResponseMessage response = await this.httpClient.SendAsync(request).ConfigureAwait(false))
-                //                {
-                //                    <HandleResultsBlock>
-                //                }
+                //                                using (var request = new HttpRequestMessage(HttpMethod.Put, "rest/accountCanonMaps"))
+                //                                using (request.Content = new StringContent(JsonConvert.SerializeObject(rows), Encoding.Default, "application/json"))
+                //                                using (HttpResponseMessage response = await this.httpClient.SendAsync(request).ConfigureAwait(false))
+                //                                {
+                //                                }
                 statements.Add(
                     SyntaxFactory.UsingStatement(
                         SyntaxFactory.UsingStatement(
@@ -438,43 +419,43 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                                 SyntaxFactory.Argument(
                                                                     SyntaxFactory.LiteralExpression(
                                                                         SyntaxKind.FalseLiteralExpression))))))))))))
-                        .WithExpression(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("request"),
-                                    SyntaxFactory.IdentifierName("Content")),
-                                SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.IdentifierName("StringContent"))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                            new SyntaxNodeOrToken[]
-                                            {
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.InvocationExpression(
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.IdentifierName("JsonConvert"),
-                                                            SyntaxFactory.IdentifierName("SerializeObject")))
-                                                    .WithArgumentList(
-                                                        SyntaxFactory.ArgumentList(
-                                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))),
-                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.IdentifierName("Encoding"),
-                                                        SyntaxFactory.IdentifierName("Default"))),
-                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.LiteralExpression(
-                                                        SyntaxKind.StringLiteralExpression,
-                                                        SyntaxFactory.Literal("application/json"))),
-                                            }))))))
+                            .WithExpression(
+                                    SyntaxFactory.AssignmentExpression(
+                                        SyntaxKind.SimpleAssignmentExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.IdentifierName("request"),
+                                            SyntaxFactory.IdentifierName("Content")),
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.IdentifierName("StringContent"))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                    new SyntaxNodeOrToken[]
+                                                    {
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.InvocationExpression(
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxFactory.IdentifierName("JsonConvert"),
+                                                                    SyntaxFactory.IdentifierName("SerializeObject")))
+                                                            .WithArgumentList(
+                                                                SyntaxFactory.ArgumentList(
+                                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                                        SyntaxFactory.Argument(
+                                                                            SyntaxFactory.IdentifierName("rows")))))),
+                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.IdentifierName("Encoding"),
+                                                                SyntaxFactory.IdentifierName("Default"))),
+                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.LiteralExpression(
+                                                                SyntaxKind.StringLiteralExpression,
+                                                                SyntaxFactory.Literal("application/json"))),
+                                                    }))))))
                     .WithDeclaration(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(
@@ -501,14 +482,12 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.IdentifierName("HttpMethod"),
-                                                                SyntaxFactory.IdentifierName("Put"))),
+                                                                SyntaxFactory.IdentifierName("Patch"))),
                                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                         SyntaxFactory.Argument(
-                                                            SyntaxFactory.InterpolatedStringExpression(
-                                                                SyntaxFactory.Token(SyntaxKind.InterpolatedStringStartToken))
-                                                            .WithContents(
-                                                                SyntaxFactory.List<InterpolatedStringContentSyntax>(
-                                                                    interpolatedStringContentSyntax.ToArray()))),
+                                                            SyntaxFactory.LiteralExpression(
+                                                                SyntaxKind.StringLiteralExpression,
+                                                                SyntaxFactory.Literal($"rest/{this.tableElement.Name.ToCamelCase().ToPlural()}"))),
                                                     })))))))));
 
                 // This is the complete block.
