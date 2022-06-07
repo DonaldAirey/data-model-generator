@@ -43,7 +43,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             //    /// <summary>
             //    /// The Configuration table.
             //    /// </summary>
-            //    public partial class ConfigurationTable : IEnumerable<ConfigurationRow>
+            //    public partial class ConfigurationTable : ITable, IEnumerable<Account>
             //    {
             //        <Members>
             //    }
@@ -83,6 +83,19 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 baseList.Add(
                     SyntaxFactory.SimpleBaseType(
                         SyntaxFactory.IdentifierName("ITable")));
+
+                // ,
+                baseList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+
+                // IEnuerator<Account>
+                baseList.Add(
+                    SyntaxFactory.SimpleBaseType(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("IEnumerable"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name))))));
 
                 return SyntaxFactory.BaseList(
                       SyntaxFactory.SeparatedList<BaseTypeSyntax>(baseList.ToArray()));

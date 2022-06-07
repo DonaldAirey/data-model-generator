@@ -477,10 +477,15 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                     new SyntaxNodeOrToken[]
                                                     {
                                                         SyntaxFactory.Argument(
-                                                            SyntaxFactory.MemberAccessExpression(
-                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.IdentifierName("HttpMethod"),
-                                                                SyntaxFactory.IdentifierName("Patch"))),
+                                                            SyntaxFactory.ObjectCreationExpression(
+                                                                SyntaxFactory.IdentifierName("HttpMethod"))
+                                                            .WithArgumentList(
+                                                                SyntaxFactory.ArgumentList(
+                                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                                        SyntaxFactory.Argument(
+                                                                            SyntaxFactory.LiteralExpression(
+                                                                                SyntaxKind.StringLiteralExpression,
+                                                                                SyntaxFactory.Literal("Patch"))))))),
                                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                         SyntaxFactory.Argument(
                                                             SyntaxFactory.LiteralExpression(
