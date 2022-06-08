@@ -1,4 +1,4 @@
-// <copyright file="MergeMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="MergeBucketMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -15,7 +15,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
     /// <summary>
     /// Creates a method to merge a record.
     /// </summary>
-    public class MergeMethod : SyntaxElement
+    public class MergeBucketMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -23,28 +23,32 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MergeMethod"/> class.
+        /// Initializes a new instance of the <see cref="MergeBucketMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public MergeMethod(TableElement tableElement)
+        public MergeBucketMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = "Merge";
+            this.Name = "MergeBucket";
 
             //        /// <inheritdoc/>
-            //        public void Merge(IEnumerable<IRow> source)
+            //        public IEnumerable<IRow> Merge(IEnumerable<IRow> source)
             //        {
             //            <Body>
             //        }
-            this.Syntax = SyntaxFactory.MethodDeclaration(
-                SyntaxFactory.PredefinedType(
-                    SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
-                SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(MergeMethod.Modifiers)
-                .WithParameterList(MergeMethod.Parameters)
+            this.Syntax = MethodDeclaration(
+                GenericName(
+                    Identifier("IEnumerable"))
+                .WithTypeArgumentList(
+                    TypeArgumentList(
+                        SingletonSeparatedList<TypeSyntax>(
+                            SyntaxFactory.IdentifierName("IRow")))),
+                Identifier(this.Name))
+                .WithModifiers(MergeBucketMethod.Modifiers)
+                .WithParameterList(MergeBucketMethod.Parameters)
                 .WithBody(this.Body)
-                .WithLeadingTrivia(MergeMethod.DocumentationComment);
+                .WithLeadingTrivia(MergeBucketMethod.DocumentationComment);
         }
 
         /// <summary>
@@ -96,7 +100,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 return TokenList(
                     new[]
                     {
-                        Token(SyntaxKind.PublicKeyword),
+                        Token(SyntaxKind.InternalKeyword),
                     });
             }
         }
@@ -206,29 +210,10 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                         IdentifierName("source"),
                         Block(this.ProcessRecord)));
 
-                //            if (residuals.Any())
-                //            {
-                //                throw new InvalidOperationException("Unable to merge results to Accounts table");
-                //            }
+                //            return residuals;
                 statements.Add(
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("residuals"),
-                                SyntaxFactory.IdentifierName("Any"))),
-                        SyntaxFactory.Block(
-                            SyntaxFactory.SingletonList<StatementSyntax>(
-                                SyntaxFactory.ThrowStatement(
-                                    SyntaxFactory.ObjectCreationExpression(
-                                        SyntaxFactory.IdentifierName("InvalidOperationException"))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.LiteralExpression(
-                                                        SyntaxKind.StringLiteralExpression,
-                                                        SyntaxFactory.Literal($"Unable to merge results to {this.tableElement.Name.ToPlural()} table")))))))))));
+                    ReturnStatement(
+                        IdentifierName("residuals")));
 
                 // This is the syntax for the body of the method.
                 return Block(List<StatementSyntax>(statements));

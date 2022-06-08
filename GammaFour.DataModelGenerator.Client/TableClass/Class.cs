@@ -274,6 +274,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
+            methods.Add(new MergeBucketMethod(this.tableElement));
+            methods.Add(new PurgeBucketMethod(this.tableElement));
             methods.Add(new OnRecordChangingMethod(this.tableElement));
 
             // Alphabetize and add the methods as members of the class.

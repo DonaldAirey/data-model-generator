@@ -132,116 +132,6 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         }
 
         /// <summary>
-        /// Gets the 'empty the merge buckets' code.
-        /// </summary>
-        private static List<StatementSyntax> EmptyMergeBuckets
-        {
-            get
-            {
-                // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                foreach (ITable table in mergeBuckets.Keys.ToList())
-                //                {
-                //                    mergeBuckets[table] = table.Merge(mergeBuckets[table]);
-                //                }
-                statements.Add(
-                    ForEachStatement(
-                        IdentifierName("ITable"),
-                        Identifier("table"),
-                        InvocationExpression(
-                            MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    IdentifierName("mergeBuckets"),
-                                    IdentifierName("Keys")),
-                                IdentifierName("ToList"))),
-                        Block(MergeMethod.MergeBucket)));
-
-                // This is the syntax for the body of the method.
-                return statements;
-            }
-        }
-
-        /// <summary>
-        /// Gets generate code to empty the purge buckets.
-        /// </summary>
-        private static List<StatementSyntax> EmptyPurgeBuckets
-        {
-            get
-            {
-                // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                foreach (ITable table in mergeBuckets.Keys.ToList())
-                //                {
-                //                    <PurgeBucket>
-                //                }
-                statements.Add(
-                    ForEachStatement(
-                        IdentifierName("ITable"),
-                        Identifier("table"),
-                        InvocationExpression(
-                            MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    IdentifierName("purgeBuckets"),
-                                    IdentifierName("Keys")),
-                                IdentifierName("ToList"))),
-                        Block(MergeMethod.PurgeBucket)));
-
-                // This is the syntax for the body of the method.
-                return statements;
-            }
-        }
-
-        /// <summary>
-        /// Gets generate code to merge a bucket.
-        /// </summary>
-        private static List<StatementSyntax> MergeBucket
-        {
-            get
-            {
-                // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                    mergeBuckets[table] = table.Merge(mergeBuckets[table]);
-                statements.Add(
-                    ExpressionStatement(
-                        AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            ElementAccessExpression(
-                                IdentifierName("mergeBuckets"))
-                            .WithArgumentList(
-                                BracketedArgumentList(
-                                    SingletonSeparatedList<ArgumentSyntax>(
-                                        Argument(
-                                            IdentifierName("table"))))),
-                            InvocationExpression(
-                                MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    IdentifierName("table"),
-                                    IdentifierName("Merge")))
-                            .WithArgumentList(
-                                ArgumentList(
-                                    SingletonSeparatedList<ArgumentSyntax>(
-                                        Argument(
-                                            ElementAccessExpression(
-                                                IdentifierName("mergeBuckets"))
-                                            .WithArgumentList(
-                                                BracketedArgumentList(
-                                                    SingletonSeparatedList<ArgumentSyntax>(
-                                                        Argument(
-                                                            IdentifierName("table"))))))))))));
-
-                // This is the syntax for the body of the method.
-                return statements;
-            }
-        }
-
-        /// <summary>
         /// Gets the modifiers.
         /// </summary>
         private static SyntaxTokenList Modifiers
@@ -276,50 +166,6 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
 
                 // This is the complete parameter specification for this constructor.
                 return ParameterList(SeparatedList<ParameterSyntax>(parameters));
-            }
-        }
-
-        /// <summary>
-        /// Gets generate code to purge a bucket.
-        /// </summary>
-        private static List<StatementSyntax> PurgeBucket
-        {
-            get
-            {
-                // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                    purgeBuckets[table] = table.Purge(purgeBuckets[table]);
-                statements.Add(
-                    ExpressionStatement(
-                        AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            ElementAccessExpression(
-                                IdentifierName("purgeBuckets"))
-                            .WithArgumentList(
-                                BracketedArgumentList(
-                                    SingletonSeparatedList<ArgumentSyntax>(
-                                        Argument(
-                                            IdentifierName("table"))))),
-                            InvocationExpression(
-                                MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    IdentifierName("table"),
-                                    IdentifierName("Purge")))
-                            .WithArgumentList(
-                                ArgumentList(
-                                    SingletonSeparatedList<ArgumentSyntax>(
-                                        Argument(
-                                            ElementAccessExpression(
-                                                IdentifierName("purgeBuckets"))
-                                            .WithArgumentList(
-                                                BracketedArgumentList(
-                                                    SingletonSeparatedList<ArgumentSyntax>(
-                                                        Argument(
-                                                            IdentifierName("table"))))))))))));
-
-                // This is the syntax for the body of the method.
-                return statements;
             }
         }
 
@@ -437,48 +283,38 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                             SyntaxKind.NumericLiteralExpression,
                                             SyntaxFactory.Literal(0))))))));
 
-                //            while (mergeBuckets.Values.Where(v => v.Any()).Any() && count++ < 10)
+                //            while (mergeBuckets.Values.Where(v => v.Any()).Any())
                 //            {
                 //                <EmptyMergeBuckets>
                 //            }
                 statements.Add(
                     SyntaxFactory.WhileStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.LogicalAndExpression,
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("mergeBuckets"),
-                                                SyntaxFactory.IdentifierName("Values")),
-                                            SyntaxFactory.IdentifierName("Where")))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.SimpleLambdaExpression(
-                                                        SyntaxFactory.Parameter(
-                                                            SyntaxFactory.Identifier("v")))
-                                                    .WithExpressionBody(
-                                                        SyntaxFactory.InvocationExpression(
-                                                            SyntaxFactory.MemberAccessExpression(
-                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.IdentifierName("v"),
-                                                                SyntaxFactory.IdentifierName("Any")))))))),
-                                    SyntaxFactory.IdentifierName("Any"))),
-                            SyntaxFactory.BinaryExpression(
-                                SyntaxKind.LessThanExpression,
-                                SyntaxFactory.PostfixUnaryExpression(
-                                    SyntaxKind.PostIncrementExpression,
-                                    SyntaxFactory.IdentifierName("count")),
-                                SyntaxFactory.LiteralExpression(
-                                    SyntaxKind.NumericLiteralExpression,
-                                    SyntaxFactory.Literal(10)))),
-                        SyntaxFactory.Block(MergeMethod.EmptyMergeBuckets)));
+                                            SyntaxFactory.IdentifierName("mergeBuckets"),
+                                            SyntaxFactory.IdentifierName("Values")),
+                                        SyntaxFactory.IdentifierName("Where")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.SimpleLambdaExpression(
+                                                    SyntaxFactory.Parameter(
+                                                        SyntaxFactory.Identifier("v")))
+                                                .WithExpressionBody(
+                                                    SyntaxFactory.InvocationExpression(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.IdentifierName("v"),
+                                                            SyntaxFactory.IdentifierName("Any")))))))),
+                                SyntaxFactory.IdentifierName("Any"))),
+                        SyntaxFactory.Block(this.EmptyMergeBuckets)));
 
                 //            Dictionary<ITable, IEnumerable<IRow>> purgeBuckets = new Dictionary<ITable, IEnumerable<IRow>>();
                 statements.Add(
@@ -528,9 +364,9 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
 
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
-                    //            JToken deletedAccountsToken = jObject["deletedAccounts"];
-                    //            JToken deletedCanonsToken = jObject["deletedCanons"];
-                    //            JToken deletedEntitiesToken = jObject["deletedEntities"];
+                    //            JToken deletedAccountsToken = jObject["purgedAccounts"];
+                    //            JToken deletedCanonsToken = jObject["purgedCanons"];
+                    //            JToken deletedEntitiesToken = jObject["purgedEntities"];
                     statements.Add(
                         LocalDeclarationStatement(
                             VariableDeclaration(
@@ -538,7 +374,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                             .WithVariables(
                                 SingletonSeparatedList<VariableDeclaratorSyntax>(
                                     VariableDeclarator(
-                                        Identifier($"deleted{tableElement.Name.ToPlural()}Token"))
+                                        Identifier($"purged{tableElement.Name.ToPlural()}Token"))
                                     .WithInitializer(
                                         EqualsValueClause(
                                             ElementAccessExpression(
@@ -549,7 +385,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                         Argument(
                                                             LiteralExpression(
                                                                 SyntaxKind.StringLiteralExpression,
-                                                                Literal($"deleted{tableElement.Name.ToPlural()}"))))))))))));
+                                                                Literal($"purged{tableElement.Name.ToPlural()}"))))))))))));
                 }
 
                 //            if (deletedAccountsToken != null)
@@ -562,11 +398,21 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                         IfStatement(
                             BinaryExpression(
                                 SyntaxKind.NotEqualsExpression,
-                                IdentifierName($"deleted{tableElement.Name.ToPlural()}Token"),
+                                IdentifierName($"purged{tableElement.Name.ToPlural()}Token"),
                                 LiteralExpression(
                                     SyntaxKind.NullLiteralExpression)),
                             Block(MergeMethod.GetPurgeTable(tableElement))));
                 }
+
+                //            count = 0;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.IdentifierName("count"),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NumericLiteralExpression,
+                                SyntaxFactory.Literal(0)))));
 
                 //            while (purgeBuckets.Values.Where(v => v.Any()).Any())
                 //            {
@@ -598,10 +444,144 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                             IdentifierName("v"),
                                                             IdentifierName("Any")))))))),
                                 IdentifierName("Any"))),
-                        Block(MergeMethod.EmptyPurgeBuckets)));
+                        Block(this.EmptyPurgeBuckets)));
 
                 // This is the syntax for the body of the method.
                 return Block(List<StatementSyntax>(statements));
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'empty the merge buckets' code.
+        /// </summary>
+        private List<StatementSyntax> EmptyMergeBuckets
+        {
+            get
+            {
+                // The elements of the body are added to this collection as they are assembled.
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                // Merge each of the tables explicitly.
+                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
+                {
+                    //                if (mergeBuckets.ContainsKey(this.Accounts))
+                    //                {
+                    //                    <MergeBucket>
+                    //                }
+                    statements.Add(
+                        SyntaxFactory.IfStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("mergeBuckets"),
+                                    SyntaxFactory.IdentifierName("ContainsKey")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))),
+                            SyntaxFactory.Block(this.MergeBucket(tableElement))));
+                }
+
+                //                if (count++ > 8)
+                //                {
+                //                    throw new InvalidOperationException("Unable to merge results");
+                //                }
+                statements.Add(
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.GreaterThanExpression,
+                            SyntaxFactory.PostfixUnaryExpression(
+                                SyntaxKind.PostIncrementExpression,
+                                SyntaxFactory.IdentifierName("count")),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NumericLiteralExpression,
+                                SyntaxFactory.Literal(8))),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ThrowStatement(
+                                    SyntaxFactory.ObjectCreationExpression(
+                                        SyntaxFactory.IdentifierName("InvalidOperationException"))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        SyntaxKind.StringLiteralExpression,
+                                                        SyntaxFactory.Literal("Unable to merge results")))))))))));
+
+                // This is the syntax for the body of the method.
+                return statements;
+            }
+        }
+
+        /// <summary>
+        /// Gets generate code to empty the purge buckets.
+        /// </summary>
+        private List<StatementSyntax> EmptyPurgeBuckets
+        {
+            get
+            {
+                // The elements of the body are added to this collection as they are assembled.
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                // Purge each of the tables explicitly.
+                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
+                {
+                    //                if (purgeBuckets.ContainsKey(this.Accounts))
+                    //                {
+                    //                    <PurgeBucket>
+                    //                }
+                    statements.Add(
+                        SyntaxFactory.IfStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("purgeBuckets"),
+                                    SyntaxFactory.IdentifierName("ContainsKey")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))),
+                            SyntaxFactory.Block(this.PurgeBucket(tableElement))));
+                }
+
+                //                if (count++ > 8)
+                //                {
+                //                    throw new InvalidOperationException("Unable to merge results");
+                //                }
+                statements.Add(
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.GreaterThanExpression,
+                            SyntaxFactory.PostfixUnaryExpression(
+                                SyntaxKind.PostIncrementExpression,
+                                SyntaxFactory.IdentifierName("count")),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NumericLiteralExpression,
+                                SyntaxFactory.Literal(8))),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ThrowStatement(
+                                    SyntaxFactory.ObjectCreationExpression(
+                                        SyntaxFactory.IdentifierName("InvalidOperationException"))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        SyntaxKind.StringLiteralExpression,
+                                                        SyntaxFactory.Literal("Unable to purge results")))))))))));
+
+                // This is the syntax for the body of the method.
+                return statements;
             }
         }
 
@@ -640,7 +620,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     ThisExpression(),
                                                     IdentifierName(tableElement.Name.ToPlural())),
-                                                IdentifierName("Merge")))
+                                                IdentifierName("MergeBucket")))
                                         .WithArgumentList(
                                             ArgumentList(
                                                 SingletonSeparatedList<ArgumentSyntax>(
@@ -701,7 +681,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     ThisExpression(),
                                                     IdentifierName(tableElement.Name.ToPlural())),
-                                                IdentifierName("Purge")))
+                                                IdentifierName("PurgeBucket")))
                                         .WithArgumentList(
                                             ArgumentList(
                                                 SingletonSeparatedList<ArgumentSyntax>(
@@ -709,7 +689,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                         InvocationExpression(
                                                             MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                                IdentifierName($"deleted{tableElement.Name.ToPlural()}Token"),
+                                                                IdentifierName($"purged{tableElement.Name.ToPlural()}Token"),
                                                                 GenericName(
                                                                     Identifier("ToObject"))
                                                                 .WithTypeArgumentList(
@@ -722,6 +702,184 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                                                     SingletonSeparatedList<TypeSyntax>(
                                                                                         IdentifierName(tableElement.Name)))))))))))))),
                                 })))));
+
+            // This is the syntax for the body of the method.
+            return statements;
+        }
+
+        /// <summary>
+        /// Gets the 'empty the merge buckets' code.
+        /// </summary>
+        private List<StatementSyntax> MergeBucket(TableElement tableElement)
+        {
+            // The elements of the body are added to this collection as they are assembled.
+            List<StatementSyntax> statements = new List<StatementSyntax>();
+
+            //                    mergeBuckets[this.Accounts] = this.Accounts.MergeBucket(mergeBuckets[this.Accounts]);
+            statements.Add(
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.AssignmentExpression(
+                        SyntaxKind.SimpleAssignmentExpression,
+                        SyntaxFactory.ElementAccessExpression(
+                            SyntaxFactory.IdentifierName("mergeBuckets"))
+                        .WithArgumentList(
+                            SyntaxFactory.BracketedArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))),
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
+                                SyntaxFactory.IdentifierName("MergeBucket")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.ElementAccessExpression(
+                                            SyntaxFactory.IdentifierName("mergeBuckets"))
+                                        .WithArgumentList(
+                                            SyntaxFactory.BracketedArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.ThisExpression(),
+                                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))))))))));
+
+            //                    if (!mergeBuckets[this.Accounts].Any())
+            //                    {
+            //                        mergeBuckets.Remove(this.Accounts);
+            //                    }
+            statements.Add(
+                SyntaxFactory.IfStatement(
+                    SyntaxFactory.PrefixUnaryExpression(
+                        SyntaxKind.LogicalNotExpression,
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ElementAccessExpression(
+                                    SyntaxFactory.IdentifierName("mergeBuckets"))
+                                .WithArgumentList(
+                                    SyntaxFactory.BracketedArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))),
+                                SyntaxFactory.IdentifierName("Any")))),
+                    SyntaxFactory.Block(
+                        SyntaxFactory.SingletonList<StatementSyntax>(
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName("mergeBuckets"),
+                                        SyntaxFactory.IdentifierName("Remove")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))))))));
+
+            // This is the syntax for the body of the method.
+            return statements;
+        }
+
+        /// <summary>
+        /// Gets the 'empty the purge buckets' code.
+        /// </summary>
+        private List<StatementSyntax> PurgeBucket(TableElement tableElement)
+        {
+            // The elements of the body are added to this collection as they are assembled.
+            List<StatementSyntax> statements = new List<StatementSyntax>();
+
+            //                    purgeBuckets[this.Accounts] = this.Accounts.PurgeBucket(purgeBuckets[this.Accounts]);
+            statements.Add(
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.AssignmentExpression(
+                        SyntaxKind.SimpleAssignmentExpression,
+                        SyntaxFactory.ElementAccessExpression(
+                            SyntaxFactory.IdentifierName("purgeBuckets"))
+                        .WithArgumentList(
+                            SyntaxFactory.BracketedArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))),
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
+                                SyntaxFactory.IdentifierName("PurgeBucket")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.ElementAccessExpression(
+                                            SyntaxFactory.IdentifierName("purgeBuckets"))
+                                        .WithArgumentList(
+                                            SyntaxFactory.BracketedArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.ThisExpression(),
+                                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))))))))));
+
+            //                    if (!purgeBuckets[this.Accounts].Any())
+            //                    {
+            //                        purgeBuckets.Remove(this.Accounts);
+            //                    }
+            statements.Add(
+                SyntaxFactory.IfStatement(
+                    SyntaxFactory.PrefixUnaryExpression(
+                        SyntaxKind.LogicalNotExpression,
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ElementAccessExpression(
+                                    SyntaxFactory.IdentifierName("purgeBuckets"))
+                                .WithArgumentList(
+                                    SyntaxFactory.BracketedArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))),
+                                SyntaxFactory.IdentifierName("Any")))),
+                    SyntaxFactory.Block(
+                        SyntaxFactory.SingletonList<StatementSyntax>(
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName("purgeBuckets"),
+                                        SyntaxFactory.IdentifierName("Remove")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))))))));
 
             // This is the syntax for the body of the method.
             return statements;

@@ -1,4 +1,4 @@
-// <copyright file="MergeMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="PurgeBucketMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -15,7 +15,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
     /// <summary>
     /// Creates a method to merge a record.
     /// </summary>
-    public class MergeMethod : SyntaxElement
+    public class PurgeBucketMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -23,28 +23,32 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MergeMethod"/> class.
+        /// Initializes a new instance of the <see cref="PurgeBucketMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public MergeMethod(TableElement tableElement)
+        public PurgeBucketMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = "Merge";
+            this.Name = "PurgeBucket";
 
             //        /// <inheritdoc/>
-            //        public void Merge(IEnumerable<IRow> source)
+            //        internal IEnumerable<IRow> PurgeBucket(IEnumerable<IRow> source)
             //        {
             //            <Body>
             //        }
-            this.Syntax = SyntaxFactory.MethodDeclaration(
-                SyntaxFactory.PredefinedType(
-                    SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
-                SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(MergeMethod.Modifiers)
-                .WithParameterList(MergeMethod.Parameters)
+            this.Syntax = MethodDeclaration(
+                GenericName(
+                    Identifier("IEnumerable"))
+                .WithTypeArgumentList(
+                    TypeArgumentList(
+                        SingletonSeparatedList<TypeSyntax>(
+                            SyntaxFactory.IdentifierName("IRow")))),
+                Identifier(this.Name))
+                .WithModifiers(PurgeBucketMethod.Modifiers)
+                .WithParameterList(PurgeBucketMethod.Parameters)
                 .WithBody(this.Body)
-                .WithLeadingTrivia(MergeMethod.DocumentationComment);
+                .WithLeadingTrivia(PurgeBucketMethod.DocumentationComment);
         }
 
         /// <summary>
@@ -96,7 +100,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 return TokenList(
                     new[]
                     {
-                        Token(SyntaxKind.PublicKeyword),
+                        Token(SyntaxKind.InternalKeyword),
                     });
             }
         }
@@ -137,7 +141,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             {
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                    residuals.Add(newBuyer);
+                //                    residuals.Add(buyer);
                 statements.Add(
                     ExpressionStatement(
                         InvocationExpression(
@@ -149,7 +153,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                             ArgumentList(
                                 SingletonSeparatedList<ArgumentSyntax>(
                                     Argument(
-                                        IdentifierName($"new{this.tableElement.Name}")))))));
+                                        IdentifierName($"old{this.tableElement.Name}")))))));
 
                 //                    continue;
                 statements.Add(
@@ -195,40 +199,21 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                         .WithArgumentList(
                                             ArgumentList())))))));
 
-                //            foreach (Buyer newBuyer in source)
+                //            foreach (Buyer oldBuyer in source)
                 //            {
                 //                 <ProcessRecord>
                 //            }
                 statements.Add(
                     ForEachStatement(
                         IdentifierName(this.tableElement.Name),
-                        Identifier($"new{this.tableElement.Name}"),
+                        Identifier($"old{this.tableElement.Name}"),
                         IdentifierName("source"),
                         Block(this.ProcessRecord)));
 
-                //            if (residuals.Any())
-                //            {
-                //                throw new InvalidOperationException("Unable to merge results to Accounts table");
-                //            }
+                //            return residuals;
                 statements.Add(
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("residuals"),
-                                SyntaxFactory.IdentifierName("Any"))),
-                        SyntaxFactory.Block(
-                            SyntaxFactory.SingletonList<StatementSyntax>(
-                                SyntaxFactory.ThrowStatement(
-                                    SyntaxFactory.ObjectCreationExpression(
-                                        SyntaxFactory.IdentifierName("InvalidOperationException"))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.LiteralExpression(
-                                                        SyntaxKind.StringLiteralExpression,
-                                                        SyntaxFactory.Literal($"Unable to merge results to {this.tableElement.Name.ToPlural()} table")))))))))));
+                    ReturnStatement(
+                        IdentifierName("residuals")));
 
                 // This is the syntax for the body of the method.
                 return Block(List<StatementSyntax>(statements));
@@ -236,30 +221,47 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         }
 
         /// <summary>
-        /// Gets the statements checks to see if the parent record exists.
+        /// Gets the statements checks to check to see if there are child records and remove if not.
         /// </summary>
-        private List<StatementSyntax> AddRecord
+        private List<StatementSyntax> CheckAndRemove
         {
             get
             {
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                this.Add(buyer = newBuyer);
+                // For each parent table, include a check to make sure the parent exists before adding the record.
+                foreach (ForeignElement foreignKeyElement in this.tableElement.ChildKeys)
+                {
+                    //                if (entity.EntityTreesByChildId.Any())
+                    //                {
+                    //                    <AddRecordToResiduals>
+                    //                }
+                    statements.Add(
+                        IfStatement(
+                            InvocationExpression(
+                                MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                        IdentifierName(foreignKeyElement.UniqueChildName)),
+                                    IdentifierName("Any"))),
+                            Block(this.AddRecordToResiduals)));
+                }
+
+                //                this.Remove(proposedOrder);
                 statements.Add(
-                    ExpressionStatement(
-                        InvocationExpression(
-                            MemberAccessExpression(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                ThisExpression(),
-                                IdentifierName("Add")))
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("Remove")))
                         .WithArgumentList(
-                            ArgumentList(
-                                SingletonSeparatedList<ArgumentSyntax>(
-                                    Argument(
-                                        AssignmentExpression(
-                                            SyntaxKind.SimpleAssignmentExpression,
-                                            IdentifierName(this.tableElement.Name.ToVariableName()),
-                                            IdentifierName($"new{this.tableElement.Name}"))))))));
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
 
                 return statements;
             }
@@ -274,100 +276,52 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             {
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                // For each parent table, include a check to make sure the parent exists before adding the record.
-                foreach (ForeignElement foreignKeyElement in this.tableElement.ParentKeys)
-                {
-                    //                if (!this.CountryBuyerCountryIdKey.HasParent(newBuyer))
-                    //                {
-                    //                    <AddRecordToResiduals>
-                    //                }
-                    statements.Add(
-                        IfStatement(
-                            PrefixUnaryExpression(
-                                SyntaxKind.LogicalNotExpression,
-                                InvocationExpression(
-                                    MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            ThisExpression(),
-                                            IdentifierName(foreignKeyElement.Name)),
-                                        IdentifierName("HasParent")))
-                                .WithArgumentList(
-                                    ArgumentList(
-                                        SingletonSeparatedList<ArgumentSyntax>(
-                                            Argument(
-                                                IdentifierName($"new{this.tableElement.Name}")))))),
-                            Block(this.AddRecordToResiduals)));
-                }
-
-                //            object key = this.primaryKeyFunction(buyer);
+                //                ProposedOrder proposedOrder = this.PortfolioDataModel.ProposedOrders.ProposedOrderKey.Find(oldProposedOrder.ProposedOrderId);
                 statements.Add(
-                    LocalDeclarationStatement(
-                    VariableDeclaration(
-                        PredefinedType(
-                            Token(SyntaxKind.ObjectKeyword)))
-                    .WithVariables(
-                        SingletonSeparatedList<VariableDeclaratorSyntax>(
-                            VariableDeclarator(
-                                Identifier("key"))
-                            .WithInitializer(
-                                EqualsValueClause(
-                                    InvocationExpression(
-                                        MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            ThisExpression(),
-                                            IdentifierName("primaryKeyFunction")))
-                                    .WithArgumentList(
-                                        ArgumentList(
-                                            SingletonSeparatedList<ArgumentSyntax>(
-                                                Argument(
-                                                    IdentifierName($"new{this.tableElement.Name}")))))))))));
-
-                //                Entity entity = this.EntityKey.Find(key);
-                statements.Add(
-                    LocalDeclarationStatement(
-                        VariableDeclaration(
-                            IdentifierName(this.tableElement.Name))
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(this.tableElement.Name))
                         .WithVariables(
-                            SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                VariableDeclarator(
-                                    Identifier(this.tableElement.Name.ToVariableName()))
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()))
                                 .WithInitializer(
-                                    EqualsValueClause(
-                                        InvocationExpression(
-                                            MemberAccessExpression(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                MemberAccessExpression(
+                                                SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                    ThisExpression(),
-                                                    IdentifierName(this.tableElement.PrimaryKey.Name)),
-                                                IdentifierName("Find")))
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.ThisExpression(),
+                                                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
+                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
+                                                    SyntaxFactory.IdentifierName(this.tableElement.PrimaryKey.Name)),
+                                                SyntaxFactory.IdentifierName("Find")))
                                         .WithArgumentList(
-                                            ArgumentList(
-                                                SingletonSeparatedList<ArgumentSyntax>(
-                                                    Argument(
-                                                        IdentifierName("key")))))))))));
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.IdentifierName($"old{this.tableElement.Name}"),
+                                                            SyntaxFactory.IdentifierName(this.tableElement.PrimaryKey.Columns[0].Column.Name))))))))))));
 
-                //                if (entity == null)
+                //                if (proposedOrder != null)
                 //                {
-                //                    <AddRecord>
-                //                }
-                //                else
-                //                {
-                //                    <UpdateRecord>
+                //                    <CheckAndRemove>
                 //                }
                 statements.Add(
-                    IfStatement(
-                        BinaryExpression(
-                            SyntaxKind.EqualsExpression,
-                            IdentifierName(this.tableElement.Name.ToVariableName()),
-                            LiteralExpression(
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                            SyntaxFactory.LiteralExpression(
                                 SyntaxKind.NullLiteralExpression)),
-                        Block(this.AddRecord))
-                    .WithElse(
-                        ElseClause(
-                            Block(this.UpdateRecord))));
+                        SyntaxFactory.Block(this.CheckAndRemove)));
 
                 //                if (entity.RowVersion > this.AlertDataModel.RowVersion)
                 //                {
@@ -379,7 +333,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                             SyntaxKind.GreaterThanExpression,
                             MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                IdentifierName(this.tableElement.Name.ToVariableName()),
+                                IdentifierName($"old{this.tableElement.Name}"),
                                 IdentifierName("RowVersion")),
                             MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -389,52 +343,6 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                     IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
                                 IdentifierName("RowVersion"))),
                         Block(this.UpdateRowVersion)));
-
-                return statements;
-            }
-        }
-
-        /// <summary>
-        /// Gets the statements checks to see if the parent record exists.
-        /// </summary>
-        private List<StatementSyntax> UpdateRecord
-        {
-            get
-            {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                        account.AccountTypeCode = newAccount.AccountTypeCode;
-                //                        account.Mnemonic = newAccount.Mnemonic;
-                foreach (ColumnElement columnElement in this.tableElement.Columns)
-                {
-                    //                        account.AccountTypeCode = newAccount.AccountTypeCode;
-                    statements.Add(
-                        ExpressionStatement(
-                            AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    IdentifierName(this.tableElement.Name.ToVariableName()),
-                                    IdentifierName(columnElement.Name)),
-                                MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    IdentifierName($"new{this.tableElement.Name}"),
-                                    IdentifierName(columnElement.Name)))));
-                }
-
-                //                this.Update(buyer);
-                statements.Add(
-                    ExpressionStatement(
-                        InvocationExpression(
-                            MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                ThisExpression(),
-                                IdentifierName("Update")))
-                        .WithArgumentList(
-                            ArgumentList(
-                                SingletonSeparatedList<ArgumentSyntax>(
-                                    Argument(
-                                        IdentifierName(this.tableElement.Name.ToVariableName())))))));
 
                 return statements;
             }
@@ -463,7 +371,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                 IdentifierName("RowVersion")),
                             MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                IdentifierName(this.tableElement.Name.ToVariableName()),
+                                IdentifierName($"old{this.tableElement.Name}"),
                                 IdentifierName("RowVersion")))));
 
                 return statements;

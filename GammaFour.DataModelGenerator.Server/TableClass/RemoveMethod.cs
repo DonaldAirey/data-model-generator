@@ -254,7 +254,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                         SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
                                     SyntaxFactory.IdentifierName("IncrementRowVersion"))))));
 
-                //            this.deletedCollection.Insert(0, (DateTime.Now, alert));
+                //            this.purgedRows.Insert(0, (DateTime.Now, alert));
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -263,7 +263,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("deletedRows")),
+                                    SyntaxFactory.IdentifierName("purgedRows")),
                                 SyntaxFactory.IdentifierName("Insert")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(

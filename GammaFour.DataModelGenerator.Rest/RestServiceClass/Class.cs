@@ -250,8 +250,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             List<SyntaxElement> methods = new List<SyntaxElement>();
 
             // Generate support for the HTTP verbs.
+            methods.Add(new DeleteOneMethod(this.tableElement));
             methods.Add(new DeleteMethod(this.tableElement));
-            methods.Add(new DeleteRangeMethod(this.tableElement));
             methods.Add(new GetAllMethod(this.tableElement));
             methods.Add(new GetMethod(this.tableElement.PrimaryKey));
             methods.Add(new PostMethod(this.tableElement));

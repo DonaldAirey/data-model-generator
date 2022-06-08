@@ -240,7 +240,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             List<SyntaxElement> fields = new List<SyntaxElement>();
             fields.Add(new PrimaryKeyFunctionField(this.tableElement.PrimaryKey));
             fields.Add(new CollectionField(this.tableElement));
-            fields.Add(new DeletedRowsField(this.tableElement));
+            fields.Add(new PurgedRowsField(this.tableElement));
             fields.Add(new UndoStackField());
 
             // Create an indexer for new records on all auto-increment columns.
@@ -272,7 +272,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
             properties.Add(new DataModelProperty(this.tableElement.XmlSchemaDocument));
-            properties.Add(new DeletedItemsProperty(this.tableElement));
+            properties.Add(new PurgedRowsProperty(this.tableElement));
             properties.Add(new ForeignIndexProperty());
             properties.Add(new NameProperty());
             properties.Add(new UniqueIndexProperty());

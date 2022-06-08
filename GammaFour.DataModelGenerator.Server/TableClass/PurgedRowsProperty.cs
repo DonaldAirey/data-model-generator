@@ -1,4 +1,4 @@
-// <copyright file="DeletedRowsField.cs" company="Gamma Four, Inc.">
+// <copyright file="PurgedRowsProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,9 +12,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field to hold the current contents of the record.
+    /// Creates a field that holds the column.
     /// </summary>
-    public class DeletedRowsField : SyntaxElement
+    public class PurgedRowsProperty : SyntaxElement
     {
         /// <summary>
         /// The description of the table.
@@ -22,21 +22,20 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DeletedRowsField"/> class.
+        /// Initializes a new instance of the <see cref="PurgedRowsProperty"/> class.
         /// </summary>
         /// <param name="tableElement">The table element.</param>
-        public DeletedRowsField(TableElement tableElement)
+        public PurgedRowsProperty(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = "deletedRows";
+            this.Name = "PurgedRows";
 
             //        /// <summary>
-            //        /// The collection of deleted records.
+            //        /// Gets the collection of deleted records.
             //        /// </summary>
-            //        private List<ValueTuple<DateTime, Alert>> deletedTable = new List<ValueTuple<DateTime, Alert>>();
-            this.Syntax = SyntaxFactory.FieldDeclaration(
-                SyntaxFactory.VariableDeclaration(
+            //        public List<ValueTuple<DateTime, Alert>> Deleted => this.purgedRows;
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
                     SyntaxFactory.GenericName(
                         SyntaxFactory.Identifier("List"))
                     .WithTypeArgumentList(
@@ -52,14 +51,12 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.IdentifierName("DateTime"),
                                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                 SyntaxFactory.IdentifierName(this.tableElement.Name),
-                                            })))))))
-                .WithVariables(
-                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                        SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier(this.Name))
-                            .WithInitializer(this.Initializer))))
-                .WithModifiers(DeletedRowsField.Modifiers)
-                .WithLeadingTrivia(DeletedRowsField.DocumentationComment);
+                                            })))))),
+                    SyntaxFactory.Identifier(this.Name))
+                .WithModifiers(PurgedRowsProperty.Modifiers)
+                .WithExpressionBody(PurgedRowsProperty.ExpressionBody)
+                .WithLeadingTrivia(PurgedRowsProperty.DocumentationComment)
+                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
         }
 
         /// <summary>
@@ -73,7 +70,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// The collection of deleted records.
+                //        /// Gets the collection of deleted records.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -97,7 +94,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " The collection of deleted records.",
+                                                $" Gets the collection of deleted records.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -123,49 +120,33 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         }
 
         /// <summary>
+        /// Gets the initializer.
+        /// </summary>
+        private static ArrowExpressionClauseSyntax ExpressionBody
+        {
+            get
+            {
+                return SyntaxFactory.ArrowExpressionClause(
+                    SyntaxFactory.MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        SyntaxFactory.ThisExpression(),
+                        SyntaxFactory.IdentifierName("purgedRows")));
+            }
+        }
+
+        /// <summary>
         /// Gets the modifiers.
         /// </summary>
         private static SyntaxTokenList Modifiers
         {
             get
             {
-                // private
+                // public
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                     });
-            }
-        }
-
-        /// <summary>
-        /// Gets the initializer.
-        /// </summary>
-        private EqualsValueClauseSyntax Initializer
-        {
-            get
-            {
-                // = new List<ValueTuple<DateTime, Alert>>();
-                return SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.ObjectCreationExpression(
-                        SyntaxFactory.GenericName(
-                            SyntaxFactory.Identifier("List"))
-                        .WithTypeArgumentList(
-                            SyntaxFactory.TypeArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.GenericName(
-                                        SyntaxFactory.Identifier("ValueTuple"))
-                                    .WithTypeArgumentList(
-                                        SyntaxFactory.TypeArgumentList(
-                                            SyntaxFactory.SeparatedList<TypeSyntax>(
-                                                new SyntaxNodeOrToken[]
-                                                {
-                                                    SyntaxFactory.IdentifierName("DateTime"),
-                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                    SyntaxFactory.IdentifierName(this.tableElement.Name),
-                                                })))))))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList()));
             }
         }
     }

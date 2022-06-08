@@ -33,18 +33,14 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             this.Name = "Purge";
 
             //        /// <inheritdoc/>
-            //        public IEnumerable<IRow> Purge(IEnumerable<IRow> source)
+            //        public void Purge(IEnumerable<IRow> source)
             //        {
             //            <Body>
             //        }
-            this.Syntax = MethodDeclaration(
-                GenericName(
-                    Identifier("IEnumerable"))
-                .WithTypeArgumentList(
-                    TypeArgumentList(
-                        SingletonSeparatedList<TypeSyntax>(
-                            SyntaxFactory.IdentifierName("IRow")))),
-                Identifier(this.Name))
+            this.Syntax = SyntaxFactory.MethodDeclaration(
+                SyntaxFactory.PredefinedType(
+                    SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
+                SyntaxFactory.Identifier(this.Name))
                 .WithModifiers(PurgeMethod.Modifiers)
                 .WithParameterList(PurgeMethod.Parameters)
                 .WithBody(this.Body)
@@ -209,11 +205,6 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                         Identifier($"old{this.tableElement.Name}"),
                         IdentifierName("source"),
                         Block(this.ProcessRecord)));
-
-                //            return residuals;
-                statements.Add(
-                    ReturnStatement(
-                        IdentifierName("residuals")));
 
                 // This is the syntax for the body of the method.
                 return Block(List<StatementSyntax>(statements));
