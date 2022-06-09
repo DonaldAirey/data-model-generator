@@ -331,6 +331,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             methods.Add(new ITablePatchAsyncMethod(this.tableElement));
             methods.Add(new ITablePostAsyncMethod(this.tableElement));
             methods.Add(new ITablePutAsyncMethod(this.tableElement));
+            methods.Add(new MergeOneMethod(this.tableElement));
             methods.Add(new MergeMethod(this.tableElement));
             methods.Add(new PatchAsyncMethod(this.tableElement));
             methods.Add(new PostAsyncMethod(this.tableElement));

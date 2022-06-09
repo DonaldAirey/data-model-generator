@@ -1,4 +1,4 @@
-// <copyright file="MergeMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="MergeOneMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -15,7 +15,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
     /// <summary>
     /// Creates a method to merge a record.
     /// </summary>
-    public class MergeMethod : SyntaxElement
+    public class MergeOneMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -23,17 +23,17 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MergeMethod"/> class.
+        /// Initializes a new instance of the <see cref="MergeOneMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public MergeMethod(TableElement tableElement)
+        public MergeOneMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
             this.Name = "Merge";
 
             //        /// <inheritdoc/>
-            //        public void Merge(IEnumerable<IRow> rows)
+            //        public void Merge(IRow row)
             //        {
             //            <Body>
             //        }
@@ -41,10 +41,10 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 SyntaxFactory.PredefinedType(
                     SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                 SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(MergeMethod.Modifiers)
-                .WithParameterList(MergeMethod.Parameters)
+                .WithModifiers(MergeOneMethod.Modifiers)
+                .WithParameterList(MergeOneMethod.Parameters)
                 .WithBody(this.Body)
-                .WithLeadingTrivia(MergeMethod.DocumentationComment);
+                .WithLeadingTrivia(MergeOneMethod.DocumentationComment);
         }
 
         /// <summary>
@@ -111,17 +111,12 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 // Create a list of parameters.
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
 
-                // IEnumerable<IRow> rows
+                // IRow row
                 parameters.Add(
                     Parameter(
-                        Identifier("rows"))
+                        Identifier("row"))
                     .WithType(
-                        GenericName(
-                            Identifier("IEnumerable"))
-                        .WithTypeArgumentList(
-                            TypeArgumentList(
-                                SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName("IRow"))))));
+                        SyntaxFactory.IdentifierName("IRow")));
 
                 // This is the complete parameter specification for this constructor.
                 return ParameterList(SeparatedList<ParameterSyntax>(parameters));
@@ -138,60 +133,21 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            foreach (Buyer newBuyer in source)
-                //            {
-                //                 <ProcessRecord>
-                //            }
+                //            RuleArgument newRuleArgument = row as RuleArgument;
                 statements.Add(
-                    ForEachStatement(
-                        IdentifierName(this.tableElement.Name),
-                        Identifier($"new{this.tableElement.Name}"),
-                        IdentifierName("rows"),
-                        Block(this.ProcessRecord)));
-
-                // This is the syntax for the body of the method.
-                return Block(List<StatementSyntax>(statements));
-            }
-        }
-
-        /// <summary>
-        /// Gets the statements checks to see if the parent record exists.
-        /// </summary>
-        private List<StatementSyntax> AddRecord
-        {
-            get
-            {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                this.Add(buyer = newBuyer);
-                statements.Add(
-                    ExpressionStatement(
-                        InvocationExpression(
-                            MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                ThisExpression(),
-                                IdentifierName("Add")))
-                        .WithArgumentList(
-                            ArgumentList(
-                                SingletonSeparatedList<ArgumentSyntax>(
-                                    Argument(
-                                        AssignmentExpression(
-                                            SyntaxKind.SimpleAssignmentExpression,
-                                            IdentifierName(this.tableElement.Name.ToVariableName()),
-                                            IdentifierName($"new{this.tableElement.Name}"))))))));
-
-                return statements;
-            }
-        }
-
-        /// <summary>
-        /// Gets the statements checks to see if the parent record exists.
-        /// </summary>
-        private List<StatementSyntax> ProcessRecord
-        {
-            get
-            {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(this.tableElement.Name))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier($"new{this.tableElement.Name}"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.BinaryExpression(
+                                            SyntaxKind.AsExpression,
+                                            SyntaxFactory.IdentifierName("row"),
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name))))))));
 
                 // For each parent table, include a check to make sure the parent exists before adding the record.
                 foreach (ForeignElement foreignKeyElement in this.tableElement.ParentKeys)
@@ -319,6 +275,37 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                     IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
                                 IdentifierName("RowVersion"))),
                         Block(this.UpdateRowVersion)));
+
+                // This is the syntax for the body of the method.
+                return Block(List<StatementSyntax>(statements));
+            }
+        }
+
+        /// <summary>
+        /// Gets the statements checks to see if the parent record exists.
+        /// </summary>
+        private List<StatementSyntax> AddRecord
+        {
+            get
+            {
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //                this.Add(buyer = newBuyer);
+                statements.Add(
+                    ExpressionStatement(
+                        InvocationExpression(
+                            MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                ThisExpression(),
+                                IdentifierName("Add")))
+                        .WithArgumentList(
+                            ArgumentList(
+                                SingletonSeparatedList<ArgumentSyntax>(
+                                    Argument(
+                                        AssignmentExpression(
+                                            SyntaxKind.SimpleAssignmentExpression,
+                                            IdentifierName(this.tableElement.Name.ToVariableName()),
+                                            IdentifierName($"new{this.tableElement.Name}"))))))));
 
                 return statements;
             }

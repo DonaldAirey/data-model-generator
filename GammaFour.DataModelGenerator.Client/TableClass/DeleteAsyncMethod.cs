@@ -284,7 +284,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 // IEnumerable<Fungible> fungibles
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier("currencies"))
+                        SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase().ToPlural()))
                     .WithType(
                         SyntaxFactory.GenericName(
                             SyntaxFactory.Identifier("IEnumerable"))
@@ -308,9 +308,88 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            var requestUri = new Uri("rest/fungibles", UriKind.Relative);
+                //                                using (var request = new HttpRequestMessage(HttpMethod.Put, "rest/accountCanonMaps"))
+                //                                using (request.Content = new StringContent(JsonConvert.SerializeObject(accountCanonMaps), Encoding.Default, "application/json"))
+                //                                using (HttpResponseMessage response = await this.httpClient.SendAsync(request).ConfigureAwait(false))
+                //                                {
+                //                                    <HandleResultsBlock>
+                //                                }
                 statements.Add(
-                    SyntaxFactory.LocalDeclarationStatement(
+                    SyntaxFactory.UsingStatement(
+                        SyntaxFactory.UsingStatement(
+                            SyntaxFactory.UsingStatement(
+                                SyntaxFactory.Block(this.HandleResultsBlock))
+                            .WithDeclaration(
+                                SyntaxFactory.VariableDeclaration(
+                                    SyntaxFactory.IdentifierName("HttpResponseMessage"))
+                                .WithVariables(
+                                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                        SyntaxFactory.VariableDeclarator(
+                                            SyntaxFactory.Identifier("response"))
+                                        .WithInitializer(
+                                            SyntaxFactory.EqualsValueClause(
+                                                SyntaxFactory.AwaitExpression(
+                                                    SyntaxFactory.InvocationExpression(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.InvocationExpression(
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxFactory.MemberAccessExpression(
+                                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                                        SyntaxFactory.ThisExpression(),
+                                                                        SyntaxFactory.IdentifierName("httpClient")),
+                                                                    SyntaxFactory.IdentifierName("SendAsync")))
+                                                            .WithArgumentList(
+                                                                SyntaxFactory.ArgumentList(
+                                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                                        SyntaxFactory.Argument(
+                                                                            SyntaxFactory.IdentifierName("request"))))),
+                                                            SyntaxFactory.IdentifierName("ConfigureAwait")))
+                                                    .WithArgumentList(
+                                                        SyntaxFactory.ArgumentList(
+                                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                                SyntaxFactory.Argument(
+                                                                    SyntaxFactory.LiteralExpression(
+                                                                        SyntaxKind.FalseLiteralExpression))))))))))))
+                            .WithExpression(
+                                    SyntaxFactory.AssignmentExpression(
+                                        SyntaxKind.SimpleAssignmentExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.IdentifierName("request"),
+                                            SyntaxFactory.IdentifierName("Content")),
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.IdentifierName("StringContent"))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                    new SyntaxNodeOrToken[]
+                                                    {
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.InvocationExpression(
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxFactory.IdentifierName("JsonConvert"),
+                                                                    SyntaxFactory.IdentifierName("SerializeObject")))
+                                                            .WithArgumentList(
+                                                                SyntaxFactory.ArgumentList(
+                                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                                        SyntaxFactory.Argument(
+                                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase().ToPlural())))))),
+                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.IdentifierName("Encoding"),
+                                                                SyntaxFactory.IdentifierName("Default"))),
+                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.LiteralExpression(
+                                                                SyntaxKind.StringLiteralExpression,
+                                                                SyntaxFactory.Literal("application/json"))),
+                                                    }))))))
+                    .WithDeclaration(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(
                                 SyntaxFactory.Identifier(
@@ -322,68 +401,27 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("requestUri"))
+                                    SyntaxFactory.Identifier("request"))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
                                         SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName("Uri"))
+                                            SyntaxFactory.IdentifierName("HttpRequestMessage"))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
                                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(
                                                     new SyntaxNodeOrToken[]
                                                     {
                                                         SyntaxFactory.Argument(
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.IdentifierName("HttpMethod"),
+                                                                SyntaxFactory.IdentifierName("Delete"))),
+                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                        SyntaxFactory.Argument(
                                                             SyntaxFactory.LiteralExpression(
                                                                 SyntaxKind.StringLiteralExpression,
                                                                 SyntaxFactory.Literal($"rest/{this.tableElement.Name.ToCamelCase().ToPlural()}"))),
-                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                        SyntaxFactory.Argument(
-                                                            SyntaxFactory.MemberAccessExpression(
-                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.IdentifierName("UriKind"),
-                                                                SyntaxFactory.IdentifierName("Relative"))),
                                                     })))))))));
-
-                //                using (HttpResponseMessage response = await this.httpClient.DeleteAsync(requestUri).ConfigureAwait(false))
-                //                {
-                //                    <UsingBlock>
-                //                }
-                statements.Add(
-                    SyntaxFactory.UsingStatement(
-                        SyntaxFactory.Block(this.UsingBlock))
-                    .WithDeclaration(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName("HttpResponseMessage"))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("response"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.AwaitExpression(
-                                            SyntaxFactory.InvocationExpression(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.InvocationExpression(
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.MemberAccessExpression(
-                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.ThisExpression(),
-                                                                SyntaxFactory.IdentifierName("httpClient")),
-                                                            SyntaxFactory.IdentifierName("DeleteAsync")))
-                                                    .WithArgumentList(
-                                                        SyntaxFactory.ArgumentList(
-                                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.IdentifierName("requestUri"))))),
-                                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
-                                            .WithArgumentList(
-                                                SyntaxFactory.ArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                        SyntaxFactory.Argument(
-                                                            SyntaxFactory.LiteralExpression(
-                                                                SyntaxKind.FalseLiteralExpression))))))))))));
 
                 // This is the complete block.
                 return statements;
@@ -393,7 +431,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        private List<StatementSyntax> UsingBlock
+        private List<StatementSyntax> HandleResultsBlock
         {
             get
             {

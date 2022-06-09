@@ -378,6 +378,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 //                                using (request.Content = new StringContent(JsonConvert.SerializeObject(accountCanonMaps), Encoding.Default, "application/json"))
                 //                                using (HttpResponseMessage response = await this.httpClient.SendAsync(request).ConfigureAwait(false))
                 //                                {
+                //                                    <HandleResultsBlock>
                 //                                }
                 statements.Add(
                     SyntaxFactory.UsingStatement(
