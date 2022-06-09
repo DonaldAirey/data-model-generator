@@ -158,6 +158,14 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
+                //                        serverListMap = clientListMap;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.IdentifierName($"server{this.tableElement.Name}"),
+                            SyntaxFactory.IdentifierName($"client{this.tableElement.Name}"))));
+
                 ////                        await lockingTransaction.WaitWriterAsync(clientManagedAccount).ConfigureAwait(false);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
@@ -174,7 +182,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.ArgumentList(
                                             SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                 SyntaxFactory.Argument(
-                                                    SyntaxFactory.IdentifierName($"client{this.tableElement.Name}"))))),
+                                                    SyntaxFactory.IdentifierName($"server{this.tableElement.Name}"))))),
                                     SyntaxFactory.IdentifierName("ConfigureAwait")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
@@ -201,7 +209,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName($"client{this.tableElement.Name}")))))));
+                                        SyntaxFactory.IdentifierName($"server{this.tableElement.Name}")))))));
 
                 //                        await this.dataModelContext.ManagedAccounts.AddAsync(clientManagedAccount);
                 statements.Add(
@@ -222,7 +230,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName($"client{this.tableElement.Name}"))))))));
+                                            SyntaxFactory.IdentifierName($"server{this.tableElement.Name}"))))))));
 
                 //                        await this.dataModelContext.SaveChangesAsync();
                 statements.Add(
