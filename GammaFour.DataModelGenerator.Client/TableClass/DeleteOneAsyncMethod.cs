@@ -1,4 +1,4 @@
-// <copyright file="DeleteAsyncMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="DeleteOneAsyncMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -15,7 +15,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
     /// <summary>
     /// Creates a method to add a record to the set.
     /// </summary>
-    public class DeleteAsyncMethod : SyntaxElement
+    public class DeleteOneAsyncMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -23,10 +23,10 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DeleteAsyncMethod"/> class.
+        /// Initializes a new instance of the <see cref="DeleteOneAsyncMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public DeleteAsyncMethod(TableElement tableElement)
+        public DeleteOneAsyncMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
@@ -36,7 +36,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             //        /// Gets the set of <see cref="Fungible"/> records from the shared data model.
             //        /// </summary>
             //        /// <returns>The active set of fungibles.</returns>
-            //        public async Task<IEnumerable<Fungible>> DeleteAsync()
+            //        public async Task<Fungible> DeleteOneAsync()
             //        {
             //            <Body>
             //        }
@@ -46,14 +46,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 .WithTypeArgumentList(
                     SyntaxFactory.TypeArgumentList(
                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                            SyntaxFactory.GenericName(
-                                SyntaxFactory.Identifier("IEnumerable"))
-                            .WithTypeArgumentList(
-                                SyntaxFactory.TypeArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name))))))),
-                SyntaxFactory.Identifier("DeleteAsync"))
-                .WithModifiers(DeleteAsyncMethod.Modifiers)
+                            SyntaxFactory.IdentifierName(this.tableElement.Name)))),
+                SyntaxFactory.Identifier(this.Name))
+                .WithModifiers(DeleteOneAsyncMethod.Modifiers)
                 .WithParameterList(this.Parameters)
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.DocumentationComment);
@@ -256,7 +251,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <returns>The set of {this.tableElement.Name.ToCamelCase().ToPlural()}.</returns>",
+                                                    $" <returns>The deleted {this.tableElement.Name.ToCamelCase()} record.</returns>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -281,17 +276,12 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 // Create a list of parameters from the columns in the unique constraint.
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
 
-                // IEnumerable<Fungible> fungibles
+                // Fungible fungible
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase().ToPlural()))
+                        SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()))
                     .WithType(
-                        SyntaxFactory.GenericName(
-                            SyntaxFactory.Identifier("IEnumerable"))
-                        .WithTypeArgumentList(
-                            SyntaxFactory.TypeArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name))))));
+                        SyntaxFactory.IdentifierName(this.tableElement.Name)));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters.OrderBy(p => p.Identifier.Text)));
@@ -307,6 +297,40 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             {
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                // $"rest/accountGroups/{provinceId}/{regionId}"
+                List<InterpolatedStringContentSyntax> interpolatedStringContentSyntax = new List<InterpolatedStringContentSyntax>();
+                interpolatedStringContentSyntax.Add(
+                    SyntaxFactory.InterpolatedStringText()
+                    .WithTextToken(
+                        SyntaxFactory.Token(
+                            SyntaxFactory.TriviaList(),
+                            SyntaxKind.InterpolatedStringTextToken,
+                            $"rest/{this.tableElement.Name.ToCamelCase().ToPlural()}/",
+                            $"rest/{this.tableElement.Name.ToCamelCase().ToPlural()}/",
+                            SyntaxFactory.TriviaList())));
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
+                {
+                    if (interpolatedStringContentSyntax.Count > 1)
+                    {
+                        interpolatedStringContentSyntax.Add(
+                            SyntaxFactory.InterpolatedStringText()
+                            .WithTextToken(
+                                SyntaxFactory.Token(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.InterpolatedStringTextToken,
+                                    "/",
+                                    "/",
+                                    SyntaxFactory.TriviaList())));
+                    }
+
+                    interpolatedStringContentSyntax.Add(
+                        SyntaxFactory.Interpolation(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                SyntaxFactory.IdentifierName(columnReferenceElement.Column.Name))));
+                }
 
                 //                                using (var request = new HttpRequestMessage(HttpMethod.Delete, "rest/accountCanonMaps"))
                 //                                using (request.Content = new StringContent(JsonConvert.SerializeObject(accountCanonMaps), Encoding.Default, "application/json"))
@@ -376,7 +400,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                                 SyntaxFactory.ArgumentList(
                                                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                                         SyntaxFactory.Argument(
-                                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase().ToPlural())))))),
+                                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))),
                                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                         SyntaxFactory.Argument(
                                                             SyntaxFactory.MemberAccessExpression(
@@ -418,9 +442,11 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                                 SyntaxFactory.IdentifierName("Delete"))),
                                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                         SyntaxFactory.Argument(
-                                                            SyntaxFactory.LiteralExpression(
-                                                                SyntaxKind.StringLiteralExpression,
-                                                                SyntaxFactory.Literal($"rest/{this.tableElement.Name.ToCamelCase().ToPlural()}"))),
+                                                            SyntaxFactory.InterpolatedStringExpression(
+                                                                SyntaxFactory.Token(SyntaxKind.InterpolatedStringStartToken))
+                                                            .WithContents(
+                                                                SyntaxFactory.List<InterpolatedStringContentSyntax>(
+                                                                    interpolatedStringContentSyntax))),
                                                     })))))))));
 
                 // This is the complete block.
@@ -447,7 +473,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                 SyntaxFactory.IdentifierName("response"),
                                 SyntaxFactory.IdentifierName("EnsureSuccessStatusCode")))));
 
-                //                    return JsonConvert.DeserializeObject<IEnumerable<Fungible>>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                //                    return JsonConvert.DeserializeObject<Fungible>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
                 statements.Add(
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
@@ -459,12 +485,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                 .WithTypeArgumentList(
                                     SyntaxFactory.TypeArgumentList(
                                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                            SyntaxFactory.GenericName(
-                                                SyntaxFactory.Identifier("IEnumerable"))
-                                            .WithTypeArgumentList(
-                                                SyntaxFactory.TypeArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                        SyntaxFactory.IdentifierName(this.tableElement.Name)))))))))
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name))))))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(

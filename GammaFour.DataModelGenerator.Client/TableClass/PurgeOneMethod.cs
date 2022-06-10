@@ -1,4 +1,4 @@
-// <copyright file="PurgeMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="PurgeOneMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -15,7 +15,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
     /// <summary>
     /// Creates a method to merge a record.
     /// </summary>
-    public class PurgeMethod : SyntaxElement
+    public class PurgeOneMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -23,17 +23,17 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PurgeMethod"/> class.
+        /// Initializes a new instance of the <see cref="PurgeOneMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public PurgeMethod(TableElement tableElement)
+        public PurgeOneMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
             this.Name = "Purge";
 
             //        /// <inheritdoc/>
-            //        public void Purge(IEnumerable<IRow> rows)
+            //        public void Purge(IRow row)
             //        {
             //            <Body>
             //        }
@@ -41,10 +41,10 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 SyntaxFactory.PredefinedType(
                     SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                 SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(PurgeMethod.Modifiers)
-                .WithParameterList(PurgeMethod.Parameters)
+                .WithModifiers(PurgeOneMethod.Modifiers)
+                .WithParameterList(PurgeOneMethod.Parameters)
                 .WithBody(this.Body)
-                .WithLeadingTrivia(PurgeMethod.DocumentationComment);
+                .WithLeadingTrivia(PurgeOneMethod.DocumentationComment);
         }
 
         /// <summary>
@@ -111,17 +111,12 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 // Create a list of parameters.
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>();
 
-                // IEnumerable<IRow> rows
+                // IRow row
                 parameters.Add(
                     Parameter(
-                        Identifier("rows"))
+                        Identifier("row"))
                     .WithType(
-                        GenericName(
-                            Identifier("IEnumerable"))
-                        .WithTypeArgumentList(
-                            TypeArgumentList(
-                                SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName("IRow"))))));
+                        SyntaxFactory.IdentifierName("IRow")));
 
                 // This is the complete parameter specification for this constructor.
                 return ParameterList(SeparatedList<ParameterSyntax>(parameters));
@@ -138,57 +133,21 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            foreach (Buyer oldBuyer in rows)
-                //            {
-                //                 <ProcessRecord>
-                //            }
+                //            ListMap oldListMap = row as ListMap;
                 statements.Add(
-                    ForEachStatement(
-                        IdentifierName(this.tableElement.Name),
-                        Identifier($"old{this.tableElement.Name}"),
-                        IdentifierName("rows"),
-                        Block(this.ProcessRecord)));
-
-                // This is the syntax for the body of the method.
-                return Block(List<StatementSyntax>(statements));
-            }
-        }
-
-        /// <summary>
-        /// Gets the statements checks to check to see if there are child records and remove if not.
-        /// </summary>
-        private List<StatementSyntax> CheckAndRemove
-        {
-            get
-            {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                this.Remove(proposedOrder);
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("Remove")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
-
-                return statements;
-            }
-        }
-
-        /// <summary>
-        /// Gets the statements checks to see if the parent record exists.
-        /// </summary>
-        private List<StatementSyntax> ProcessRecord
-        {
-            get
-            {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(this.tableElement.Name))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier($"old{this.tableElement.Name}"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.BinaryExpression(
+                                            SyntaxKind.AsExpression,
+                                            SyntaxFactory.IdentifierName("row"),
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name))))))));
 
                 //                ProposedOrder proposedOrder = this.PortfolioDataModel.ProposedOrders.ProposedOrderKey.Find(oldProposedOrder.ProposedOrderId);
                 statements.Add(
@@ -257,6 +216,34 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                     IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
                                 IdentifierName("RowVersion"))),
                         Block(this.UpdateRowVersion)));
+
+                // This is the syntax for the body of the method.
+                return Block(List<StatementSyntax>(statements));
+            }
+        }
+
+        /// <summary>
+        /// Gets the statements checks to check to see if there are child records and remove if not.
+        /// </summary>
+        private List<StatementSyntax> CheckAndRemove
+        {
+            get
+            {
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //                this.Remove(proposedOrder);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("Remove")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
 
                 return statements;
             }

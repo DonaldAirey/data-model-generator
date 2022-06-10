@@ -321,6 +321,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             methods.Add(new AddRowMethod(this.tableElement));
             methods.Add(new AddUniqueIndexMethod(this.tableElement));
             methods.Add(new BuildForeignIndicesMethod(this.tableElement));
+            methods.Add(new DeleteOneAsyncMethod(this.tableElement));
             methods.Add(new DeleteAsyncMethod(this.tableElement));
             methods.Add(new DeserializeMethod(this.tableElement));
             methods.Add(new GetAsyncMethod(this.tableElement));
@@ -336,6 +337,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             methods.Add(new PatchAsyncMethod(this.tableElement));
             methods.Add(new PostAsyncMethod(this.tableElement));
             methods.Add(new PurgeMethod(this.tableElement));
+            methods.Add(new PurgeOneMethod(this.tableElement));
             methods.Add(new PutAsyncMethod(this.tableElement));
             methods.Add(new RemoveMethod(this.tableElement));
             methods.Add(new UpdateMethod(this.tableElement));
