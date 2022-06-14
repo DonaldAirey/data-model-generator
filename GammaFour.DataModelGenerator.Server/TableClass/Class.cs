@@ -274,6 +274,8 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             properties.Add(new DataModelProperty(this.tableElement.XmlSchemaDocument));
             properties.Add(new PurgedRowsProperty(this.tableElement));
             properties.Add(new ForeignIndexProperty());
+            properties.Add(new IsReadLockHeldProperty());
+            properties.Add(new IsWriteLockHeldProperty());
             properties.Add(new NameProperty());
             properties.Add(new UniqueIndexProperty());
 

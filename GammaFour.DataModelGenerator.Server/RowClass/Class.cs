@@ -355,6 +355,8 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             List<SyntaxElement> properties = new List<SyntaxElement>();
             properties.Add(new IndexProperty(this.tableElement));
             properties.Add(new TableProperty(this.tableElement));
+            properties.Add(new IsReadLockHeldProperty());
+            properties.Add(new IsWriteLockHeldProperty());
             properties.Add(new RecordStateProperty());
 
             // Create a navigation property to each of the parent collections.
