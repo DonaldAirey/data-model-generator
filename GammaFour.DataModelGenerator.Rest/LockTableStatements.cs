@@ -87,8 +87,9 @@ namespace GammaFour.DataModelGenerator.RestService
                                         SyntaxFactory.LiteralExpression(
                                             SyntaxKind.FalseLiteralExpression))))))));
 
-            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.ItemAccountKey).ConfigureAwait(false);
-            foreach (ForeignElement foreignKeyElement in tableElement.ParentKeys.AsEnumerable().Reverse())
+            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountKey).ConfigureAwait(false);
+            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountSymbolKey).ConfigureAwait(false);
+            foreach (UniqueElement uniqueElement in tableElement.UniqueKeys.OrderBy(ue => ue.Name))
             {
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
@@ -113,8 +114,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.ThisExpression(),
                                                                 SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
-                                                            SyntaxFactory.IdentifierName(foreignKeyElement.Table.Name.ToPlural())),
-                                                        SyntaxFactory.IdentifierName(foreignKeyElement.Name)))))),
+                                                            SyntaxFactory.IdentifierName(uniqueElement.Table.Name.ToPlural())),
+                                                        SyntaxFactory.IdentifierName(uniqueElement.Name)))))),
                                     SyntaxFactory.IdentifierName("ConfigureAwait")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
@@ -124,9 +125,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                                 SyntaxKind.FalseLiteralExpression))))))));
             }
 
-            //            await lockingTransaction.WaitReaderAsync(this.dataModel.Accounts.AccountKey).ConfigureAwait(false);
-            //            await lockingTransaction.WaitReaderAsync(this.dataModel.Accounts.AccountSymbolKey).ConfigureAwait(false);
-            foreach (UniqueElement uniqueKeyElement in tableElement.UniqueKeys.AsEnumerable().Reverse())
+            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.ItemAccountKey).ConfigureAwait(false);
+            foreach (ForeignElement foreignElement in tableElement.ParentKeys.OrderBy(fe => fe.Name))
             {
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
@@ -151,8 +151,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.ThisExpression(),
                                                                 SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
-                                                            SyntaxFactory.IdentifierName(uniqueKeyElement.Table.Name.ToPlural())),
-                                                        SyntaxFactory.IdentifierName(uniqueKeyElement.Name)))))),
+                                                            SyntaxFactory.IdentifierName(foreignElement.Table.Name.ToPlural())),
+                                                        SyntaxFactory.IdentifierName(foreignElement.Name)))))),
                                     SyntaxFactory.IdentifierName("ConfigureAwait")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
@@ -181,8 +181,7 @@ namespace GammaFour.DataModelGenerator.RestService
             //                {
             //                    <UsingBody>
             //                }
-            statements.Add(
-            SyntaxFactory.UsingStatement(
+            statements.Add(SyntaxFactory.UsingStatement(
                  SyntaxFactory.Block(LockTableStatements.UsingBody(tableElement, usingBlock)))
              .WithDeclaration(
                  SyntaxFactory.VariableDeclaration(
@@ -255,8 +254,9 @@ namespace GammaFour.DataModelGenerator.RestService
                                         SyntaxFactory.LiteralExpression(
                                             SyntaxKind.FalseLiteralExpression))))))));
 
-            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.ItemAccountKey).ConfigureAwait(false);
-            foreach (ForeignElement foreignKeyElement in tableElement.ParentKeys.AsEnumerable().Reverse())
+            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountKey).ConfigureAwait(false);
+            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountSymbolKey).ConfigureAwait(false);
+            foreach (UniqueElement uniqueElement in tableElement.UniqueKeys.OrderBy(ue => ue.Name))
             {
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
@@ -281,8 +281,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.ThisExpression(),
                                                                 SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
-                                                            SyntaxFactory.IdentifierName(foreignKeyElement.Table.Name.ToPlural())),
-                                                        SyntaxFactory.IdentifierName(foreignKeyElement.Name)))))),
+                                                            SyntaxFactory.IdentifierName(uniqueElement.Table.Name.ToPlural())),
+                                                        SyntaxFactory.IdentifierName(uniqueElement.Name)))))),
                                     SyntaxFactory.IdentifierName("ConfigureAwait")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
@@ -292,9 +292,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                                 SyntaxKind.FalseLiteralExpression))))))));
             }
 
-            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountKey).ConfigureAwait(false);
-            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountSymbolKey).ConfigureAwait(false);
-            foreach (UniqueElement uniqueKeyElement in tableElement.UniqueKeys.AsEnumerable().Reverse())
+            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.ItemAccountKey).ConfigureAwait(false);
+            foreach (ForeignElement foreignElement in tableElement.ParentKeys.OrderBy(fe => fe.Name))
             {
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
@@ -319,8 +318,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.ThisExpression(),
                                                                 SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
-                                                            SyntaxFactory.IdentifierName(uniqueKeyElement.Table.Name.ToPlural())),
-                                                        SyntaxFactory.IdentifierName(uniqueKeyElement.Name)))))),
+                                                            SyntaxFactory.IdentifierName(foreignElement.Table.Name.ToPlural())),
+                                                        SyntaxFactory.IdentifierName(foreignElement.Name)))))),
                                     SyntaxFactory.IdentifierName("ConfigureAwait")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
