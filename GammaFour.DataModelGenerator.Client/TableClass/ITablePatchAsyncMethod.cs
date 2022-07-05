@@ -172,6 +172,47 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
+                //            if (positions.Any())
+                //            {
+                //                <TryBlock>
+                //            }
+                statements.Add(
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase().ToPlural()),
+                                SyntaxFactory.IdentifierName("Any"))), this.TryBlock));
+
+                //            return Enumerable.Empty<Position>();
+                statements.Add(
+                    SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("Enumerable"),
+                                SyntaxFactory.GenericName(
+                                    SyntaxFactory.Identifier("Empty"))
+                                .WithTypeArgumentList(
+                                    SyntaxFactory.TypeArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name))))))));
+
+                // This is the syntax for the body of the method.
+                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
+            }
+        }
+
+        /// <summary>
+        /// Gets the body.
+        /// </summary>
+        private BlockSyntax TryBlock
+        {
+            get
+            {
+                // The elements of the body are added to this collection as they are assembled.
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
                 //            try
                 //            {
                 //                <TryBlock>
@@ -183,7 +224,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 statements.Add(
                     SyntaxFactory.TryStatement(this.CatchClauses)
                     .WithBlock(
-                        SyntaxFactory.Block(this.TryBlock)));
+                        SyntaxFactory.Block(this.TryBody)));
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -369,7 +410,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        private List<StatementSyntax> TryBlock
+        private List<StatementSyntax> TryBody
         {
             get
             {
