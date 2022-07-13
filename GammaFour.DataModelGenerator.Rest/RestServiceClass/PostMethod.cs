@@ -83,46 +83,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <summary>
         /// Gets the body.
         /// </summary>
-        private static BlockSyntax HandleDbUpdateException
-        {
-            get
-            {
-                // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                this.logger.LogError(dbUpdateException.Message);
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("logger")),
-                                SyntaxFactory.IdentifierName("LogError")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName("dbUpdateException"),
-                                            SyntaxFactory.IdentifierName("Message"))))))));
-
-                //                throw dbUpdateException;
-                statements.Add(
-                    SyntaxFactory.ThrowStatement(
-                        SyntaxFactory.IdentifierName("dbUpdateException")));
-
-                // This is the syntax for the body of the method.
-                return SyntaxFactory.Block(statements);
-            }
-        }
-
-        /// <summary>
-        /// Gets the body.
-        /// </summary>
         private static BlockSyntax HandleOperationCanceledException
         {
             get
@@ -161,32 +121,103 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 // The catch clauses are collected in this list.
                 List<CatchClauseSyntax> clauses = new List<CatchClauseSyntax>();
 
-                //            catch (DbUpdateException dbUpdateException)
-                //            {
-                //                <HandleDbUpdateException>
-                //            }
-                clauses.Add(
-                    SyntaxFactory.CatchClause()
-                    .WithDeclaration(
-                        SyntaxFactory.CatchDeclaration(
-                            SyntaxFactory.IdentifierName("DbUpdateException"))
-                        .WithIdentifier(
-                            SyntaxFactory.Identifier("dbUpdateException")))
-                    .WithBlock(PostMethod.HandleDbUpdateException));
-
                 //            catch (OperationCanceledException)
                 //            {
-                //                <HandleOperationCanceledException>
+                //                <Handle Exception>
                 //            }
                 clauses.Add(
                     SyntaxFactory.CatchClause()
                     .WithDeclaration(
                         SyntaxFactory.CatchDeclaration(
-                            SyntaxFactory.IdentifierName("OperationCanceledException")))
-                    .WithBlock(PostMethod.HandleOperationCanceledException));
+                            SyntaxFactory.IdentifierName("Exception"))
+                        .WithIdentifier(
+                            SyntaxFactory.Identifier("exception")))
+                    .WithBlock(PostMethod.HandleException));
 
                 // This is the collection of catch clauses.
                 return SyntaxFactory.List<CatchClauseSyntax>(clauses);
+            }
+        }
+
+        /// <summary>
+        /// Gets the body.
+        /// </summary>
+        private static BlockSyntax HandleException
+        {
+            get
+            {
+                // The elements of the body are added to this collection as they are assembled.
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //                this.logger.LogError("{message}", exception.Message);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("logger")),
+                                SyntaxFactory.IdentifierName("LogError")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                SyntaxFactory.Literal("{message}"))),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("exception"),
+                                                SyntaxFactory.IdentifierName("Message"))),
+                                    })))));
+
+                //                return this.BadRequest($"{exception.GetType()}: {exception.Message}");
+                statements.Add(
+                    SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("BadRequest")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.InterpolatedStringExpression(
+                                            SyntaxFactory.Token(SyntaxKind.InterpolatedStringStartToken))
+                                        .WithContents(
+                                            SyntaxFactory.List<InterpolatedStringContentSyntax>(
+                                                new InterpolatedStringContentSyntax[]
+                                                {
+                                                    SyntaxFactory.Interpolation(
+                                                        SyntaxFactory.InvocationExpression(
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.IdentifierName("exception"),
+                                                                SyntaxFactory.IdentifierName("GetType")))),
+                                                    SyntaxFactory.InterpolatedStringText()
+                                                    .WithTextToken(
+                                                        SyntaxFactory.Token(
+                                                            SyntaxFactory.TriviaList(),
+                                                            SyntaxKind.InterpolatedStringTextToken,
+                                                            ": ",
+                                                            ": ",
+                                                            SyntaxFactory.TriviaList())),
+                                                    SyntaxFactory.Interpolation(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.IdentifierName("exception"),
+                                                            SyntaxFactory.IdentifierName("Message"))),
+                                                }))))))));
+
+                // This is the syntax for the body of the method.
+                return SyntaxFactory.Block(statements);
             }
         }
 

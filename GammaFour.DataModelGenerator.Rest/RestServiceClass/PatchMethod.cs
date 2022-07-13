@@ -145,8 +145,44 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxFactory.IdentifierName("Message"))),
                                     })))));
 
-                //                throw;
-                statements.Add(SyntaxFactory.ThrowStatement());
+                //                return this.BadRequest($"{exception.GetType()}: {exception.Message}");
+                statements.Add(
+                    SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("BadRequest")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.InterpolatedStringExpression(
+                                            SyntaxFactory.Token(SyntaxKind.InterpolatedStringStartToken))
+                                        .WithContents(
+                                            SyntaxFactory.List<InterpolatedStringContentSyntax>(
+                                                new InterpolatedStringContentSyntax[]
+                                                {
+                                                    SyntaxFactory.Interpolation(
+                                                        SyntaxFactory.InvocationExpression(
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.IdentifierName("exception"),
+                                                                SyntaxFactory.IdentifierName("GetType")))),
+                                                    SyntaxFactory.InterpolatedStringText()
+                                                    .WithTextToken(
+                                                        SyntaxFactory.Token(
+                                                            SyntaxFactory.TriviaList(),
+                                                            SyntaxKind.InterpolatedStringTextToken,
+                                                            ": ",
+                                                            ": ",
+                                                            SyntaxFactory.TriviaList())),
+                                                    SyntaxFactory.Interpolation(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.IdentifierName("exception"),
+                                                            SyntaxFactory.IdentifierName("Message"))),
+                                                }))))))));
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(statements);
