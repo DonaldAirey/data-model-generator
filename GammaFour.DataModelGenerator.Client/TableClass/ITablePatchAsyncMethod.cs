@@ -172,7 +172,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            if (positions.Any())
+                //            if (rows.Any())
                 //            {
                 //                <TryBlock>
                 //            }
@@ -181,7 +181,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase().ToPlural()),
+                                SyntaxFactory.IdentifierName("rows"),
                                 SyntaxFactory.IdentifierName("Any"))), this.TryBlock));
 
                 //            return Enumerable.Empty<Position>();
