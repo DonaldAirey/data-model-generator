@@ -30,31 +30,35 @@ namespace GammaFour.DataModelGenerator.Common
             BinaryExpressionSyntax syntaxNode = default;
             for (int index = 0; index < uniqueKeyElement.Columns.Count; index++)
             {
-                if (index == 0)
+                // We can only filter nullable items.
+                if (uniqueKeyElement.Columns[index].Column.ColumnType.IsNullable)
                 {
-                    syntaxNode = SyntaxFactory.BinaryExpression(
-                        SyntaxKind.NotEqualsExpression,
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName(abbreviation),
-                            SyntaxFactory.IdentifierName(uniqueKeyElement.Columns[0].Column.Name)),
-                        SyntaxFactory.LiteralExpression(
-                            SyntaxKind.NullLiteralExpression));
-                }
-                else
-                {
-                    BinaryExpressionSyntax oldNode = syntaxNode;
-                    syntaxNode = SyntaxFactory.BinaryExpression(
-                        SyntaxKind.LogicalAndExpression,
-                        oldNode,
-                        SyntaxFactory.BinaryExpression(
-                        SyntaxKind.NotEqualsExpression,
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName(abbreviation),
-                            SyntaxFactory.IdentifierName(uniqueKeyElement.Columns[index].Column.Name)),
-                        SyntaxFactory.LiteralExpression(
-                            SyntaxKind.NullLiteralExpression)));
+                    if (index == 0)
+                    {
+                        syntaxNode = SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(abbreviation),
+                                SyntaxFactory.IdentifierName(uniqueKeyElement.Columns[0].Column.Name)),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression));
+                    }
+                    else
+                    {
+                        BinaryExpressionSyntax oldNode = syntaxNode;
+                        syntaxNode = SyntaxFactory.BinaryExpression(
+                            SyntaxKind.LogicalAndExpression,
+                            oldNode,
+                            SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(abbreviation),
+                                SyntaxFactory.IdentifierName(uniqueKeyElement.Columns[index].Column.Name)),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression)));
+                    }
                 }
             }
 
@@ -77,31 +81,35 @@ namespace GammaFour.DataModelGenerator.Common
             BinaryExpressionSyntax syntaxNode = default;
             for (int index = 0; index < foreignKeyElement.Columns.Count; index++)
             {
-                if (index == 0)
+                // We can only filter nullable items.
+                if (foreignKeyElement.Columns[0].Column.ColumnType.IsNullable)
                 {
-                    syntaxNode = SyntaxFactory.BinaryExpression(
-                        SyntaxKind.NotEqualsExpression,
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName(abbreviation),
-                            SyntaxFactory.IdentifierName(foreignKeyElement.Columns[0].Column.Name)),
-                        SyntaxFactory.LiteralExpression(
-                            SyntaxKind.NullLiteralExpression));
-                }
-                else
-                {
-                    BinaryExpressionSyntax oldNode = syntaxNode;
-                    syntaxNode = SyntaxFactory.BinaryExpression(
-                        SyntaxKind.LogicalAndExpression,
-                        oldNode,
-                        SyntaxFactory.BinaryExpression(
-                        SyntaxKind.NotEqualsExpression,
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName(abbreviation),
-                            SyntaxFactory.IdentifierName(foreignKeyElement.Columns[index].Column.Name)),
-                        SyntaxFactory.LiteralExpression(
-                            SyntaxKind.NullLiteralExpression)));
+                    if (index == 0)
+                    {
+                        syntaxNode = SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(abbreviation),
+                                SyntaxFactory.IdentifierName(foreignKeyElement.Columns[0].Column.Name)),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression));
+                    }
+                    else
+                    {
+                        BinaryExpressionSyntax oldNode = syntaxNode;
+                        syntaxNode = SyntaxFactory.BinaryExpression(
+                            SyntaxKind.LogicalAndExpression,
+                            oldNode,
+                            SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(abbreviation),
+                                SyntaxFactory.IdentifierName(foreignKeyElement.Columns[index].Column.Name)),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression)));
+                    }
                 }
             }
 
