@@ -241,7 +241,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 //                }
                 //                else
                 //                {
-                //                    <UpdateRecord>
+                //                    <UpdateRecordIfNewer>
                 //                }
                 statements.Add(
                     IfStatement(
@@ -253,7 +253,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                         Block(this.AddRecord))
                     .WithElse(
                         ElseClause(
-                            Block(this.UpdateRecord))));
+                            Block(this.UpdateRecordIfNewer))));
 
                 //                if (entity.RowVersion > this.AlertDataModel.RowVersion)
                 //                {
@@ -306,6 +306,37 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                             SyntaxKind.SimpleAssignmentExpression,
                                             IdentifierName(this.tableElement.Name.ToVariableName()),
                                             IdentifierName($"new{this.tableElement.Name}"))))))));
+
+                return statements;
+            }
+        }
+
+        /// <summary>
+        /// Gets the statements checks to see if the parent record exists.
+        /// </summary>
+        private List<StatementSyntax> UpdateRecordIfNewer
+        {
+            get
+            {
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //                    if (outsideOrder.RowVersion < newOutsideOrder.RowVersion)
+                //                    {
+                //                        <UpdateRecord>
+                //                    }
+                statements.Add(
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.LessThanExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                SyntaxFactory.IdentifierName("RowVersion")),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName($"new{this.tableElement.Name}"),
+                                SyntaxFactory.IdentifierName("RowVersion"))),
+                        SyntaxFactory.Block(this.UpdateRecord)));
 
                 return statements;
             }

@@ -127,10 +127,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 members = this.CreatePrivateInstanceFields(members);
                 members = this.CreateConstructors(members);
                 members = this.CreatePublicInstanceProperties(members);
-                members = Class.CreateInternalInstanceProperties(members);
                 members = Class.CreatePublicInstanceMethods(members);
-                members = Class.CreateInternalInstanceMethods(members);
-                members = Class.CreateProtectedInstanceMethods(members);
                 members = this.CreatePrivateInstanceMethods(members);
                 return members;
             }
@@ -158,67 +155,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         }
 
         /// <summary>
-        /// Create the public instance methods.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The structure members with the methods added.</returns>
-        private static SyntaxList<MemberDeclarationSyntax> CreateInternalInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // This will create the public instance properties.
-            List<SyntaxElement> methods = new List<SyntaxElement>();
-
-            // Alphabetize and add the methods as members of the class.
-            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
-            {
-                members = members.Add(syntaxElement.Syntax);
-            }
-
-            // Return the new collection of members.
-            return members;
-        }
-
-        /// <summary>
-        /// Create the private instance fields.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The structure members with the fields added.</returns>
-        private static SyntaxList<MemberDeclarationSyntax> CreateInternalInstanceProperties(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // This will create the internal instance properties.
-            List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new RowVersionProperty());
-
-            // Alphabetize and add the fields as members of the class.
-            foreach (SyntaxElement syntaxElement in properties.OrderBy(m => m.Name))
-            {
-                members = members.Add(syntaxElement.Syntax);
-            }
-
-            // Return the new collection of members.
-            return members;
-        }
-
-        /// <summary>
-        /// Create the public instance methods.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The structure members with the methods added.</returns>
-        private static SyntaxList<MemberDeclarationSyntax> CreateProtectedInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // This will create the public instance properties.
-            List<SyntaxElement> methods = new List<SyntaxElement>();
-
-            // Alphabetize and add the methods as members of the class.
-            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
-            {
-                members = members.Add(syntaxElement.Syntax);
-            }
-
-            // Return the new collection of members.
-            return members;
-        }
-
-        /// <summary>
         /// Create the private instance fields.
         /// </summary>
         /// <param name="members">The structure members.</param>
@@ -230,7 +166,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             fields.Add(new DbContextField(this.xmlSchemaDocument));
             fields.Add(new LoggerField());
             fields.Add(new RowVersionField());
-            fields.Add(new TransactionTimeoutField());
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(f => f.Name))
@@ -293,6 +228,8 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             // This will create the internal instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
+            properties.Add(new InstanceProperty());
+            properties.Add(new RowVersionProperty());
 
             // Create a property for each of the tables.
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)

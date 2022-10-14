@@ -74,63 +74,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         }
 
         /// <summary>
-        /// Gets a block of code.
-        /// </summary>
-        private static SyntaxList<CatchClauseSyntax> CatchClauses
-        {
-            get
-            {
-                // The catch clauses are collected in this list.
-                List<CatchClauseSyntax> clauses = new List<CatchClauseSyntax>();
-
-                //            catch (OperationCanceledException)
-                //            {
-                //                <HandleOperationCanceledException>
-                //            }
-                clauses.Add(
-                    SyntaxFactory.CatchClause()
-                    .WithDeclaration(
-                        SyntaxFactory.CatchDeclaration(
-                            SyntaxFactory.IdentifierName("OperationCanceledException")))
-                    .WithBlock(GetMethod.HandleOperationCanceledException));
-
-                // This is the collection of catch clauses.
-                return SyntaxFactory.List<CatchClauseSyntax>(clauses);
-            }
-        }
-
-        /// <summary>
-        /// Gets a handler for the operation timing out.
-        /// </summary>
-        private static BlockSyntax HandleOperationCanceledException
-        {
-            get
-            {
-                // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                return this.StatusCode(408);
-                statements.Add(
-                     SyntaxFactory.ReturnStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("StatusCode")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.NumericLiteralExpression,
-                                            SyntaxFactory.Literal(408))))))));
-
-                // This is the syntax for the body of the method.
-                return SyntaxFactory.Block(statements);
-            }
-        }
-
-        /// <summary>
         /// Gets the data contract attribute syntax.
         /// </summary>
         private SyntaxList<AttributeListSyntax> Attributes
@@ -193,12 +136,11 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 //            }
                 //            catch
                 //            {
-                //                <CatchClauses>
+                //                <CommonCatchClauses>
                 //            }
                 statements.Add(
-                    SyntaxFactory.TryStatement(GetMethod.CatchClauses)
-                    .WithBlock(
-                        SyntaxFactory.Block(this.TryBlock)));
+                    SyntaxFactory.TryStatement(CommonStatements.CommonCatchClauses)
+                    .WithBlock(SyntaxFactory.Block(this.TryBlock)));
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(statements);

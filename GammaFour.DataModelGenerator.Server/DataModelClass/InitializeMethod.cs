@@ -109,7 +109,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //            using var lockingTransaction = new LockingTransaction(this.transactionTimeout);
+                //            using var lockingTransaction = new LockingTransaction(TransactionManager.MaximumTimeout);
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
@@ -134,8 +134,8 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                     SyntaxFactory.Argument(
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName("transactionTimeout")))))))))))
+                                                            SyntaxFactory.IdentifierName("TransactionManager"),
+                                                            SyntaxFactory.IdentifierName("MaximumTimeout")))))))))))
                     .WithUsingKeyword(
                         SyntaxFactory.Token(SyntaxKind.UsingKeyword)));
 

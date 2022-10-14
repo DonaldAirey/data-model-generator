@@ -109,7 +109,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                 SyntaxFactory.IdentifierName("logger")),
                             SyntaxFactory.IdentifierName("logger"))));
 
-                //            this.transactionTimeout = configuration.GetValue("TransactionTimeout", Timeout.InfiniteTimeSpan);
+                //            this.transactionTimeout = configuration.GetValue("DataModel:TransactionTimeout", TransactionManager.MaximumTimeout);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
@@ -131,13 +131,13 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.LiteralExpression(
                                                     SyntaxKind.StringLiteralExpression,
-                                                    SyntaxFactory.Literal("TransactionTimeout"))),
+                                                    SyntaxFactory.Literal($"{this.tableElement.XmlSchemaDocument.DataModel}:TransactionTimeout"))),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.IdentifierName("Timeout"),
-                                                    SyntaxFactory.IdentifierName("InfiniteTimeSpan"))),
+                                                    SyntaxFactory.IdentifierName("TransactionManager"),
+                                                    SyntaxFactory.IdentifierName("MaximumTimeout"))),
                                         }))))));
 
                 //            this.dataModelContext.Database.SetCommandTimeout(this.transactionTimeout);

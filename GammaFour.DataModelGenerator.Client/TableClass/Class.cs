@@ -207,7 +207,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // Add the constructors.
-            members = members.Add(new ConstructorIHttpClientLogger(this.tableElement).Syntax);
+            members = members.Add(new Constructor(this.tableElement).Syntax);
 
             // Return the new collection of members.
             return members;
@@ -221,9 +221,6 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         private SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the private instance fields.
-            List<SyntaxElement> fields = new List<SyntaxElement>();
-            members = members.Add(new HttpClientField().Syntax);
-            members = members.Add(new LoggerField().Syntax);
             members = members.Add(new PrimaryKeyFunctionField(this.tableElement.PrimaryKey).Syntax);
             return members.Add(new CollectionField(this.tableElement).Syntax);
         }

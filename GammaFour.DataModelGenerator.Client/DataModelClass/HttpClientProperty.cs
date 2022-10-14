@@ -1,4 +1,4 @@
-// <copyright file="ServiceProviderField.cs" company="Gamma Four, Inc.">
+// <copyright file="HttpClientProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,31 +12,44 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field to hold the current contents of the row.
+    /// Creates a collection of readers (transactions) waiting for a read lock.
     /// </summary>
-    public class ServiceProviderField : SyntaxElement
+    public class HttpClientProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ServiceProviderField"/> class.
+        /// Initializes a new instance of the <see cref="HttpClientProperty"/> class.
         /// </summary>
-        public ServiceProviderField()
+        public HttpClientProperty()
         {
             // Initialize the object.
-            this.Name = "serviceProvider";
+            this.Name = "HttpClient";
 
             //        /// <summary>
-            //        /// The service provider
+            //        /// Gets the <see cref="HttpClient"/> used to communicate with the web service.
             //        /// </summary>
-            //        private readonly IServiceProvider serviceProvider;
-            this.Syntax = SyntaxFactory.FieldDeclaration(
-                SyntaxFactory.VariableDeclaration(
-                    SyntaxFactory.IdentifierName("IServiceProvider"))
-                .WithVariables(
-                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                        SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier("serviceProvider")))))
-                .WithModifiers(ServiceProviderField.Modifiers)
-                .WithLeadingTrivia(ServiceProviderField.DocumentationComment);
+            //        public HttpClient HttpClient { get; }
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
+                    SyntaxFactory.IdentifierName("HttpClient"),
+                    SyntaxFactory.Identifier(this.Name))
+                .WithAccessorList(HttpClientProperty.AccessorList)
+                .WithModifiers(HttpClientProperty.Modifiers)
+                .WithLeadingTrivia(HttpClientProperty.DocumentationComment);
+        }
+
+        /// <summary>
+        /// Gets the list of accessors.
+        /// </summary>
+        private static AccessorListSyntax AccessorList
+        {
+            get
+            {
+                return SyntaxFactory.AccessorList(
+                    SyntaxFactory.List(
+                        new AccessorDeclarationSyntax[]
+                        {
+                            HttpClientProperty.GetAccessor,
+                        }));
+            }
         }
 
         /// <summary>
@@ -50,7 +63,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
 
                 //        /// <summary>
-                //        /// The service provider
+                //        /// Gets the <see cref="Fungibles"/> table.
                 //        /// </summary>
                 comments.Add(
                     SyntaxFactory.Trivia(
@@ -74,7 +87,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " The service provider",
+                                                $" Gets the <see cref=\"HttpClient\"/> table used to communicate with the web service.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -100,18 +113,32 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         }
 
         /// <summary>
+        /// Gets the 'Get' accessor.
+        /// </summary>
+        private static AccessorDeclarationSyntax GetAccessor
+        {
+            get
+            {
+                // get;
+                return SyntaxFactory.AccessorDeclaration(
+                        SyntaxKind.GetAccessorDeclaration)
+                    .WithSemicolonToken(
+                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            }
+        }
+
+        /// <summary>
         /// Gets the modifiers.
         /// </summary>
         private static SyntaxTokenList Modifiers
         {
             get
             {
-                // private
+                // public
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
-                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
+                        SyntaxFactory.Token(SyntaxKind.InternalKeyword),
                     });
             }
         }

@@ -163,9 +163,6 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         /// <returns>The structure members with the fields added.</returns>
         private static SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
         {
-            members = members.Add(new LoggerField().Syntax);
-            members = members.Add(new ServiceProviderField().Syntax);
-            members = members.Add(new StringLocalizerField().Syntax);
             return members.Add(new RowVersionField().Syntax);
         }
 
@@ -178,6 +175,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         {
             // This will create the internal instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
+            properties.Add(new HttpClientProperty());
             properties.Add(new RowVersionProperty());
 
             // Alphabetize and add the fields as members of the class.

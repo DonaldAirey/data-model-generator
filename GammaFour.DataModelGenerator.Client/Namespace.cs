@@ -4,7 +4,6 @@
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Client
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using GammaFour.DataModelGenerator.Common;
@@ -149,13 +148,9 @@ namespace GammaFour.DataModelGenerator.Client
                     usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")));
                 }
 
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.DependencyInjection")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Localization")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Logging")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Newtonsoft.Json")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Newtonsoft.Json.Converters")));
                 usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Newtonsoft.Json.Linq")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("ThetaRex.Common")));
                 return usingStatements;
             }
         }
@@ -209,7 +204,6 @@ namespace GammaFour.DataModelGenerator.Client
 
             // The actual data model class and an extension class to add the classes to the dependency injection container.
             members = members.Add(new DataModelClass.Class(this.xmlSchemaDocument).Syntax);
-            members = members.Add(new ServiceCollectionExtensionClass.Class(this.xmlSchemaDocument).Syntax);
 
             // This is the collection of alphabetized fields.
             return members;

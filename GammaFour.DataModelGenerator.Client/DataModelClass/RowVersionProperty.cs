@@ -107,7 +107,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                        SyntaxFactory.Token(SyntaxKind.InternalKeyword),
                     });
             }
         }
@@ -119,15 +119,12 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         {
             get
             {
-                //            internal set
+                //            set
                 //            {
                 //                System.Threading.Interlocked.Exchange(ref this.rowVersion, value);
                 //            }
                 return SyntaxFactory.AccessorDeclaration(
                     SyntaxKind.SetAccessorDeclaration)
-                    .WithModifiers(
-                        SyntaxFactory.TokenList(
-                            SyntaxFactory.Token(SyntaxKind.InternalKeyword)))
                 .WithBody(
                     SyntaxFactory.Block(
                         SyntaxFactory.SingletonList<StatementSyntax>(

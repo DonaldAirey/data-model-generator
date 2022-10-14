@@ -27,7 +27,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             //        /// <summary>
             //        /// Gets or sets the master row version.
             //        /// </summary>
-            //        internal long RowVersion
+            //        public long RowVersion
             //        {
             this.Syntax = SyntaxFactory.PropertyDeclaration(
                 SyntaxFactory.PredefinedType(
@@ -103,11 +103,11 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             get
             {
-                // internal
+                // public
                 return SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.InternalKeyword),
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                     });
             }
         }
