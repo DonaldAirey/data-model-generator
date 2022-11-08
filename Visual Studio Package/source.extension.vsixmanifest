@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="DataModelGenerator.c5a71ebf-72ae-4a36-89d3-2a5a62eb2312" Version="3.1.21" Language="en-US" Publisher="Gamma Four" />
+        <Identity Id="DataModelGenerator.c5a71ebf-72ae-4a36-89d3-2a5a62eb2312" Version="3.1.22" Language="en-US" Publisher="Gamma Four" />
         <DisplayName>Data Model Generator</DisplayName>
         <Description xml:space="preserve">This product generates a high-performance, in-memory database that turbo-charges Entity Framework from a description in an XSD Schema file.</Description>
         <MoreInfo>https://github.com/GammaFour/data-model-generator</MoreInfo>
