@@ -287,7 +287,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                                 SyntaxFactory.IdentifierName("Now"))),
                                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                         SyntaxFactory.Argument(
-                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase())),
+                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
                                                     }))),
                                     })))));
 
