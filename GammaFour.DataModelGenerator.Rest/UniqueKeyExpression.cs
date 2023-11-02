@@ -95,7 +95,7 @@ namespace GammaFour.DataModelGenerator.RestService
                     }
 
                     ColumnElement columnElement = columnReferenceElement.Column;
-                    string attributeName = columnElement.Name.ToVariableName();
+                    string attributeName = columnElement.Name;
                     keys.Add(
                         SyntaxFactory.Argument(
                             SyntaxFactory.MemberAccessExpression(
