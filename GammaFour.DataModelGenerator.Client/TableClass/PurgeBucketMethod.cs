@@ -243,7 +243,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        IdentifierName(this.tableElement.Name.ToCamelCase()),
+                                        IdentifierName(this.tableElement.Name.ToVariableName()),
                                         IdentifierName(foreignKeyElement.UniqueChildName)),
                                     IdentifierName("Any"))),
                             Block(this.AddRecordToResiduals)));
