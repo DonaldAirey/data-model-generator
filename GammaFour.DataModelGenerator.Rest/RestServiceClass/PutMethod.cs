@@ -35,10 +35,10 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             //        /// Puts the <see cref="ManagedAccount"/> record.
             //        /// </summary>
             //        /// <param name="managedAccountId">The ManagedAccountId identifier.</param>
-            //        /// <param name="jObject">The JSON record.</param>
+            //        /// <param name="jsonObject">The JSON record.</param>
             //        /// <returns>The result of the PUT verb.</returns>
             //        [HttpPut("managedAccounts/{managedAccountId}")]
-            //        public async Task<IActionResult> PutManagedAccount([FromRoute] int managedAccountId, [FromBody] JObject jObject)
+            //        public async Task<IActionResult> PutManagedAccount([FromRoute] int managedAccountId, [FromBody] JsonObject jsonObject)
             //        {
             //            <Body>
             //        }
@@ -331,7 +331,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 }))))));
                 }
 
-                //        /// <param name="jObject">The JSON record.</param>
+                //        /// <param name="jsonObject">The JSON record.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -344,7 +344,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             {
                                                     SyntaxFactory.XmlTextLiteral(
                                                         SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                        $" <param name=\"jObject\">The JSON record.</param>",
+                                                        $" <param name=\"jsonObject\">The JSON record.</param>",
                                                         string.Empty,
                                                         SyntaxFactory.TriviaList()),
                                                     SyntaxFactory.XmlTextNewLine(
@@ -412,11 +412,11 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             .WithType(Conversions.FromType(columnReferenceElement.Column.ColumnType)));
                 }
 
-                // , [FromBody] JObject jObject
+                // , [FromBody] JsonObject jsonObject
                 parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier("jObject"))
+                        SyntaxFactory.Identifier("jsonObject"))
                     .WithAttributeLists(
                         SyntaxFactory.SingletonList<AttributeListSyntax>(
                             SyntaxFactory.AttributeList(
@@ -424,7 +424,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.Attribute(
                                         SyntaxFactory.IdentifierName("FromBody"))))))
                     .WithType(
-                        SyntaxFactory.IdentifierName("JObject")));
+                        SyntaxFactory.IdentifierName("JsonObject")));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
@@ -462,7 +462,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                    var clientManagedAccount = jObject.ToObject<ManagedAccount>();
+                //                    var clientManagedAccount = jsonObject.GetValue<ManagedAccount>();
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
@@ -482,9 +482,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.InvocationExpression(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("jObject"),
+                                                SyntaxFactory.IdentifierName("jsonObject"),
                                                 SyntaxFactory.GenericName(
-                                                    SyntaxFactory.Identifier("ToObject"))
+                                                    SyntaxFactory.Identifier("GetValue"))
                                                 .WithTypeArgumentList(
                                                     SyntaxFactory.TypeArgumentList(
                                                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(

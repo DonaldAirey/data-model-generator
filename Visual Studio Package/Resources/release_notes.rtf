@@ -67,7 +67,7 @@ generated REST API had to be the same as the underlying data model.  This allows
 \par }{\rtlch\fcs1 \af0\afs36 \ltrch\fcs0 \fs36\insrsid8201348 The Entity-Framework RowVersion feature has a limitation: it doesn\rquote t increment the R
 owVersion on deleted records.  Since the client use of the API depends on the RowVersion for the incremental updates, I had to take control of the RowVersion property.  Also, the autoincremented indices are now controlled by the middle tier.  This turned 
 out to have a measurable effect on the throughput as the Insert and Update operations are now one-way.  There\rquote s no need for EF to read a record to get the row version or index value.
-\par }{\rtlch\fcs1 \af0\afs36 \ltrch\fcs0 \fs36\insrsid1526236 Put back the functionality that processed JArrays in the POST verb as well as single JObjects.
+\par }{\rtlch\fcs1 \af0\afs36 \ltrch\fcs0 \fs36\insrsid1526236 Put back the functionality that processed JArrays in the POST verb as well as single JsonObjects.
 \par }{\rtlch\fcs1 \af0\afs36 \ltrch\fcs0 \fs36\insrsid4872443 Added support for nullable, unique indexes.
 \par }{\rtlch\fcs1 \af0\afs36 \ltrch\fcs0 \fs36\insrsid4784935 Changed the attributes on the XSD attributes to be all camel-case.  So, for example:
 \par }\pard \ltrpar\ql \fi720\li0\ri0\widctlpar\wrapdefault\faauto\rin0\lin0\itap0\pararsid4784935 {\rtlch\fcs1 \af43\afs19 \ltrch\fcs0 \f43\fs19\cf2\insrsid4784935 <}{\rtlch\fcs1 \af43\afs19 \ltrch\fcs0 \f43\fs19\cf19\insrsid4784935 xs:element}{\rtlch\fcs1 

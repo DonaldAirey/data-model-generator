@@ -184,7 +184,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 // Don't emit a converter for the predefined types.
                 if (!this.columnElement.ColumnType.IsPredefined)
                 {
-                    //        [JsonConverter(typeof(StringEnumConverter))]
+                    //        [JsonConverter(typeof(JsonStringEnumConverter))]
                     attributes.Add(
                         SyntaxFactory.AttributeList(
                             SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
@@ -195,7 +195,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                         SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
                                             SyntaxFactory.AttributeArgument(
                                                 SyntaxFactory.TypeOfExpression(
-                                                    SyntaxFactory.IdentifierName("StringEnumConverter")))))))));
+                                                    SyntaxFactory.IdentifierName("JsonStringEnumConverter")))))))));
                 }
 
                 // The collection of attributes.

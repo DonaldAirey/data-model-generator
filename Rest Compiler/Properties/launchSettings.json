@@ -2,7 +2,7 @@
   "profiles": {
     "Rest Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\openbook\\Web Api\\Controllers\\Rest\\Rest.xsd\" -out \"..\\..\\..\\..\\..\\openbook\\Web Api\\Controllers\\Rest\\Rest.Designer.cs\" -ns \"ThetaRex.OpenBook.WebApi.Controllers.Rest\""
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-webapi\\Web API\\Controllers\\Rest\\Rest.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-webapi\\Web API\\Controllers\\Rest\\Rest.Designer.cs\" -ns \"ThetaRex.OpenBook.WebApi.Controllers.Rest\""
     }
   }
 }

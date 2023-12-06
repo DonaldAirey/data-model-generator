@@ -35,8 +35,8 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             //        /// <summary>
             //        /// Merge the results of an incremental update.
             //        /// </summary>
-            //        /// <param name="jObject">The JSON object containg the incremental data.</param>
-            //        public void Merge(JObject jObject)
+            //        /// <param name="jsonObject">The JSON object containg the incremental data.</param>
+            //        public void Merge(JsonObject jsonObject)
             //        {
             this.Syntax = MethodDeclaration(
                     PredefinedType(
@@ -103,7 +103,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                 TriviaList()),
                                         }))))));
 
-                //        /// <param name="jObject">The JSON object containg the incremental data.</param>
+                //        /// <param name="jsonObject">The JSON object containg the incremental data.</param>
                 comments.Add(
                     Trivia(
                         DocumentationCommentTrivia(
@@ -116,7 +116,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                             {
                                                 XmlTextLiteral(
                                                     TriviaList(DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <param name=\"jObject\">The JSON object containg the incremental data.</param>",
+                                                    $" <param name=\"jsonObject\">The JSON object containg the incremental data.</param>",
                                                     string.Empty,
                                                     TriviaList()),
                                                 XmlTextNewLine(
@@ -160,9 +160,9 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                 // IEnumerable<object> source
                 parameters.Add(
                     Parameter(
-                        Identifier("jObject"))
+                        Identifier("jsonObject"))
                     .WithType(
-                        IdentifierName("JObject")));
+                        IdentifierName("JsonObject")));
 
                 // This is the complete parameter specification for this constructor.
                 return ParameterList(SeparatedList<ParameterSyntax>(parameters));
@@ -227,9 +227,9 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
 
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
-                    //            JToken accountsToken = jObject["accounts"];
-                    //            JToken canonsToken = jObject["canons"];
-                    //            JToken entitiesToken = jObject["entities"];
+                    //            JToken accountsToken = jsonObject["accounts"];
+                    //            JToken canonsToken = jsonObject["canons"];
+                    //            JToken entitiesToken = jsonObject["entities"];
                     statements.Add(
                         LocalDeclarationStatement(
                             VariableDeclaration(
@@ -241,7 +241,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                     .WithInitializer(
                                         EqualsValueClause(
                                             ElementAccessExpression(
-                                                IdentifierName("jObject"))
+                                                IdentifierName("jsonObject"))
                                             .WithArgumentList(
                                                 BracketedArgumentList(
                                                     SingletonSeparatedList<ArgumentSyntax>(
@@ -364,9 +364,9 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
 
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
-                    //            JToken deletedAccountsToken = jObject["purgedAccounts"];
-                    //            JToken deletedCanonsToken = jObject["purgedCanons"];
-                    //            JToken deletedEntitiesToken = jObject["purgedEntities"];
+                    //            JToken deletedAccountsToken = jsonObject["purgedAccounts"];
+                    //            JToken deletedCanonsToken = jsonObject["purgedCanons"];
+                    //            JToken deletedEntitiesToken = jsonObject["purgedEntities"];
                     statements.Add(
                         LocalDeclarationStatement(
                             VariableDeclaration(
@@ -378,7 +378,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                     .WithInitializer(
                                         EqualsValueClause(
                                             ElementAccessExpression(
-                                                IdentifierName("jObject"))
+                                                IdentifierName("jsonObject"))
                                             .WithArgumentList(
                                                 BracketedArgumentList(
                                                     SingletonSeparatedList<ArgumentSyntax>(

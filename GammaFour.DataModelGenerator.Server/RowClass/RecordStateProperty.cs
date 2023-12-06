@@ -74,7 +74,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 // This collects all the attributes.
                 List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
 
-                //        [JsonConverter(typeof(StringEnumConverter))]
+                //        [JsonConverter(typeof(JsonStringEnumConverter))]
                 attributes.Add(
                     SyntaxFactory.AttributeList(
                         SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(

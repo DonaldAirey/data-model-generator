@@ -36,10 +36,10 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             //        /// </summary>
             //        /// <param name="name">The Name identifier.</param>
             //        /// <param name="countryCode">The CountryCode identifier.</param>
-            //        /// <param name="jObject">The JSON record.</param>
+            //        /// <param name="jsonObject">The JSON record.</param>
             //        /// <returns>The result of the POST verb.</returns>
             //        [HttpPost]
-            //        public async Task<IActionResult> PostProvince([From`] JObject jObject)
+            //        public async Task<IActionResult> PostProvince([From`] JsonObject jsonObject)
             //        {
             //            <Body>
             //        }
@@ -90,10 +90,10 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 // Create a list of parameters.
                 List<SyntaxNodeOrToken> parameters = new List<SyntaxNodeOrToken>();
 
-                // [FromBody] JObject jObject
+                // [FromBody] JsonObject jsonObject
                 parameters.Add(
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier("jObject"))
+                        SyntaxFactory.Identifier("jsonObject"))
                     .WithAttributeLists(
                         SyntaxFactory.SingletonList<AttributeListSyntax>(
                             SyntaxFactory.AttributeList(
@@ -101,7 +101,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.Attribute(
                                         SyntaxFactory.IdentifierName("FromBody"))))))
                     .WithType(
-                        SyntaxFactory.IdentifierName("JObject")));
+                        SyntaxFactory.IdentifierName("JsonObject")));
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
@@ -213,7 +213,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))));
 
-                //        /// <param name="jObject">The message body.</param>
+                //        /// <param name="jsonObject">The message body.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -226,7 +226,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             {
                                                     SyntaxFactory.XmlTextLiteral(
                                                         SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                        $" <param name=\"jObject\">The message body.</param>",
+                                                        $" <param name=\"jsonObject\">The message body.</param>",
                                                         string.Empty,
                                                         SyntaxFactory.TriviaList()),
                                                     SyntaxFactory.XmlTextNewLine(
@@ -274,7 +274,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                //                        Account account = jObject.ToObject<Account>();
+                //                        Account account = jsonObject.GetValue<Account>();
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
@@ -288,9 +288,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.InvocationExpression(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("jObject"),
+                                                SyntaxFactory.IdentifierName("jsonObject"),
                                                 SyntaxFactory.GenericName(
-                                                    SyntaxFactory.Identifier("ToObject"))
+                                                    SyntaxFactory.Identifier("GetValue"))
                                                 .WithTypeArgumentList(
                                                     SyntaxFactory.TypeArgumentList(
                                                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
@@ -653,7 +653,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             // This is used to collect the statements.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 
-            //                        var childIdObject = jObject.GetValue("childId", StringComparison.InvariantCulture) as JObject;
+            //                        var childIdObject = jsonObject.GetValue("childId", StringComparison.InvariantCulture) as JsonObject;
             statements.Add(
                 SyntaxFactory.LocalDeclarationStatement(
                     SyntaxFactory.VariableDeclaration(
@@ -669,7 +669,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.InvocationExpression(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("jObject"),
+                                                SyntaxFactory.IdentifierName("jsonObject"),
                                                 SyntaxFactory.IdentifierName("GetValue")))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
@@ -687,7 +687,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                                         SyntaxFactory.IdentifierName("StringComparison"),
                                                                         SyntaxFactory.IdentifierName("OrdinalIgnoreCase"))),
                                                     }))),
-                                        SyntaxFactory.IdentifierName("JObject"))))))));
+                                        SyntaxFactory.IdentifierName("JsonObject"))))))));
 
             //                        if (childIdObject != null)
             //                        {
@@ -735,7 +735,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 
             foreach (UniqueElement uniqueKeyElement in uniqueKeyElements)
             {
-                //                var countryCountryCodeKey = jObject.GetValue("countryCountryCodeKey");
+                //                var countryCountryCodeKey = jsonObject.GetValue("countryCountryCodeKey");
                 statements.Add(
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
@@ -769,7 +769,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                                     SyntaxFactory.IdentifierName("StringComparison"),
                                                                     SyntaxFactory.IdentifierName("OrdinalIgnoreCase"))),
                                                         }))),
-                                            SyntaxFactory.IdentifierName("JObject"))))))));
+                                            SyntaxFactory.IdentifierName("JsonObject"))))))));
 
                 //                if (countryCountryCodeKey != null)
                 //                {

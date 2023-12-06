@@ -108,32 +108,39 @@ namespace GammaFour.DataModelGenerator.RestService
             get
             {
                 // Create the list of system namespaces.
-                List<UsingDirectiveSyntax> systemUsingStatements = new List<UsingDirectiveSyntax>();
-                systemUsingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System")));
-                systemUsingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")));
-                systemUsingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")));
-                systemUsingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")));
+                List<UsingDirectiveSyntax> systemUsingStatements = new List<UsingDirectiveSyntax>
+                {
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json.Nodes")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json.Serialization")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")),
+                };
 
                 // Create the list of non-system namespaces.
-                List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>();
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.Data.Server")));
+                List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>
+                {
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.Data.Server")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.AspNetCore.Http")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.AspNetCore.Mvc")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Configuration")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Logging")),
+                };
+
                 if (this.xmlSchemaDocument.IsSecure.HasValue && this.xmlSchemaDocument.IsSecure.Value)
                 {
                     usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.AspNetCore.Authorization")));
                 }
 
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.AspNetCore.Http")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.AspNetCore.Mvc")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Configuration")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Logging")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Newtonsoft.Json.Linq")));
                 if (!string.IsNullOrEmpty(this.xmlSchemaDocument.DataModelNamespace))
                 {
                     usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName(this.xmlSchemaDocument.DataModelNamespace)));
                 }
 
-                // This sorts and concatenates the two lists.  The 'System' namespace comes before the rest.
+                // This sorts and combines the two lists. The 'System' namespace comes before the rest.
                 return systemUsingStatements.OrderBy(ud => ud.Name.ToString()).Concat(usingStatements.OrderBy(ud => ud.Name.ToString())).ToList();
             }
         }
