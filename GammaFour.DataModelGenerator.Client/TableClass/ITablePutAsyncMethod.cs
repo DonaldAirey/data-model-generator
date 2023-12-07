@@ -124,7 +124,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 }
 
                 //            using (var request = new HttpRequestMessage(HttpMethod.Put, $"rest/accountMaps/{row["AccountMapId"]}"))
-                //            using (request.Content = new StringContent(JsonConvert.SerializeObject(row), Encoding.Default, "application/json"))
+                //            using (request.Content = new StringContent(JsonSerializer.Serialize(row), Encoding.Default, "application/json"))
                 //            using (HttpResponseMessage response = await this.DataModel.HttpClient.SendAsync(request).ConfigureAwait(false))
                 //            {
                 //                <UsingBlock>
@@ -188,8 +188,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                     SyntaxFactory.InvocationExpression(
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.IdentifierName("JsonConvert"),
-                                                            SyntaxFactory.IdentifierName("SerializeObject")))
+                                                            SyntaxFactory.IdentifierName("JsonSerializer"),
+                                                            SyntaxFactory.IdentifierName("Serialize")))
                                                     .WithArgumentList(
                                                         SyntaxFactory.ArgumentList(
                                                             SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
@@ -372,15 +372,15 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                 SyntaxFactory.IdentifierName("response"),
                                 SyntaxFactory.IdentifierName("EnsureSuccessStatusCode")))));
 
-                //                    return JsonConvert.DeserializeObject<ModelWeight>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                //                    return JsonSerializer.Deserialize<ModelWeight>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
                 statements.Add(
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("JsonConvert"),
+                                SyntaxFactory.IdentifierName("JsonSerializer"),
                                 SyntaxFactory.GenericName(
-                                    SyntaxFactory.Identifier("DeserializeObject"))
+                                    SyntaxFactory.Identifier("Deserialize"))
                                 .WithTypeArgumentList(
                                     SyntaxFactory.TypeArgumentList(
                                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(

@@ -119,7 +119,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                     .WithUsingKeyword(
                         SyntaxFactory.Token(SyntaxKind.UsingKeyword)));
 
-                //            request.Content = new StringContent(JsonConvert.SerializeObject(@event), Encoding.Default, "application/json");
+                //            request.Content = new StringContent(JsonSerializer.Serialize(@event), Encoding.Default, "application/json");
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
@@ -139,8 +139,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                 SyntaxFactory.InvocationExpression(
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.IdentifierName("JsonConvert"),
-                                                        SyntaxFactory.IdentifierName("SerializeObject")))
+                                                        SyntaxFactory.IdentifierName("JsonSerializer"),
+                                                        SyntaxFactory.IdentifierName("Serialize")))
                                                 .WithArgumentList(
                                                     SyntaxFactory.ArgumentList(
                                                         SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
@@ -210,15 +210,15 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                 SyntaxFactory.IdentifierName("response"),
                                 SyntaxFactory.IdentifierName("EnsureSuccessStatusCode")))));
 
-                //                    return JsonConvert.DeserializeObject<ModelWeight>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                //                    return JsonSerializer.Deserialize<ModelWeight>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
                 statements.Add(
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("JsonConvert"),
+                                SyntaxFactory.IdentifierName("JsonSerializer"),
                                 SyntaxFactory.GenericName(
-                                    SyntaxFactory.Identifier("DeserializeObject"))
+                                    SyntaxFactory.Identifier("Deserialize"))
                                 .WithTypeArgumentList(
                                     SyntaxFactory.TypeArgumentList(
                                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(

@@ -227,13 +227,19 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
 
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
-                    //            JToken accountsToken = jsonObject["accounts"];
-                    //            JToken canonsToken = jsonObject["canons"];
-                    //            JToken entitiesToken = jsonObject["entities"];
+                    //            var accountsToken = jsonObject["accounts"];
+                    //            var canonsToken = jsonObject["canons"];
+                    //            var entitiesToken = jsonObject["entities"];
                     statements.Add(
                         LocalDeclarationStatement(
-                            VariableDeclaration(
-                                IdentifierName("JToken"))
+                            SyntaxFactory.VariableDeclaration(
+                                SyntaxFactory.IdentifierName(
+                                    SyntaxFactory.Identifier(
+                                        SyntaxFactory.TriviaList(),
+                                        SyntaxKind.VarKeyword,
+                                        "var",
+                                        "var",
+                                        SyntaxFactory.TriviaList())))
                             .WithVariables(
                                 SingletonSeparatedList<VariableDeclaratorSyntax>(
                                     VariableDeclarator(
@@ -369,8 +375,14 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                     //            JToken deletedEntitiesToken = jsonObject["purgedEntities"];
                     statements.Add(
                         LocalDeclarationStatement(
-                            VariableDeclaration(
-                                IdentifierName("JToken"))
+                            SyntaxFactory.VariableDeclaration(
+                                SyntaxFactory.IdentifierName(
+                                    SyntaxFactory.Identifier(
+                                        SyntaxFactory.TriviaList(),
+                                        SyntaxKind.VarKeyword,
+                                        "var",
+                                        "var",
+                                        SyntaxFactory.TriviaList())))
                             .WithVariables(
                                 SingletonSeparatedList<VariableDeclaratorSyntax>(
                                     VariableDeclarator(
@@ -593,7 +605,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             // The elements of the body are added to this collection as they are assembled.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 
-            //                mergeBuckets.Add(this.Accounts, this.Accounts.Merge(accountsToken.ToObject<List<Account>>()));
+            //                mergeBuckets.Add(this.Accounts, this.Accounts.Merge(accountsToken.Deserialize<List<Account>>()));
             statements.Add(
                 ExpressionStatement(
                     InvocationExpression(
@@ -630,7 +642,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 IdentifierName($"{tableElement.Name.ToPlural().ToCamelCase()}Token"),
                                                                 GenericName(
-                                                                    Identifier("ToObject"))
+                                                                    Identifier("Deserialize"))
                                                                 .WithTypeArgumentList(
                                                                     TypeArgumentList(
                                                                         SingletonSeparatedList<TypeSyntax>(
@@ -654,7 +666,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             // The elements of the body are added to this collection as they are assembled.
             List<StatementSyntax> statements = new List<StatementSyntax>();
 
-            //                purgeBuckets.Add(this.Accounts, this.Accounts.Purge(deletedAccountsToken.ToObject<List<Account>>()));
+            //                purgeBuckets.Add(this.Accounts, this.Accounts.Purge(deletedAccountsToken.Deserialize<List<Account>>()));
             statements.Add(
                 ExpressionStatement(
                     InvocationExpression(
@@ -691,7 +703,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 IdentifierName($"purged{tableElement.Name.ToPlural()}Token"),
                                                                 GenericName(
-                                                                    Identifier("ToObject"))
+                                                                    Identifier("Deserialize"))
                                                                 .WithTypeArgumentList(
                                                                     TypeArgumentList(
                                                                         SingletonSeparatedList<TypeSyntax>(

@@ -37,7 +37,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             //        /// </summary>
             //        /// <param name="source">The source text.</param>
             //        /// <returns>The deserialized collection of rows.</returns>
-            //        public IEnumerable<T> Deserialize(string source) => JsonConvert.DeserializeObject<IEnumerable<Region>>(source);
+            //        public IEnumerable<T> Deserialize(string source) => JsonSerializer.Deserialize<IEnumerable<Region>>(source);
             this.Syntax = SyntaxFactory.MethodDeclaration(
                 SyntaxFactory.GenericName(
                     SyntaxFactory.Identifier("IEnumerable"))
@@ -186,9 +186,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                     SyntaxFactory.InvocationExpression(
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName("JsonConvert"),
+                            SyntaxFactory.IdentifierName("JsonSerializer"),
                             SyntaxFactory.GenericName(
-                                SyntaxFactory.Identifier("DeserializeObject"))
+                                SyntaxFactory.Identifier("Deserialize"))
                             .WithTypeArgumentList(
                                 SyntaxFactory.TypeArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<TypeSyntax>(

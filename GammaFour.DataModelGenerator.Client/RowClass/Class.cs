@@ -321,10 +321,12 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceProperties(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
-            List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new TableProperty(this.tableElement));
-            properties.Add(new RecordStateProperty());
-            properties.Add(new IndexProperty(this.tableElement));
+            List<SyntaxElement> properties = new List<SyntaxElement>
+            {
+                new TableProperty(this.tableElement),
+                new RecordStateProperty(),
+                new IndexProperty(this.tableElement),
+            };
 
             // Create a navigation property to each of the parent collections.
             foreach (ForeignElement foreignKeyElement in this.tableElement.ParentKeys)

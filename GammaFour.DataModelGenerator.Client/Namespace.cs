@@ -130,28 +130,34 @@ namespace GammaFour.DataModelGenerator.Client
         {
             get
             {
-                // Create the 'using' statements.
-                // [TODO] Make the addition of user namespaces part of the initialization.  Run through the tables and extract the
-                // namespaces from the types found therein.
-                List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>();
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq.Expressions")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Net.Http")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.Data.Client")));
+                // Create the system using statements.
+                List<UsingDirectiveSyntax> systemUsingStatements = new List<UsingDirectiveSyntax>
+                {
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq.Expressions")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Net.Http")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json.Nodes")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json.Serialization")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text")),
+                };
+
+                List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>
+                {
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.Data.Client")),
+                };
+
                 if (!this.xmlSchemaDocument.IsVolatile.HasValue || !this.xmlSchemaDocument.IsVolatile.Value)
                 {
                     usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")));
                 }
 
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Newtonsoft.Json")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Newtonsoft.Json.Converters")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Newtonsoft.Json.Linq")));
-                return usingStatements;
+                // This sorts and combines the two lists. The 'System' namespace comes before the rest.
+                return systemUsingStatements.OrderBy(ud => ud.Name.ToString()).Concat(usingStatements.OrderBy(ud => ud.Name.ToString())).ToList();
             }
         }
 

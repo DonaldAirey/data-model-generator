@@ -326,15 +326,15 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                 SyntaxFactory.IdentifierName("response"),
                                 SyntaxFactory.IdentifierName("EnsureSuccessStatusCode")))));
 
-                //                    return JsonConvert.DeserializeObject<Fungible>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                //                    return JsonSerializer.Deserialize<Fungible>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
                 statements.Add(
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("JsonConvert"),
+                                SyntaxFactory.IdentifierName("JsonSerializer"),
                                 SyntaxFactory.GenericName(
-                                    SyntaxFactory.Identifier("DeserializeObject"))
+                                    SyntaxFactory.Identifier("Deserialize"))
                                 .WithTypeArgumentList(
                                     SyntaxFactory.TypeArgumentList(
                                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
