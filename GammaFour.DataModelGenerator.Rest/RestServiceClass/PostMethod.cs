@@ -290,7 +290,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.IdentifierName("jsonObject"),
                                                 SyntaxFactory.GenericName(
-                                                    SyntaxFactory.Identifier("GetValue"))
+                                                    SyntaxFactory.Identifier("Deserialize"))
                                                 .WithTypeArgumentList(
                                                     SyntaxFactory.TypeArgumentList(
                                                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
@@ -670,7 +670,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.IdentifierName("jsonObject"),
-                                                SyntaxFactory.IdentifierName("GetValue")))
+                                                SyntaxFactory.IdentifierName("Deserialize")))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
                                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(

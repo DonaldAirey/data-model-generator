@@ -484,7 +484,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.IdentifierName("jsonObject"),
                                                 SyntaxFactory.GenericName(
-                                                    SyntaxFactory.Identifier("GetValue"))
+                                                    SyntaxFactory.Identifier("Deserialize"))
                                                 .WithTypeArgumentList(
                                                     SyntaxFactory.TypeArgumentList(
                                                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
