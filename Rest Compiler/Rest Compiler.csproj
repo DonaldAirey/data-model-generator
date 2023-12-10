@@ -4,17 +4,11 @@
     <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>GammaFour.DataModelGenerator.RestCompiler</RootNamespace>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn></NoWarn>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>bin\Debug\GammaFour.DataModelGenerator.RestCompiler.xml</DocumentationFile>
-    <DefineConstants>DEBUG</DefineConstants>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|AnyCPU'">
+    <DefineConstants>DEVELOPMENT</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn></NoWarn>
-    <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>bin\Release\GammaFour.DataModelGenerator.RestCompiler.xml</DocumentationFile>
-    <DefineConstants>RELEASE</DefineConstants>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Production|AnyCPU'">
+    <DefineConstants>PRODUCTION</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="stylecop.json" />

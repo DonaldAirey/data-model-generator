@@ -179,7 +179,21 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // This collects all the attributes.
-                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
+                var attributes = new List<AttributeListSyntax>
+                {
+                    //        [JsonPropertyName("name")]
+                    SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                SyntaxFactory.IdentifierName("JsonPropertyName"))
+                            .WithArgumentList(
+                                SyntaxFactory.AttributeArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
+                                        SyntaxFactory.AttributeArgument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                SyntaxFactory.Literal(this.Name.ToCamelCase())))))))),
+                };
 
                 // Don't emit a converter for the predefined types.
                 if (!this.columnElement.ColumnType.IsPredefined)
