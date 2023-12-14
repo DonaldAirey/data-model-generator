@@ -200,7 +200,6 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                     .WithUsingKeyword(
                         SyntaxFactory.Token(SyntaxKind.UsingKeyword)));
 
-
                 //                    response.EnsureSuccessStatusCode();
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
