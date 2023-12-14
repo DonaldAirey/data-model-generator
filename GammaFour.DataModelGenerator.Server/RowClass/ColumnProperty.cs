@@ -53,10 +53,9 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                    this.RecordState = this.RecordState == RecordState.Added ? RecordState.Added : RecordState.Modified;
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                    this.RecordState = this.RecordState == RecordState.Added ? RecordState.Added : RecordState.Modified;
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -82,10 +81,9 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.IdentifierName("RecordState"),
-                                    SyntaxFactory.IdentifierName("Modified"))))));
+                                    SyntaxFactory.IdentifierName("Modified"))))),
 
-                //                    this.originalData = (object[])this.currentData.Clone();
-                statements.Add(
+                    //                    this.originalData = (object[])this.currentData.Clone();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -109,10 +107,9 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
                                             SyntaxFactory.IdentifierName("currentData")),
-                                        SyntaxFactory.IdentifierName("Clone")))))));
+                                        SyntaxFactory.IdentifierName("Clone")))))),
 
-                //                    this.previousData = (object[])this.currentData.Clone();
-                statements.Add(
+                    //                    this.previousData = (object[])this.currentData.Clone();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -136,7 +133,8 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
                                             SyntaxFactory.IdentifierName("currentData")),
-                                        SyntaxFactory.IdentifierName("Clone")))))));
+                                        SyntaxFactory.IdentifierName("Clone")))))),
+                };
 
                 return statements;
             }
@@ -226,11 +224,10 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             {
                 // This list collects the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
-                string property = this.columnElement.Name;
 
-                //                return this.currentData[0] as string;
                 if (this.columnElement.ColumnType.IsValueType)
                 {
+                    //                return (decimal)this.currentData[0];
                     statements.Add(
                         SyntaxFactory.ReturnStatement(
                             SyntaxFactory.CastExpression(
@@ -250,6 +247,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 }
                 else
                 {
+                    //                return this.currentData[0] as string;
                     statements.Add(
                         SyntaxFactory.ReturnStatement(
                             SyntaxFactory.BinaryExpression(
@@ -351,14 +349,57 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-                string property = this.columnElement.Name;
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                if ((string)this.currentData[0] != value)
+                    //                {
+                    //                    <ValueChangedBlock>
+                    //                }
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
+                            SyntaxFactory.CastExpression(
+                                Conversions.FromType(this.columnElement.ColumnType),
+                                SyntaxFactory.ElementAccessExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("currentData")))
+                                .WithArgumentList(
+                                    SyntaxFactory.BracketedArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.LiteralExpression(
+                                                    SyntaxKind.NumericLiteralExpression,
+                                                    SyntaxFactory.Literal(this.columnElement.Index))))))),
+                            SyntaxFactory.IdentifierName("value")),
+                        SyntaxFactory.Block(this.ValueChangedBlock)),
+                };
 
-                //                if (this.State == RecordState.Unchanged)
-                //                {
-                //                    <InitializeState>
-                //                }
-                statements.Add(
+                //            set
+                //            {
+                //            }
+                return SyntaxFactory.AccessorDeclaration(
+                    SyntaxKind.SetAccessorDeclaration,
+                    SyntaxFactory.Block(
+                        SyntaxFactory.List<StatementSyntax>(statements)));
+            }
+        }
+
+        /// <summary>
+        /// Gets the statements that sets the underlying field to the new value.
+        /// </summary>
+        private List<StatementSyntax> ValueChangedBlock
+        {
+            get
+            {
+                // This list collects the statements.
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                if (this.State == RecordState.Unchanged)
+                    //                {
+                    //                    <InitializeState>
+                    //                }
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.EqualsExpression,
@@ -370,10 +411,9 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("RecordState"),
                                 SyntaxFactory.IdentifierName("Unchanged"))),
-                        SyntaxFactory.Block(ColumnProperty.InitializeState)));
+                        SyntaxFactory.Block(ColumnProperty.InitializeState)),
 
-                //                    this.currentData[1] = value;
-                statements.Add(
+                    //                    this.currentData[1] = value;
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -389,15 +429,10 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                             SyntaxFactory.LiteralExpression(
                                                 SyntaxKind.NumericLiteralExpression,
                                                 SyntaxFactory.Literal(this.columnElement.Index)))))),
-                            SyntaxFactory.IdentifierName("value"))));
+                            SyntaxFactory.IdentifierName("value"))),
+                };
 
-                //            set
-                //            {
-                //            }
-                return SyntaxFactory.AccessorDeclaration(
-                    SyntaxKind.SetAccessorDeclaration,
-                    SyntaxFactory.Block(
-                        SyntaxFactory.List<StatementSyntax>(statements)));
+                return statements;
             }
         }
     }
