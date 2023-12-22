@@ -662,8 +662,39 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.IdentifierName(columnElement.Name)))));
                 }
 
-                //                        this.dataModel.ManagedAccounts.Update(serverManagedAccount);
-                statements.Add(
+                //                                if (serverListMap.RecordState != RecordState.Unchanged)
+                //                                {
+                //                                    <UpdateChangedRecord>
+                //                                {
+                statements.Add(SyntaxFactory.IfStatement(
+                    SyntaxFactory.BinaryExpression(
+                        SyntaxKind.NotEqualsExpression,
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName($"server{this.tableElement.Name}"),
+                            SyntaxFactory.IdentifierName("RecordState")),
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName("RecordState"),
+                            SyntaxFactory.IdentifierName("Unchanged"))),
+                    SyntaxFactory.Block(this.UpdateChangedRecord)));
+
+                // This is the complete block.
+                return statements;
+            }
+        }
+
+        /// <summary>
+        /// Gets a block of code.
+        /// </summary>
+        private List<StatementSyntax> UpdateChangedRecord
+        {
+            get
+            {
+                // This is used to collect the statements.
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                        this.dataModel.ManagedAccounts.Update(serverManagedAccount);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -680,10 +711,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName($"server{this.tableElement.Name}")))))));
+                                        SyntaxFactory.IdentifierName($"server{this.tableElement.Name}")))))),
 
-                //                        this.dataModelContext.ManagedAccounts.Update(serverManagedAccount);
-                statements.Add(
+                    //                        this.dataModelContext.ManagedAccounts.Update(serverManagedAccount);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -700,10 +730,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName($"server{this.tableElement.Name}")))))));
+                                        SyntaxFactory.IdentifierName($"server{this.tableElement.Name}")))))),
 
-                //                        await this.dataModelContext.SaveChangesAsync();
-                statements.Add(
+                    //                        await this.dataModelContext.SaveChangesAsync();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
                             SyntaxFactory.InvocationExpression(
@@ -713,7 +742,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
                                         SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase()}Context")),
-                                    SyntaxFactory.IdentifierName("SaveChangesAsync"))))));
+                                    SyntaxFactory.IdentifierName("SaveChangesAsync"))))),
+                };
 
                 // This is the complete block.
                 return statements;
