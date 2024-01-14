@@ -6,6 +6,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
 {
     using System;
     using System.Collections.Generic;
+    using System.Text.Json;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -177,6 +178,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // This collects all the attributes.
+                var jsonPropertyName = this.columnElement.Table.XmlSchemaDocument.JsonNamingPolicy.ConvertName(this.Name);
                 var attributes = new List<AttributeListSyntax>
                 {
                     //        [JsonPropertyName("name")]
@@ -190,7 +192,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                         SyntaxFactory.AttributeArgument(
                                             SyntaxFactory.LiteralExpression(
                                                 SyntaxKind.StringLiteralExpression,
-                                                SyntaxFactory.Literal(this.Name.ToCamelCase())))))))),
+                                                SyntaxFactory.Literal(jsonPropertyName)))))))),
                 };
 
                 // Don't emit a converter for the predefined types.

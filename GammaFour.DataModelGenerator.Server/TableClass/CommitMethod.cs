@@ -47,10 +47,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            this.undoStack.Clear();
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            this.undoStack.Clear();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -59,16 +58,16 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName("undoStack")),
-                                SyntaxFactory.IdentifierName("Clear")))));
+                                SyntaxFactory.IdentifierName("Clear")))),
 
-                //            enlistment.Done();
-                statements.Add(
+                    //            enlistment.Done();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("enlistment"),
-                                SyntaxFactory.IdentifierName("Done")))));
+                                SyntaxFactory.IdentifierName("Done")))),
+                };
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -83,10 +82,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             get
             {
                 // This is used to collect the trivia.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <inheritdoc/>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <inheritdoc/>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -106,7 +104,8 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -137,14 +136,14 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             get
             {
                 // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // Enlistment enlistment
-                parameters.Add(
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>
+                {
+                    // Enlistment enlistment
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("enlistment"))
                     .WithType(
-                        SyntaxFactory.IdentifierName("Enlistment")));
+                        SyntaxFactory.IdentifierName("Enlistment")),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

@@ -122,25 +122,25 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            if (!this.ModelState.IsValid)
+                    //            {
+                    //                return this.BadRequest(this.ModelState);
+                    //            }
+                    CheckStateExpression.Syntax,
 
-                //            if (!this.ModelState.IsValid)
-                //            {
-                //                return this.BadRequest(this.ModelState);
-                //            }
-                statements.Add(CheckStateExpression.Syntax);
-
-                //            try
-                //            {
-                //                <TryBlock>
-                //            }
-                //            catch
-                //            {
-                //                <CommonCatchClauses>
-                //            }
-                statements.Add(
+                    //            try
+                    //            {
+                    //                <TryBlock>
+                    //            }
+                    //            catch
+                    //            {
+                    //                <CommonCatchClauses>
+                    //            }
                     SyntaxFactory.TryStatement(CommonStatements.CommonCatchClauses)
-                    .WithBlock(SyntaxFactory.Block(this.TryBlock)));
+                    .WithBlock(SyntaxFactory.Block(this.TryBlock)),
+                };
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(statements);
@@ -155,12 +155,11 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Gets a specific <see cref="Province"/> record.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Gets a specific <see cref="Province"/> record.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -200,7 +199,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 //        /// <param name="provinceId">The primary key identifier.</param>
                 foreach (ColumnReferenceElement columnReferenceElement in this.uniqueKeyElement.Columns)
@@ -300,10 +300,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            using var lockingTransaction = new LockingTransaction(this.transactionTimeout);
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            using var lockingTransaction = new LockingTransaction(this.transactionTimeout);
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(
@@ -330,10 +329,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                             SyntaxFactory.ThisExpression(),
                                                             SyntaxFactory.IdentifierName("transactionTimeout")))))))))))
                     .WithUsingKeyword(
-                        SyntaxFactory.Token(SyntaxKind.UsingKeyword)));
+                        SyntaxFactory.Token(SyntaxKind.UsingKeyword)),
 
-                //                await lockingTransaction.WaitReaderAsync(this.dataModel.ItemTrees.ItemTreeChildParentKey).ConfigureAwait(false);
-                statements.Add(
+                    //                await lockingTransaction.WaitReaderAsync(this.dataModel.ItemTrees.ItemTreeChildParentKey).ConfigureAwait(false);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
                             SyntaxFactory.InvocationExpression(
@@ -364,10 +362,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.FalseLiteralExpression))))))));
+                                                SyntaxKind.FalseLiteralExpression))))))),
 
-                //                Province province = this.dataModel.Provinces.ProvinceKey.Find(provinceId);
-                statements.Add(
+                    //                Province province = this.dataModel.Provinces.ProvinceKey.Find(provinceId);
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name))
@@ -392,13 +389,12 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     SyntaxFactory.IdentifierName(this.uniqueKeyElement.Name)),
                                                 SyntaxFactory.IdentifierName("Find")))
                                         .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(UniqueKeyExpression.GetSyntax(this.uniqueKeyElement)))))))));
+                                            SyntaxFactory.ArgumentList(UniqueKeyExpression.GetSyntax(this.uniqueKeyElement)))))))),
 
-                //                if (province == null)
-                //                {
-                //                    return this.NotFound();
-                //                }
-                statements.Add(
+                    //                if (province == null)
+                    //                {
+                    //                    return this.NotFound();
+                    //                }
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.EqualsExpression,
@@ -412,10 +408,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("NotFound"))))))));
+                                            SyntaxFactory.IdentifierName("NotFound"))))))),
 
-                //            await lockingTransaction.WaitReaderAsync(account).ConfigureAwait(false);
-                statements.Add(
+                    //            await lockingTransaction.WaitReaderAsync(account).ConfigureAwait(false);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
                             SyntaxFactory.InvocationExpression(
@@ -437,10 +432,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.FalseLiteralExpression))))))));
+                                                SyntaxKind.FalseLiteralExpression))))))),
 
-                //                    return this.Ok(new { province.CountryCode, province.CountryId, province.Name, province.ProvinceId, province.RegionName, province.RegionId, province.Short, province.RowVersion });
-                statements.Add(
+                    //                    return this.Ok(new { province.CountryCode, province.CountryId, province.Name, province.ProvinceId, province.RegionName, province.RegionId, province.Short, province.RowVersion });
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -451,7 +445,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        AnonymousRecordExpression.GetSyntax(this.uniqueKeyElement.Table)))))));
+                                        AnonymousRecordExpression.GetSyntax(this.uniqueKeyElement.Table)))))),
+                };
 
                 // This is the complete block.
                 return statements;

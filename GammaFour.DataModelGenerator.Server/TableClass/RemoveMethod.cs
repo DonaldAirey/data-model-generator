@@ -72,10 +72,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            object key = this.primaryKeyFunction(buyer);
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            object key = this.primaryKeyFunction(buyer);
                     SyntaxFactory.LocalDeclarationStatement(
                     SyntaxFactory.VariableDeclaration(
                         SyntaxFactory.PredefinedType(
@@ -95,10 +94,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                         SyntaxFactory.ArgumentList(
                                             SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                 SyntaxFactory.Argument(
-                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))))))));
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))))))),
 
-                //            country.SetOwner(null);
-                statements.Add(
+                    //            country.SetOwner(null);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -110,10 +108,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.NullLiteralExpression)))))));
+                                            SyntaxKind.NullLiteralExpression)))))),
 
-                //            this.undoStack.Push(() => sourceOrder.SetOwner(this));
-                statements.Add(
+                    //            this.undoStack.Push(() => sourceOrder.SetOwner(this));
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -138,10 +135,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.ArgumentList(
                                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                         SyntaxFactory.Argument(
-                                                            SyntaxFactory.ThisExpression())))))))))));
+                                                            SyntaxFactory.ThisExpression())))))))))),
 
-                //            this.collection.Remove(key);
-                statements.Add(
+                    //            this.collection.Remove(key);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -155,10 +151,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("key")))))));
+                                        SyntaxFactory.IdentifierName("key")))))),
 
-                //            this.undoStack.Push(() => this.collection.Add(key, country));
-                statements.Add(
+                    //            this.undoStack.Push(() => this.collection.Add(key, country));
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -192,7 +187,8 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                             SyntaxFactory.Argument(
                                                                 SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
-                                                        }))))))))));
+                                                        }))))))))),
+                };
 
                 // Remove the record to each of the unique key indices on this set.
                 foreach (UniqueElement uniqueKeyElement in this.tableElement.UniqueKeys)
@@ -331,12 +327,11 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Removes a <see cref="Buyer"/> from the set.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Removes a <see cref="Buyer"/> from the set.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -376,10 +371,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
 
-                //        /// <param name="buyer">The buyer to be added.</param>
-                comments.Add(
+                    //        /// <param name="buyer">The buyer to be added.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -399,7 +393,8 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                     Environment.NewLine,
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
-                                            }))))));
+                                            }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -414,14 +409,14 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             get
             {
                 // Create a list of parameters.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // The row parameter comes after the key elements.
-                parameters.Add(
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>
+                {
+                    // The row parameter comes after the key elements.
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()))
                     .WithType(
-                        SyntaxFactory.IdentifierName(this.tableElement.Name)));
+                        SyntaxFactory.IdentifierName(this.tableElement.Name)),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

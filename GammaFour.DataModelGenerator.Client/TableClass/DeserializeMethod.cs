@@ -77,15 +77,15 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // IEnumerable<Fungible> fungibles
-                parameters.Add(
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>
+                {
+                    // IEnumerable<Fungible> fungibles
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("source"))
                     .WithType(
                         SyntaxFactory.PredefinedType(
-                            SyntaxFactory.Token(SyntaxKind.StringKeyword))));
+                            SyntaxFactory.Token(SyntaxKind.StringKeyword))),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters.ToList().OrderBy(p => p.Identifier.Text)));
@@ -100,12 +100,11 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Adds a <see cref="Buyer"/> to the set.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Adds a <see cref="Buyer"/> to the set.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -145,10 +144,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
 
-                //        /// <returns>The set of fungibles.</returns>
-                comments.Add(
+                    //        /// <returns>The set of fungibles.</returns>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -168,7 +166,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                     Environment.NewLine,
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
-                                            }))))));
+                                            }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);

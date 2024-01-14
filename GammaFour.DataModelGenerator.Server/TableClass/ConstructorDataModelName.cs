@@ -73,10 +73,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            this.DataModel = dataModel;
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            this.DataModel = dataModel;
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -84,10 +83,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
-                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToVariableName()))));
+                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name.ToVariableName()))),
 
-                //            this.Name = name;
-                statements.Add(
+                    //            this.Name = name;
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -95,7 +93,8 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName("Name")),
-                            SyntaxFactory.IdentifierName("name"))));
+                            SyntaxFactory.IdentifierName("name"))),
+                };
 
                 // Initialize the unique index properties.
                 foreach (UniqueElement uniqueKeyElement in this.tableElement.UniqueKeys)
@@ -125,12 +124,11 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Initializes a new instance of the <see cref="ConfigurationSet"/> class.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Initializes a new instance of the <see cref="ConfigurationSet"/> class.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -173,10 +171,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
 
-                //        /// <param name="dataModel">The data model.</param>
-                comments.Add(
+                    //        /// <param name="dataModel">The data model.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -196,10 +193,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                     Environment.NewLine,
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
-                                            }))))));
+                                            }))))),
 
-                //        /// <param name="name">The name of the set.</param>
-                comments.Add(
+                    //        /// <param name="name">The name of the set.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -219,7 +215,8 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                     Environment.NewLine,
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
-                                            }))))));
+                                            }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -234,23 +231,22 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             get
             {
                 // Create a list of parameters from the columns in the unique constraint.
-                List<SyntaxNodeOrToken> parameters = new List<SyntaxNodeOrToken>();
-
-                // DataModel dataModel;
-                parameters.Add(
+                List<SyntaxNodeOrToken> parameters = new List<SyntaxNodeOrToken>
+                {
+                    // DataModel dataModel;
                     SyntaxFactory.Parameter(SyntaxFactory.Identifier(this.tableElement.XmlSchemaDocument.Name.ToVariableName()))
-                    .WithType(SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)));
+                    .WithType(SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
 
-                // ,
-                parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                    // ,
+                    SyntaxFactory.Token(SyntaxKind.CommaToken),
 
-                // string Name
-                parameters.Add(
+                    // string Name
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("name"))
                     .WithType(
                         SyntaxFactory.PredefinedType(
-                            SyntaxFactory.Token(SyntaxKind.StringKeyword))));
+                            SyntaxFactory.Token(SyntaxKind.StringKeyword))),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

@@ -56,12 +56,11 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Initializes a new instance of the <see cref="DataModel"/> class.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Initializes a new instance of the <see cref="DataModel"/> class.
+                    //        /// </summary>
                     Trivia(
                         DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -101,10 +100,9 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 TriviaList()),
-                                        }))))));
+                                        }))))),
 
-                //        /// <param name="jsonObject">The JSON object containg the incremental data.</param>
-                comments.Add(
+                    //        /// <param name="jsonObject">The JSON object containg the incremental data.</param>
                     Trivia(
                         DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -124,7 +122,8 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                     Environment.NewLine,
                                                     string.Empty,
                                                     TriviaList()),
-                                            }))))));
+                                            }))))),
+                };
 
                 // This is the complete document comment.
                 return TriviaList(comments);
@@ -155,14 +154,14 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             get
             {
                 // Create a list of parameters.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // IEnumerable<object> source
-                parameters.Add(
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>
+                {
+                    // IEnumerable<object> source
                     Parameter(
                         Identifier("jsonObject"))
                     .WithType(
-                        IdentifierName("JsonObject")));
+                        IdentifierName("JsonObject")),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return ParameterList(SeparatedList<ParameterSyntax>(parameters));
@@ -177,10 +176,9 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            Dictionary<ITable, IEnumerable<IRow>> mergeBuckets = new Dictionary<ITable, IEnumerable<IRow>>();
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            Dictionary<ITable, IEnumerable<IRow>> mergeBuckets = new Dictionary<ITable, IEnumerable<IRow>>();
                     LocalDeclarationStatement(
                         VariableDeclaration(
                             GenericName(
@@ -223,7 +221,8 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                                         SyntaxFactory.IdentifierName("IRow")))),
                                                         }))))
                                         .WithArgumentList(
-                                            ArgumentList())))))));
+                                            ArgumentList())))))),
+                };
 
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
@@ -603,10 +602,9 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         private static List<StatementSyntax> GetMergeTable(TableElement tableElement)
         {
             // The elements of the body are added to this collection as they are assembled.
-            List<StatementSyntax> statements = new List<StatementSyntax>();
-
-            //                mergeBuckets.Add(this.Accounts, this.Accounts.Merge(accountsToken.Deserialize<List<Account>>()));
-            statements.Add(
+            List<StatementSyntax> statements = new List<StatementSyntax>
+            {
+                //                mergeBuckets.Add(this.Accounts, this.Accounts.Merge(accountsToken.Deserialize<List<Account>>()));
                 ExpressionStatement(
                     InvocationExpression(
                         MemberAccessExpression(
@@ -652,7 +650,8 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                                                 TypeArgumentList(
                                                                                     SingletonSeparatedList<TypeSyntax>(
                                                                                         IdentifierName(tableElement.Name)))))))))))))),
-                                })))));
+                                })))),
+            };
 
             // This is the syntax for the body of the method.
             return statements;
@@ -664,10 +663,9 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         private static List<StatementSyntax> GetPurgeTable(TableElement tableElement)
         {
             // The elements of the body are added to this collection as they are assembled.
-            List<StatementSyntax> statements = new List<StatementSyntax>();
-
-            //                purgeBuckets.Add(this.Accounts, this.Accounts.Purge(deletedAccountsToken.Deserialize<List<Account>>()));
-            statements.Add(
+            List<StatementSyntax> statements = new List<StatementSyntax>
+            {
+                //                purgeBuckets.Add(this.Accounts, this.Accounts.Purge(deletedAccountsToken.Deserialize<List<Account>>()));
                 ExpressionStatement(
                     InvocationExpression(
                         MemberAccessExpression(
@@ -713,7 +711,8 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                                                 TypeArgumentList(
                                                                                     SingletonSeparatedList<TypeSyntax>(
                                                                                         IdentifierName(tableElement.Name)))))))))))))),
-                                })))));
+                                })))),
+            };
 
             // This is the syntax for the body of the method.
             return statements;
@@ -725,10 +724,9 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         private List<StatementSyntax> MergeBucket(TableElement tableElement)
         {
             // The elements of the body are added to this collection as they are assembled.
-            List<StatementSyntax> statements = new List<StatementSyntax>();
-
-            //                    mergeBuckets[this.Accounts] = this.Accounts.MergeBucket(mergeBuckets[this.Accounts]);
-            statements.Add(
+            List<StatementSyntax> statements = new List<StatementSyntax>
+            {
+                //                    mergeBuckets[this.Accounts] = this.Accounts.MergeBucket(mergeBuckets[this.Accounts]);
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AssignmentExpression(
                         SyntaxKind.SimpleAssignmentExpression,
@@ -763,13 +761,12 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))))))))));
+                                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))))))))),
 
-            //                    if (!mergeBuckets[this.Accounts].Any())
-            //                    {
-            //                        mergeBuckets.Remove(this.Accounts);
-            //                    }
-            statements.Add(
+                //                    if (!mergeBuckets[this.Accounts].Any())
+                //                    {
+                //                        mergeBuckets.Remove(this.Accounts);
+                //                    }
                 SyntaxFactory.IfStatement(
                     SyntaxFactory.PrefixUnaryExpression(
                         SyntaxKind.LogicalNotExpression,
@@ -802,7 +799,8 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))))))));
+                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))))))),
+            };
 
             // This is the syntax for the body of the method.
             return statements;
@@ -814,10 +812,9 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         private List<StatementSyntax> PurgeBucket(TableElement tableElement)
         {
             // The elements of the body are added to this collection as they are assembled.
-            List<StatementSyntax> statements = new List<StatementSyntax>();
-
-            //                    purgeBuckets[this.Accounts] = this.Accounts.PurgeBucket(purgeBuckets[this.Accounts]);
-            statements.Add(
+            List<StatementSyntax> statements = new List<StatementSyntax>
+            {
+                //                    purgeBuckets[this.Accounts] = this.Accounts.PurgeBucket(purgeBuckets[this.Accounts]);
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AssignmentExpression(
                         SyntaxKind.SimpleAssignmentExpression,
@@ -852,13 +849,12 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))))))))));
+                                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))))))))),
 
-            //                    if (!purgeBuckets[this.Accounts].Any())
-            //                    {
-            //                        purgeBuckets.Remove(this.Accounts);
-            //                    }
-            statements.Add(
+                //                    if (!purgeBuckets[this.Accounts].Any())
+                //                    {
+                //                        purgeBuckets.Remove(this.Accounts);
+                //                    }
                 SyntaxFactory.IfStatement(
                     SyntaxFactory.PrefixUnaryExpression(
                         SyntaxKind.LogicalNotExpression,
@@ -891,7 +887,8 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))))))));
+                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))))))),
+            };
 
             // This is the syntax for the body of the method.
             return statements;

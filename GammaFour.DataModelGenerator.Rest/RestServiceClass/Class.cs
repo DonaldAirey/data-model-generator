@@ -93,10 +93,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // This collects all the attributes.
-                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
-
-                //        [Route("api/[controller]")]
-                attributes.Add(
+                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>
+                {
+                    //        [Route("api/[controller]")]
                     SyntaxFactory.AttributeList(
                         SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
                             SyntaxFactory.Attribute(
@@ -107,17 +106,17 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.AttributeArgument(
                                             SyntaxFactory.LiteralExpression(
                                                 SyntaxKind.StringLiteralExpression,
-                                                SyntaxFactory.Literal($"{this.tableElement.XmlSchemaDocument.Name.ToCamelCase()}/[controller]")))))))));
+                                                SyntaxFactory.Literal($"{this.tableElement.XmlSchemaDocument.Name.ToCamelCase()}/[controller]")))))))),
 
-                //        [ApiController]
-                attributes.Add(
+                    //        [ApiController]
                     SyntaxFactory.AttributeList(
                         SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
                             SyntaxFactory.Attribute(
-                                SyntaxFactory.IdentifierName("ApiController")))));
+                                SyntaxFactory.IdentifierName("ApiController")))),
+                };
 
                 //        [Authorize]
-                if (this.tableElement.XmlSchemaDocument.IsSecure.HasValue && this.tableElement.XmlSchemaDocument.IsSecure.Value)
+                if (this.tableElement.XmlSchemaDocument.IsSecure)
                 {
                     attributes.Add(
                     SyntaxFactory.AttributeList(
@@ -209,11 +208,13 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         private SyntaxList<MemberDeclarationSyntax> CreatePrivateReadonlyInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the private instance fields.
-            List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new DbContextField(this.tableElement.XmlSchemaDocument));
-            fields.Add(new DataModelField(this.tableElement.XmlSchemaDocument));
-            fields.Add(new LoggerField());
-            fields.Add(new TransactionTimeoutField());
+            List<SyntaxElement> fields = new List<SyntaxElement>
+            {
+                new DbContextField(this.tableElement.XmlSchemaDocument),
+                new DataModelField(this.tableElement.XmlSchemaDocument),
+                new LoggerField(),
+                new TransactionTimeoutField(),
+            };
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
@@ -247,16 +248,17 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
-            List<SyntaxElement> methods = new List<SyntaxElement>();
-
-            // Generate support for the HTTP verbs.
-            methods.Add(new DeleteOneMethod(this.tableElement));
-            methods.Add(new DeleteMethod(this.tableElement));
-            methods.Add(new GetAllMethod(this.tableElement));
-            methods.Add(new GetMethod(this.tableElement.PrimaryKey));
-            methods.Add(new PostMethod(this.tableElement));
-            methods.Add(new PutMethod(this.tableElement));
-            methods.Add(new PatchMethod(this.tableElement));
+            List<SyntaxElement> methods = new List<SyntaxElement>
+            {
+                // Generate support for the HTTP verbs.
+                new DeleteOneMethod(this.tableElement),
+                new DeleteMethod(this.tableElement),
+                new GetAllMethod(this.tableElement),
+                new GetMethod(this.tableElement.PrimaryKey),
+                new PostMethod(this.tableElement),
+                new PutMethod(this.tableElement),
+                new PatchMethod(this.tableElement),
+            };
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))

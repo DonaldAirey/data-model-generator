@@ -74,10 +74,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            this.dataModel = dataModel;
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            this.dataModel = dataModel;
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -85,10 +84,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
-                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToVariableName()))));
+                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToVariableName()))),
 
-                //            this.dataModelContext = dataModelContext;
-                statements.Add(
+                    //            this.dataModelContext = dataModelContext;
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -96,10 +94,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase()}Context")),
-                            SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase()}Context"))));
+                            SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase()}Context"))),
 
-                //            this.logger = logger;
-                statements.Add(
+                    //            this.logger = logger;
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -107,10 +104,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName("logger")),
-                            SyntaxFactory.IdentifierName("logger"))));
+                            SyntaxFactory.IdentifierName("logger"))),
 
-                //            this.transactionTimeout = configuration.GetValue("DataModel:TransactionTimeout", TransactionManager.MaximumTimeout);
-                statements.Add(
+                    //            this.transactionTimeout = configuration.GetValue("DataModel:TransactionTimeout", TransactionManager.MaximumTimeout);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -138,10 +134,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.IdentifierName("TransactionManager"),
                                                     SyntaxFactory.IdentifierName("MaximumTimeout"))),
-                                        }))))));
+                                        }))))),
 
-                //            this.dataModelContext.Database.SetCommandTimeout(this.transactionTimeout);
-                statements.Add(
+                    //            this.dataModelContext.Database.SetCommandTimeout(this.transactionTimeout);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -161,7 +156,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("transactionTimeout"))))))));
+                                            SyntaxFactory.IdentifierName("transactionTimeout"))))))),
+                };
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -176,12 +172,11 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Initializes a new instance of the <see cref="RestService"/> class.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Initializes a new instance of the <see cref="RestService"/> class.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -221,10 +216,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
 
-                //        /// <param name="configuration">Configuration settings.</param>
-                comments.Add(
+                    //        /// <param name="configuration">Configuration settings.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -244,10 +238,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     Environment.NewLine,
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
-                                            }))))));
+                                            }))))),
 
-                //        /// <param name="dataModel">The data model.</param>
-                comments.Add(
+                    //        /// <param name="dataModel">The data model.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -267,10 +260,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     Environment.NewLine,
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
-                                            }))))));
+                                            }))))),
 
-                //        /// <param name="dataModelContext">The DbContext for the dataModel.</param>
-                comments.Add(
+                    //        /// <param name="dataModelContext">The DbContext for the dataModel.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -290,10 +282,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     Environment.NewLine,
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
-                                            }))))));
+                                            }))))),
 
-                //        /// <param name="dataModelContext">The DbContext for the dataModel.</param>
-                comments.Add(
+                    //        /// <param name="dataModelContext">The DbContext for the dataModel.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -313,7 +304,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     Environment.NewLine,
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
-                                            }))))));
+                                            }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -328,40 +320,36 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // Create a list of parameters from the columns in the unique constraint.
-                List<SyntaxNodeOrToken> parameters = new List<SyntaxNodeOrToken>();
-
-                // IConfiguration configuration
-                parameters.Add(
+                List<SyntaxNodeOrToken> parameters = new List<SyntaxNodeOrToken>
+                {
+                    // IConfiguration configuration
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("configuration"))
                     .WithType(
-                        SyntaxFactory.IdentifierName("IConfiguration")));
+                        SyntaxFactory.IdentifierName("IConfiguration")),
 
-                // ,
-                parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                    // ,
+                    SyntaxFactory.Token(SyntaxKind.CommaToken),
 
-                // DataModel dataModel
-                parameters.Add(
+                    // DataModel dataModel
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier(this.tableElement.XmlSchemaDocument.DataModel.ToVariableName()))
                     .WithType(
-                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel)));
+                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel)),
 
-                // ,
-                parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                    // ,
+                    SyntaxFactory.Token(SyntaxKind.CommaToken),
 
-                // DataModelContext dataModelContext
-                parameters.Add(
+                    // DataModelContext dataModelContext
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier($"{this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase()}Context"))
                     .WithType(
-                        SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.DataModel}Context")));
+                        SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.DataModel}Context")),
 
-                // ,
-                parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                    // ,
+                    SyntaxFactory.Token(SyntaxKind.CommaToken),
 
-                // IConfiguration<AccountsController> configuration
-                parameters.Add(
+                    // IConfiguration<AccountsController> configuration
                     SyntaxFactory.Parameter(
                     SyntaxFactory.Identifier("logger"))
                 .WithType(
@@ -370,7 +358,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                     .WithTypeArgumentList(
                         SyntaxFactory.TypeArgumentList(
                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                SyntaxFactory.IdentifierName($"{this.tableElement.Name.ToPlural()}Controller"))))));
+                                SyntaxFactory.IdentifierName($"{this.tableElement.Name.ToPlural()}Controller"))))),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

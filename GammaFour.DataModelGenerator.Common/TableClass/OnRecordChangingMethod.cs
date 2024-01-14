@@ -74,10 +74,9 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            this.RecordChanging?.Invoke(this, new RecordChangeEventArgs<Buyer> { DataAction = dataAction, Previous = previous, Current = current });
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            this.RecordChanging?.Invoke(this, new RecordChangeEventArgs<Buyer> { DataAction = dataAction, Previous = previous, Current = current });
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.ConditionalAccessExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -117,7 +116,8 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                                                 SyntaxFactory.Argument(
                                                                     SyntaxFactory.IdentifierName("current")),
                                                             })))),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -132,12 +132,11 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Handles a proposed change to the <see cref="Buyer"/> record.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Handles a proposed change to the <see cref="Buyer"/> record.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -177,10 +176,9 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
 
-                //        /// <param name="dataAction">The action taken.</param>
-                comments.Add(
+                    //        /// <param name="dataAction">The action taken.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -200,10 +198,9 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
 
-                //        /// <param name="previous">The previous state of the record.</param>
-                comments.Add(
+                    //        /// <param name="previous">The previous state of the record.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -223,10 +220,9 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
 
-                //        /// <param name="current">The current state of the record.</param>
-                comments.Add(
+                    //        /// <param name="current">The current state of the record.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -246,7 +242,8 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -261,34 +258,32 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
             get
             {
                 // Create a list of parameters.
-                List<SyntaxNodeOrToken> parameters = new List<SyntaxNodeOrToken>();
-
-                // DataAction dataAction
-                parameters.Add(
+                List<SyntaxNodeOrToken> parameters = new List<SyntaxNodeOrToken>
+                {
+                    // DataAction dataAction
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("dataAction"))
                     .WithType(
-                        SyntaxFactory.IdentifierName("DataAction")));
+                        SyntaxFactory.IdentifierName("DataAction")),
 
-                // ,
-                parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                    // ,
+                    SyntaxFactory.Token(SyntaxKind.CommaToken),
 
-                // Buyer previousBuyer
-                parameters.Add(
+                    // Buyer previousBuyer
                     SyntaxFactory.Parameter(
                          SyntaxFactory.Identifier("previous"))
                      .WithType(
-                        SyntaxFactory.IdentifierName(this.tableElement.Name)));
+                        SyntaxFactory.IdentifierName(this.tableElement.Name)),
 
-                // ,
-                parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                    // ,
+                    SyntaxFactory.Token(SyntaxKind.CommaToken),
 
-                // Buyer currentBuyer
-                parameters.Add(
+                    // Buyer currentBuyer
                     SyntaxFactory.Parameter(
                          SyntaxFactory.Identifier("current"))
                     .WithType(
-                        SyntaxFactory.IdentifierName(this.tableElement.Name)));
+                        SyntaxFactory.IdentifierName(this.tableElement.Name)),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

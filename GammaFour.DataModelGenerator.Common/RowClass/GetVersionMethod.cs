@@ -57,12 +57,11 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
             get
             {
                 // This is used to collect the trivia.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Creates a copy of the record.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Creates a copy of the record.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -102,10 +101,9 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
 
-                //        /// <param name="recordVersion">The version to be produced.</param>
-                comments.Add(
+                    //        /// <param name="recordVersion">The version to be produced.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -125,10 +123,9 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
                                                     Environment.NewLine,
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
-                                            }))))));
+                                            }))))),
 
-                //        /// <returns>A copy of the record from the selected version.</returns>
-                comments.Add(
+                    //        /// <returns>A copy of the record from the selected version.</returns>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -148,7 +145,8 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
                                                     Environment.NewLine,
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
-                                            }))))));
+                                            }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -179,10 +177,9 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
             get
             {
                 // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // RecordVersion recordVersion = RecordVersion.Current
-                parameters.Add(
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>
+                {
+                    // RecordVersion recordVersion = RecordVersion.Current
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("recordVersion"))
                     .WithType(
@@ -192,7 +189,8 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("RecordVersion"),
-                                SyntaxFactory.IdentifierName("Current")))));
+                                SyntaxFactory.IdentifierName("Current")))),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
@@ -207,10 +205,9 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            return new Buyer(Buyer.cloneVersions[recordVersion](this));
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            return new Buyer(Buyer.cloneVersions[recordVersion](this));
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.ObjectCreationExpression(
                             SyntaxFactory.IdentifierName(this.tableElement.Name))
@@ -233,7 +230,8 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
                                             SyntaxFactory.ArgumentList(
                                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                     SyntaxFactory.Argument(
-                                                        SyntaxFactory.ThisExpression()))))))))));
+                                                        SyntaxFactory.ThisExpression()))))))))),
+                };
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));

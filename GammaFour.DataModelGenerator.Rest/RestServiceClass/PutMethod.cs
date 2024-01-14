@@ -82,18 +82,16 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                        serverListMap = clientListMap;
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                        serverListMap = clientListMap;
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
                             SyntaxFactory.IdentifierName($"server{this.tableElement.Name}"),
-                            SyntaxFactory.IdentifierName($"client{this.tableElement.Name}"))));
+                            SyntaxFactory.IdentifierName($"client{this.tableElement.Name}"))),
 
-                ////                        await lockingTransaction.WaitWriterAsync(clientManagedAccount).ConfigureAwait(false);
-                statements.Add(
+                    ////                        await lockingTransaction.WaitWriterAsync(clientManagedAccount).ConfigureAwait(false);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
                             SyntaxFactory.InvocationExpression(
@@ -115,10 +113,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.FalseLiteralExpression))))))));
+                                                SyntaxKind.FalseLiteralExpression))))))),
 
-                //                        this.dataModel.ManagedAccounts.Add(clientManagedAccount);
-                statements.Add(
+                    //                        this.dataModel.ManagedAccounts.Add(clientManagedAccount);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -135,10 +132,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName($"server{this.tableElement.Name}")))))));
+                                        SyntaxFactory.IdentifierName($"server{this.tableElement.Name}")))))),
 
-                //                        await this.dataModelContext.ManagedAccounts.AddAsync(clientManagedAccount);
-                statements.Add(
+                    //                        await this.dataModelContext.ManagedAccounts.AddAsync(clientManagedAccount);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
                             SyntaxFactory.InvocationExpression(
@@ -156,10 +152,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName($"server{this.tableElement.Name}"))))))));
+                                            SyntaxFactory.IdentifierName($"server{this.tableElement.Name}"))))))),
 
-                //                        await this.dataModelContext.SaveChangesAsync();
-                statements.Add(
+                    //                        await this.dataModelContext.SaveChangesAsync();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
                             SyntaxFactory.InvocationExpression(
@@ -169,7 +164,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
                                         SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase()}Context")),
-                                    SyntaxFactory.IdentifierName("SaveChangesAsync"))))));
+                                    SyntaxFactory.IdentifierName("SaveChangesAsync"))))),
+                };
 
                 // This is the complete block.
                 return statements;
@@ -224,25 +220,25 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            if (!this.ModelState.IsValid)
+                    //            {
+                    //                return this.BadRequest(this.ModelState);
+                    //            }
+                    CheckStateExpression.Syntax,
 
-                //            if (!this.ModelState.IsValid)
-                //            {
-                //                return this.BadRequest(this.ModelState);
-                //            }
-                statements.Add(CheckStateExpression.Syntax);
-
-                //            try
-                //            {
-                //                <TryBlock>
-                //            }
-                //            catch
-                //            {
-                //                <CommonCatchClauses>
-                //            }
-                statements.Add(
+                    //            try
+                    //            {
+                    //                <TryBlock>
+                    //            }
+                    //            catch
+                    //            {
+                    //                <CommonCatchClauses>
+                    //            }
                     SyntaxFactory.TryStatement(CommonStatements.CommonCatchClauses)
-                    .WithBlock(SyntaxFactory.Block(this.TryBlock)));
+                    .WithBlock(SyntaxFactory.Block(this.TryBlock)),
+                };
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -257,12 +253,11 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Put the <see cref="Province"/> record into the dataModel.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Put the <see cref="Province"/> record into the dataModel.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -302,7 +297,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 //        /// <param name="fungibleId">The FungibleId identifier.</param>
                 foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
@@ -460,10 +456,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                    var clientManagedAccount = jsonObject.GetValue<ManagedAccount>();
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                    var clientManagedAccount = jsonObject.GetValue<ManagedAccount>();
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(
@@ -488,10 +483,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 .WithTypeArgumentList(
                                                     SyntaxFactory.TypeArgumentList(
                                                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                            SyntaxFactory.IdentifierName(this.tableElement.Name))))))))))));
+                                                            SyntaxFactory.IdentifierName(this.tableElement.Name))))))))))),
 
-                //                    var serverCountry = this.dataModel.Countries.CountryCountryCodeKey.Find(countryCode);
-                statements.Add(
+                    //                    var serverCountry = this.dataModel.Countries.CountryCountryCodeKey.Find(countryCode);
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName("var"))
@@ -516,17 +510,16 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     SyntaxFactory.IdentifierName(this.tableElement.PrimaryKey.Name)),
                                                 SyntaxFactory.IdentifierName("Find")))
                                         .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(UniqueKeyExpression.GetSyntax(this.tableElement.PrimaryKey)))))))));
+                                        SyntaxFactory.ArgumentList(UniqueKeyExpression.GetSyntax(this.tableElement.PrimaryKey)))))))),
 
-                //                    if (serverCountry == null)
-                //                    {
-                //                        <AddRecord>
-                //                    }
-                //                    else
-                //                    {
-                //                        <UpdateRecord>
-                //                    }
-                statements.Add(
+                    //                    if (serverCountry == null)
+                    //                    {
+                    //                        <AddRecord>
+                    //                    }
+                    //                    else
+                    //                    {
+                    //                        <UpdateRecord>
+                    //                    }
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.EqualsExpression,
@@ -536,19 +529,17 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                         SyntaxFactory.Block(this.AddRecord))
                     .WithElse(
                         SyntaxFactory.ElseClause(
-                            SyntaxFactory.Block(this.UpdateRecord))));
+                            SyntaxFactory.Block(this.UpdateRecord))),
 
-                //                    lockingTransaction.Complete();
-                statements.Add(
+                    //                    lockingTransaction.Complete();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("lockingTransaction"),
-                                SyntaxFactory.IdentifierName("Complete")))));
+                                SyntaxFactory.IdentifierName("Complete")))),
 
-                //                    return this.Ok(fungibles);
-                statements.Add(
+                    //                    return this.Ok(fungibles);
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -559,7 +550,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName($"server{this.tableElement.Name}")))))));
+                                        SyntaxFactory.IdentifierName($"server{this.tableElement.Name}")))))),
+                };
 
                 // This is the complete block.
                 return statements;
@@ -574,10 +566,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                        await lockingTransaction.WaitReaderAsync(serverManagedAccount).ConfigureAwait(false);
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                        await lockingTransaction.WaitReaderAsync(serverManagedAccount).ConfigureAwait(false);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
                             SyntaxFactory.InvocationExpression(
@@ -599,13 +590,12 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.FalseLiteralExpression))))))));
+                                                SyntaxKind.FalseLiteralExpression))))))),
 
-                //                                if (serverFungible.RowVersion != clientFungible.RowVersion)
-                //                                {
-                //                                    return this.StatusCode(StatusCodes.Status412PreconditionFailed);
-                //                                }
-                statements.Add(
+                    //                                if (serverFungible.RowVersion != clientFungible.RowVersion)
+                    //                                {
+                    //                                    return this.StatusCode(StatusCodes.Status412PreconditionFailed);
+                    //                                }
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.NotEqualsExpression,
@@ -632,7 +622,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.IdentifierName("StatusCodes"),
-                                                        SyntaxFactory.IdentifierName("Status412PreconditionFailed")))))))))));
+                                                        SyntaxFactory.IdentifierName("Status412PreconditionFailed")))))))))),
+                };
 
                 //                        serverManagedAccount.AccountId = clientManagedAccount.AccountId;
                 //                        serverManagedAccount.BaseFungibleId = clientManagedAccount.BaseFungibleId;

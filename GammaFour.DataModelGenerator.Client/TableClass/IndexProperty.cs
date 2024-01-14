@@ -91,12 +91,11 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Gets the Name.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Gets the Name.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -136,7 +135,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -167,15 +167,15 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // DataModelContext dataModelContext
-                parameters.Add(
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>
+                {
+                    // DataModelContext dataModelContext
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("index"))
                     .WithType(
                         SyntaxFactory.PredefinedType(
-                            SyntaxFactory.Token(SyntaxKind.IntKeyword))));
+                            SyntaxFactory.Token(SyntaxKind.IntKeyword))),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.BracketedParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

@@ -105,12 +105,11 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Initializes a new instance of the <see cref="DataModelContext"/> class.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Initializes a new instance of the <see cref="DataModelContext"/> class.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -150,10 +149,9 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
 
-                //        /// <param name="contextOptions">The options for bulding the DbContext.</param>
-                comments.Add(
+                    //        /// <param name="contextOptions">The options for bulding the DbContext.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -173,7 +171,8 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                     Environment.NewLine,
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
-                                            }))))));
+                                            }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -452,10 +451,9 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
             get
             {
                 // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // DataModelContext dataModelContext
-                parameters.Add(
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>
+                {
+                    // DataModelContext dataModelContext
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("contextOptions"))
                     .WithType(
@@ -464,7 +462,8 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                         .WithTypeArgumentList(
                             SyntaxFactory.TypeArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name}Context"))))));
+                                    SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name}Context"))))),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

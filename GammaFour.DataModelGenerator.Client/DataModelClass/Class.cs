@@ -174,9 +174,11 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         private static SyntaxList<MemberDeclarationSyntax> CreateInternalInstanceProperties(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the internal instance properties.
-            List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new HttpClientProperty());
-            properties.Add(new RowVersionProperty());
+            List<SyntaxElement> properties = new List<SyntaxElement>
+            {
+                new HttpClientProperty(),
+                new RowVersionProperty(),
+            };
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in properties.OrderBy(m => m.Name))
@@ -236,8 +238,10 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
-            List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new MergeMethod(this.xmlSchemaDocument));
+            List<SyntaxElement> methods = new List<SyntaxElement>
+            {
+                new MergeMethod(this.xmlSchemaDocument),
+            };
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
@@ -257,7 +261,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // The volatile data model doesn't try to load the data from a DbContext, the non-volatile data model does.
-            if (this.xmlSchemaDocument.IsVolatile.HasValue && this.xmlSchemaDocument.IsVolatile.Value)
+            if (this.xmlSchemaDocument.IsVolatile)
             {
                 members = members.Add(new Constructor(this.xmlSchemaDocument).Syntax);
             }
@@ -278,8 +282,10 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceProperties(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the internal instance properties.
-            List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new TablesProperty());
+            List<SyntaxElement> properties = new List<SyntaxElement>
+            {
+                new TablesProperty(),
+            };
 
             // Create a property for each of the tables.
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)

@@ -24,10 +24,9 @@ namespace GammaFour.DataModelGenerator.RestService
         public static List<StatementSyntax> GetSyntax(TableElement tableElement)
         {
             // This is used to collect the statements.
-            List<StatementSyntax> statements = new List<StatementSyntax>();
-
-            //            using var lockingTransaction = new LockingTransaction(this.transactionTimeout);
-            statements.Add(
+            List<StatementSyntax> statements = new List<StatementSyntax>
+            {
+                //            using var lockingTransaction = new LockingTransaction(this.transactionTimeout);
                 SyntaxFactory.LocalDeclarationStatement(
                     SyntaxFactory.VariableDeclaration(
                         SyntaxFactory.IdentifierName(
@@ -54,10 +53,9 @@ namespace GammaFour.DataModelGenerator.RestService
                                                         SyntaxFactory.ThisExpression(),
                                                         SyntaxFactory.IdentifierName("transactionTimeout")))))))))))
                 .WithUsingKeyword(
-                    SyntaxFactory.Token(SyntaxKind.UsingKeyword)));
+                    SyntaxFactory.Token(SyntaxKind.UsingKeyword)),
 
-            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts).ConfigureAwait(false);
-            statements.Add(
+                //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts).ConfigureAwait(false);
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AwaitExpression(
                         SyntaxFactory.InvocationExpression(
@@ -85,7 +83,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.FalseLiteralExpression))))))));
+                                            SyntaxKind.FalseLiteralExpression))))))),
+            };
 
             //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountKey).ConfigureAwait(false);
             //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountSymbolKey).ConfigureAwait(false);
@@ -175,13 +174,13 @@ namespace GammaFour.DataModelGenerator.RestService
         public static List<StatementSyntax> GetUsingSyntax(TableElement tableElement, List<StatementSyntax> usingBlock)
         {
             // This is used to collect the statements.
-            List<StatementSyntax> statements = new List<StatementSyntax>();
-
-            //                using (var lockingTransaction = new LockingTransaction(this.transactionTimeout))
-            //                {
-            //                    <UsingBody>
-            //                }
-            statements.Add(SyntaxFactory.UsingStatement(
+            List<StatementSyntax> statements = new List<StatementSyntax>
+            {
+                //                using (var lockingTransaction = new LockingTransaction(this.transactionTimeout))
+                //                {
+                //                    <UsingBody>
+                //                }
+                SyntaxFactory.UsingStatement(
                  SyntaxFactory.Block(LockTableStatements.UsingBody(tableElement, usingBlock)))
              .WithDeclaration(
                  SyntaxFactory.VariableDeclaration(
@@ -207,7 +206,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                                  SyntaxFactory.MemberAccessExpression(
                                                      SyntaxKind.SimpleMemberAccessExpression,
                                                      SyntaxFactory.ThisExpression(),
-                                                     SyntaxFactory.IdentifierName("transactionTimeout"))))))))))));
+                                                     SyntaxFactory.IdentifierName("transactionTimeout"))))))))))),
+            };
 
             // This set of statement will enlist the indices and tables in the current transaction and acquire an exclusive lock.
             return statements;
@@ -221,10 +221,9 @@ namespace GammaFour.DataModelGenerator.RestService
         private static List<StatementSyntax> UsingBody(TableElement tableElement, List<StatementSyntax> usingBlock)
         {
             // The elements of the body are added to this collection as they are assembled.
-            List<StatementSyntax> statements = new List<StatementSyntax>();
-
-            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts).ConfigureAwait(false);
-            statements.Add(
+            List<StatementSyntax> statements = new List<StatementSyntax>
+            {
+                //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts).ConfigureAwait(false);
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AwaitExpression(
                         SyntaxFactory.InvocationExpression(
@@ -252,7 +251,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.FalseLiteralExpression))))))));
+                                            SyntaxKind.FalseLiteralExpression))))))),
+            };
 
             //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountKey).ConfigureAwait(false);
             //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountSymbolKey).ConfigureAwait(false);

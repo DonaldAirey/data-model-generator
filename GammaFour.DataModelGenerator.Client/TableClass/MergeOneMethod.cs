@@ -55,10 +55,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // This is used to collect the trivia.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <inheritdoc/>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <inheritdoc/>
                     Trivia(
                         DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -78,7 +77,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the complete document comment.
                 return TriviaList(comments);
@@ -109,14 +109,14 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // Create a list of parameters.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // IRow row
-                parameters.Add(
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>
+                {
+                    // IRow row
                     Parameter(
                         Identifier("row"))
                     .WithType(
-                        SyntaxFactory.IdentifierName("IRow")));
+                        SyntaxFactory.IdentifierName("IRow")),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return ParameterList(SeparatedList<ParameterSyntax>(parameters));
@@ -131,10 +131,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            RuleArgument newRuleArgument = row as RuleArgument;
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            RuleArgument newRuleArgument = row as RuleArgument;
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(this.tableElement.Name))
@@ -147,7 +146,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                         SyntaxFactory.BinaryExpression(
                                             SyntaxKind.AsExpression,
                                             SyntaxFactory.IdentifierName("row"),
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name))))))));
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name))))))),
+                };
 
                 // For each parent table, include a check to make sure the parent exists before adding the record.
                 foreach (ForeignElement foreignKeyElement in this.tableElement.ParentKeys)
@@ -288,10 +288,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                this.Add(buyer = newBuyer);
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                this.Add(buyer = newBuyer);
                     ExpressionStatement(
                         InvocationExpression(
                             MemberAccessExpression(
@@ -305,7 +304,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                         AssignmentExpression(
                                             SyntaxKind.SimpleAssignmentExpression,
                                             IdentifierName(this.tableElement.Name.ToVariableName()),
-                                            IdentifierName($"new{this.tableElement.Name}"))))))));
+                                            IdentifierName($"new{this.tableElement.Name}"))))))),
+                };
 
                 return statements;
             }
@@ -318,13 +318,12 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                    if (outsideOrder.RowVersion < newOutsideOrder.RowVersion)
-                //                    {
-                //                        <UpdateRecord>
-                //                    }
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                    if (outsideOrder.RowVersion < newOutsideOrder.RowVersion)
+                    //                    {
+                    //                        <UpdateRecord>
+                    //                    }
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.LessThanExpression,
@@ -336,7 +335,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName($"new{this.tableElement.Name}"),
                                 SyntaxFactory.IdentifierName("RowVersion"))),
-                        SyntaxFactory.Block(this.UpdateRecord)));
+                        SyntaxFactory.Block(this.UpdateRecord)),
+                };
 
                 return statements;
             }
@@ -395,10 +395,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                    this.AlertDataModel.RowVersion = entity.RowVersion;
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                    this.AlertDataModel.RowVersion = entity.RowVersion;
                     ExpressionStatement(
                         AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -412,7 +411,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                             MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 IdentifierName(this.tableElement.Name.ToVariableName()),
-                                IdentifierName("RowVersion")))));
+                                IdentifierName("RowVersion")))),
+                };
 
                 return statements;
             }

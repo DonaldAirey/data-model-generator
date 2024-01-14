@@ -71,10 +71,9 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            this.HttpClient = httpClientFactory.CreateClient(typeof(DataModel).FullName);
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            this.HttpClient = httpClientFactory.CreateClient(typeof(DataModel).FullName);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -95,7 +94,8 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.TypeOfExpression(
                                                     SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name)),
-                                                SyntaxFactory.IdentifierName("FullName")))))))));
+                                                SyntaxFactory.IdentifierName("FullName")))))))),
+                };
 
                 // Initialize each of the tables.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
@@ -186,14 +186,14 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             get
             {
                 // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // HttpClient httpClient
-                parameters.Add(
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>
+                {
+                    // HttpClient httpClient
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("httpClientFactory"))
                     .WithType(
-                        SyntaxFactory.IdentifierName("IHttpClientFactory")));
+                        SyntaxFactory.IdentifierName("IHttpClientFactory")),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters.ToList().OrderBy(p => p.Identifier.Text)));
@@ -208,12 +208,11 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Initializes a new instance of the <see cref="DataModel"/> class.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Initializes a new instance of the <see cref="DataModel"/> class.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -253,7 +252,8 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);

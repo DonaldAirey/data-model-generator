@@ -81,8 +81,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 // $"rest/accountGroups/{provinceId}/{regionId}"
-                List<InterpolatedStringContentSyntax> interpolatedStringContentSyntax = new List<InterpolatedStringContentSyntax>();
-                interpolatedStringContentSyntax.Add(
+                List<InterpolatedStringContentSyntax> interpolatedStringContentSyntax = new List<InterpolatedStringContentSyntax>
+                {
                     SyntaxFactory.InterpolatedStringText()
                     .WithTextToken(
                         SyntaxFactory.Token(
@@ -90,7 +90,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                             SyntaxKind.InterpolatedStringTextToken,
                             $"rest/{this.tableElement.Name.ToCamelCase().ToPlural()}/",
                             $"rest/{this.tableElement.Name.ToCamelCase().ToPlural()}/",
-                            SyntaxFactory.TriviaList())));
+                            SyntaxFactory.TriviaList())),
+                };
                 foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
                 {
                     if (interpolatedStringContentSyntax.Count > 1)
@@ -203,12 +204,11 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Adds a <see cref="Buyer"/> to the set.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Adds a <see cref="Buyer"/> to the set.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -248,10 +248,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
 
-                //        /// <returns>The set of fungibles.</returns>
-                comments.Add(
+                    //        /// <returns>The set of fungibles.</returns>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -271,7 +270,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                     Environment.NewLine,
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
-                                            }))))));
+                                            }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -315,19 +315,17 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                    response.EnsureSuccessStatusCode();
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                    response.EnsureSuccessStatusCode();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("response"),
-                                SyntaxFactory.IdentifierName("EnsureSuccessStatusCode")))));
+                                SyntaxFactory.IdentifierName("EnsureSuccessStatusCode")))),
 
-                //                    return JsonSerializer.Deserialize<Fungible>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
-                statements.Add(
+                    //                    return JsonSerializer.Deserialize<Fungible>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -361,7 +359,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                         SyntaxFactory.Argument(
                                                             SyntaxFactory.LiteralExpression(
-                                                                SyntaxKind.FalseLiteralExpression))))))))))));
+                                                                SyntaxKind.FalseLiteralExpression))))))))))),
+                };
 
                 // This is the complete block.
                 return statements;

@@ -82,14 +82,13 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            using (var request = new HttpRequestMessage(HttpMethod.Get, "rest/accounts"))
-                //            using (HttpResponseMessage response = await this.DataModel.HttpClient.SendAsync(request).ConfigureAwait(false))
-                //            {
-                //                <UsingBlock>
-                //            }
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            using (var request = new HttpRequestMessage(HttpMethod.Get, "rest/accounts"))
+                    //            using (HttpResponseMessage response = await this.DataModel.HttpClient.SendAsync(request).ConfigureAwait(false))
+                    //            {
+                    //                <UsingBlock>
+                    //            }
                     SyntaxFactory.UsingStatement(
                         SyntaxFactory.UsingStatement(
                             SyntaxFactory.Block(this.UsingBlock))
@@ -161,7 +160,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                             SyntaxFactory.LiteralExpression(
                                                                 SyntaxKind.StringLiteralExpression,
                                                                 SyntaxFactory.Literal($"rest/{this.tableElement.Name.ToCamelCase().ToPlural()}"))),
-                                                    })))))))));
+                                                    })))))))),
+                };
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -176,12 +176,11 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Adds a <see cref="Buyer"/> to the set.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Adds a <see cref="Buyer"/> to the set.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -221,10 +220,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
 
-                //        /// <returns>The set of fungibles.</returns>
-                comments.Add(
+                    //        /// <returns>The set of fungibles.</returns>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -244,7 +242,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                     Environment.NewLine,
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
-                                            }))))));
+                                            }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -259,19 +258,17 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                    response.EnsureSuccessStatusCode();
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                    response.EnsureSuccessStatusCode();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("response"),
-                                SyntaxFactory.IdentifierName("EnsureSuccessStatusCode")))));
+                                SyntaxFactory.IdentifierName("EnsureSuccessStatusCode")))),
 
-                //                    return JsonSerializer.Deserialize<IEnumerable<Fungible>>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
-                statements.Add(
+                    //                    return JsonSerializer.Deserialize<IEnumerable<Fungible>>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -310,7 +307,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                         SyntaxFactory.Argument(
                                                             SyntaxFactory.LiteralExpression(
-                                                                SyntaxKind.FalseLiteralExpression))))))))))));
+                                                                SyntaxKind.FalseLiteralExpression))))))))))),
+                };
 
                 // This is the complete block.
                 return statements;

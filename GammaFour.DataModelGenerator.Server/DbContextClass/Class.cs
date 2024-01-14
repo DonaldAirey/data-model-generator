@@ -197,8 +197,10 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
         private SyntaxList<MemberDeclarationSyntax> CreateProtectedInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
-            List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new OnModelCreatingMethod(this.xmlSchemaDocument));
+            List<SyntaxElement> methods = new List<SyntaxElement>
+            {
+                new OnModelCreatingMethod(this.xmlSchemaDocument),
+            };
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))

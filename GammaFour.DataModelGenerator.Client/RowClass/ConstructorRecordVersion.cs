@@ -71,10 +71,9 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             get
             {
                 // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // object[] data
-                parameters.Add(
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>
+                {
+                    // object[] data
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("data"))
                     .WithType(
@@ -85,7 +84,8 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                             SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
                                 SyntaxFactory.ArrayRankSpecifier(
                                     SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
-                                        SyntaxFactory.OmittedArraySizeExpression()))))));
+                                        SyntaxFactory.OmittedArraySizeExpression()))))),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
@@ -100,10 +100,9 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            this.data = data;
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            this.data = data;
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -111,10 +110,9 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName("currentData")),
-                            SyntaxFactory.IdentifierName("data"))));
+                            SyntaxFactory.IdentifierName("data"))),
 
-                //            this.State = RecordState.Detached;
-                statements.Add(
+                    //            this.State = RecordState.Detached;
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -125,7 +123,8 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("RecordState"),
-                                SyntaxFactory.IdentifierName("Detached")))));
+                                SyntaxFactory.IdentifierName("Detached")))),
+                };
 
                 //            this.getBuyers = () => Country.defaultBuyers;
                 //            this.getProvinces = () => Country.defaultProvinces;
@@ -161,12 +160,11 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Initializes a new instance of the <see cref="Buyer"/> class.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Initializes a new instance of the <see cref="Buyer"/> class.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -206,10 +204,9 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
 
-                //        /// <param name="data">The data behind the properties.</param>
-                comments.Add(
+                    //        /// <param name="data">The data behind the properties.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -229,7 +226,8 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                                     Environment.NewLine,
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
-                                            }))))));
+                                            }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);

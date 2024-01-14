@@ -72,10 +72,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            Buyer previousBuyer = buyer.GetVersion(RecordVersion.Previous) as Buyer;
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            Buyer previousBuyer = buyer.GetVersion(RecordVersion.Previous) as Buyer;
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(this.tableElement.Name))
@@ -100,10 +99,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.IdentifierName("RecordVersion"),
                                                                 SyntaxFactory.IdentifierName("Previous")))))),
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name))))))));
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name))))))),
 
-                //            object oldKey = this.primaryKeyFunction(previousBuyer);
-                statements.Add(
+                    //            object oldKey = this.primaryKeyFunction(previousBuyer);
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.PredefinedType(
@@ -123,10 +121,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                             SyntaxFactory.ArgumentList(
                                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                     SyntaxFactory.Argument(
-                                                        SyntaxFactory.IdentifierName($"previous{this.tableElement.Name}")))))))))));
+                                                        SyntaxFactory.IdentifierName($"previous{this.tableElement.Name}")))))))))),
 
-                //            object newKey = this.primaryKeyFunction(buyer);
-                statements.Add(
+                    //            object newKey = this.primaryKeyFunction(buyer);
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.PredefinedType(
@@ -146,13 +143,12 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                             SyntaxFactory.ArgumentList(
                                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                     SyntaxFactory.Argument(
-                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))))))));
+                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))))))),
 
-                //            if (oldKey != null && oldKey.Equals(newKey))
-                //            {
-                //                <UpdatePrimaryKey>
-                //            }
-                statements.Add(
+                    //            if (oldKey != null && oldKey.Equals(newKey))
+                    //            {
+                    //                <UpdatePrimaryKey>
+                    //            }
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.LogicalAndExpression,
@@ -173,7 +169,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                         SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.IdentifierName("newKey"))))))),
-                        SyntaxFactory.Block(this.UpdatePrimaryKey)));
+                        SyntaxFactory.Block(this.UpdatePrimaryKey)),
+                };
 
                 // Remove the record to each of the unique key indices on this set.
                 foreach (UniqueElement uniqueKeyElement in this.tableElement.UniqueKeys)
@@ -265,13 +262,12 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Updates a <see cref="Buyer"/> in the set.
-                //        /// </summary>
-                //        /// <param name="buyer">The buyer to be updated.</param>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Updates a <see cref="Buyer"/> in the set.
+                    //        /// </summary>
+                    //        /// <param name="buyer">The buyer to be updated.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -311,10 +307,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
 
-                //        /// <param name="buyer">The buyer to be updated.</param>
-                comments.Add(
+                    //        /// <param name="buyer">The buyer to be updated.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -334,7 +329,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                     Environment.NewLine,
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
-                                            }))))));
+                                            }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -349,14 +345,14 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // Create a list of parameters.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // The row parameter comes after the key elements.
-                parameters.Add(
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>
+                {
+                    // The row parameter comes after the key elements.
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()))
                     .WithType(
-                        SyntaxFactory.IdentifierName(this.tableElement.Name)));
+                        SyntaxFactory.IdentifierName(this.tableElement.Name)),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
@@ -370,10 +366,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                this.collection.Remove(oldKey);
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                this.collection.Remove(oldKey);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
@@ -387,10 +382,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName("oldKey")))))));
+                                            SyntaxFactory.IdentifierName("oldKey")))))),
 
-                //                this.collection.Add(newKey, buyer);
-                statements.Add(
+                    //                this.collection.Add(newKey, buyer);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -410,7 +404,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
-                                    })))));
+                                    })))),
+                };
 
                 return statements;
             }

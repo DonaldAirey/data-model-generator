@@ -55,10 +55,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // This is used to collect the trivia.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <inheritdoc/>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <inheritdoc/>
                     Trivia(
                         DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -78,7 +77,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the complete document comment.
                 return TriviaList(comments);
@@ -109,14 +109,14 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // Create a list of parameters.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // IRow row
-                parameters.Add(
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>
+                {
+                    // IRow row
                     Parameter(
                         Identifier("row"))
                     .WithType(
-                        SyntaxFactory.IdentifierName("IRow")));
+                        SyntaxFactory.IdentifierName("IRow")),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return ParameterList(SeparatedList<ParameterSyntax>(parameters));
@@ -131,10 +131,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            ListMap oldListMap = row as ListMap;
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            ListMap oldListMap = row as ListMap;
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(this.tableElement.Name))
@@ -147,10 +146,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                         SyntaxFactory.BinaryExpression(
                                             SyntaxKind.AsExpression,
                                             SyntaxFactory.IdentifierName("row"),
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name))))))));
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name))))))),
 
-                //                ProposedOrder proposedOrder = this.PortfolioDataModel.ProposedOrders.ProposedOrderKey.Find(oldProposedOrder.ProposedOrderId);
-                statements.Add(
+                    //                ProposedOrder proposedOrder = this.PortfolioDataModel.ProposedOrders.ProposedOrderKey.Find(oldProposedOrder.ProposedOrderId);
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(this.tableElement.Name))
@@ -181,26 +179,24 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.IdentifierName($"old{this.tableElement.Name}"),
-                                                            SyntaxFactory.IdentifierName(this.tableElement.PrimaryKey.Columns[0].Column.Name))))))))))));
+                                                            SyntaxFactory.IdentifierName(this.tableElement.PrimaryKey.Columns[0].Column.Name))))))))))),
 
-                //                if (proposedOrder != null)
-                //                {
-                //                    <CheckAndRemove>
-                //                }
-                statements.Add(
+                    //                if (proposedOrder != null)
+                    //                {
+                    //                    <CheckAndRemove>
+                    //                }
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.NotEqualsExpression,
                             SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.NullLiteralExpression)),
-                        SyntaxFactory.Block(this.CheckAndRemove)));
+                        SyntaxFactory.Block(this.CheckAndRemove)),
 
-                //                if (entity.RowVersion > this.AlertDataModel.RowVersion)
-                //                {
-                //                    <UpdateRowVersion>
-                //                }
-                statements.Add(
+                    //                if (entity.RowVersion > this.AlertDataModel.RowVersion)
+                    //                {
+                    //                    <UpdateRowVersion>
+                    //                }
                     IfStatement(
                         BinaryExpression(
                             SyntaxKind.GreaterThanExpression,
@@ -215,7 +211,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                     ThisExpression(),
                                     IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
                                 IdentifierName("RowVersion"))),
-                        Block(this.UpdateRowVersion)));
+                        Block(this.UpdateRowVersion)),
+                };
 
                 // This is the syntax for the body of the method.
                 return Block(List<StatementSyntax>(statements));
@@ -229,10 +226,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                this.Remove(proposedOrder);
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                this.Remove(proposedOrder);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -243,7 +239,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))),
+                };
 
                 return statements;
             }
@@ -256,10 +253,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                    this.AlertDataModel.RowVersion = entity.RowVersion;
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                    this.AlertDataModel.RowVersion = entity.RowVersion;
                     ExpressionStatement(
                         AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -273,7 +269,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                             MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 IdentifierName($"old{this.tableElement.Name}"),
-                                IdentifierName("RowVersion")))));
+                                IdentifierName("RowVersion")))),
+                };
 
                 return statements;
             }
