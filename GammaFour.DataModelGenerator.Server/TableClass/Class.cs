@@ -71,25 +71,24 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             get
             {
                 // A list of base classes or interfaces.
-                List<SyntaxNodeOrToken> baseList = new List<SyntaxNodeOrToken>();
-
-                // ITable
-                baseList.Add(
+                List<SyntaxNodeOrToken> baseList = new List<SyntaxNodeOrToken>
+                {
+                    // ITable
                     SyntaxFactory.SimpleBaseType(
-                        SyntaxFactory.IdentifierName("ITable")));
+                        SyntaxFactory.IdentifierName("ITable")),
 
-                // ,
-                baseList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                    // ,
+                    SyntaxFactory.Token(SyntaxKind.CommaToken),
 
-                // IEnumerable<Fungible>
-                baseList.Add(
+                    // IEnumerable<Fungible>
                     SyntaxFactory.SimpleBaseType(
                         SyntaxFactory.GenericName(
                             SyntaxFactory.Identifier("IEnumerable"))
                         .WithTypeArgumentList(
                             SyntaxFactory.TypeArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name))))));
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name))))),
+                };
 
                 return SyntaxFactory.BaseList(
                       SyntaxFactory.SeparatedList<BaseTypeSyntax>(baseList.ToArray()));
@@ -182,8 +181,10 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         private static SyntaxList<MemberDeclarationSyntax> CreatePrivateReadonlyInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the private instance fields.
-            List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new AsyncReaderWriterLockField());
+            List<SyntaxElement> fields = new List<SyntaxElement>
+            {
+                new AsyncReaderWriterLockField(),
+            };
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
@@ -237,11 +238,13 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         private SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the private instance fields.
-            List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new PrimaryKeyFunctionField(this.tableElement.PrimaryKey));
-            fields.Add(new CollectionField(this.tableElement));
-            fields.Add(new PurgedRowsField(this.tableElement));
-            fields.Add(new UndoStackField());
+            List<SyntaxElement> fields = new List<SyntaxElement>
+            {
+                new PrimaryKeyFunctionField(this.tableElement.PrimaryKey),
+                new CollectionField(this.tableElement),
+                new PurgedRowsField(this.tableElement),
+                new UndoStackField(),
+            };
 
             // Create an indexer for new records on all auto-increment columns.
             foreach (ColumnElement columnElement in this.tableElement.Columns)
@@ -270,14 +273,16 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceProperties(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
-            List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new DataModelProperty(this.tableElement.XmlSchemaDocument));
-            properties.Add(new PurgedRowsProperty(this.tableElement));
-            properties.Add(new ForeignIndexProperty());
-            properties.Add(new IsReadLockHeldProperty());
-            properties.Add(new IsWriteLockHeldProperty());
-            properties.Add(new NameProperty());
-            properties.Add(new UniqueIndexProperty());
+            List<SyntaxElement> properties = new List<SyntaxElement>
+            {
+                new DataModelProperty(this.tableElement.XmlSchemaDocument),
+                new PurgedRowsProperty(this.tableElement),
+                new ForeignIndexProperty(),
+                new IsReadLockHeldProperty(),
+                new IsWriteLockHeldProperty(),
+                new NameProperty(),
+                new UniqueIndexProperty(),
+            };
 
             // Add a property for each of the unique keys indices.
             foreach (UniqueElement uniqueKeyElement in this.tableElement.UniqueKeys)
@@ -309,8 +314,10 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         private SyntaxList<MemberDeclarationSyntax> CreateInternalInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
-            List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new OnRecordChangingMethod(this.tableElement));
+            List<SyntaxElement> methods = new List<SyntaxElement>
+            {
+                new OnRecordChangingMethod(this.tableElement),
+            };
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
@@ -330,8 +337,10 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         private SyntaxList<MemberDeclarationSyntax> CreatePublicEvents(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
-            List<SyntaxElement> events = new List<SyntaxElement>();
-            events.Add(new RecordChangingEvent(this.tableElement));
+            List<SyntaxElement> events = new List<SyntaxElement>
+            {
+                new RecordChangingEvent(this.tableElement),
+            };
 
             // Alphabetize and add the events as members of the class.
             foreach (SyntaxElement syntaxElement in events.OrderBy(m => m.Name))
@@ -351,21 +360,23 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
-            List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new AddMethod(this.tableElement));
-            methods.Add(new BuildForeignIndicesMethod(this.tableElement));
-            methods.Add(new CommitMethod());
-            methods.Add(new InDoubtMethod());
-            methods.Add(new GetEnumeratorMethod(this.tableElement));
-            methods.Add(new GenericGetEnumeratorMethod(this.tableElement));
-            methods.Add(new MergeMethod(this.tableElement));
-            methods.Add(new PrepareMethod());
-            methods.Add(new ReleaseMethod());
-            methods.Add(new RemoveMethod(this.tableElement));
-            methods.Add(new RollbackMethod());
-            methods.Add(new UpdateMethod(this.tableElement));
-            methods.Add(new WaitReaderAsyncMethod());
-            methods.Add(new WaitWriterAsyncMethod());
+            List<SyntaxElement> methods = new List<SyntaxElement>
+            {
+                new AddMethod(this.tableElement),
+                new BuildForeignIndicesMethod(this.tableElement),
+                new CommitMethod(),
+                new InDoubtMethod(),
+                new GetEnumeratorMethod(this.tableElement),
+                new GenericGetEnumeratorMethod(this.tableElement),
+                new MergeMethod(this.tableElement),
+                new PrepareMethod(),
+                new ReleaseMethod(),
+                new RemoveMethod(this.tableElement),
+                new RollbackMethod(),
+                new UpdateMethod(this.tableElement),
+                new WaitReaderAsyncMethod(),
+                new WaitWriterAsyncMethod(),
+            };
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))

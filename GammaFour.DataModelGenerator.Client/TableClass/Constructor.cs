@@ -73,10 +73,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            this.Name = "Accounts";
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            this.Name = "Accounts";
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -86,7 +85,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                 SyntaxFactory.IdentifierName("Name")),
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.StringLiteralExpression,
-                                SyntaxFactory.Literal(this.tableElement.Name.ToPlural())))));
+                                SyntaxFactory.Literal(this.tableElement.Name.ToPlural())))),
+                };
 
                 // Initialize the unique index properties.
                 foreach (UniqueElement uniqueKeyElement in this.tableElement.UniqueKeys)
@@ -133,12 +133,11 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Initializes a new instance of the <see cref="ConfigurationSet"/> class.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Initializes a new instance of the <see cref="ConfigurationSet"/> class.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -181,7 +180,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);

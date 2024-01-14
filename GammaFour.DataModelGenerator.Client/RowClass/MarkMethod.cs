@@ -48,10 +48,9 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            this.previousData = this.RecordState == RecordState.Added ? null : (object[])this.currentData.Clone();                statements.Add(
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            this.previousData = this.RecordState == RecordState.Added ? null : (object[])this.currentData.Clone();                statements.Add(
                     ExpressionStatement(
                         AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -88,10 +87,9 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 ThisExpression(),
                                                 IdentifierName("currentData")),
-                                            IdentifierName("Clone"))))))));
+                                            IdentifierName("Clone"))))))),
 
-                //            this.RecordState = RecordState.Unchanged;
-                statements.Add(
+                    //            this.RecordState = RecordState.Unchanged;
                     ExpressionStatement(
                         AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -102,7 +100,8 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                             MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 IdentifierName("RecordState"),
-                                IdentifierName("Unchanged")))));
+                                IdentifierName("Unchanged")))),
+                };
 
                 // This is the syntax for the body of the method.
                 return Block(List<StatementSyntax>(statements));
@@ -117,12 +116,11 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Used to mark a point in time when the record was consistent.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Used to mark a point in time when the record was consistent.
+                    //        /// </summary>
                     Trivia(
                         DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -162,7 +160,8 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the complete document comment.
                 return TriviaList(comments);

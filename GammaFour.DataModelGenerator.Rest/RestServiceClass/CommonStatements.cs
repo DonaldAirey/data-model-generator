@@ -22,13 +22,12 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // The catch clauses are collected in this list.
-                List<CatchClauseSyntax> clauses = new List<CatchClauseSyntax>();
-
-                //            catch (OperationCanceledException operationCanceledException)
-                //            {
-                //                <HandleOperationCancelledException>
-                //            }
-                clauses.Add(
+                List<CatchClauseSyntax> clauses = new List<CatchClauseSyntax>
+                {
+                    //            catch (OperationCanceledException operationCanceledException)
+                    //            {
+                    //                <HandleOperationCancelledException>
+                    //            }
                     SyntaxFactory.CatchClause()
                         .WithDeclaration(
                             SyntaxFactory.CatchDeclaration(
@@ -36,13 +35,12 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             .WithIdentifier(
                                 SyntaxFactory.Identifier("operationCanceledException")))
                         .WithBlock(
-                            SyntaxFactory.Block(CommonStatements.HandleOperationCanceledExceptionException)));
+                            SyntaxFactory.Block(CommonStatements.HandleOperationCanceledExceptionException)),
 
-                //            catch (Exception exception)
-                //            {
-                //                <HandleException>
-                //            }
-                clauses.Add(
+                    //            catch (Exception exception)
+                    //            {
+                    //                <HandleException>
+                    //            }
                     SyntaxFactory.CatchClause()
                     .WithDeclaration(
                         SyntaxFactory.CatchDeclaration(
@@ -50,7 +48,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                         .WithIdentifier(
                             SyntaxFactory.Identifier("exception")))
                     .WithBlock(
-                        SyntaxFactory.Block(CommonStatements.HandleException)));
+                        SyntaxFactory.Block(CommonStatements.HandleException)),
+                };
 
                 // This is the collection of catch clauses.
                 return SyntaxFactory.List<CatchClauseSyntax>(clauses);
@@ -65,10 +64,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                this.logger.LogError(exception, "{message}", exception.Message);
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                this.logger.LogError(exception, "{message}", exception.Message);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -96,10 +94,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.IdentifierName("exception"),
                                                 SyntaxFactory.IdentifierName("Message"))),
-                                    })))));
+                                    })))),
 
-                //                return this.BadRequest($"{exception.GetType()}: {exception.Message}");
-                statements.Add(
+                    //                return this.BadRequest($"{exception.GetType()}: {exception.Message}");
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -135,7 +132,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.IdentifierName("exception"),
                                                             SyntaxFactory.IdentifierName("Message"))),
-                                                }))))))));
+                                                }))))))),
+                };
 
                 // This is the syntax for the body of the method.
                 return statements;
@@ -150,10 +148,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                this.logger.LogError(operationCanceledException, "{message}", operationCanceledException.Message);
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                this.logger.LogError(operationCanceledException, "{message}", operationCanceledException.Message);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -181,10 +178,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.IdentifierName("operationCanceledException"),
                                                 SyntaxFactory.IdentifierName("Message"))),
-                                    })))));
+                                    })))),
 
-                //                return this.StatusCode(408);
-                statements.Add(
+                    //                return this.StatusCode(408);
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -197,7 +193,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.LiteralExpression(
                                             SyntaxKind.NumericLiteralExpression,
-                                            SyntaxFactory.Literal(408))))))));
+                                            SyntaxFactory.Literal(408))))))),
+                };
 
                 // This is the syntax for the body of the method.
                 return statements;

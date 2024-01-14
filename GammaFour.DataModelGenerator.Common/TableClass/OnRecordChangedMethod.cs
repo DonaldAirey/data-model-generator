@@ -85,10 +85,9 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            this.RecordChanged?.Invoke(this, new ConfigurationRecordChangeEventArgs(dataAction, configurationRecord));
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            this.RecordChanged?.Invoke(this, new ConfigurationRecordChangeEventArgs(dataAction, configurationRecord));
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.ConditionalAccessExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -122,7 +121,8 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                                                     SyntaxFactory.IdentifierName(
                                                                         this.tableElement.Name.ToVariableName())),
                                                             })))),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -137,12 +137,11 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Handles a change to the Configuration row.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Handles a change to the Configuration row.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -185,10 +184,9 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
 
-                //        /// <param name="dataAction">The action taken.</param>
-                comments.Add(
+                    //        /// <param name="dataAction">The action taken.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -208,10 +206,9 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
 
-                //        /// <param name="configuration">The row on which the action was taken.</param>
-                comments.Add(
+                    //        /// <param name="configuration">The row on which the action was taken.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -234,7 +231,8 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -249,19 +247,18 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
             get
             {
                 // Create a list of parameters.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // DataAction dataAction,
-                parameters.Add(
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>
+                {
+                    // DataAction dataAction,
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("dataAction"))
-                        .WithType(SyntaxFactory.IdentifierName("DataAction")));
+                        .WithType(SyntaxFactory.IdentifierName("DataAction")),
 
-                // ConfigurationRecord configurationRecord
-                parameters.Add(
+                    // ConfigurationRecord configurationRecord
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier(this.recordName))
-                        .WithType(SyntaxFactory.IdentifierName(this.rowType)));
+                        .WithType(SyntaxFactory.IdentifierName(this.rowType)),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

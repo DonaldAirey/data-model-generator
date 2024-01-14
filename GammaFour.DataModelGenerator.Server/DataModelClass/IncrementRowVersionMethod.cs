@@ -46,10 +46,9 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            return System.Threading.Interlocked.Increment(ref this.rowVersion);
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            return System.Threading.Interlocked.Increment(ref this.rowVersion);
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -71,7 +70,8 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                             SyntaxFactory.ThisExpression(),
                                             SyntaxFactory.IdentifierName("rowVersion")))
                                     .WithRefOrOutKeyword(
-                                        SyntaxFactory.Token(SyntaxKind.RefKeyword)))))));
+                                        SyntaxFactory.Token(SyntaxKind.RefKeyword)))))),
+                };
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -86,12 +86,11 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// The master row version.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// The master row version.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -131,10 +130,9 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
 
-                //                /// <returns>The incremented row version.</returns>
-                comments.Add(
+                    //                /// <returns>The incremented row version.</returns>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -154,7 +152,8 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                         Environment.NewLine,
                                                         string.Empty,
                                                         SyntaxFactory.TriviaList()),
-                                            }))))));
+                                            }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);

@@ -53,12 +53,11 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Locks this resource for the duration of a transaction.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Locks this resource for the duration of a transaction.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -98,7 +97,8 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);

@@ -47,10 +47,9 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            this.previousData = (object[])this.currentData.Clone();
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            this.previousData = (object[])this.currentData.Clone();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -74,7 +73,8 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
                                             SyntaxFactory.IdentifierName("currentData")),
-                                        SyntaxFactory.IdentifierName("Clone")))))));
+                                        SyntaxFactory.IdentifierName("Clone")))))),
+                };
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -89,12 +89,11 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Used to mark a point in time when the record was consistent.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Used to mark a point in time when the record was consistent.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -134,7 +133,8 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);

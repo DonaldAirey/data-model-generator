@@ -55,10 +55,9 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
             get
             {
                 // This is used to collect the trivia.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <inheritdoc/>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <inheritdoc/>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -78,7 +77,8 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -110,14 +110,14 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
             get
             {
                 // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // ModelBuilder modelBuilder
-                parameters.Add(
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>
+                {
+                    // ModelBuilder modelBuilder
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("modelBuilder"))
                     .WithType(
-                        SyntaxFactory.IdentifierName("ModelBuilder")));
+                        SyntaxFactory.IdentifierName("ModelBuilder")),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
@@ -132,10 +132,9 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            modelBuilder.UseCollation("SQL_Latin1_General_CP1_CS_AS");
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            modelBuilder.UseCollation("SQL_Latin1_General_CP1_CS_AS");
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -148,7 +147,8 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.LiteralExpression(
                                             SyntaxKind.StringLiteralExpression,
-                                            SyntaxFactory.Literal("SQL_Latin1_General_CP1_CS_AS"))))))));
+                                            SyntaxFactory.Literal("SQL_Latin1_General_CP1_CS_AS"))))))),
+                };
 
                 // This will configure each of the tables and their indices.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)

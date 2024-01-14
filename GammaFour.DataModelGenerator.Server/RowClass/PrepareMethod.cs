@@ -47,17 +47,16 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            if (this.State == RecordState.Unchanged)
-                //            {
-                //                <EnlistmentDone>
-                //            }
-                //            else
-                //            {
-                //                <EnlistmentPrepared>
-                //            }
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            if (this.State == RecordState.Unchanged)
+                    //            {
+                    //                <EnlistmentDone>
+                    //            }
+                    //            else
+                    //            {
+                    //                <EnlistmentPrepared>
+                    //            }
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.EqualsExpression,
@@ -72,7 +71,8 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                         SyntaxFactory.Block(PrepareMethod.EnlistmentDone))
                     .WithElse(
                         SyntaxFactory.ElseClause(
-                            SyntaxFactory.Block(PrepareMethod.EnlistmentPrepared))));
+                            SyntaxFactory.Block(PrepareMethod.EnlistmentPrepared))),
+                };
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -87,10 +87,9 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // This is used to collect the trivia.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <inheritdoc/>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <inheritdoc/>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -110,7 +109,8 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -124,16 +124,16 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                preparingEnlistment.Done();
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                preparingEnlistment.Done();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("preparingEnlistment"),
-                                SyntaxFactory.IdentifierName("Done")))));
+                                SyntaxFactory.IdentifierName("Done")))),
+                };
 
                 return statements;
             }
@@ -181,14 +181,14 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // PreparingEnlistment preparingEnlistment
-                parameters.Add(
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>
+                {
+                    // PreparingEnlistment preparingEnlistment
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("preparingEnlistment"))
                     .WithType(
-                        SyntaxFactory.IdentifierName("PreparingEnlistment")));
+                        SyntaxFactory.IdentifierName("PreparingEnlistment")),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

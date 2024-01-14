@@ -52,10 +52,9 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <inheritdoc/>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <inheritdoc/>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -75,7 +74,8 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -107,10 +107,9 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            using var lockingTransaction = new LockingTransaction(TransactionManager.MaximumTimeout);
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            using var lockingTransaction = new LockingTransaction(TransactionManager.MaximumTimeout);
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(
@@ -137,7 +136,8 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                             SyntaxFactory.IdentifierName("TransactionManager"),
                                                             SyntaxFactory.IdentifierName("MaximumTimeout")))))))))))
                     .WithUsingKeyword(
-                        SyntaxFactory.Token(SyntaxKind.UsingKeyword)));
+                        SyntaxFactory.Token(SyntaxKind.UsingKeyword)),
+                };
 
                 //            await lockingTransaction.WaitReaderAsync(this.Accounts.ItemAccountKey);
                 //            await lockingTransaction.WaitReaderAsync(this.Accounts.AccountKey);

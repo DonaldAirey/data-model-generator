@@ -1,4 +1,4 @@
-// <copyright file="TableProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="TablesProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,32 +14,38 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
     /// <summary>
     /// Creates a collection of readers (transactions) waiting for a read lock.
     /// </summary>
-    public class TableProperty : SyntaxElement
+    public class TablesProperty : SyntaxElement
     {
         /// <summary>
-        /// The table schema.
+        /// Initializes a new instance of the <see cref="TablesProperty"/> class.
         /// </summary>
-        private TableElement tableElement;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TableProperty"/> class.
-        /// </summary>
-        /// <param name="tableElement">The table schema.</param>
-        public TableProperty(TableElement tableElement)
+        public TablesProperty()
         {
             // Initialize the object.
-            this.tableElement = tableElement;
-            this.Name = this.tableElement.Name.ToPlural();
+            this.Name = "Tables";
 
             //        /// <summary>
-            //        /// Gets the <see cref="Fungibles"/> table.
+            //        /// Gets the table by name.
             //        /// </summary>
-            //        public BuyerSet Buyers { get; }
+            //        public Dictionary<string, ITable> Tables { get; } = new Dictionary<string, ITable>();
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                    SyntaxFactory.IdentifierName($"{tableElement.Name.ToPlural()}"),
-                    SyntaxFactory.Identifier(this.Name))
-                .WithAccessorList(TableProperty.AccessorList)
-                .WithModifiers(TableProperty.Modifiers)
+                SyntaxFactory.GenericName(
+                    SyntaxFactory.Identifier("Dictionary"))
+                .WithTypeArgumentList(
+                    SyntaxFactory.TypeArgumentList(
+                        SyntaxFactory.SeparatedList<TypeSyntax>(
+                            new SyntaxNodeOrToken[]
+                            {
+                                SyntaxFactory.PredefinedType(
+                                    SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                SyntaxFactory.IdentifierName("ITable"),
+                            }))),
+                SyntaxFactory.Identifier("Tables"))
+                .WithModifiers(TablesProperty.Modifiers)
+                .WithAccessorList(TablesProperty.AccessorList)
+                .WithInitializer(TablesProperty.Initializer)
+                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken))
                 .WithLeadingTrivia(this.DocumentationComment);
         }
 
@@ -54,7 +60,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                     SyntaxFactory.List(
                         new AccessorDeclarationSyntax[]
                         {
-                            TableProperty.GetAccessor,
+                            TablesProperty.GetAccessor,
                         }));
             }
         }
@@ -71,6 +77,38 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                         SyntaxKind.GetAccessorDeclaration)
                     .WithSemicolonToken(
                         SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            }
+        }
+
+        /// <summary>
+        /// Gets the list of accessors.
+        /// </summary>
+        private static EqualsValueClauseSyntax Initializer
+        {
+            get
+            {
+                return SyntaxFactory.EqualsValueClause(
+                    SyntaxFactory.ObjectCreationExpression(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("Dictionary"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SeparatedList<TypeSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.PredefinedType(
+                                            SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.IdentifierName("ITable"),
+                                    }))))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName("StringComparer"),
+                                        SyntaxFactory.IdentifierName("OrdinalIgnoreCase")))))));
             }
         }
 
@@ -101,7 +139,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Gets the <see cref="Fungibles"/> table.
+                    //        /// Gets the table by name.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -124,7 +162,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Gets the <see cref=\"{this.tableElement.Name.ToPlural()}\"/> table.",
+                                                $" Gets the table by name.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

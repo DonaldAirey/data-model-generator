@@ -59,10 +59,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             get
             {
                 // This is used to collect the trivia.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <inheritdoc/>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <inheritdoc/>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -82,7 +81,8 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -113,10 +113,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             get
             {
                 // Create a list of parameters.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // IEnumerable<object> source
-                parameters.Add(
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>
+                {
+                    // IEnumerable<object> source
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("source"))
                     .WithType(
@@ -126,7 +125,8 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                             SyntaxFactory.TypeArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                                     SyntaxFactory.PredefinedType(
-                                        SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))))));
+                                        SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))))),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
@@ -140,10 +140,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                    residuals.Add(buyer);
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                    residuals.Add(buyer);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -154,11 +153,11 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))),
 
-                //                    continue;
-                statements.Add(
-                    SyntaxFactory.ContinueStatement());
+                    //                    continue;
+                    SyntaxFactory.ContinueStatement(),
+                };
 
                 return statements;
             }
@@ -172,10 +171,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            List<object> residuals = new List<object>();
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            List<object> residuals = new List<object>();
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.GenericName(
@@ -200,23 +198,22 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                         SyntaxFactory.PredefinedType(
                                                             SyntaxFactory.Token(SyntaxKind.ObjectKeyword))))))
                                         .WithArgumentList(
-                                            SyntaxFactory.ArgumentList())))))));
+                                            SyntaxFactory.ArgumentList())))))),
 
-                //            foreach (Buyer buyer in source)
-                //            {
-                //                 <CheckForParents>
-                //            }
-                statements.Add(
+                    //            foreach (Buyer buyer in source)
+                    //            {
+                    //                 <CheckForParents>
+                    //            }
                     SyntaxFactory.ForEachStatement(
                         SyntaxFactory.IdentifierName(this.tableElement.Name),
                         SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()),
                         SyntaxFactory.IdentifierName("source"),
-                        SyntaxFactory.Block(this.CheckForParents)));
+                        SyntaxFactory.Block(this.CheckForParents)),
 
-                //            return residuals;
-                statements.Add(
+                    //            return residuals;
                     SyntaxFactory.ReturnStatement(
-                        SyntaxFactory.IdentifierName("residuals")));
+                        SyntaxFactory.IdentifierName("residuals")),
+                };
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -230,10 +227,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                    this.DataModel.RowVersion = assetClass.RowVersion;
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                    this.DataModel.RowVersion = assetClass.RowVersion;
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -247,7 +243,8 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                                SyntaxFactory.IdentifierName("RowVersion")))));
+                                SyntaxFactory.IdentifierName("RowVersion")))),
+                };
 
                 return statements;
             }

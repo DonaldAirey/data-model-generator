@@ -8,6 +8,8 @@ namespace GammaFour.DataModelGenerator.Common
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Reflection;
+    using System.Text.Json;
     using System.Xml.Linq;
 
     /// <summary>
@@ -48,13 +50,36 @@ namespace GammaFour.DataModelGenerator.Common
                 this.DataModelNamespace = string.Join(".", dataModelParts, 0, dataModelParts.Length - 1);
             }
 
+            // This tells us whether the generated model should employ relational intergity.
+            XAttribute isRelationalAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.IsRelationalName);
+            this.IsRelational = isRelationalAttribute == null ? true : Convert.ToBoolean(isRelationalAttribute.Value, CultureInfo.InvariantCulture);
+
             // This tells us whether the generated controllers should require authorization.
             XAttribute isSecureAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.IsSecureName);
-            this.IsSecure = isSecureAttribute == null ? null : new bool?(Convert.ToBoolean(isSecureAttribute.Value, CultureInfo.InvariantCulture));
+            this.IsSecure = isSecureAttribute == null ? false : Convert.ToBoolean(isSecureAttribute.Value, CultureInfo.InvariantCulture);
 
             // This tells us whether to provide an interface to Entity Framework or not.
             XAttribute isVolatileAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.IsVolatileName);
-            this.IsVolatile = isVolatileAttribute == null ? null : new bool?(Convert.ToBoolean(isVolatileAttribute.Value, CultureInfo.InvariantCulture));
+            this.IsVolatile = isVolatileAttribute == null ? false : Convert.ToBoolean(isVolatileAttribute.Value, CultureInfo.InvariantCulture);
+
+            // This tells the generator what kind of naming convension to use for JSON properties.
+            XAttribute jsonNamingPolicyAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.JsonNamingPolicyName);
+            if (jsonNamingPolicyAttribute == null)
+            {
+                // The default naming policy for JSON properties is camel case.
+                this.JsonNamingPolicy = JsonNamingPolicy.CamelCase;
+            }
+            else
+            {
+                // This will employ the specified naming policity from the System.Text.Json package when mapping JSON property names to POCO
+                // properties.
+                Type jsonNamingPolicyType = typeof(JsonNamingPolicy);
+                PropertyInfo propertyInfo = jsonNamingPolicyType.GetProperty(jsonNamingPolicyAttribute.Value);
+                if (propertyInfo != null)
+                {
+                    this.JsonNamingPolicy = propertyInfo.GetValue(null) as JsonNamingPolicy;
+                }
+            }
 
             // The data model description is found on the first element of the first complex type in the module.
             XElement complexTypeElement = rootElement.Element(XmlSchemaDocument.ComplexTypeName);
@@ -83,8 +108,13 @@ namespace GammaFour.DataModelGenerator.Common
             List<XElement> keyRefElements = rootElement.Elements(XmlSchemaDocument.KeyrefName).ToList();
             foreach (XElement xElement in keyRefElements)
             {
-                // This will create the foreign key constraints.
-                rootElement.Add(new ForeignElement(xElement));
+                // This will create the foreign key constraints if they're requested.
+                if (this.IsRelational)
+                {
+                    rootElement.Add(new ForeignElement(xElement));
+                }
+
+                // Make sure we remove this node in any case.
                 xElement.Remove();
             }
 
@@ -185,6 +215,21 @@ namespace GammaFour.DataModelGenerator.Common
         public static XName FractionDigitsName { get; } = XName.Get("fractionDigits", XmlSchemaDocument.XmlSchemaNamespace);
 
         /// <summary>
+        /// Gets the IsPrimaryKey attribute.
+        /// </summary>
+        public static XName IsPrimaryKeyName { get; } = XName.Get("isPrimaryKey", XmlSchemaDocument.GammaFourDataNamespace);
+
+        /// <summary>
+        /// Gets the IsRelational attribute.
+        /// </summary>
+        public static XName IsRelationalName { get; } = XName.Get("isRelational", XmlSchemaDocument.GammaFourDataNamespace);
+
+        /// <summary>
+        /// Gets the IsRowVersion attribute.
+        /// </summary>
+        public static XName IsRowVersionName { get; } = XName.Get("isRowVersion", XmlSchemaDocument.GammaFourDataNamespace);
+
+        /// <summary>
         /// Gets the IsSecure attribute.
         /// </summary>
         public static XName IsSecureName { get; } = XName.Get("isSecure", XmlSchemaDocument.GammaFourDataNamespace);
@@ -195,14 +240,9 @@ namespace GammaFour.DataModelGenerator.Common
         public static XName IsVolatileName { get; } = XName.Get("isVolatile", XmlSchemaDocument.GammaFourDataNamespace);
 
         /// <summary>
-        /// Gets the IsPrimaryKey attribute.
+        /// Gets the JsonNamingPolicy attribute.
         /// </summary>
-        public static XName IsPrimaryKeyName { get; } = XName.Get("isPrimaryKey", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
-        /// Gets the IsRowVersion attribute.
-        /// </summary>
-        public static XName IsRowVersionName { get; } = XName.Get("isRowVersion", XmlSchemaDocument.GammaFourDataNamespace);
+        public static XName JsonNamingPolicyName { get; } = XName.Get("jsonNamingPolicy", XmlSchemaDocument.GammaFourDataNamespace);
 
         /// <summary>
         /// Gets the Keyref element.
@@ -307,14 +347,24 @@ namespace GammaFour.DataModelGenerator.Common
         }
 
         /// <summary>
-        /// Gets a value indicating whether the data model supports a persistent Entity Framework store.
+        /// Gets a value indicating whether the generated controllers require authentication.
         /// </summary>
-        public bool? IsVolatile { get; private set; }
+        public bool IsRelational { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether the generated controllers require authentication.
         /// </summary>
-        public bool? IsSecure { get; private set; }
+        public bool IsSecure { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether the data model supports a persistent Entity Framework store.
+        /// </summary>
+        public bool IsVolatile { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether the generated controllers require authentication.
+        /// </summary>
+        public JsonNamingPolicy JsonNamingPolicy { get; private set; }
 
         /// <summary>
         /// Gets the name of the data model.

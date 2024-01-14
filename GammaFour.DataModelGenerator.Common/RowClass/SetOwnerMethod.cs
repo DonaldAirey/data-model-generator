@@ -74,13 +74,12 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            if (this.RecordState == RecordState.Unchanged)
-                //            {
-                //                <UnchangedStateChange>
-                //            }
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            if (this.RecordState == RecordState.Unchanged)
+                    //            {
+                    //                <UnchangedStateChange>
+                    //            }
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.EqualsExpression,
@@ -92,13 +91,12 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("RecordState"),
                                 SyntaxFactory.IdentifierName("Unchanged"))),
-                        SyntaxFactory.Block(this.UnchangedStateChange)));
+                        SyntaxFactory.Block(this.UnchangedStateChange)),
 
-                //            if (this.RecordState == RecordState.Detached)
-                //            {
-                //                <DetachedStateChange>
-                //            }
-                statements.Add(
+                    //            if (this.RecordState == RecordState.Detached)
+                    //            {
+                    //                <DetachedStateChange>
+                    //            }
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.EqualsExpression,
@@ -110,7 +108,8 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("RecordState"),
                                 SyntaxFactory.IdentifierName("Detached"))),
-                        SyntaxFactory.Block(this.DetachedStateChange)));
+                        SyntaxFactory.Block(this.DetachedStateChange)),
+                };
 
                 // If there are any child rows, add either a default link or an actual link to the collection.  The default link to an empty set
                 // allows for iteration without having to check for 'null' each time you want to see the children.
@@ -160,10 +159,9 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                this.State = provinces == null ? RecordState.Detached : RecordState.Added;
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                this.State = provinces == null ? RecordState.Detached : RecordState.Added;
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -184,7 +182,8 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.IdentifierName("RecordState"),
-                                    SyntaxFactory.IdentifierName("Added"))))));
+                                    SyntaxFactory.IdentifierName("Added"))))),
+                };
 
                 return statements;
             }
@@ -198,12 +197,11 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Sets the parent record set.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Sets the parent record set.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -243,10 +241,9 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
 
-                //        /// <param name="countries">A set of records to which this record belongs (or null to leave a set).</param>
-                comments.Add(
+                    //        /// <param name="countries">A set of records to which this record belongs (or null to leave a set).</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -266,7 +263,8 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
                                                     Environment.NewLine,
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
-                                            }))))));
+                                            }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -281,14 +279,14 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
             get
             {
                 // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // CountrySet countries
-                parameters.Add(
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>
+                {
+                    // CountrySet countries
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier(this.tableElement.Name.ToCamelCase().ToPlural()))
                     .WithType(
-                        SyntaxFactory.IdentifierName($"{this.tableElement.Name.ToPlural()}")));
+                        SyntaxFactory.IdentifierName($"{this.tableElement.Name.ToPlural()}")),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
@@ -302,10 +300,9 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            this.RecordState = countries == null ? RecordState.Deleted : RecordState.Added;
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            this.RecordState = countries == null ? RecordState.Deleted : RecordState.Added;
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -326,10 +323,9 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.IdentifierName("RecordState"),
-                                    SyntaxFactory.IdentifierName("Added"))))));
+                                    SyntaxFactory.IdentifierName("Added"))))),
 
-                //                    this.originalData = (object[])this.currentData.Clone();
-                statements.Add(
+                    //                    this.originalData = (object[])this.currentData.Clone();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -353,10 +349,9 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
                                             SyntaxFactory.IdentifierName("currentData")),
-                                        SyntaxFactory.IdentifierName("Clone")))))));
+                                        SyntaxFactory.IdentifierName("Clone")))))),
 
-                //                    this.previousData = (object[])this.currentData.Clone();
-                statements.Add(
+                    //                    this.previousData = (object[])this.currentData.Clone();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -380,7 +375,8 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
                                             SyntaxFactory.IdentifierName("currentData")),
-                                        SyntaxFactory.IdentifierName("Clone")))))));
+                                        SyntaxFactory.IdentifierName("Clone")))))),
+                };
 
                 return statements;
             }

@@ -53,10 +53,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            return this.Rows.GetEnumerator();
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            return this.Rows.GetEnumerator();
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -68,7 +67,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                         SyntaxFactory.ThisExpression(),
                                         SyntaxFactory.IdentifierName("collection")),
                                     SyntaxFactory.IdentifierName("Values")),
-                                SyntaxFactory.IdentifierName("GetEnumerator")))));
+                                SyntaxFactory.IdentifierName("GetEnumerator")))),
+                };
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -83,10 +83,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // This is used to collect the trivia.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <inheritdoc/>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <inheritdoc/>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -106,7 +105,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);

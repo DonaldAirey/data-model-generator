@@ -77,25 +77,24 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // A list of base classes or interfaces.
-                List<SyntaxNodeOrToken> baseList = new List<SyntaxNodeOrToken>();
-
-                // ITable
-                baseList.Add(
+                List<SyntaxNodeOrToken> baseList = new List<SyntaxNodeOrToken>
+                {
+                    // ITable
                     SyntaxFactory.SimpleBaseType(
-                        SyntaxFactory.IdentifierName("ITable")));
+                        SyntaxFactory.IdentifierName("ITable")),
 
-                // ,
-                baseList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                    // ,
+                    SyntaxFactory.Token(SyntaxKind.CommaToken),
 
-                // IEnuerator<Account>
-                baseList.Add(
+                    // IEnuerator<Account>
                     SyntaxFactory.SimpleBaseType(
                         SyntaxFactory.GenericName(
                             SyntaxFactory.Identifier("IEnumerable"))
                         .WithTypeArgumentList(
                             SyntaxFactory.TypeArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name))))));
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name))))),
+                };
 
                 return SyntaxFactory.BaseList(
                       SyntaxFactory.SeparatedList<BaseTypeSyntax>(baseList.ToArray()));
@@ -233,12 +232,14 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceProperties(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
-            List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new DataModelProperty(this.tableElement.XmlSchemaDocument));
-            properties.Add(new ForeignIndexProperty());
-            properties.Add(new IndexProperty(this.tableElement));
-            properties.Add(new NameProperty());
-            properties.Add(new UniqueIndexProperty());
+            List<SyntaxElement> properties = new List<SyntaxElement>
+            {
+                new DataModelProperty(this.tableElement.XmlSchemaDocument),
+                new ForeignIndexProperty(),
+                new IndexProperty(this.tableElement),
+                new NameProperty(),
+                new UniqueIndexProperty(),
+            };
 
             // Add a property for each of the unique keys indices.
             foreach (UniqueElement uniqueKeyElement in this.tableElement.UniqueKeys)
@@ -270,10 +271,12 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         private SyntaxList<MemberDeclarationSyntax> CreateInternalInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
-            List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new MergeBucketMethod(this.tableElement));
-            methods.Add(new PurgeBucketMethod(this.tableElement));
-            methods.Add(new OnRecordChangingMethod(this.tableElement));
+            List<SyntaxElement> methods = new List<SyntaxElement>
+            {
+                new MergeBucketMethod(this.tableElement),
+                new PurgeBucketMethod(this.tableElement),
+                new OnRecordChangingMethod(this.tableElement),
+            };
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
@@ -293,8 +296,10 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         private SyntaxList<MemberDeclarationSyntax> CreatePublicEvents(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
-            List<SyntaxElement> events = new List<SyntaxElement>();
-            events.Add(new RecordChangingEvent(this.tableElement));
+            List<SyntaxElement> events = new List<SyntaxElement>
+            {
+                new RecordChangingEvent(this.tableElement),
+            };
 
             // Alphabetize and add the events as members of the class.
             foreach (SyntaxElement syntaxElement in events.OrderBy(m => m.Name))
@@ -314,30 +319,32 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
-            List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new AddRowMethod(this.tableElement));
-            methods.Add(new AddUniqueIndexMethod(this.tableElement));
-            methods.Add(new BuildForeignIndicesMethod(this.tableElement));
-            methods.Add(new DeleteOneAsyncMethod(this.tableElement));
-            methods.Add(new DeleteAsyncMethod(this.tableElement));
-            methods.Add(new DeserializeMethod(this.tableElement));
-            methods.Add(new GetAsyncMethod(this.tableElement));
-            methods.Add(new GetEnumeratorMethod(this.tableElement));
-            methods.Add(new GetOneAsyncMethod(this.tableElement));
-            methods.Add(new GenericGetEnumeratorMethod(this.tableElement));
-            methods.Add(new ITableGetAsyncMethod(this.tableElement));
-            methods.Add(new ITablePatchAsyncMethod(this.tableElement));
-            methods.Add(new ITablePostAsyncMethod(this.tableElement));
-            methods.Add(new ITablePutAsyncMethod(this.tableElement));
-            methods.Add(new MergeOneMethod(this.tableElement));
-            methods.Add(new MergeMethod(this.tableElement));
-            methods.Add(new PatchAsyncMethod(this.tableElement));
-            methods.Add(new PostAsyncMethod(this.tableElement));
-            methods.Add(new PurgeMethod(this.tableElement));
-            methods.Add(new PurgeOneMethod(this.tableElement));
-            methods.Add(new PutAsyncMethod(this.tableElement));
-            methods.Add(new RemoveMethod(this.tableElement));
-            methods.Add(new UpdateMethod(this.tableElement));
+            List<SyntaxElement> methods = new List<SyntaxElement>
+            {
+                new AddRowMethod(this.tableElement),
+                new AddUniqueIndexMethod(this.tableElement),
+                new BuildForeignIndicesMethod(this.tableElement),
+                new DeleteOneAsyncMethod(this.tableElement),
+                new DeleteAsyncMethod(this.tableElement),
+                new DeserializeMethod(this.tableElement),
+                new GetAsyncMethod(this.tableElement),
+                new GetEnumeratorMethod(this.tableElement),
+                new GetOneAsyncMethod(this.tableElement),
+                new GenericGetEnumeratorMethod(this.tableElement),
+                new ITableGetAsyncMethod(this.tableElement),
+                new ITablePatchAsyncMethod(this.tableElement),
+                new ITablePostAsyncMethod(this.tableElement),
+                new ITablePutAsyncMethod(this.tableElement),
+                new MergeOneMethod(this.tableElement),
+                new MergeMethod(this.tableElement),
+                new PatchAsyncMethod(this.tableElement),
+                new PostAsyncMethod(this.tableElement),
+                new PurgeMethod(this.tableElement),
+                new PurgeOneMethod(this.tableElement),
+                new PutAsyncMethod(this.tableElement),
+                new RemoveMethod(this.tableElement),
+                new UpdateMethod(this.tableElement),
+            };
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))

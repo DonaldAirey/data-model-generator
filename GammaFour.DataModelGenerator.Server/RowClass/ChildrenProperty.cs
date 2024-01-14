@@ -57,14 +57,14 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // This collects all the attributes.
-                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
-
-                //        [JsonConverter(typeof(JsonStringEnumConverter))]
-                attributes.Add(
+                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>
+                {
+                    //        [JsonConverter(typeof(JsonStringEnumConverter))]
                     SyntaxFactory.AttributeList(
                         SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
                             SyntaxFactory.Attribute(
-                                SyntaxFactory.IdentifierName("JsonIgnore")))));
+                                SyntaxFactory.IdentifierName("JsonIgnore")))),
+                };
 
                 // The collection of attributes.
                 return SyntaxFactory.List<AttributeListSyntax>(attributes);
@@ -111,12 +111,11 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Gets the child <see cref="Buyer"/> records.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Gets the child <see cref="Buyer"/> records.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -156,7 +155,8 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -171,16 +171,16 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                return this.getRegions();
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                return this.getRegions();
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName($"get{this.foreignKeyElement.UniqueChildName}")))));
+                                SyntaxFactory.IdentifierName($"get{this.foreignKeyElement.UniqueChildName}")))),
+                };
 
                 //            get
                 //            {

@@ -53,10 +53,9 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                    this.RecordState = this.RecordState == RecordState.Added ? RecordState.Added : RecordState.Modified;
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                    this.RecordState = this.RecordState == RecordState.Added ? RecordState.Added : RecordState.Modified;
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -82,10 +81,9 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.IdentifierName("RecordState"),
-                                    SyntaxFactory.IdentifierName("Modified"))))));
+                                    SyntaxFactory.IdentifierName("Modified"))))),
 
-                //                    this.previousData = (object[])this.currentData.Clone();
-                statements.Add(
+                    //                    this.previousData = (object[])this.currentData.Clone();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -109,7 +107,8 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
                                             SyntaxFactory.IdentifierName("currentData")),
-                                        SyntaxFactory.IdentifierName("Clone")))))));
+                                        SyntaxFactory.IdentifierName("Clone")))))),
+                };
 
                 return statements;
             }
@@ -152,21 +151,22 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             get
             {
                 // This collects all the attributes.
-                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
-
-                //        [JsonProeprtyName("userId")]
-                attributes.Add(
+                var jsonPropertyName = this.columnElement.Table.XmlSchemaDocument.JsonNamingPolicy.ConvertName(this.Name);
+                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>
+                {
+                    //        [JsonPropertyName("userId")]
                     SyntaxFactory.AttributeList(
-                SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
-                    SyntaxFactory.Attribute(
-                        SyntaxFactory.IdentifierName("JsonPropertyName"))
-                    .WithArgumentList(
-                        SyntaxFactory.AttributeArgumentList(
-                            SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
-                                SyntaxFactory.AttributeArgument(
-                                    SyntaxFactory.LiteralExpression(
-                                        SyntaxKind.StringLiteralExpression,
-                                        SyntaxFactory.Literal(this.Name.ToCamelCase())))))))));
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                SyntaxFactory.IdentifierName("JsonPropertyName"))
+                            .WithArgumentList(
+                                SyntaxFactory.AttributeArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
+                                        SyntaxFactory.AttributeArgument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                SyntaxFactory.Literal(jsonPropertyName)))))))),
+                };
 
                 // Don't emit a converter for the predefined types.
                 if (!this.columnElement.ColumnType.IsPredefined)

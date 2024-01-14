@@ -73,10 +73,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            this.UniqueIndex.Add(uniqueIndex.Name, uniqueIndex);
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            this.UniqueIndex.Add(uniqueIndex.Name, uniqueIndex);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -99,10 +98,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.IdentifierName("uniqueIndex")),
-                                    })))));
+                                    })))),
 
-                //            uniqueIndex.Table = this;
-                statements.Add(
+                    //            uniqueIndex.Table = this;
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -110,7 +108,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("uniqueIndex"),
                                 SyntaxFactory.IdentifierName("Table")),
-                            SyntaxFactory.ThisExpression())));
+                            SyntaxFactory.ThisExpression())),
+                };
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -125,12 +124,11 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Adds a <see cref="Buyer"/> to the set.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Adds a <see cref="Buyer"/> to the set.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -170,10 +168,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
 
-                //        /// <param name="uniqueIndex">The unique index.</param>
-                comments.Add(
+                    //        /// <param name="uniqueIndex">The unique index.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -193,7 +190,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                     Environment.NewLine,
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
-                                            }))))));
+                                            }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -208,14 +206,14 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // Create a list of parameters.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>();
-
-                // UniqueIndex uniqueIndex
-                parameters.Add(
+                List<ParameterSyntax> parameters = new List<ParameterSyntax>
+                {
+                    // UniqueIndex uniqueIndex
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("uniqueIndex"))
                     .WithType(
-                        SyntaxFactory.IdentifierName("UniqueIndex")));
+                        SyntaxFactory.IdentifierName("UniqueIndex")),
+                };
 
                 // This is the complete parameter specification for this constructor.
                 return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));

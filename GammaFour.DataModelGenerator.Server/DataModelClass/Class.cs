@@ -141,8 +141,10 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         private static SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
-            List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new IncrementRowVersionMethod());
+            List<SyntaxElement> methods = new List<SyntaxElement>
+            {
+                new IncrementRowVersionMethod(),
+            };
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
@@ -162,10 +164,17 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         private SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the private instance fields.
-            List<SyntaxElement> fields = new List<SyntaxElement>();
-            fields.Add(new DbContextField(this.xmlSchemaDocument));
-            fields.Add(new LoggerField());
-            fields.Add(new RowVersionField());
+            List<SyntaxElement> fields = new List<SyntaxElement>
+            {
+                new RowVersionField(),
+            };
+
+            // Only add a DB context for the non-volatile model.
+            if (!this.xmlSchemaDocument.IsVolatile)
+            {
+                fields.Add(new DbContextField(this.xmlSchemaDocument));
+                fields.Add(new LoggerField());
+            }
 
             // Alphabetize and add the fields as members of the class.
             foreach (SyntaxElement syntaxElement in fields.OrderBy(f => f.Name))
@@ -186,7 +195,12 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-            methods.Add(new InitializeMethod(this.xmlSchemaDocument));
+
+            // We only need an initialization with a non-volatile model.
+            if (!this.xmlSchemaDocument.IsVolatile)
+            {
+                methods.Add(new InitializeMethod(this.xmlSchemaDocument));
+            }
 
             // Alphabetize and add the methods as members of the class.
             foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
@@ -206,7 +220,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // The volatile data model doesn't try to load the data from a DbContext, the non-volatile data model does.
-            if (this.xmlSchemaDocument.IsVolatile.HasValue && this.xmlSchemaDocument.IsVolatile.Value)
+            if (this.xmlSchemaDocument.IsVolatile)
             {
                 members = members.Add(new Constructor(this.xmlSchemaDocument).Syntax);
             }
@@ -227,9 +241,12 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceProperties(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the internal instance properties.
-            List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new InstanceProperty());
-            properties.Add(new RowVersionProperty());
+            List<SyntaxElement> properties = new List<SyntaxElement>
+            {
+                new InstanceProperty(),
+                new RowVersionProperty(),
+                new TablesProperty(),
+            };
 
             // Create a property for each of the tables.
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)

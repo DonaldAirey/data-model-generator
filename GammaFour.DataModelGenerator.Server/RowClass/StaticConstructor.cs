@@ -69,10 +69,9 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            Account.cloneVersions.Add(RecordVersion.Current, c => c.currentData);
-                statements.Add(
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //            Account.cloneVersions.Add(RecordVersion.Current, c => c.currentData);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -101,10 +100,9 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.IdentifierName("c"),
                                                     SyntaxFactory.IdentifierName("currentData")))),
-                                    })))));
+                                    })))),
 
-                //            Account.cloneVersions.Add(RecordVersion.Original, c => c.originalData);
-                statements.Add(
+                    //            Account.cloneVersions.Add(RecordVersion.Original, c => c.originalData);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -133,10 +131,9 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.IdentifierName("c"),
                                                     SyntaxFactory.IdentifierName("originalData")))),
-                                    })))));
+                                    })))),
 
-                //            Account.cloneVersions.Add(RecordVersion.Previous, c => c.previousData);
-                statements.Add(
+                    //            Account.cloneVersions.Add(RecordVersion.Previous, c => c.previousData);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -165,7 +162,8 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.IdentifierName("c"),
                                                     SyntaxFactory.IdentifierName("previousData")))),
-                                    })))));
+                                    })))),
+                };
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -180,12 +178,11 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Initializes a new instance of the <see cref="Configuration"/> class.
-                //        /// </summary>
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Initializes a new instance of the <see cref="Configuration"/> class.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -225,7 +222,8 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
