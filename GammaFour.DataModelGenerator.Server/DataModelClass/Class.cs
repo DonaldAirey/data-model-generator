@@ -245,7 +245,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             {
                 new InstanceProperty(),
                 new RowVersionProperty(),
-                new TablesProperty(),
             };
 
             // Create a property for each of the tables.
