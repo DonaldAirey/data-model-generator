@@ -190,7 +190,29 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             {
                 List<StatementSyntax> statements = new List<StatementSyntax>
                 {
-                    //                ProposedOrder proposedOrder = this.PortfolioDataModel.ProposedOrders.ProposedOrderKey.Find(oldProposedOrder.ProposedOrderId);
+                    //            object key = this.primaryKeyFunction(buyer);
+                    LocalDeclarationStatement(
+                        VariableDeclaration(
+                            PredefinedType(
+                                Token(SyntaxKind.ObjectKeyword)))
+                        .WithVariables(
+                            SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                VariableDeclarator(
+                                    Identifier("key"))
+                                .WithInitializer(
+                                    EqualsValueClause(
+                                        InvocationExpression(
+                                            MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                ThisExpression(),
+                                                IdentifierName("primaryKeyFunction")))
+                                        .WithArgumentList(
+                                            ArgumentList(
+                                                SingletonSeparatedList<ArgumentSyntax>(
+                                                    Argument(
+                                                        IdentifierName($"old{this.tableElement.Name}")))))))))),
+
+                    //                Entity entity = this.EntityKey.Find(key);
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(this.tableElement.Name))
@@ -218,10 +240,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                             SyntaxFactory.ArgumentList(
                                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                     SyntaxFactory.Argument(
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.IdentifierName($"old{this.tableElement.Name}"),
-                                                            SyntaxFactory.IdentifierName(this.tableElement.PrimaryKey.Columns[0].Column.Name))))))))))),
+                                                        SyntaxFactory.IdentifierName("key")))))))))),
 
                     //                if (proposedOrder != null)
                     //                {

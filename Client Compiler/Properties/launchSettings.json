@@ -2,15 +2,19 @@
   "profiles": {
     "Desktop": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\theta-rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop.Common\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\theta-rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop.Common\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Desktop.Common\""
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop.Common\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop.Common\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Desktop.Common\""
+    },
+    "Editor": {
+      "commandName": "Project",
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-editor\\ThetaRex.OpenBook.Editor.Common\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-editor\\ThetaRex.OpenBook.Editor.Common\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Editor.Common\""
     },
     "Loader": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\theta-rex\\openbook-loader\\Loader\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\theta-rex\\openbook-loader\\Loader\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Loader\""
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-loader\\Loader\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-loader\\Loader\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Loader\""
     },
     "Market": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\theta-rex\\openbook-market\\ThetaRex.Market.Common\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\theta-rex\\openbook-market\\ThetaRex.Market.Common\\DataModel.Designer.cs\" -ns \"ThetaRex.Market.Common\""
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-market\\ThetaRex.Market.Common\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-market\\ThetaRex.Market.Common\\DataModel.Designer.cs\" -ns \"ThetaRex.Market.Common\""
     }
   }
 }
