@@ -2,12 +2,11 @@
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server
+namespace GammaFour.DataModelGenerator.Common
 {
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -35,10 +34,10 @@ namespace GammaFour.DataModelGenerator.Server
             string abbreviation = uniqueKeyElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
 
             // This will create an expression for extracting the key from record.
-            CSharpSyntaxNode syntaxNode = null;
+            CSharpSyntaxNode syntaxNode;
             if (uniqueKeyElement.Columns.Count == 1)
             {
-                // A simple key can be used like a value type.
+                // A simple key is constructed a value type.
                 syntaxNode = SyntaxFactory.MemberAccessExpression(
                     SyntaxKind.SimpleMemberAccessExpression,
                     SyntaxFactory.IdentifierName(abbreviation),
@@ -46,7 +45,7 @@ namespace GammaFour.DataModelGenerator.Server
             }
             else
             {
-                // A Compound key must be constructed from an anomymous type.
+                // A Compound key is constructed as a tuple.
                 List<SyntaxNodeOrToken> keyElements = new List<SyntaxNodeOrToken>();
                 foreach (ColumnReferenceElement columnReferenceElement in uniqueKeyElement.Columns)
                 {
@@ -83,15 +82,9 @@ namespace GammaFour.DataModelGenerator.Server
                 }
                 else
                 {
-                    // b => b.BuyerId or p => ValueTuple.Create(p.Name, p.CountryCode)
-                    syntaxNode = SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName("ValueTuple"),
-                            SyntaxFactory.IdentifierName("Create")))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList(
-                            SyntaxFactory.SeparatedList<ArgumentSyntax>(keyElements.ToArray())));
+                    // p => (p.Name, p.CountryCode)
+                    syntaxNode = SyntaxFactory.TupleExpression(
+                        SyntaxFactory.SeparatedList<ArgumentSyntax>(keyElements.ToArray()));
                 }
             }
 

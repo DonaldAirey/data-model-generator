@@ -2,7 +2,7 @@
 //    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Client.TableClass
+namespace GammaFour.DataModelGenerator.Common.TableClass
 {
     using System;
     using System.Collections.Generic;
@@ -34,7 +34,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             //        /// <summary>
             //        /// Used to get the primary key from the record.
             //        /// </summary>
-            //        private Func<Buyer, object> primaryKeyFunction = ((Expression<Func<Buyer, object>>)(b => b.BuyerId)).Compile();
+            //        private Func<Buyer, object> primaryKeyFunction = (b => b.BuyerId));
             this.Syntax = SyntaxFactory.FieldDeclaration(
                     SyntaxFactory.VariableDeclaration(
                         SyntaxFactory.GenericName(
@@ -141,33 +141,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             get
             {
-                // = ((Expression<Func<Buyer, object>>)(b => b.BuyerId)).Compile();
-                return SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.ParenthesizedExpression(
-                                SyntaxFactory.CastExpression(
-                                    SyntaxFactory.GenericName(
-                                        SyntaxFactory.Identifier("Expression"))
-                                    .WithTypeArgumentList(
-                                        SyntaxFactory.TypeArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                SyntaxFactory.GenericName(
-                                                    SyntaxFactory.Identifier("Func"))
-                                                .WithTypeArgumentList(
-                                                    SyntaxFactory.TypeArgumentList(
-                                                        SyntaxFactory.SeparatedList<TypeSyntax>(
-                                                            new SyntaxNodeOrToken[]
-                                                            {
-                                                                SyntaxFactory.IdentifierName(this.uniqueKeyElement.Table.Name),
-                                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                                SyntaxFactory.PredefinedType(
-                                                                    SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
-                                                            })))))),
-                                    SyntaxFactory.ParenthesizedExpression(
-                                        UniqueKeyExpression.GetUniqueKey(this.uniqueKeyElement)))),
-                            SyntaxFactory.IdentifierName("Compile"))));
+                // = p => (p.Name, p.CountryCode)
+                return SyntaxFactory.EqualsValueClause(UniqueKeyExpression.GetUniqueKey(this.uniqueKeyElement));
             }
         }
     }

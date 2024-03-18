@@ -134,7 +134,6 @@ namespace GammaFour.DataModelGenerator.Client
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")),
-                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq.Expressions")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Net.Http")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json.Nodes")),

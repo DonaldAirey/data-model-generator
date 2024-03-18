@@ -7,6 +7,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
     using System;
     using System.Collections.Generic;
     using GammaFour.DataModelGenerator.Common;
+    using GammaFour.DataModelGenerator.RestService;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -510,7 +511,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     SyntaxFactory.IdentifierName(this.tableElement.PrimaryKey.Name)),
                                                 SyntaxFactory.IdentifierName("Find")))
                                         .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(UniqueKeyExpression.GetSyntax(this.tableElement.PrimaryKey)))))))),
+                                        SyntaxFactory.ArgumentList(
+                                            RestService.UniqueKeyExpression.GetSyntax(this.tableElement.PrimaryKey)))))))),
 
                     //                    if (serverCountry == null)
                     //                    {

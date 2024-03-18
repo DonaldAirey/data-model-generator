@@ -34,7 +34,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             //        /// <summary>
             //        /// The collection of deleted records.
             //        /// </summary>
-            //        private List<ValueTuple<DateTime, Alert>> deletedTable = new List<ValueTuple<DateTime, Alert>>();
+            //        private List<(DateTime, Alert)> deletedTable = new List<(DateTime, Alert)>();
             this.Syntax = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
                     SyntaxFactory.GenericName(
@@ -42,22 +42,40 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                     .WithTypeArgumentList(
                         SyntaxFactory.TypeArgumentList(
                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                SyntaxFactory.GenericName(
-                                    SyntaxFactory.Identifier("ValueTuple"))
-                                .WithTypeArgumentList(
-                                    SyntaxFactory.TypeArgumentList(
-                                        SyntaxFactory.SeparatedList<TypeSyntax>(
-                                            new SyntaxNodeOrToken[]
-                                            {
-                                                SyntaxFactory.IdentifierName("DateTime"),
-                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name),
-                                            })))))))
+                                SyntaxFactory.TupleType(
+                                    SyntaxFactory.SeparatedList<TupleElementSyntax>(
+                                        new SyntaxNodeOrToken[]
+                                        {
+                                            SyntaxFactory.TupleElement(
+                                                SyntaxFactory.IdentifierName("DateTime")),
+                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                            SyntaxFactory.TupleElement(
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name)),
+                                        }))))))
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                         SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier(this.Name))
-                            .WithInitializer(this.Initializer))))
+                            SyntaxFactory.Identifier("purgedRows"))
+                        .WithInitializer(
+                            SyntaxFactory.EqualsValueClause(
+                                SyntaxFactory.ObjectCreationExpression(
+                                    SyntaxFactory.GenericName(
+                                        SyntaxFactory.Identifier("List"))
+                                    .WithTypeArgumentList(
+                                        SyntaxFactory.TypeArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                SyntaxFactory.TupleType(
+                                                    SyntaxFactory.SeparatedList<TupleElementSyntax>(
+                                                        new SyntaxNodeOrToken[]
+                                                        {
+                                                            SyntaxFactory.TupleElement(
+                                                                SyntaxFactory.IdentifierName("DateTime")),
+                                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                            SyntaxFactory.TupleElement(
+                                                                SyntaxFactory.IdentifierName(this.tableElement.Name)),
+                                                        }))))))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList()))))))
                 .WithModifiers(PurgedRowsField.Modifiers)
                 .WithLeadingTrivia(PurgedRowsField.DocumentationComment);
         }
@@ -135,37 +153,6 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                     {
                         SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
                     });
-            }
-        }
-
-        /// <summary>
-        /// Gets the initializer.
-        /// </summary>
-        private EqualsValueClauseSyntax Initializer
-        {
-            get
-            {
-                // = new List<ValueTuple<DateTime, Alert>>();
-                return SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.ObjectCreationExpression(
-                        SyntaxFactory.GenericName(
-                            SyntaxFactory.Identifier("List"))
-                        .WithTypeArgumentList(
-                            SyntaxFactory.TypeArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.GenericName(
-                                        SyntaxFactory.Identifier("ValueTuple"))
-                                    .WithTypeArgumentList(
-                                        SyntaxFactory.TypeArgumentList(
-                                            SyntaxFactory.SeparatedList<TypeSyntax>(
-                                                new SyntaxNodeOrToken[]
-                                                {
-                                                    SyntaxFactory.IdentifierName("DateTime"),
-                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                    SyntaxFactory.IdentifierName(this.tableElement.Name),
-                                                })))))))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList()));
             }
         }
     }

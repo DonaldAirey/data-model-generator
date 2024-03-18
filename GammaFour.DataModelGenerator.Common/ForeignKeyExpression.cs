@@ -26,10 +26,10 @@ namespace GammaFour.DataModelGenerator.Common
             string abbreviation = foreignKeyElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
 
             // This will create an expression for extracting the key from record.
-            CSharpSyntaxNode syntaxNode = null;
+            CSharpSyntaxNode syntaxNode;
             if (foreignKeyElement.Columns.Count == 1)
             {
-                // A simple key can be used like a value type.
+                // b.BuyerId
                 syntaxNode = SyntaxFactory.MemberAccessExpression(
                     SyntaxKind.SimpleMemberAccessExpression,
                     SyntaxFactory.IdentifierName(abbreviation),
@@ -37,7 +37,7 @@ namespace GammaFour.DataModelGenerator.Common
             }
             else
             {
-                // A Compound key must be constructed from an anomymous type.
+                // A Compound key is constructed as a value tuple.
                 List<SyntaxNodeOrToken> keyElements = new List<SyntaxNodeOrToken>();
                 foreach (ColumnReferenceElement columnReferenceElement in foreignKeyElement.Columns)
                 {
@@ -47,19 +47,26 @@ namespace GammaFour.DataModelGenerator.Common
                     }
 
                     keyElements.Add(
-                        SyntaxFactory.AnonymousObjectMemberDeclarator(
+                        SyntaxFactory.Argument(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName(abbreviation),
                                 SyntaxFactory.IdentifierName(columnReferenceElement.Column.Name))));
                 }
 
-                // b => b.BuyerId or b => new { b.BuyerId, b.ExternalId0 }
-                syntaxNode = SyntaxFactory.AnonymousObjectCreationExpression(
-                        SyntaxFactory.SeparatedList<AnonymousObjectMemberDeclaratorSyntax>(keyElements.ToArray()));
+                // ValueTuple.Create(b.BuyerId, b.ExternalId0)
+                syntaxNode = SyntaxFactory.InvocationExpression(
+                    SyntaxFactory.MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        SyntaxFactory.IdentifierName("ValueTuple"),
+                        SyntaxFactory.IdentifierName("Create")))
+                .WithArgumentList(
+                    SyntaxFactory.ArgumentList(
+                        SyntaxFactory.SeparatedList<ArgumentSyntax>(keyElements)));
             }
 
-            //            this.BuyerKey = new ForeignIndex<Buyer>("BuyerKey").HasIndex(b => b.BuyerId);
+            // b =>  b.BuyerId
+            // b => ValueTuple.Create(b.BuyerId, b.ExternalId0);
             return SyntaxFactory.SimpleLambdaExpression(SyntaxFactory.Parameter(SyntaxFactory.Identifier(abbreviation)), syntaxNode);
         }
     }

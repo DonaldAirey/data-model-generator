@@ -4,7 +4,6 @@
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.RestService
 {
-    using System;
     using System.Collections.Generic;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;

@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "OpenBook Web API": {
+    "Web API": {
       "commandName": "Project",
       "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-webapi\\ThetaRex.OpenBook.Data\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-webapi\\ThetaRex.OpenBook.Data\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Data\""
     },

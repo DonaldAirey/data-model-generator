@@ -34,29 +34,33 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             //        /// <summary>
             //        /// Gets the collection of deleted records.
             //        /// </summary>
-            //        public List<ValueTuple<DateTime, Alert>> Deleted => this.purgedRows;
+            //        public List<(DateTime, Alert)> PurgedRows => this.purgedRows;
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                    SyntaxFactory.GenericName(
-                        SyntaxFactory.Identifier("List"))
-                    .WithTypeArgumentList(
-                        SyntaxFactory.TypeArgumentList(
-                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                SyntaxFactory.GenericName(
-                                    SyntaxFactory.Identifier("ValueTuple"))
-                                .WithTypeArgumentList(
-                                    SyntaxFactory.TypeArgumentList(
-                                        SyntaxFactory.SeparatedList<TypeSyntax>(
-                                            new SyntaxNodeOrToken[]
-                                            {
-                                                SyntaxFactory.IdentifierName("DateTime"),
-                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name),
-                                            })))))),
-                    SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(PurgedRowsProperty.Modifiers)
-                .WithExpressionBody(PurgedRowsProperty.ExpressionBody)
-                .WithLeadingTrivia(PurgedRowsProperty.DocumentationComment)
-                .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+                SyntaxFactory.GenericName(
+                    SyntaxFactory.Identifier("List"))
+                .WithTypeArgumentList(
+                    SyntaxFactory.TypeArgumentList(
+                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                            SyntaxFactory.TupleType(
+                                SyntaxFactory.SeparatedList<TupleElementSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.TupleElement(
+                                            SyntaxFactory.IdentifierName("DateTime")),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.TupleElement(
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name)),
+                                    }))))),
+                SyntaxFactory.Identifier("PurgedRows"))
+            .WithModifiers(PurgedRowsProperty.Modifiers)
+            .WithExpressionBody(
+                SyntaxFactory.ArrowExpressionClause(
+                    SyntaxFactory.MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        SyntaxFactory.ThisExpression(),
+                        SyntaxFactory.IdentifierName("purgedRows"))))
+            .WithLeadingTrivia(PurgedRowsProperty.DocumentationComment)
+            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
         }
 
         /// <summary>
@@ -116,21 +120,6 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the initializer.
-        /// </summary>
-        private static ArrowExpressionClauseSyntax ExpressionBody
-        {
-            get
-            {
-                return SyntaxFactory.ArrowExpressionClause(
-                    SyntaxFactory.MemberAccessExpression(
-                        SyntaxKind.SimpleMemberAccessExpression,
-                        SyntaxFactory.ThisExpression(),
-                        SyntaxFactory.IdentifierName("purgedRows")));
             }
         }
 

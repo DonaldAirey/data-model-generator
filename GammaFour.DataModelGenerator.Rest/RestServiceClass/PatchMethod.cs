@@ -8,6 +8,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
     using System.Collections.Generic;
     using System.Linq;
     using GammaFour.DataModelGenerator.Common;
+    using GammaFour.DataModelGenerator.RestService;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -389,7 +390,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxFactory.IdentifierName("Find")))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
-                                                UniqueKeyExpression.GetMemberSyntax(this.tableElement.PrimaryKey, $"client{this.tableElement.Name}")))))))),
+                                                RestService.UniqueKeyExpression.GetMemberSyntax(this.tableElement.PrimaryKey, $"client{this.tableElement.Name}")))))))),
 
                     //                        if (serverFungible == null)
                     //                        {
@@ -848,7 +849,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
                                 SyntaxFactory.IdentifierName("Find")))
                         .WithArgumentList(
-                            SyntaxFactory.ArgumentList(UniqueKeyExpression.GetSyntax(uniqueKeyElement, true))))));
+                            SyntaxFactory.ArgumentList(
+                                RestService.UniqueKeyExpression.GetSyntax(uniqueKeyElement, true))))));
 
             // This is the complete block.
             return statements;
