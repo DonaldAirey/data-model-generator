@@ -451,7 +451,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
                                         SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(ForeignKeyExpression.GetForeignKey(foreignKeyElement)))));
+                                            SyntaxFactory.Argument(OnModelCreatingMethod.GetForeignKey(foreignKeyElement)))));
 
                         //            ... .OnDelete(DeleteBehavior.Restrict)
                         indexProperties = SyntaxFactory.InvocationExpression(
@@ -476,6 +476,54 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
             }
+        }
+
+        /// <summary>
+        /// Creates an argument that creates a lambda expression for extracting the key from a class.
+        /// </summary>
+        /// <param name="foreignKeyElement">The unique key element.</param>
+        /// <returns>An argument that extracts a key from an object.</returns>
+        public static ExpressionSyntax GetForeignKey(ForeignElement foreignKeyElement)
+        {
+            // Used as a variable when constructing the lambda expression.
+            string abbreviation = foreignKeyElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
+
+            // This will create an expression for extracting the key from record.
+            CSharpSyntaxNode syntaxNode = null;
+            if (foreignKeyElement.Columns.Count == 1)
+            {
+                // A simple key can be used like a value type.
+                syntaxNode = SyntaxFactory.MemberAccessExpression(
+                    SyntaxKind.SimpleMemberAccessExpression,
+                    SyntaxFactory.IdentifierName(abbreviation),
+                    SyntaxFactory.IdentifierName(foreignKeyElement.Columns[0].Column.Name));
+            }
+            else
+            {
+                // A Compound key must be constructed from an anomymous type.
+                List<SyntaxNodeOrToken> keyElements = new List<SyntaxNodeOrToken>();
+                foreach (ColumnReferenceElement columnReferenceElement in foreignKeyElement.Columns)
+                {
+                    if (keyElements.Count != 0)
+                    {
+                        keyElements.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                    }
+
+                    keyElements.Add(
+                        SyntaxFactory.AnonymousObjectMemberDeclarator(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(abbreviation),
+                                SyntaxFactory.IdentifierName(columnReferenceElement.Column.Name))));
+                }
+
+                // b => b.BuyerId or b => new { b.BuyerId, b.ExternalId0 }
+                syntaxNode = SyntaxFactory.AnonymousObjectCreationExpression(
+                        SyntaxFactory.SeparatedList<AnonymousObjectMemberDeclaratorSyntax>(keyElements.ToArray()));
+            }
+
+            //            this.BuyerKey = new ForeignIndex<Buyer>("BuyerKey").HasIndex(b => b.BuyerId);
+            return SyntaxFactory.SimpleLambdaExpression(SyntaxFactory.Parameter(SyntaxFactory.Identifier(abbreviation)), syntaxNode);
         }
     }
 }
