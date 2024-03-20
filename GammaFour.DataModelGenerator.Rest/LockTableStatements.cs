@@ -181,32 +181,32 @@ namespace GammaFour.DataModelGenerator.RestService
                 //                    <UsingBody>
                 //                }
                 SyntaxFactory.UsingStatement(
-                 SyntaxFactory.Block(LockTableStatements.UsingBody(tableElement, usingBlock)))
-             .WithDeclaration(
-                 SyntaxFactory.VariableDeclaration(
-                     SyntaxFactory.IdentifierName(
-                         SyntaxFactory.Identifier(
-                             SyntaxFactory.TriviaList(),
-                             SyntaxKind.VarKeyword,
-                             "var",
-                             "var",
-                             SyntaxFactory.TriviaList())))
-                 .WithVariables(
-                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                         SyntaxFactory.VariableDeclarator(
-                             SyntaxFactory.Identifier("lockingTransaction"))
-                         .WithInitializer(
-                             SyntaxFactory.EqualsValueClause(
-                                 SyntaxFactory.ObjectCreationExpression(
-                                     SyntaxFactory.IdentifierName("LockingTransaction"))
-                                 .WithArgumentList(
-                                     SyntaxFactory.ArgumentList(
-                                         SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                             SyntaxFactory.Argument(
-                                                 SyntaxFactory.MemberAccessExpression(
-                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                     SyntaxFactory.ThisExpression(),
-                                                     SyntaxFactory.IdentifierName("transactionTimeout"))))))))))),
+                    SyntaxFactory.Block(LockTableStatements.UsingBody(tableElement, usingBlock)))
+                     .WithDeclaration(
+                         SyntaxFactory.VariableDeclaration(
+                             SyntaxFactory.IdentifierName(
+                                 SyntaxFactory.Identifier(
+                                     SyntaxFactory.TriviaList(),
+                                     SyntaxKind.VarKeyword,
+                                     "var",
+                                     "var",
+                                     SyntaxFactory.TriviaList())))
+                         .WithVariables(
+                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                 SyntaxFactory.VariableDeclarator(
+                                     SyntaxFactory.Identifier("lockingTransaction"))
+                                 .WithInitializer(
+                                     SyntaxFactory.EqualsValueClause(
+                                         SyntaxFactory.ObjectCreationExpression(
+                                             SyntaxFactory.IdentifierName("LockingTransaction"))
+                                         .WithArgumentList(
+                                             SyntaxFactory.ArgumentList(
+                                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                     SyntaxFactory.Argument(
+                                                         SyntaxFactory.MemberAccessExpression(
+                                                             SyntaxKind.SimpleMemberAccessExpression,
+                                                             SyntaxFactory.ThisExpression(),
+                                                             SyntaxFactory.IdentifierName("transactionTimeout"))))))))))),
             };
 
             // This set of statement will enlist the indices and tables in the current transaction and acquire an exclusive lock.
@@ -254,79 +254,96 @@ namespace GammaFour.DataModelGenerator.RestService
                                             SyntaxKind.FalseLiteralExpression))))))),
             };
 
-            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountKey).ConfigureAwait(false);
-            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountSymbolKey).ConfigureAwait(false);
+            // Alphabetize the unique and foreign indices so we can order them alphabetically.
+            var names = new List<(string, object)>();
             foreach (UniqueElement uniqueElement in tableElement.UniqueKeys.OrderBy(ue => ue.Name))
             {
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AwaitExpression(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName("lockingTransaction"),
-                                            SyntaxFactory.IdentifierName("WaitWriterAsync")))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.MemberAccessExpression(
-                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.ThisExpression(),
-                                                                SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
-                                                            SyntaxFactory.IdentifierName(uniqueElement.Table.Name.ToPlural())),
-                                                        SyntaxFactory.IdentifierName(uniqueElement.Name)))))),
-                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.FalseLiteralExpression))))))));
+                names.Add((uniqueElement.Name, uniqueElement));
             }
 
-            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.ItemAccountKey).ConfigureAwait(false);
             foreach (ForeignElement foreignElement in tableElement.ParentKeys.OrderBy(fe => fe.Name))
             {
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AwaitExpression(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName("lockingTransaction"),
-                                            SyntaxFactory.IdentifierName("WaitWriterAsync")))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
+                names.Add((foreignElement.Name, foreignElement));
+            }
+
+            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountKey).ConfigureAwait(false);
+            //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountSymbolKey).ConfigureAwait(false);
+            foreach (var name in names.OrderBy(n => n.Item1))
+            {
+                //                     await lockingTransaction.WaitWriterAsync(this.dataModel.Positions.PositionIndex).ConfigureAwait(false);
+                if (name.Item2 is UniqueElement uniqueElement)
+                {
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AwaitExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("lockingTransaction"),
+                                                SyntaxFactory.IdentifierName("WaitWriterAsync")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                                SyntaxFactory.ThisExpression(),
-                                                                SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
-                                                            SyntaxFactory.IdentifierName(foreignElement.Table.Name.ToPlural())),
-                                                        SyntaxFactory.IdentifierName(foreignElement.Name)))))),
-                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.FalseLiteralExpression))))))));
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxFactory.ThisExpression(),
+                                                                    SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
+                                                                SyntaxFactory.IdentifierName(uniqueElement.Table.Name.ToPlural())),
+                                                            SyntaxFactory.IdentifierName(uniqueElement.Name)))))),
+                                        SyntaxFactory.IdentifierName("ConfigureAwait")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.LiteralExpression(
+                                                    SyntaxKind.FalseLiteralExpression))))))));
+                }
+
+                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Positions.AccountPositionIndex).ConfigureAwait(false);
+                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Positions.AssetPositionIndex).ConfigureAwait(false);
+                if (name.Item2 is ForeignElement foreignElement)
+                {
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AwaitExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("lockingTransaction"),
+                                                SyntaxFactory.IdentifierName("WaitWriterAsync")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxFactory.ThisExpression(),
+                                                                    SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
+                                                                SyntaxFactory.IdentifierName(foreignElement.Table.Name.ToPlural())),
+                                                            SyntaxFactory.IdentifierName(foreignElement.Name)))))),
+                                        SyntaxFactory.IdentifierName("ConfigureAwait")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.LiteralExpression(
+                                                    SyntaxKind.FalseLiteralExpression))))))));
+                }
             }
 
             // Add the reset of the using body.
