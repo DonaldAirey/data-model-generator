@@ -9,7 +9,6 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
     using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using GammaFour.DataModelGenerator.Common.RowClass;
-    using GammaFour.DataModelGenerator.Common.TableClass;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -37,7 +36,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             //    /// <summary>
             //    /// A row of data in the Configuration table.
             //    /// </summary>
-            //    public partial class ConfigurationRow
+            //    public partial class AchEvent : IRow
             //    {
             //        <Members>
             //    }
@@ -59,6 +58,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                     new[]
                     {
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                        SyntaxFactory.Token(SyntaxKind.PartialKeyword),
                     });
             }
         }

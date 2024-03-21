@@ -37,7 +37,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             //    /// <summary>
             //    /// The Configuration table.
             //    /// </summary>
-            //    public partial class ConfigurationTable : IEnumerable<ConfigurationRow>
+            //    public partial class AchEvents : ITable, IEnumerable<AchEvent>
             //    {
             //        <Members>
             //    }
@@ -59,6 +59,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                     new[]
                     {
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                        SyntaxFactory.Token(SyntaxKind.PartialKeyword),
                     });
             }
         }
