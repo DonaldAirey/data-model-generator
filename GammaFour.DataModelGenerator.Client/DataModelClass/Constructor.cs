@@ -153,7 +153,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
                                         SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                    SyntaxFactory.IdentifierName("DataModel")),
+                                    SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.Name)),
                                 SyntaxFactory.ThisExpression())));
                 }
 

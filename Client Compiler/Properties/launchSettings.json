@@ -1,5 +1,9 @@
 {
   "profiles": {
+    "Common": {
+      "commandName": "Project",
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\ThetaRex.OpenBook.Common\\ThetaRex.OpenBook.Common\\Client\\DataModelCore.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\ThetaRex.OpenBook.Common\\ThetaRex.OpenBook.Common\\Client\\DataModelCore.Designer.cs\" -ns \"ThetaRex.OpenBook.Common.Client\""
+    },
     "Desktop": {
       "commandName": "Project",
       "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop.Common\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop.Common\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Desktop.Common\""
