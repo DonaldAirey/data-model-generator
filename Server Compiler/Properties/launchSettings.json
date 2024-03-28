@@ -8,9 +8,9 @@
       "commandName": "Project",
       "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-market\\ThetaRex.Market.Tradier\\Data\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-market\\ThetaRex.Market.Tradier\\Data\\DataModel.Designer.cs\" -ns \"ThetaRex.Market.Tradier.Data\""
     },
-    "Web API": {
+    "Common Server": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-webapi\\ThetaRex.OpenBook.Data\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-webapi\\ThetaRex.OpenBook.Data\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Data\""
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\ThetaRex.OpenBook.Common\\ThetaRex.OpenBook.Common\\Server\\DataModelCore.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\ThetaRex.OpenBook.Common\\ThetaRex.OpenBook.Common\\Server\\DataModelCore.Designer.cs\""
     }
   }
 }
