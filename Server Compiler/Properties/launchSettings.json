@@ -10,7 +10,7 @@
     },
     "Common Server": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\ThetaRex.OpenBook.Common\\ThetaRex.OpenBook.Common\\Server\\DataModelCore.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\ThetaRex.OpenBook.Common\\ThetaRex.OpenBook.Common\\Server\\DataModelCore.Designer.cs\""
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\ThetaRex.OpenBook.Common\\ThetaRex.OpenBook.Common\\Server\\DataModelCore.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\ThetaRex.OpenBook.Common\\ThetaRex.OpenBook.Common\\Server\\DataModelCore.Designer.cs\" -ns \"ThetaRex.OpenBook.Common.Server\""
     }
   }
 }

@@ -149,7 +149,6 @@ namespace GammaFour.DataModelGenerator.Server
                 {
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("DotNext.Threading")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.Data.Server")),
-                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Logging")),
                 };
 
                 if (!this.xmlSchemaDocument.IsVolatile)

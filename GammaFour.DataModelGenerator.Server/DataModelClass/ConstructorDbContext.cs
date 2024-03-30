@@ -35,8 +35,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             //        /// Initializes a new instance of the <see cref="DataModel"/> class.
             //        /// </summary>
             //        /// <param name="dataModelContext">The dataModel dabase context.</param>
-            //        /// <param name="logger">The log device.</param>
-            //        public DataModel(DataModelContext dataModelContext, ILogger<DataModel> logger)
+            //        public DataModel(DataModelContext dataModelContext)
             //        {
             //            <Body>
             //        }
@@ -83,16 +82,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToVariableName()}Context")),
                             SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToVariableName()}Context"))),
-
-                    //            this.logger = logger;
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName($"logger")),
-                            SyntaxFactory.IdentifierName($"logger"))),
                 };
 
                 // Initialize each of the record sets.
@@ -242,28 +231,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                             }))))),
-
-                    //        /// <param name="dataModelContext">The dataModel dabase context.</param>
-                    SyntaxFactory.Trivia(
-                        SyntaxFactory.DocumentationCommentTrivia(
-                            SyntaxKind.SingleLineDocumentationCommentTrivia,
-                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                    SyntaxFactory.XmlText()
-                                    .WithTextTokens(
-                                        SyntaxFactory.TokenList(
-                                            new[]
-                                            {
-                                                SyntaxFactory.XmlTextLiteral(
-                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <param name=\"logger\">The log device.</param>",
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList()),
-                                                SyntaxFactory.XmlTextNewLine(
-                                                    SyntaxFactory.TriviaList(),
-                                                    Environment.NewLine,
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList()),
-                                            }))))),
                 };
 
                 // This is the complete document comment.
@@ -292,12 +259,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                         SyntaxFactory.Identifier($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context"))
                     .WithType(
                         SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name}Context")),
-
-                    // DataModelContext dataModelContext
-                    SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier($"logger"))
-                    .WithType(
-                        SyntaxFactory.IdentifierName($"ILogger<{this.xmlSchemaDocument.Name}>")),
                 };
 
                 // This is the complete parameter specification for this constructor.

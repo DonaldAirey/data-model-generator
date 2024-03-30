@@ -173,7 +173,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             if (!this.xmlSchemaDocument.IsVolatile)
             {
                 fields.Add(new DbContextField(this.xmlSchemaDocument));
-                fields.Add(new LoggerField());
             }
 
             // Alphabetize and add the fields as members of the class.
