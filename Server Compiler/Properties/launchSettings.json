@@ -1,16 +1,12 @@
 {
   "profiles": {
-    "Editor": {
-      "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-editor\\ThetaRex.OpenBook.Editor.Common\\Tradier\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-editor\\ThetaRex.OpenBook.Editor.Common\\Tradier\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Editor.Common.Tradier\""
-    },
-    "Market": {
-      "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-market\\ThetaRex.Market.Tradier\\Data\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-market\\ThetaRex.Market.Tradier\\Data\\DataModel.Designer.cs\" -ns \"ThetaRex.Market.Tradier.Data\""
-    },
     "Common Server": {
       "commandName": "Project",
       "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\ThetaRex.OpenBook.Common\\ThetaRex.OpenBook.Common\\Server\\DataModelCore.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\ThetaRex.OpenBook.Common\\ThetaRex.OpenBook.Common\\Server\\DataModelCore.Designer.cs\" -ns \"ThetaRex.OpenBook.Common.Server\""
+    },
+    "Tradier": {
+      "commandName": "Project",
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\ThetaRex.Tradier\\ThetaRex.Tradier\\DataModelCore.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\ThetaRex.Tradier\\ThetaRex.Tradier\\DataModelCore.Designer.cs\" -ns \"ThetaRex.Tradier\""
     }
   }
 }

@@ -168,23 +168,6 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                                 SyntaxFactory.Literal(jsonPropertyName)))))))),
                 };
 
-                // Don't emit a converter for the predefined types.
-                if (!this.columnElement.ColumnType.IsPredefined)
-                {
-                    //        [JsonConverter(typeof(JsonStringEnumConverter))]
-                    attributes.Add(
-                        SyntaxFactory.AttributeList(
-                            SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
-                                SyntaxFactory.Attribute(
-                                    SyntaxFactory.IdentifierName("JsonConverter"))
-                                .WithArgumentList(
-                                    SyntaxFactory.AttributeArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
-                                            SyntaxFactory.AttributeArgument(
-                                                SyntaxFactory.TypeOfExpression(
-                                                    SyntaxFactory.IdentifierName("JsonStringEnumConverter")))))))));
-                }
-
                 // The collection of attributes.
                 return SyntaxFactory.List<AttributeListSyntax>(attributes);
             }
