@@ -448,19 +448,12 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        private List<StatementSyntax> TryBlock
+        private List<StatementSyntax> PatchBody
         {
             get
             {
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //            using var lockingTransaction = new LockingTransaction(this.transactionTimeout);
-                //            await lockingTransaction.WaitReaderAsync(this.dataModel.Accounts);
-                //            await lockingTransaction.WaitReaderAsync(this.dataModel.Accounts.AccountKey);
-                //            await lockingTransaction.WaitReaderAsync(this.dataModel.Accounts.AccountSymbolKey);
-                //            await lockingTransaction.WaitReaderAsync(this.dataModel.Accounts.ItemAccountKey);
-                statements.AddRange(LockTableStatements.GetSyntax(this.tableElement));
 
                 //                    List<Fungible> realizedFungibles = new List<Fungible>();
                 statements.Add(SyntaxFactory.LocalDeclarationStatement(
@@ -533,6 +526,37 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.IdentifierName($"realized{this.tableElement.Name.ToPlural()}")))))));
+
+                // This is the complete block.
+                return statements;
+            }
+        }
+
+        /// <summary>
+        /// Gets a block of code.
+        /// </summary>
+        private List<StatementSyntax> TryBlock
+        {
+            get
+            {
+                // This is used to collect the statements.
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //                using (var lockingTransaction = new LockingTransaction(this.transactionTimeout))
+                //                {
+                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities).ConfigureAwait(false);
+                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.IssuerSecurityKey).ConfigureAwait(false);
+                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.FungibleSecuritySettlementIdKey).ConfigureAwait(false);
+                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.FungibleSecurityFungibleIdKey).ConfigureAwait(false);
+                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.SecuritySymbolKey).ConfigureAwait(false);
+                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.SecuritySedolKey).ConfigureAwait(false);
+                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.SecurityRicKey).ConfigureAwait(false);
+                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.SecurityKey).ConfigureAwait(false);
+                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.SecurityIsinKey).ConfigureAwait(false);
+                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.SecurityFungibleIdKey).ConfigureAwait(false);
+                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.SecurityFigiKey).ConfigureAwait(false);
+                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.SecurityCusipKey).ConfigureAwait(false);
+                statements.AddRange(LockTableStatements.GetUsingSyntax(this.tableElement, this.PatchBody));
 
                 // This is the complete block.
                 return statements;
