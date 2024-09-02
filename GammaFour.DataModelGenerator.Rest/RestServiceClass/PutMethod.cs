@@ -189,7 +189,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 {
                     if (endpoint != string.Empty)
                     {
-                        endpoint += "\\";
+                        endpoint += "/";
                     }
 
                     endpoint += $"{{{columnReferenceElement.Column.Name.ToCamelCase()}}}";
