@@ -35,7 +35,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             //        /// <summary>
             //        /// Initializes a new instance of the <see cref="DataModel"/> class.
             //        /// </summary>
-            //        public DataModel(HttpClient httpClient)
+            //        public DataModel(IConfiguration configuration, HttpClient httpClient)
             //        {
             //            <Body>
             //        }
@@ -73,7 +73,42 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>
                 {
-                    //            this.HttpClient = httpClientFactory.CreateClient(typeof(DataModel).FullName);
+                    //             var openBookHttpClientName = configuration.GetValue<string>("OpenBook:HttpClient:Name");
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(
+                                SyntaxFactory.Identifier(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.VarKeyword,
+                                    "var",
+                                    "var",
+                                    SyntaxFactory.TriviaList())))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("openBookHttpClientName"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("configuration"),
+                                                SyntaxFactory.GenericName(
+                                                    SyntaxFactory.Identifier("GetValue"))
+                                                .WithTypeArgumentList(
+                                                    SyntaxFactory.TypeArgumentList(
+                                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                            SyntaxFactory.PredefinedType(
+                                                                SyntaxFactory.Token(SyntaxKind.StringKeyword)))))))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.LiteralExpression(
+                                                            SyntaxKind.StringLiteralExpression,
+                                                            SyntaxFactory.Literal("OpenBook:HttpClient:Name"))))))))))),
+
+                    //            this.HttpClient = httpClientFactory.CreateClient(openBookHttpClientName);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -90,11 +125,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.TypeOfExpression(
-                                                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name)),
-                                                SyntaxFactory.IdentifierName("FullName")))))))),
+                                            SyntaxFactory.IdentifierName("openBookHttpClientName"))))))),
                 };
 
                 // Initialize each of the tables.
@@ -188,11 +219,17 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                 // Create a list of parameters from the columns in the unique constraint.
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>
                 {
-                    // HttpClient httpClient
+                    // IHttpClientFactory httpClientFactory
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier("httpClientFactory"))
                     .WithType(
                         SyntaxFactory.IdentifierName("IHttpClientFactory")),
+
+                    // IConfiguration configuration
+                    SyntaxFactory.Parameter(
+                        SyntaxFactory.Identifier("configuration"))
+                    .WithType(
+                        SyntaxFactory.IdentifierName("IConfiguration")),
                 };
 
                 // This is the complete parameter specification for this constructor.
