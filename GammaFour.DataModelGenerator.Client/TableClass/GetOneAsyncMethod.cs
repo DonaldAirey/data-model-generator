@@ -111,7 +111,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 }
 
                 //            using (var request = new HttpRequestMessage(HttpMethod.Get, $"rest/accountMaps/{accountMapId}"))
-                //            using (HttpResponseMessage response = await this.DataModel.HttpClient.GetAsync(requestUri).ConfigureAwait(false))
+                //            using (HttpResponseMessage response = await this.DataModel.GetAsync(requestUri).ConfigureAwait(false))
                 //            {
                 //                <UsingBlock>
                 //            }
@@ -137,11 +137,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.MemberAccessExpression(
                                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                                    SyntaxFactory.MemberAccessExpression(
-                                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                                        SyntaxFactory.ThisExpression(),
-                                                                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
-                                                                    SyntaxFactory.IdentifierName("HttpClient")),
+                                                                    SyntaxFactory.ThisExpression(),
+                                                                    SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
                                                                 SyntaxFactory.IdentifierName("SendAsync")))
                                                         .WithArgumentList(
                                                             SyntaxFactory.ArgumentList(

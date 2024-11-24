@@ -163,7 +163,21 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         /// <returns>The structure members with the fields added.</returns>
         private static SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
         {
-            return members.Add(new RowVersionField().Syntax);
+            // This will create the private fields.
+            List<SyntaxElement> properties = new List<SyntaxElement>
+            {
+                new HttpClientField(),
+                new RowVersionField(),
+            };
+
+            // Alphabetize and add the fields as members of the class.
+            foreach (SyntaxElement syntaxElement in properties.OrderBy(m => m.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
+            }
+
+            // Return the new collection of members.
+            return members;
         }
 
         /// <summary>
@@ -173,10 +187,9 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         /// <returns>The structure members with the fields added.</returns>
         private static SyntaxList<MemberDeclarationSyntax> CreateInternalInstanceProperties(SyntaxList<MemberDeclarationSyntax> members)
         {
-            // This will create the internal instance properties.
+            // This will create the instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>
             {
-                new HttpClientProperty(),
                 new RowVersionProperty(),
             };
 
@@ -240,6 +253,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>
             {
+                new SendAsyncMethod(),
                 new MergeMethod(this.xmlSchemaDocument),
             };
 

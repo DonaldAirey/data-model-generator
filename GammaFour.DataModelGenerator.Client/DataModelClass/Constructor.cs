@@ -35,7 +35,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             //        /// <summary>
             //        /// Initializes a new instance of the <see cref="DataModel"/> class.
             //        /// </summary>
-            //        public DataModel(IConfiguration configuration, HttpClient httpClient)
+            //        public DataModel(HttpClient httpClient)
             //        {
             //            <Body>
             //        }
@@ -73,59 +73,15 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>
                 {
-                    //             var openBookHttpClientName = configuration.GetValue<string>("OpenBook:HttpClient:Name");
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(
-                                SyntaxFactory.Identifier(
-                                    SyntaxFactory.TriviaList(),
-                                    SyntaxKind.VarKeyword,
-                                    "var",
-                                    "var",
-                                    SyntaxFactory.TriviaList())))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("openBookHttpClientName"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.InvocationExpression(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("configuration"),
-                                                SyntaxFactory.GenericName(
-                                                    SyntaxFactory.Identifier("GetValue"))
-                                                .WithTypeArgumentList(
-                                                    SyntaxFactory.TypeArgumentList(
-                                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                            SyntaxFactory.PredefinedType(
-                                                                SyntaxFactory.Token(SyntaxKind.StringKeyword)))))))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.LiteralExpression(
-                                                            SyntaxKind.StringLiteralExpression,
-                                                            SyntaxFactory.Literal("OpenBook:HttpClient:Name"))))))))))),
-
-                    //            this.HttpClient = httpClientFactory.CreateClient(openBookHttpClientName);
+                    //            this.httpClient = httpClient;
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("HttpClient")),
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("httpClientFactory"),
-                                    SyntaxFactory.IdentifierName("CreateClient")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName("openBookHttpClientName"))))))),
+                                SyntaxFactory.IdentifierName("httpClient")),
+                            SyntaxFactory.IdentifierName("httpClient"))),
                 };
 
                 // Initialize each of the tables.
@@ -219,17 +175,11 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                 // Create a list of parameters from the columns in the unique constraint.
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>
                 {
-                    // IHttpClientFactory httpClientFactory
+                    // HttpClient httpClient
                     SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier("httpClientFactory"))
+                        SyntaxFactory.Identifier("httpClient"))
                     .WithType(
-                        SyntaxFactory.IdentifierName("IHttpClientFactory")),
-
-                    // IConfiguration configuration
-                    SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier("configuration"))
-                    .WithType(
-                        SyntaxFactory.IdentifierName("IConfiguration")),
+                        SyntaxFactory.IdentifierName("HttpClient")),
                 };
 
                 // This is the complete parameter specification for this constructor.

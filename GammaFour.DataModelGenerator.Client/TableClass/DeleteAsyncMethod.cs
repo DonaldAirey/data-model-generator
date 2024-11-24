@@ -228,7 +228,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 {
                     //                                using (var request = new HttpRequestMessage(HttpMethod.Delete, "rest/accountCanonMaps"))
                     //                                using (request.Content = new StringContent(JsonSerializer.Serialize(accountCanonMaps), Encoding.Default, "application/json"))
-                    //                                using (HttpResponseMessage response = await this.httpClient.SendAsync(request).ConfigureAwait(false))
+                    //                                using (HttpResponseMessage response = await this.SendAsync(request).ConfigureAwait(false))
                     //                                {
                     //                                    <HandleResultsBlock>
                     //                                }
@@ -254,11 +254,8 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                                     SyntaxFactory.MemberAccessExpression(
                                                                         SyntaxKind.SimpleMemberAccessExpression,
-                                                                        SyntaxFactory.MemberAccessExpression(
-                                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                                            SyntaxFactory.ThisExpression(),
-                                                                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
-                                                                        SyntaxFactory.IdentifierName("HttpClient")),
+                                                                        SyntaxFactory.ThisExpression(),
+                                                                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
                                                                     SyntaxFactory.IdentifierName("SendAsync")))
                                                             .WithArgumentList(
                                                                 SyntaxFactory.ArgumentList(

@@ -145,7 +145,6 @@ namespace GammaFour.DataModelGenerator.Client
                 List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>
                 {
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.Data.Client")),
-                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Configuration")),
                 };
 
                 if (!this.xmlSchemaDocument.IsVolatile)

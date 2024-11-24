@@ -6,7 +6,7 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <OutputType>Exe</OutputType>
     <RootNamespace>GammaFour.DataModelGenerator.ClientCompiler</RootNamespace>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Production|AnyCPU'">
@@ -27,12 +27,12 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop" Version="17.11.40262" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop" Version="17.12.40391" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.ComponentModel.Composition" Version="8.0.0" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
