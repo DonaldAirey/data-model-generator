@@ -188,28 +188,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //        /// <param name="configuration">Configuration settings.</param>
-                    SyntaxFactory.Trivia(
-                        SyntaxFactory.DocumentationCommentTrivia(
-                            SyntaxKind.SingleLineDocumentationCommentTrivia,
-                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                    SyntaxFactory.XmlText()
-                                    .WithTextTokens(
-                                        SyntaxFactory.TokenList(
-                                            new[]
-                                            {
-                                                SyntaxFactory.XmlTextLiteral(
-                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <param name=\"configuration\">Configuration settings.</param>",
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList()),
-                                                SyntaxFactory.XmlTextNewLine(
-                                                    SyntaxFactory.TriviaList(),
-                                                    Environment.NewLine,
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList()),
-                                            }))))),
-
                     //        /// <param name="dataModelContext">The dataModel dabase context.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -248,12 +226,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                 // Create a list of parameters from the columns in the unique constraint.
                 List<ParameterSyntax> parameters = new List<ParameterSyntax>
                 {
-                    // DataModelContext dataModelContext
-                    SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier("configuration"))
-                    .WithType(
-                        SyntaxFactory.IdentifierName("IConfiguration")),
-
                     // DataModelContext dataModelContext
                     SyntaxFactory.Parameter(
                         SyntaxFactory.Identifier($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context"))

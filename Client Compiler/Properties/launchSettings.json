@@ -2,7 +2,7 @@
   "profiles": {
     "ThetaRex.OpenBook": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\ThetaRex.OpenBook\\ThetaRex.OpenBook\\Client\\DataModelCore.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\ThetaRex.OpenBook\\ThetaRex.OpenBook\\Client\\DataModelCore.Designer.cs\" -ns \"ThetaRex.OpenBook.Client\""
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\ThetaRex.OpenBook\\ThetaRex.OpenBook\\Client\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\ThetaRex.OpenBook\\ThetaRex.OpenBook\\Client\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Client\""
     },
     "Desktop": {
       "commandName": "Project",

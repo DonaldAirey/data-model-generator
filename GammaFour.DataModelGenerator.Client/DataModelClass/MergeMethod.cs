@@ -36,7 +36,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             //        /// Merge the results of an incremental update.
             //        /// </summary>
             //        /// <param name="jsonObject">The JSON object containg the incremental data.</param>
-            //        public void Merge(JsonObject jsonObject)
+            //        public void Merge(JsonObject jsonNode)
             //        {
             this.Syntax = MethodDeclaration(
                     PredefinedType(
@@ -102,7 +102,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                 TriviaList()),
                                         }))))),
 
-                    //        /// <param name="jsonObject">The JSON object containg the incremental data.</param>
+                    //        /// <param name="jsonNode">The JSON object containg the incremental data.</param>
                     Trivia(
                         DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -114,7 +114,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                             {
                                                 XmlTextLiteral(
                                                     TriviaList(DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <param name=\"jsonObject\">The JSON object containg the incremental data.</param>",
+                                                    $" <param name=\"jsonNode\">The JSON object containg the incremental data.</param>",
                                                     string.Empty,
                                                     TriviaList()),
                                                 XmlTextNewLine(
@@ -158,9 +158,9 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                 {
                     // IEnumerable<object> source
                     Parameter(
-                        Identifier("jsonObject"))
+                        Identifier("jsonNode"))
                     .WithType(
-                        IdentifierName("JsonObject")),
+                        IdentifierName("JsonNode")),
                 };
 
                 // This is the complete parameter specification for this constructor.
@@ -226,9 +226,9 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
 
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
-                    //            var accountsToken = jsonObject["accounts"];
-                    //            var canonsToken = jsonObject["canons"];
-                    //            var entitiesToken = jsonObject["entities"];
+                    //            var accountsNode = jsonNode["accounts"];
+                    //            var canonsNode = jsonNode["canons"];
+                    //            var entitiesNode = jsonNode["entities"];
                     statements.Add(
                         LocalDeclarationStatement(
                             SyntaxFactory.VariableDeclaration(
@@ -242,11 +242,11 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                             .WithVariables(
                                 SingletonSeparatedList<VariableDeclaratorSyntax>(
                                     VariableDeclarator(
-                                        Identifier($"{tableElement.Name.ToPlural().ToCamelCase()}Token"))
+                                        Identifier($"{tableElement.Name.ToPlural().ToCamelCase()}Node"))
                                     .WithInitializer(
                                         EqualsValueClause(
                                             ElementAccessExpression(
-                                                IdentifierName("jsonObject"))
+                                                IdentifierName("jsonNode"))
                                             .WithArgumentList(
                                                 BracketedArgumentList(
                                                     SingletonSeparatedList<ArgumentSyntax>(
@@ -256,7 +256,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                                 Literal($"{tableElement.Name.ToPlural().ToCamelCase()}"))))))))))));
                 }
 
-                //            if (accountsToken != null)
+                //            if (accountsNode != null)
                 //            {
                 //                <GetMergeTable>
                 //            }
@@ -266,7 +266,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                         IfStatement(
                             BinaryExpression(
                                 SyntaxKind.NotEqualsExpression,
-                                IdentifierName($"{tableElement.Name.ToPlural().ToCamelCase()}Token"),
+                                IdentifierName($"{tableElement.Name.ToPlural().ToCamelCase()}Node"),
                                 LiteralExpression(
                                     SyntaxKind.NullLiteralExpression)),
                             Block(MergeMethod.GetMergeTable(tableElement))));
@@ -369,9 +369,9 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
 
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
-                    //            JToken deletedAccountsToken = jsonObject["purgedAccounts"];
-                    //            JToken deletedCanonsToken = jsonObject["purgedCanons"];
-                    //            JToken deletedEntitiesToken = jsonObject["purgedEntities"];
+                    //            JNode deletedAccountsNode = jsonNode["purgedAccounts"];
+                    //            JNode deletedCanonsNode = jsonNode["purgedCanons"];
+                    //            JNode deletedEntitiesNode = jsonNode["purgedEntities"];
                     statements.Add(
                         LocalDeclarationStatement(
                             SyntaxFactory.VariableDeclaration(
@@ -385,11 +385,11 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                             .WithVariables(
                                 SingletonSeparatedList<VariableDeclaratorSyntax>(
                                     VariableDeclarator(
-                                        Identifier($"purged{tableElement.Name.ToPlural()}Token"))
+                                        Identifier($"purged{tableElement.Name.ToPlural()}Node"))
                                     .WithInitializer(
                                         EqualsValueClause(
                                             ElementAccessExpression(
-                                                IdentifierName("jsonObject"))
+                                                IdentifierName("jsonNode"))
                                             .WithArgumentList(
                                                 BracketedArgumentList(
                                                     SingletonSeparatedList<ArgumentSyntax>(
@@ -399,7 +399,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                                 Literal($"purged{tableElement.Name.ToPlural()}"))))))))))));
                 }
 
-                //            if (deletedAccountsToken != null)
+                //            if (deletedAccountsNode != null)
                 //            {
                 //                <GetPurgeTable>
                 //            }
@@ -409,7 +409,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                         IfStatement(
                             BinaryExpression(
                                 SyntaxKind.NotEqualsExpression,
-                                IdentifierName($"purged{tableElement.Name.ToPlural()}Token"),
+                                IdentifierName($"purged{tableElement.Name.ToPlural()}Node"),
                                 LiteralExpression(
                                     SyntaxKind.NullLiteralExpression)),
                             Block(MergeMethod.GetPurgeTable(tableElement))));
@@ -604,7 +604,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             // The elements of the body are added to this collection as they are assembled.
             List<StatementSyntax> statements = new List<StatementSyntax>
             {
-                //                mergeBuckets.Add(this.Accounts, this.Accounts.Merge(accountsToken.Deserialize<List<Account>>()));
+                //                mergeBuckets.Add(this.Accounts, this.Accounts.Merge(accountsNode.Deserialize<List<Account>>()));
                 ExpressionStatement(
                     InvocationExpression(
                         MemberAccessExpression(
@@ -638,7 +638,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                         InvocationExpression(
                                                             MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                                IdentifierName($"{tableElement.Name.ToPlural().ToCamelCase()}Token"),
+                                                                IdentifierName($"{tableElement.Name.ToPlural().ToCamelCase()}Node"),
                                                                 GenericName(
                                                                     Identifier("Deserialize"))
                                                                 .WithTypeArgumentList(
@@ -665,7 +665,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             // The elements of the body are added to this collection as they are assembled.
             List<StatementSyntax> statements = new List<StatementSyntax>
             {
-                //                purgeBuckets.Add(this.Accounts, this.Accounts.Purge(deletedAccountsToken.Deserialize<List<Account>>()));
+                //                purgeBuckets.Add(this.Accounts, this.Accounts.Purge(deletedAccountsNode.Deserialize<List<Account>>()));
                 ExpressionStatement(
                     InvocationExpression(
                         MemberAccessExpression(
@@ -699,7 +699,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                         InvocationExpression(
                                                             MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                                IdentifierName($"purged{tableElement.Name.ToPlural()}Token"),
+                                                                IdentifierName($"purged{tableElement.Name.ToPlural()}Node"),
                                                                 GenericName(
                                                                     Identifier("Deserialize"))
                                                                 .WithTypeArgumentList(
