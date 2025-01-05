@@ -1,5 +1,5 @@
 // <copyright file="Class.cs" company="Gamma Four, Inc.">
-//    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.DataModelClass
@@ -198,7 +198,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             // We only need an initialization with a non-volatile model.
             if (!this.xmlSchemaDocument.IsVolatile)
             {
-                methods.Add(new InitializeMethod(this.xmlSchemaDocument));
+                methods.Add(new InitializeAsyncMethod(this.xmlSchemaDocument));
             }
 
             // Alphabetize and add the methods as members of the class.

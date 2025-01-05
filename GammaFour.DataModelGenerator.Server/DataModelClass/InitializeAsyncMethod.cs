@@ -1,5 +1,5 @@
-// <copyright file="InitializeMethod.cs" company="Gamma Four, Inc.">
-//    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
+// <copyright file="InitializeAsyncMethod.cs" company="Gamma Four, Inc.">
+//    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.DataModelClass
@@ -14,22 +14,22 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
     /// <summary>
     /// Creates a method to acquire a reader lock.
     /// </summary>
-    public class InitializeMethod : SyntaxElement
+    public class InitializeAsyncMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
         /// </summary>
-        private XmlSchemaDocument xmlSchemaDocument;
+        private readonly XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="InitializeMethod"/> class.
+        /// Initializes a new instance of the <see cref="InitializeAsyncMethod"/> class.
         /// </summary>
         /// <param name="xmlSchemaDocument">The table schema.</param>
-        public InitializeMethod(XmlSchemaDocument xmlSchemaDocument)
+        public InitializeAsyncMethod(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
             this.xmlSchemaDocument = xmlSchemaDocument;
-            this.Name = "Initialize";
+            this.Name = "InitializeAsync";
 
             //        /// <inheritdoc/>
             //        public async Task StartAsync(CancellationToken cancellationToken)
@@ -39,9 +39,9 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             this.Syntax = SyntaxFactory.MethodDeclaration(
                 SyntaxFactory.IdentifierName("Task"),
                 SyntaxFactory.Identifier(this.Name))
-            .WithModifiers(InitializeMethod.Modifiers)
+            .WithModifiers(InitializeAsyncMethod.Modifiers)
             .WithBody(this.Body)
-            .WithLeadingTrivia(InitializeMethod.DocumentationComment);
+            .WithLeadingTrivia(InitializeAsyncMethod.DocumentationComment);
         }
 
         /// <summary>

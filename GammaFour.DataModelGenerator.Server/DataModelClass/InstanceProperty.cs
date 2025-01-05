@@ -1,5 +1,5 @@
 // <copyright file="InstanceProperty.cs" company="Gamma Four, Inc.">
-//    Copyright © 2022 - Gamma Four, Inc.  All Rights Reserved.
+//    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.DataModelClass
