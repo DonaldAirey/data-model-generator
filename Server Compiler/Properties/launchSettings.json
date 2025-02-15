@@ -3,6 +3,12 @@
     "Common Server": {
       "commandName": "Project",
       "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\ThetaRex.OpenBook\\ThetaRex.OpenBook\\Server\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\ThetaRex.OpenBook\\ThetaRex.OpenBook\\Server\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Server\""
+    },
+    "Index Simulation": {
+      "commandName": "Project",
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\index-simulation\\Index Simulation\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\index-simulation\\Index Simulation\\DataModel.Designer.cs\" -ns \"IndexSimulation\""
     }
   }
 }
+
+

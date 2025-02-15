@@ -153,7 +153,6 @@ namespace GammaFour.DataModelGenerator.Server
 
                 if (!this.xmlSchemaDocument.IsVolatile)
                 {
-                    usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Configuration")));
                     usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")));
                 }
 

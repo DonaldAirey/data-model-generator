@@ -148,7 +148,6 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
                 members = this.CreatePrivateStaticReadonlyFields(members);
                 members = this.CreatePrivateStaticFields(members);
-                members = Class.CreatePrivateReadonlyInstanceFields(members);
                 members = this.CreatePrivateInstanceFields(members);
                 members = this.CreateConstructors(members);
                 members = this.CreatePublicInstanceProperties(members);
@@ -180,29 +179,6 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         }
 
         /// <summary>
-        /// Create the private instance fields.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The syntax for creating the internal instance properties.</returns>
-        private static SyntaxList<MemberDeclarationSyntax> CreatePrivateReadonlyInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // This will create the private instance fields.
-            List<SyntaxElement> fields = new List<SyntaxElement>
-            {
-                new AsyncReaderWriterLockField(),
-            };
-
-            // Alphabetize and add the fields as members of the class.
-            foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
-            {
-                members = members.Add(syntaxElement.Syntax);
-            }
-
-            // Return the new collection of members.
-            return members;
-        }
-
-        /// <summary>
         /// Create the public instance methods.
         /// </summary>
         /// <param name="members">The structure members.</param>
@@ -215,10 +191,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 new CommitMethod(),
                 new InDoubtMethod(),
                 new PrepareMethod(),
-                new ReleaseMethod(),
                 new RollbackMethod(),
-                new WaitReaderAsyncMethod(),
-                new WaitWriterAsyncMethod(),
             };
 
             // Alphabetize and add the methods as members of the class.
@@ -368,8 +341,6 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             {
                 new IndexProperty(this.tableElement),
                 new TableProperty(this.tableElement),
-                new IsReadLockHeldProperty(),
-                new IsWriteLockHeldProperty(),
                 new RecordStateProperty(),
             };
 

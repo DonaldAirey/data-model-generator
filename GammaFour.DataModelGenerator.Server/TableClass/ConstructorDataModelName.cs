@@ -268,13 +268,19 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                     SyntaxFactory.TypeArgumentList(
                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                             SyntaxFactory.IdentifierName(uniqueKeyElement.Table.Name)))))
-            .WithArgumentList(
-                SyntaxFactory.ArgumentList(
-                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                        SyntaxFactory.Argument(
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.StringLiteralExpression,
-                                SyntaxFactory.Literal(uniqueKeyElement.Name))))));
+                .WithArgumentList(
+                    SyntaxFactory.ArgumentList(
+                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                            new SyntaxNodeOrToken[]
+                            {
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.LiteralExpression(
+                                        SyntaxKind.StringLiteralExpression,
+                                        SyntaxFactory.Literal(uniqueKeyElement.Name))),
+                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.ThisExpression()),
+                            })));
 
             // .HasIndex(a => a.ItemId)
             expressionSyntax = SyntaxFactory.InvocationExpression(

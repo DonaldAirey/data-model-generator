@@ -79,13 +79,13 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                 SyntaxFactory.LiteralExpression(
                                     SyntaxKind.NullLiteralExpression)))),
 
-                    //            enlistment.Done();
+                    //            enlistment?.Done();
                     SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("enlistment"),
-                                SyntaxFactory.IdentifierName("Done")))),
+                        SyntaxFactory.ConditionalAccessExpression(
+                            SyntaxFactory.IdentifierName("enlistment"),
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberBindingExpression(
+                                    SyntaxFactory.IdentifierName("Done"))))),
                 };
 
                 // This is the syntax for the body of the method.
