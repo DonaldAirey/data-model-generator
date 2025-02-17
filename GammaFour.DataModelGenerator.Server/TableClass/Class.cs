@@ -42,58 +42,38 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             //        <Members>
             //    }
             this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
-                .WithModifiers(Class.Modifiers)
-                .WithBaseList(this.BaseList)
-                .WithMembers(this.Members)
-                .WithLeadingTrivia(this.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                return SyntaxFactory.TokenList(
+            .WithModifiers(
+                SyntaxFactory.TokenList(
                     new[]
                     {
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                         SyntaxFactory.Token(SyntaxKind.PartialKeyword),
-                    });
-            }
-        }
-
-        /// <summary>
-        /// Gets the base class syntax.
-        /// </summary>
-        private BaseListSyntax BaseList
-        {
-            get
-            {
-                // A list of base classes or interfaces.
-                List<SyntaxNodeOrToken> baseList = new List<SyntaxNodeOrToken>
-                {
-                    // ITable
-                    SyntaxFactory.SimpleBaseType(
-                        SyntaxFactory.IdentifierName("ITable")),
-
-                    // ,
-                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-
-                    // IEnumerable<Fungible>
-                    SyntaxFactory.SimpleBaseType(
-                        SyntaxFactory.GenericName(
-                            SyntaxFactory.Identifier("IEnumerable"))
-                        .WithTypeArgumentList(
-                            SyntaxFactory.TypeArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name))))),
-                };
-
-                return SyntaxFactory.BaseList(
-                      SyntaxFactory.SeparatedList<BaseTypeSyntax>(baseList.ToArray()));
-            }
+                    }))
+            .WithParameterList(
+                SyntaxFactory.ParameterList(
+                    SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
+                        SyntaxFactory.Parameter(
+                            SyntaxFactory.Identifier(this.tableElement.XmlSchemaDocument.Name.ToVariableName()))
+                        .WithType(
+                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)))))
+            .WithBaseList(
+                SyntaxFactory.BaseList(
+                    SyntaxFactory.SeparatedList<BaseTypeSyntax>(
+                        new SyntaxNodeOrToken[]
+                        {
+                            SyntaxFactory.SimpleBaseType(
+                                SyntaxFactory.IdentifierName("IEnlistmentNotification")),
+                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                            SyntaxFactory.SimpleBaseType(
+                                SyntaxFactory.GenericName(
+                                    SyntaxFactory.Identifier("IEnumerable"))
+                                .WithTypeArgumentList(
+                                    SyntaxFactory.TypeArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name))))),
+                        })))
+                .WithMembers(this.Members)
+                .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
@@ -103,10 +83,12 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         {
             get
             {
-                //    /// <summary>
-                //    /// A collection of <see cref="Buyer"/> records.
-                //    /// </summary>
-                return SyntaxFactory.TriviaList(
+                // The document comment trivia is collected in this list.
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //    /// <summary>
+                    //    /// A table of <see cref="Account"/> rows.
+                    //    /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -130,7 +112,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 string.Format(
                                                     CultureInfo.InvariantCulture,
-                                                    $" A collection of <see cref=\"{this.tableElement.Name}\"/> records.",
+                                                    $" A table of <see cref=\"{this.tableElement.Name}\"/> rows.",
                                                     this.tableElement.Name),
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
@@ -149,7 +131,33 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+
+                    //        /// <param name="dataModel">The data model.</param>
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                SyntaxFactory.XmlText()
+                                .WithTextTokens(
+                                    SyntaxFactory.TokenList(
+                                        new[]
+                                        {
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                $" <param name=\"{this.tableElement.XmlSchemaDocument.Name.ToCamelCase()}\">The data model.</param>",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                        }))))),
+                };
+
+                // This is the complete document comment.
+                return SyntaxFactory.TriviaList(comments);
             }
         }
 
@@ -164,7 +172,6 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
                 members = Class.CreatePrivateReadonlyInstanceFields(members);
                 members = this.CreatePrivateInstanceFields(members);
-                members = this.CreateConstructors(members);
                 members = this.CreatePublicEvents(members);
                 members = this.CreatePublicInstanceProperties(members);
                 members = this.CreatePublicInstanceMethods(members);
@@ -184,7 +191,6 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>
             {
-                new AsyncReaderWriterLockField(),
             };
 
             // Alphabetize and add the fields as members of the class.
@@ -218,20 +224,6 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         }
 
         /// <summary>
-        /// Create the constructors.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The structure members with the fields added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // Add the constructors.
-            members = members.Add(new ConstructorDataModelName(this.tableElement).Syntax);
-
-            // Return the new collection of members.
-            return members;
-        }
-
-        /// <summary>
         /// Create the private instance fields.
         /// </summary>
         /// <param name="members">The structure members.</param>
@@ -241,9 +233,8 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>
             {
-                new PrimaryKeyFunctionField(this.tableElement.PrimaryKey),
-                new CollectionField(this.tableElement),
-                new PurgedRowsField(this.tableElement),
+                new CommitStackField(),
+                new DeletedRowsField(this.tableElement),
                 new UndoStackField(),
             };
 
@@ -279,8 +270,6 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 new DataModelProperty(this.tableElement.XmlSchemaDocument),
                 new PurgedRowsProperty(this.tableElement),
                 new ForeignIndexProperty(),
-                new IsReadLockHeldProperty(),
-                new IsWriteLockHeldProperty(),
                 new NameProperty(),
                 new UniqueIndexProperty(),
             };
@@ -371,12 +360,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 new GenericGetEnumeratorMethod(this.tableElement),
                 new MergeMethod(this.tableElement),
                 new PrepareMethod(),
-                new ReleaseMethod(),
                 new RemoveMethod(this.tableElement),
                 new RollbackMethod(),
                 new UpdateMethod(this.tableElement),
-                new WaitReaderAsyncMethod(),
-                new WaitWriterAsyncMethod(),
             };
 
             // Alphabetize and add the methods as members of the class.

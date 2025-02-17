@@ -1,8 +1,8 @@
-// <copyright file="GetChildrenFunctionField.cs" company="Gamma Four, Inc.">
+// <copyright file="DeletedRowsField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.RowClass
+namespace GammaFour.DataModelGenerator.Server.TableClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,105 +12,66 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field to hold the current contents of the row.
+    /// Creates a field to hold the current contents of the record.
     /// </summary>
-    public class GetChildrenFunctionField : SyntaxElement
+    public class DeletedRowsField : SyntaxElement
     {
         /// <summary>
-        /// The table schema.
+        /// The description of the table.
         /// </summary>
-        private readonly ForeignElement foreignKeyElement;
+        private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GetChildrenFunctionField"/> class.
+        /// Initializes a new instance of the <see cref="DeletedRowsField"/> class.
         /// </summary>
-        /// <param name="foreignKeyElement">A description of a foreign key.</param>
-        public GetChildrenFunctionField(ForeignElement foreignKeyElement)
+        /// <param name="tableElement">The table element.</param>
+        public DeletedRowsField(TableElement tableElement)
         {
             // Initialize the object.
-            this.foreignKeyElement = foreignKeyElement;
-            this.Name = $"get{this.foreignKeyElement.UniqueChildName}";
+            this.tableElement = tableElement;
+            this.Name = "deletedRows";
 
             //        /// <summary>
-            //        /// Function to get child Buyers.
+            //        /// The collection of deleted records.
             //        /// </summary>
-            //        private Func<IEnumerable<Buyer>> getBuyers;
+            //        private readonly LinkedList<Account> deletedRows = new LinkedList<Account>();
             this.Syntax = SyntaxFactory.FieldDeclaration(
-                    SyntaxFactory.VariableDeclaration(
-                        SyntaxFactory.GenericName(
-                            SyntaxFactory.Identifier("Func"))
-                        .WithTypeArgumentList(
-                            SyntaxFactory.TypeArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                SyntaxFactory.VariableDeclaration(
+                    SyntaxFactory.GenericName(
+                        SyntaxFactory.Identifier("LinkedList"))
+                    .WithTypeArgumentList(
+                        SyntaxFactory.TypeArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                SyntaxFactory.IdentifierName(this.tableElement.Name)))))
+                .WithVariables(
+                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                        SyntaxFactory.VariableDeclarator(
+                            SyntaxFactory.Identifier(this.Name))
+                        .WithInitializer(
+                            SyntaxFactory.EqualsValueClause(
+                                SyntaxFactory.ObjectCreationExpression(
                                     SyntaxFactory.GenericName(
-                                        SyntaxFactory.Identifier("IEnumerable"))
+                                        SyntaxFactory.Identifier("LinkedList"))
                                     .WithTypeArgumentList(
                                         SyntaxFactory.TypeArgumentList(
                                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name))))))))
-                    .WithVariables(
-                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                            SyntaxFactory.VariableDeclarator(
-                                SyntaxFactory.Identifier(this.Name)))))
-                .WithModifiers(GetChildrenFunctionField.Modifiers)
-                .WithLeadingTrivia(this.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name)))))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList()))))))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
                     new[]
                     {
                         SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
-                    });
-            }
-        }
-
-        /// <summary>
-        /// Gets the generic type declaration.
-        /// </summary>
-        private TypeArgumentListSyntax ArgumentListSyntax
-        {
-            get
-            {
-                return SyntaxFactory.TypeArgumentList(
-                        SyntaxFactory.SeparatedList<TypeSyntax>(
-                            new SyntaxNodeOrToken[]
-                            {
-                                SyntaxFactory.IdentifierName("RecordVersion"),
-                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                SyntaxFactory.GenericName(
-                                    SyntaxFactory.Identifier("Func"))
-                                .WithTypeArgumentList(
-                                    SyntaxFactory.TypeArgumentList(
-                                        SyntaxFactory.SeparatedList<TypeSyntax>(
-                                            new SyntaxNodeOrToken[]
-                                            {
-                                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Name),
-                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                SyntaxFactory.ArrayType(
-                                                    SyntaxFactory.PredefinedType(
-                                                        SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
-                                                .WithRankSpecifiers(
-                                                    SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
-                                                        SyntaxFactory.ArrayRankSpecifier(
-                                                            SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
-                                                                SyntaxFactory.OmittedArraySizeExpression())))),
-                                            }))),
-                            }));
-            }
+                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
+                    }))
+            .WithLeadingTrivia(DeletedRowsField.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -118,7 +79,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Function to get child buyers.
+                    //        /// The collection of deleted records.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -141,7 +102,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Function to get child {this.foreignKeyElement.Table.Name.ToCamelCase().ToPlural()}.",
+                                                " The deleted rows.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

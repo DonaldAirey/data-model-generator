@@ -1,8 +1,8 @@
-// <copyright file="PurgedRowsField.cs" company="Gamma Four, Inc.">
+// <copyright file="UndoStackField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.TableClass
+namespace GammaFour.DataModelGenerator.Server.RowClass
 {
     using System;
     using System.Collections.Generic;
@@ -14,70 +14,51 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
     /// <summary>
     /// Creates a field to hold the current contents of the record.
     /// </summary>
-    public class PurgedRowsField : SyntaxElement
+    public class UndoStackField : SyntaxElement
     {
         /// <summary>
-        /// The description of the table.
+        /// Initializes a new instance of the <see cref="UndoStackField"/> class.
         /// </summary>
-        private readonly TableElement tableElement;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PurgedRowsField"/> class.
-        /// </summary>
-        /// <param name="tableElement">The table element.</param>
-        public PurgedRowsField(TableElement tableElement)
+        public UndoStackField()
         {
             // Initialize the object.
-            this.tableElement = tableElement;
-            this.Name = "purgedRows";
+            this.Name = "undoStack";
 
             //        /// <summary>
-            //        /// The collection of deleted records.
+            //        ///  The undo stack.
             //        /// </summary>
-            //        private List<(DateTime, Alert)> deletedTable = new List<(DateTime, Alert)>();
+            //        private readonly Stack<Action> undoStack = new Stack<Action>();
             this.Syntax = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
                     SyntaxFactory.GenericName(
-                        SyntaxFactory.Identifier("List"))
+                        SyntaxFactory.Identifier("Stack"))
                     .WithTypeArgumentList(
                         SyntaxFactory.TypeArgumentList(
                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                SyntaxFactory.TupleType(
-                                    SyntaxFactory.SeparatedList<TupleElementSyntax>(
-                                        new SyntaxNodeOrToken[]
-                                        {
-                                            SyntaxFactory.TupleElement(
-                                                SyntaxFactory.IdentifierName("DateTime")),
-                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                            SyntaxFactory.TupleElement(
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name)),
-                                        }))))))
+                                SyntaxFactory.IdentifierName("Action")))))
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                         SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier("purgedRows"))
+                            SyntaxFactory.Identifier("undoStack"))
                         .WithInitializer(
                             SyntaxFactory.EqualsValueClause(
                                 SyntaxFactory.ObjectCreationExpression(
                                     SyntaxFactory.GenericName(
-                                        SyntaxFactory.Identifier("List"))
+                                        SyntaxFactory.Identifier("Stack"))
                                     .WithTypeArgumentList(
                                         SyntaxFactory.TypeArgumentList(
                                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                SyntaxFactory.TupleType(
-                                                    SyntaxFactory.SeparatedList<TupleElementSyntax>(
-                                                        new SyntaxNodeOrToken[]
-                                                        {
-                                                            SyntaxFactory.TupleElement(
-                                                                SyntaxFactory.IdentifierName("DateTime")),
-                                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                            SyntaxFactory.TupleElement(
-                                                                SyntaxFactory.IdentifierName(this.tableElement.Name)),
-                                                        }))))))
+                                                SyntaxFactory.IdentifierName("Action")))))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList()))))))
-                .WithModifiers(PurgedRowsField.Modifiers)
-                .WithLeadingTrivia(PurgedRowsField.DocumentationComment);
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
+                    }))
+            .WithLeadingTrivia(UndoStackField.DocumentationComment);
         }
 
         /// <summary>
@@ -91,7 +72,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// The collection of deleted records.
+                    //        /// The undo stack.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -114,7 +95,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " The collection of deleted records.",
+                                                " The undo stack.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -137,22 +118,6 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
-                    });
             }
         }
     }

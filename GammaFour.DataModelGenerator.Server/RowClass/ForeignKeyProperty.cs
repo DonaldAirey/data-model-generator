@@ -1,4 +1,4 @@
-// <copyright file="RecordStateProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="ForeignKeyProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,84 +12,74 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a property that describes the state.
+    /// Creates a property that navigates to the parent record.
     /// </summary>
-    public class RecordStateProperty : SyntaxElement
+    public class ForeignKeyProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RecordStateProperty"/> class.
+        /// The column element.
         /// </summary>
-        public RecordStateProperty()
+        private readonly ForeignElement foreignElement;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ForeignKeyProperty"/> class.
+        /// </summary>
+        /// <param name="foreignElement">The column element.</param>
+        public ForeignKeyProperty(ForeignElement foreignElement)
         {
             // Initialize the object.
-            this.Name = "RecordState";
+            this.foreignElement = foreignElement;
+            this.Name = this.foreignElement.Table.Name;
 
             //        /// <summary>
-            //        /// Gets the state of the record.
+            //        /// Gets the child <see cref="Order"/> rows.
             //        /// </summary>
-            //        public RecordState State { get; private set; }
+            //        [JsonIgnore]
+            //        public HashSet<Order> Orders { get; } = new HashSet<Order>();
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.IdentifierName("RecordState"),
-                SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(RecordStateProperty.Modifiers)
-                .WithAccessorList(RecordStateProperty.AccessorList)
-                .WithAttributeLists(RecordStateProperty.Attributes)
-                .WithLeadingTrivia(RecordStateProperty.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the list of accessors.
-        /// </summary>
-        private static AccessorListSyntax AccessorList
-        {
-            get
-            {
-                // { get; private set; }
-                return SyntaxFactory.AccessorList(
-                        SyntaxFactory.List<AccessorDeclarationSyntax>(
-                            new AccessorDeclarationSyntax[]
-                            {
-                                SyntaxFactory.AccessorDeclaration(
-                                    SyntaxKind.GetAccessorDeclaration)
-                                .WithSemicolonToken(
-                                    SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
-                                SyntaxFactory.AccessorDeclaration(
-                                    SyntaxKind.SetAccessorDeclaration)
-                                .WithModifiers(
-                                    SyntaxFactory.TokenList(
-                                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
-                                .WithSemicolonToken(
-                                    SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
-                            }));
-            }
-        }
-
-        /// <summary>
-        /// Gets the data contract attribute syntax.
-        /// </summary>
-        private static SyntaxList<AttributeListSyntax> Attributes
-        {
-            get
-            {
-                // This collects all the attributes.
-                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>
-                {
-                    //        [JsonIgnore]
+                SyntaxFactory.GenericName(
+                    SyntaxFactory.Identifier("HashSet"))
+                .WithTypeArgumentList(
+                    SyntaxFactory.TypeArgumentList(
+                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                            SyntaxFactory.IdentifierName(this.Name)))),
+                SyntaxFactory.Identifier(foreignElement.Table.Name.ToPlural()))
+            .WithAttributeLists(
+                SyntaxFactory.SingletonList<AttributeListSyntax>(
                     SyntaxFactory.AttributeList(
                         SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
                             SyntaxFactory.Attribute(
-                                SyntaxFactory.IdentifierName("JsonIgnore")))),
-                };
-
-                // The collection of attributes.
-                return SyntaxFactory.List<AttributeListSyntax>(attributes);
-            }
+                                SyntaxFactory.IdentifierName("JsonIgnore"))))))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithAccessorList(
+                SyntaxFactory.AccessorList(
+                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
+                        SyntaxFactory.AccessorDeclaration(
+                            SyntaxKind.GetAccessorDeclaration)
+                        .WithSemicolonToken(
+                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
+            .WithInitializer(
+                SyntaxFactory.EqualsValueClause(
+                    SyntaxFactory.ObjectCreationExpression(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("HashSet"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                    SyntaxFactory.IdentifierName(foreignElement.Table.Name)))))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList())))
+            .WithSemicolonToken(
+                SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+            .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -97,7 +87,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Gets the state of the record.
+                    //        /// Gets or sets the parent <see cref="Account"/> table.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -120,7 +110,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Gets the state of the record.",
+                                                $"  Gets the child <see cref=\"{this.foreignElement.Table.Name}\"/> rows.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -143,22 +133,6 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                    });
             }
         }
     }

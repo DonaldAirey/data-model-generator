@@ -1,8 +1,8 @@
-// <copyright file="Constructor.cs" company="Gamma Four, Inc.">
+// <copyright file="RecordChangedEvent.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.RowClass
+namespace GammaFour.DataModelGenerator.Server.TableClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,45 +12,58 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a constructor.
+    /// Creates a field that holds the column.
     /// </summary>
-    public class Constructor : SyntaxElement
+    public class RecordChangedEvent : SyntaxElement
     {
         /// <summary>
-        /// The table schema.
+        /// The event type.
+        /// </summary>
+        private readonly SimpleNameSyntax eventType;
+
+        /// <summary>
+        /// The unique constraint schema.
         /// </summary>
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Constructor"/> class.
+        /// Initializes a new instance of the <see cref="RecordChangedEvent"/> class.
         /// </summary>
-        /// <param name="tableElement">The table schema.</param>
-        public Constructor(TableElement tableElement)
+        /// <param name="tableElement">The column schema.</param>
+        public RecordChangedEvent(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = this.tableElement.Name;
+            this.Name = "RecordChanged";
+
+            // The type of event.
+            this.eventType = SyntaxFactory.GenericName(
+                SyntaxFactory.Identifier("EventHandler"))
+            .WithTypeArgumentList(
+                SyntaxFactory.TypeArgumentList(
+                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                        SyntaxFactory.IdentifierName(this.tableElement.Name + "RecordChangeEventArgs")))
+                .WithLessThanToken(SyntaxFactory.Token(SyntaxKind.LessThanToken))
+                .WithGreaterThanToken(SyntaxFactory.Token(SyntaxKind.GreaterThanToken)));
 
             //        /// <summary>
-            //        /// Initializes a new instance of the <see cref="Buyer"/> class.
+            //        /// Occurs when a row has changed.
             //        /// </summary>
-            //        public Buyer()
-            //        {
-            //        }
-            this.Syntax = SyntaxFactory.ConstructorDeclaration(
-                SyntaxFactory.Identifier(this.Name))
-            .WithModifiers(
-                SyntaxFactory.TokenList(
-                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithBody(
-                SyntaxFactory.Block())
-            .WithLeadingTrivia(this.DocumentationComment);
+            //        public event EventHandler<ConfigurationRecordChangeEventArgs> RecordChanged;
+            this.Syntax = SyntaxFactory.EventFieldDeclaration(
+                SyntaxFactory.VariableDeclaration(this.eventType)
+                .WithVariables(
+                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                        SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(this.Name)))))
+            .WithModifiers(RecordChangedEvent.Modifiers)
+            .WithEventKeyword(SyntaxFactory.Token(SyntaxKind.EventKeyword))
+            .WithLeadingTrivia(RecordChangedEvent.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -58,7 +71,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Initializes a new instance of the <see cref="Configuration"/> class.
+                    //        /// Occurs when a row has changed.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -81,7 +94,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Initializes a new instance of the <see cref=\"{this.tableElement.Name}\"/> class.",
+                                                " Occurs when a row has changed.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -104,6 +117,22 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
+            }
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private static SyntaxTokenList Modifiers
+        {
+            get
+            {
+                // internal
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                    });
             }
         }
     }

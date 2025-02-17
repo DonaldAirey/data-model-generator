@@ -1,4 +1,4 @@
-// <copyright file="ConstructorRecordVersion.cs" company="Gamma Four, Inc.">
+// <copyright file="ConstructorDeepClone.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,7 +14,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
     /// <summary>
     /// Creates a constructor.
     /// </summary>
-    public class ConstructorRecordVersion : SyntaxElement
+    public class ConstructorDeepClone : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -22,74 +22,37 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConstructorRecordVersion"/> class.
+        /// Initializes a new instance of the <see cref="ConstructorDeepClone"/> class.
         /// </summary>
         /// <param name="tableElement">The table schema.</param>
-        public ConstructorRecordVersion(TableElement tableElement)
+        public ConstructorDeepClone(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
             this.Name = this.tableElement.Name;
 
-            //        /// <summary>
-            //        /// Initializes a new instance of the <see cref="Buyer"/> class.
-            //        /// </summary>
-            //        /// <param name="data">The data behind the properties.</param>
-            //        private Buyer(object[] data)
+            //        public Position(Position position)
             //        {
-            //             <Body>
+            //            this.AccountCode = position.AccountCode;
+            //            this.AssetCode = position.AssetCode;
+            //            this.Date = position.Date;
+            //            this.Quantity = position.Quantity;
             //        }
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
                 SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(ConstructorRecordVersion.Modifiers)
-                .WithParameterList(ConstructorRecordVersion.Parameters)
-                .WithBody(this.Body)
-                .WithLeadingTrivia(this.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
-                    });
-            }
-        }
-
-        /// <summary>
-        /// Gets the list of parameters.
-        /// </summary>
-        private static ParameterListSyntax Parameters
-        {
-            get
-            {
-                // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>
-                {
-                    // object[] data
-                    SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier("data"))
-                    .WithType(
-                        SyntaxFactory.ArrayType(
-                            SyntaxFactory.PredefinedType(
-                                SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
-                        .WithRankSpecifiers(
-                            SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
-                                SyntaxFactory.ArrayRankSpecifier(
-                                    SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
-                                        SyntaxFactory.OmittedArraySizeExpression()))))),
-                };
-
-                // This is the complete parameter specification for this constructor.
-                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
-            }
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithParameterList(
+                SyntaxFactory.ParameterList(
+                    SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
+                        SyntaxFactory.Parameter(
+                            SyntaxFactory.Identifier(this.Name.ToVariableName()))
+                        .WithType(
+                            SyntaxFactory.IdentifierName(this.tableElement.Name)))))
+            .WithBody(
+                this.Body)
+            .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
@@ -100,36 +63,13 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
-                {
-                    //            this.data = data;
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("currentData")),
-                            SyntaxFactory.IdentifierName("data"))),
+                List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                    //            this.State = RecordState.Detached;
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("RecordState")),
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("RecordState"),
-                                SyntaxFactory.IdentifierName("Detached")))),
-                };
-
-                //            this.getBuyers = () => Country.defaultBuyers;
-                //            this.getProvinces = () => Country.defaultProvinces;
-                //            this.getRegions = () => Country.defaultRegions;
-                foreach (ForeignElement foreignKeyElement in this.tableElement.ChildKeys)
+                //            this.AccountCode = position.AccountCode;
+                //            this.AssetCode = position.AssetCode;
+                //            this.Date = position.Date;
+                //            this.Quantity = position.Quantity;
+                foreach (var columnElement in this.tableElement.Columns)
                 {
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
@@ -138,13 +78,11 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName($"get{foreignKeyElement.UniqueChildName}")),
-                                SyntaxFactory.ParenthesizedLambdaExpression(
-                                    SyntaxFactory.ParameterList(),
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name),
-                                        SyntaxFactory.IdentifierName($"Default{foreignKeyElement.UniqueChildName}"))))));
+                                    SyntaxFactory.IdentifierName(columnElement.Name)),
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                    SyntaxFactory.IdentifierName(columnElement.Name)))));
                 }
 
                 // This is the syntax for the body of the constructor.
@@ -218,7 +156,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    " <param name=\"data\">The data behind the properties.</param>",
+                                                    $" /// <param name=\"{this.tableElement.Name.ToVariableName()}\">The {this.tableElement.Name.ToVariableName()}.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(

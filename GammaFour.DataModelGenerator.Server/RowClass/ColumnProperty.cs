@@ -6,182 +6,52 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
 {
     using System;
     using System.Collections.Generic;
-    using System.Text.Json;
+    using System.Xml.XPath;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field that holds the column.
+    /// Creates a property that navigates to the parent record.
     /// </summary>
     public class ColumnProperty : SyntaxElement
     {
         /// <summary>
-        /// The unique constraint schema.
+        /// The column element.
         /// </summary>
         private readonly ColumnElement columnElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ColumnProperty"/> class.
         /// </summary>
-        /// <param name="columnElement">The column schema.</param>
+        /// <param name="columnElement">The column element.</param>
         public ColumnProperty(ColumnElement columnElement)
         {
             // Initialize the object.
             this.columnElement = columnElement;
-
-            // This is the name of the property.
             this.Name = this.columnElement.Name;
 
             //        /// <summary>
-            //        /// Gets or sets ConfigurationId.
+            //        /// Gets or sets the parent <see cref="Account"/> row.
             //        /// </summary>
-            //        public string ConfigurationId { get; set; }
+            //        public Account? Account
+            //        {
+            //            get
+            //            {
+            //                <GetAccessor>;
+            //            }
+            //
+            //            set
+            //            {
+            //                <SetAccessor>
+            //            }
+            //        }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                    Conversions.FromType(columnElement.ColumnType),
-                    SyntaxFactory.Identifier(this.Name))
-                .WithAccessorList(this.AccessorList)
-                .WithModifiers(ColumnProperty.Modifiers)
-                .WithAttributeLists(this.Attributes)
-                .WithLeadingTrivia(this.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the statements that sets the underlying field to the new value.
-        /// </summary>
-        private static List<StatementSyntax> InitializeState
-        {
-            get
-            {
-                List<StatementSyntax> statements = new List<StatementSyntax>
-                {
-                    //                    this.RecordState = this.RecordState == RecordState.Added ? RecordState.Added : RecordState.Modified;
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("RecordState")),
-                            SyntaxFactory.ConditionalExpression(
-                                SyntaxFactory.BinaryExpression(
-                                    SyntaxKind.EqualsExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("RecordState")),
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("RecordState"),
-                                        SyntaxFactory.IdentifierName("Added"))),
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("RecordState"),
-                                    SyntaxFactory.IdentifierName("Added")),
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("RecordState"),
-                                    SyntaxFactory.IdentifierName("Modified"))))),
-
-                    //                    this.originalData = (object[])this.currentData.Clone();
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("originalData")),
-                            SyntaxFactory.CastExpression(
-                                SyntaxFactory.ArrayType(
-                                    SyntaxFactory.PredefinedType(
-                                        SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
-                                .WithRankSpecifiers(
-                                    SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
-                                        SyntaxFactory.ArrayRankSpecifier(
-                                            SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
-                                                SyntaxFactory.OmittedArraySizeExpression())))),
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("currentData")),
-                                        SyntaxFactory.IdentifierName("Clone")))))),
-
-                    //                    this.previousData = (object[])this.currentData.Clone();
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("previousData")),
-                            SyntaxFactory.CastExpression(
-                                SyntaxFactory.ArrayType(
-                                    SyntaxFactory.PredefinedType(
-                                        SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
-                                .WithRankSpecifiers(
-                                    SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
-                                        SyntaxFactory.ArrayRankSpecifier(
-                                            SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
-                                                SyntaxFactory.OmittedArraySizeExpression())))),
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("currentData")),
-                                        SyntaxFactory.IdentifierName("Clone")))))),
-                };
-
-                return statements;
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // internal
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                    });
-            }
-        }
-
-        /// <summary>
-        /// Gets the list of accessors (get, set).
-        /// </summary>
-        private AccessorListSyntax AccessorList
-        {
-            get
-            {
-                return SyntaxFactory.AccessorList(
-                    SyntaxFactory.List(
-                        new AccessorDeclarationSyntax[] { this.GetAccessor, this.SetAccessor }));
-            }
-        }
-
-        /// <summary>
-        /// Gets the data contract attribute syntax.
-        /// </summary>
-        private SyntaxList<AttributeListSyntax> Attributes
-        {
-            get
-            {
-                // This collects all the attributes.
-                var jsonPropertyName = this.columnElement.Table.XmlSchemaDocument.JsonNamingPolicy.ConvertName(this.Name);
-                var attributes = new List<AttributeListSyntax>
-                {
-                    //        [JsonPropertyName("name")]
+                Conversions.FromType(columnElement.ColumnType),
+                SyntaxFactory.Identifier(this.Name))
+            .WithAttributeLists(
+                SyntaxFactory.SingletonList<AttributeListSyntax>(
                     SyntaxFactory.AttributeList(
                         SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
                             SyntaxFactory.Attribute(
@@ -192,75 +62,19 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                         SyntaxFactory.AttributeArgument(
                                             SyntaxFactory.LiteralExpression(
                                                 SyntaxKind.StringLiteralExpression,
-                                                SyntaxFactory.Literal(jsonPropertyName)))))))),
-                };
-
-                // The collection of attributes.
-                return SyntaxFactory.List<AttributeListSyntax>(attributes);
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Get' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax GetAccessor
-        {
-            get
-            {
-                // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                if (this.columnElement.ColumnType.IsValueType)
-                {
-                    //                return (decimal)this.currentData[0];
-                    statements.Add(
-                        SyntaxFactory.ReturnStatement(
-                            SyntaxFactory.CastExpression(
-                                Conversions.FromType(this.columnElement.ColumnType),
-                                SyntaxFactory.ElementAccessExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("currentData")))
-                                .WithArgumentList(
-                                    SyntaxFactory.BracketedArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.LiteralExpression(
-                                                    SyntaxKind.NumericLiteralExpression,
-                                                    SyntaxFactory.Literal(this.columnElement.Index)))))))));
-                }
-                else
-                {
-                    //                return this.currentData[0] as string;
-                    statements.Add(
-                        SyntaxFactory.ReturnStatement(
-                            SyntaxFactory.BinaryExpression(
-                                SyntaxKind.AsExpression,
-                                SyntaxFactory.ElementAccessExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("currentData")))
-                                .WithArgumentList(
-                                    SyntaxFactory.BracketedArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.LiteralExpression(
-                                                    SyntaxKind.NumericLiteralExpression,
-                                                    SyntaxFactory.Literal(this.columnElement.Index)))))),
-                                Conversions.FromType(this.columnElement.ColumnType))));
-                }
-
-                //            get
-                //            {
-                //            }
-                return SyntaxFactory.AccessorDeclaration(
-                    SyntaxKind.GetAccessorDeclaration,
-                    SyntaxFactory.Block(
-                        SyntaxFactory.List(statements)))
-                    .WithKeyword(SyntaxFactory.Token(SyntaxKind.GetKeyword));
-            }
+                                                SyntaxFactory.Literal(this.columnElement.Name.ToCamelCase()))))))))))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithAccessorList(
+                SyntaxFactory.AccessorList(
+                    SyntaxFactory.List<AccessorDeclarationSyntax>(
+                        new AccessorDeclarationSyntax[]
+                        {
+                            this.GetAccessor,
+                            this.SetAccessor,
+                        })))
+            .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
@@ -271,15 +85,11 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Gets or sets Address1.
-                //        /// </summary>
-                string description = this.columnElement.ColumnType.FullName == "System.Boolean" ?
-                    $" Gets or sets a value indicating whether {this.Name}" :
-                    $" Gets or sets {this.Name}.";
-                comments.Add(
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Gets or sets the parent <see cref="Account"/> table.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -301,7 +111,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                description,
+                                                $" Gets or sets the {this.columnElement.Name.ToCamelCase()}.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -319,10 +129,41 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'Get' accessor.
+        /// </summary>
+        private AccessorDeclarationSyntax GetAccessor
+        {
+            get
+            {
+                // This list collects the statements.
+                List<StatementSyntax> statements = new List<StatementSyntax>
+                {
+                    //                return this.account;
+                    SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.ThisExpression(),
+                            SyntaxFactory.IdentifierName(this.columnElement.Name.ToCamelCase()))),
+                };
+
+                //            get
+                //            {
+                //                <statements>
+                //            }
+                return SyntaxFactory.AccessorDeclaration(
+                    SyntaxKind.GetAccessorDeclaration,
+                    SyntaxFactory.Block(
+                        SyntaxFactory.List(statements)))
+                .WithKeyword(SyntaxFactory.Token(SyntaxKind.GetKeyword));
             }
         }
 
@@ -334,88 +175,137 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
-                {
-                    //                if ((string)this.currentData[0] != value)
-                    //                {
-                    //                    <ValueChangedBlock>
-                    //                }
+                List<StatementSyntax> statements = new List<StatementSyntax>();
+
+                //                if (this.code != value)
+                //                {
+                //                    <ValueChangedBlock>
+                //                }
+                statements.Add(
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.NotEqualsExpression,
-                            SyntaxFactory.CastExpression(
-                                Conversions.FromType(this.columnElement.ColumnType),
-                                SyntaxFactory.ElementAccessExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("currentData")))
-                                .WithArgumentList(
-                                    SyntaxFactory.BracketedArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.LiteralExpression(
-                                                    SyntaxKind.NumericLiteralExpression,
-                                                    SyntaxFactory.Literal(this.columnElement.Index))))))),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName(this.columnElement.Name.ToCamelCase())),
                             SyntaxFactory.IdentifierName("value")),
-                        SyntaxFactory.Block(this.ValueChangedBlock)),
-                };
+                        SyntaxFactory.Block(this.ValueChangedBlock)));
 
                 //            set
                 //            {
+                //                <statements>
                 //            }
                 return SyntaxFactory.AccessorDeclaration(
                     SyntaxKind.SetAccessorDeclaration,
                     SyntaxFactory.Block(
-                        SyntaxFactory.List<StatementSyntax>(statements)));
+                        SyntaxFactory.List(statements)))
+                .WithKeyword(SyntaxFactory.Token(SyntaxKind.SetKeyword));
             }
         }
 
-        /// <summary>
-        /// Gets the statements that sets the underlying field to the new value.
-        /// </summary>
-        private List<StatementSyntax> ValueChangedBlock
+        private IEnumerable<StatementSyntax> ValueChangedBlock
         {
             get
             {
                 // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
-                {
-                    //                if (this.State == RecordState.Unchanged)
-                    //                {
-                    //                    <InitializeState>
-                    //                }
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.EqualsExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("RecordState")),
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("RecordState"),
-                                SyntaxFactory.IdentifierName("Unchanged"))),
-                        SyntaxFactory.Block(ColumnProperty.InitializeState)),
+                List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                    //                    this.currentData[1] = value;
+                //                    if (this.Orders.Any())
+                //                    {
+                //                        throw new ConstraintException("The update action conflicted with the constraint AccountOrderIndex.");
+                //                    }
+                foreach (var foreignKey in this.columnElement.Table.ForeignKeys)
+                {
+                    foreach (var columnReferenceElement in foreignKey.UniqueKey.Columns)
+                    {
+                        if (columnReferenceElement.Column.Name == this.columnElement.Name)
+                        {
+                            statements.Add(
+                                SyntaxFactory.IfStatement(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName(foreignKey.Table.Name.ToPlural())),
+                                            SyntaxFactory.IdentifierName("Any"))),
+                                    SyntaxFactory.Block(
+                                        SyntaxFactory.SingletonList<StatementSyntax>(
+                                            SyntaxFactory.ThrowStatement(
+                                                SyntaxFactory.ObjectCreationExpression(
+                                                    SyntaxFactory.IdentifierName("ConstraintException"))
+                                                .WithArgumentList(
+                                                    SyntaxFactory.ArgumentList(
+                                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.LiteralExpression(
+                                                                    SyntaxKind.StringLiteralExpression,
+                                                                    SyntaxFactory.Literal($"The update action conflicted with the constraint {foreignKey.Name}.")))))))))));
+                        }
+
+                        break;
+                    }
+                }
+
+                //                    var code = this.Code;
+                statements.Add(
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(
+                                SyntaxFactory.Identifier(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.VarKeyword,
+                                    "var",
+                                    "var",
+                                    SyntaxFactory.TriviaList())))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier(this.columnElement.Name.ToVariableName()))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName(this.columnElement.Name.ToCamelCase()))))))));
+
+                //                    this.undoStack.Push(() => this.code = code);
+                statements.Add(
                     SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.ElementAccessExpression(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("currentData")))
-                            .WithArgumentList(
-                                SyntaxFactory.BracketedArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.NumericLiteralExpression,
-                                                SyntaxFactory.Literal(this.columnElement.Index)))))),
-                            SyntaxFactory.IdentifierName("value"))),
-                };
+                                    SyntaxFactory.IdentifierName("undoStack")),
+                                SyntaxFactory.IdentifierName("Push")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.ParenthesizedLambdaExpression()
+                                        .WithExpressionBody(
+                                            SyntaxFactory.AssignmentExpression(
+                                                SyntaxKind.SimpleAssignmentExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName(this.columnElement.Name.ToCamelCase())),
+                                                SyntaxFactory.IdentifierName(this.columnElement.Name.ToVariableName())))))))));
+
+                //                    this.code = value;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName(this.columnElement.Name.ToCamelCase())),
+                            SyntaxFactory.IdentifierName("value"))));
 
                 return statements;
             }

@@ -1,8 +1,8 @@
-// <copyright file="MarkMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="CommitStackField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.RowClass
+namespace GammaFour.DataModelGenerator.Server.TableClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,73 +12,53 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to start editing.
+    /// Creates a field to hold the current contents of the record.
     /// </summary>
-    public class MarkMethod : SyntaxElement
+    public class CommitStackField : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MarkMethod"/> class.
+        /// Initializes a new instance of the <see cref="CommitStackField"/> class.
         /// </summary>
-        public MarkMethod()
+        public CommitStackField()
         {
             // Initialize the object.
-            this.Name = "Mark";
+            this.Name = "commitStack";
 
             //        /// <summary>
-            //        /// Marks a point in time when the record was consistent with it's indices.
+            //        ///  The commit stack.
             //        /// </summary>
-            //        internal void Mark()
-            //        {
-            //            <Body>
-            //        }
-            this.Syntax = SyntaxFactory.MethodDeclaration(
-                    SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
-                    SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(MarkMethod.Modifiers)
-                .WithBody(MarkMethod.Body)
-                .WithLeadingTrivia(MarkMethod.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the body.
-        /// </summary>
-        private static BlockSyntax Body
-        {
-            get
-            {
-                // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
-                {
-                    //            this.previousData = (object[])this.currentData.Clone();
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("previousData")),
-                            SyntaxFactory.CastExpression(
-                                SyntaxFactory.ArrayType(
-                                    SyntaxFactory.PredefinedType(
-                                        SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
-                                .WithRankSpecifiers(
-                                    SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
-                                        SyntaxFactory.ArrayRankSpecifier(
-                                            SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
-                                                SyntaxFactory.OmittedArraySizeExpression())))),
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("currentData")),
-                                        SyntaxFactory.IdentifierName("Clone")))))),
-                };
-
-                // This is the syntax for the body of the method.
-                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
-            }
+            //        private readonly Stack<Action> commitStack = new Stack<Action>();
+            this.Syntax = SyntaxFactory.FieldDeclaration(
+                SyntaxFactory.VariableDeclaration(
+                    SyntaxFactory.GenericName(
+                        SyntaxFactory.Identifier("Stack"))
+                    .WithTypeArgumentList(
+                        SyntaxFactory.TypeArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                SyntaxFactory.IdentifierName("Action")))))
+                .WithVariables(
+                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                        SyntaxFactory.VariableDeclarator(
+                            SyntaxFactory.Identifier("commitStack"))
+                        .WithInitializer(
+                            SyntaxFactory.EqualsValueClause(
+                                SyntaxFactory.ObjectCreationExpression(
+                                    SyntaxFactory.GenericName(
+                                        SyntaxFactory.Identifier("Stack"))
+                                    .WithTypeArgumentList(
+                                        SyntaxFactory.TypeArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                SyntaxFactory.IdentifierName("Action")))))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList()))))))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
+                    }))
+            .WithLeadingTrivia(CommitStackField.DocumentationComment);
         }
 
         /// <summary>
@@ -92,7 +72,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Used to mark a point in time when the record was consistent.
+                    //        /// The commit stack.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -115,7 +95,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " Marks a point in time when the record was consistent with it's indices.",
+                                                " The commit stack.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -138,22 +118,6 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.InternalKeyword),
-                    });
             }
         }
     }

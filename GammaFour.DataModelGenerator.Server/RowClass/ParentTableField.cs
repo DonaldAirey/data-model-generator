@@ -1,4 +1,4 @@
-// <copyright file="CurrentDataField.cs" company="Gamma Four, Inc.">
+//  <copyright file="ParentTableField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,42 +14,45 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
     /// <summary>
     /// Creates a field to hold the current contents of the record.
     /// </summary>
-    public class CurrentDataField : SyntaxElement
+    public class ParentTableField : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CurrentDataField"/> class.
+        /// The unique constraint schema.
         /// </summary>
-        public CurrentDataField()
+        private readonly TableElement tableElement;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ParentTableField"/> class.
+        /// </summary>
+        /// <param name="tableElement">The column schema.</param>
+        public ParentTableField(TableElement tableElement)
         {
             // Initialize the object.
-            this.Name = "currentData";
+            this.tableElement = tableElement;
+            this.Name = this.tableElement.Name.ToPlural().ToVariableName();
 
             //        /// <summary>
-            //        /// The current contents of the record.
+            //        /// The table to which this row belongs.
             //        /// </summary>
-            //        private object[] currentData;
+            //        private Accounts? accounts;
             this.Syntax = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
-                    SyntaxFactory.ArrayType(
-                        SyntaxFactory.PredefinedType(
-                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
-                    .WithRankSpecifiers(
-                        SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
-                            SyntaxFactory.ArrayRankSpecifier(
-                                SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
-                                    SyntaxFactory.OmittedArraySizeExpression())))))
-                    .WithVariables(
-                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                            SyntaxFactory.VariableDeclarator(
-                                SyntaxFactory.Identifier("currentData")))))
-                .WithModifiers(CurrentDataField.Modifiers)
-                .WithLeadingTrivia(CurrentDataField.DocumentationComment);
+                    SyntaxFactory.NullableType(
+                        SyntaxFactory.IdentifierName($"{this.tableElement.Name.ToPlural()}")))
+                .WithVariables(
+                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                        SyntaxFactory.VariableDeclarator(
+                            SyntaxFactory.Identifier(this.Name)))))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
+            .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -80,7 +83,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " The current contents of the record.",
+                                                $" The parent <see cref=\"{this.tableElement.Name.ToPlural()}\"/> table.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -103,22 +106,6 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
-                    });
             }
         }
     }

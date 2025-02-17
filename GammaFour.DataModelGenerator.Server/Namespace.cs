@@ -79,6 +79,12 @@ namespace GammaFour.DataModelGenerator.Server
                         .WithErrorCodes(
                             SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
                                 SyntaxFactory.IdentifierName("SA1649")))),
+
+                    // #nullable true
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.NullableDirectiveTrivia(
+                            SyntaxFactory.Token(SyntaxKind.EnableKeyword),
+                            true)),
                 };
 
                 // This is the complete document comment.
@@ -133,6 +139,7 @@ namespace GammaFour.DataModelGenerator.Server
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Data")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json.Serialization")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")),
@@ -148,7 +155,6 @@ namespace GammaFour.DataModelGenerator.Server
                 List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>
                 {
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("DotNext.Threading")),
-                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.Data.Server")),
                 };
 
                 if (!this.xmlSchemaDocument.IsVolatile)
@@ -170,6 +176,7 @@ namespace GammaFour.DataModelGenerator.Server
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
+                members = this.CreatePublicEnums(members);
                 members = this.CreatePublicClasses(members);
                 return members;
             }
@@ -216,6 +223,27 @@ namespace GammaFour.DataModelGenerator.Server
             {
                 // The DbContext class that provides access to the persistent store.
                 members = members.Add(new DbContextClass.Class(this.xmlSchemaDocument).Syntax);
+            }
+
+            // This is the collection of alphabetized fields.
+            return members;
+        }
+
+        /// <summary>
+        /// Creates the enums.
+        /// </summary>
+        /// <param name="members">The collection of members.</param>
+        /// <returns>The collection of members augmented with the enums.</returns>
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicEnums(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            // Create the record classes.
+            List<SyntaxElement> syntaxElements = new List<SyntaxElement>();
+            syntaxElements.Add(new DataActionEnum.Enum());
+
+            // Alphabetize the list of record classes and add them to the structure.
+            foreach (var syntaxElement in syntaxElements.OrderBy(se => se.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
             }
 
             // This is the collection of alphabetized fields.

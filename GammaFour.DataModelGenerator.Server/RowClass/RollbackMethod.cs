@@ -33,8 +33,16 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 SyntaxFactory.PredefinedType(
                     SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                 SyntaxFactory.Identifier(this.Name))
-            .WithModifiers(RollbackMethod.Modifiers)
-            .WithParameterList(RollbackMethod.Parameters)
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithParameterList(
+                SyntaxFactory.ParameterList(
+                    SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
+                        SyntaxFactory.Parameter(
+                            SyntaxFactory.Identifier("enlistment"))
+                        .WithType(
+                            SyntaxFactory.IdentifierName("Enlistment")))))
             .WithBody(RollbackMethod.Body)
             .WithLeadingTrivia(RollbackMethod.DocumentationComment);
         }
@@ -49,18 +57,35 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>
                 {
-                    SyntaxFactory.IfStatement(
+                    //            while (this.undoStack.Count != 0)
+                    //            {
+                    //                this.undoStack.Pop()();
+                    //            }
+                    SyntaxFactory.WhileStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.NotEqualsExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("RecordState")),
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("RecordState"),
-                                SyntaxFactory.IdentifierName("Unchanged"))),
-                        SyntaxFactory.Block(RollbackMethod.RollbackRecord)),
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("undoStack")),
+                                SyntaxFactory.IdentifierName("Count")),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NumericLiteralExpression,
+                                SyntaxFactory.Literal(0))),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ExpressionStatement(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName("undoStack")),
+                                                SyntaxFactory.IdentifierName("Pop")))))))),
                 };
 
                 // This is the syntax for the body of the method.
@@ -103,101 +128,6 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                    });
-            }
-        }
-
-        /// <summary>
-        /// Gets the statements that sets the underlying field to the new value.
-        /// </summary>
-        private static List<StatementSyntax> RollbackRecord
-        {
-            get
-            {
-                List<StatementSyntax> statements = new List<StatementSyntax>
-                {
-                    //            this.State = RecordState.Unchanged;
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("RecordState")),
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("RecordState"),
-                                SyntaxFactory.IdentifierName("Unchanged")))),
-
-                    //            this.currentData = this.originalData;
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("currentData")),
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("originalData")))),
-
-                    //            this.originalData = this.previousData = null;
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("originalData")),
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("previousData")),
-                                SyntaxFactory.LiteralExpression(
-                                    SyntaxKind.NullLiteralExpression)))),
-                };
-
-                return statements;
-            }
-        }
-
-        /// <summary>
-        /// Gets the list of parameters.
-        /// </summary>
-        private static ParameterListSyntax Parameters
-        {
-            get
-            {
-                // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>
-                {
-                    // Enlistment enlistment
-                    SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier("enlistment"))
-                    .WithType(
-                        SyntaxFactory.IdentifierName("Enlistment")),
-                };
-
-                // This is the complete parameter specification for this constructor.
-                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
             }
         }
     }

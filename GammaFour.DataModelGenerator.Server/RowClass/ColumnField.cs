@@ -1,4 +1,4 @@
-// <copyright file="PreviousDataField.cs" company="Gamma Four, Inc.">
+// <copyright file="ColumnField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,53 +12,70 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field to hold the previous contents of the record.
+    /// Creates a field that holds the column.
     /// </summary>
-    public class PreviousDataField : SyntaxElement
+    public class ColumnField : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="PreviousDataField"/> class.
+        /// The unique constraint schema.
         /// </summary>
-        public PreviousDataField()
+        private readonly ColumnElement columnElement;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ColumnField"/> class.
+        /// </summary>
+        /// <param name="columnElement">The column schema.</param>
+        public ColumnField(ColumnElement columnElement)
         {
             // Initialize the object.
-            this.Name = "previousData";
+            this.columnElement = columnElement;
+
+            // This is the name of the field.
+            this.Name = this.columnElement.Name.ToCamelCase();
+
+            //        private double quantity;
+            //        private string code = string.Empty;
+            var columnType = this.columnElement.ColumnType;
+            var variableDeclarator = SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(this.Name));
+            if (!columnType.IsValueType && !columnType.IsNullable)
+            {
+                variableDeclarator = SyntaxFactory.VariableDeclarator(
+                    SyntaxFactory.Identifier(this.Name))
+                .WithInitializer(
+                    SyntaxFactory.EqualsValueClause(
+                        Defaults.FromType(columnType)));
+            }
 
             //        /// <summary>
-            //        /// The previous contents of the record.
+            //        /// The code.
             //        /// </summary>
-            //        private object[] previousData;
+            //        private string code = string.Empty;
             this.Syntax = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
-                    SyntaxFactory.ArrayType(
-                        SyntaxFactory.PredefinedType(
-                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))
-                    .WithRankSpecifiers(
-                        SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(
-                            SyntaxFactory.ArrayRankSpecifier(
-                                SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
-                                    SyntaxFactory.OmittedArraySizeExpression())))))
+                    Conversions.FromType(columnElement.ColumnType))
                 .WithVariables(
-                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                        SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier("previousData")))))
-                .WithModifiers(PreviousDataField.Modifiers)
-                .WithLeadingTrivia(PreviousDataField.DocumentationComment);
+                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(variableDeclarator)))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
+            .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private SyntaxTriviaList DocumentationComment
         {
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
-                {
-                    //        /// <summary>
-                    //        /// The previous contents of the record.
-                    //        /// </summary>
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
+
+                //        /// <summary>
+                //        /// Gets or sets Address1.
+                //        /// </summary>
+                string description = $" The {this.Name.ToCamelCase()}";
+                comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -80,7 +97,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " The previous contents of the record.",
+                                                description,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -98,27 +115,10 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))),
-                };
+                                        }))))));
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
-                    });
             }
         }
     }

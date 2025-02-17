@@ -27,7 +27,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             //        /// <summary>
             //        ///  The undo stack.
             //        /// </summary>
-            //        private Stack<Action> undoStack = new Stack<Action>();
+            //        private readonly Stack<Action> undoStack = new Stack<Action>();
             this.Syntax = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
                     SyntaxFactory.GenericName(
@@ -40,9 +40,25 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                         SyntaxFactory.VariableDeclarator(
                             SyntaxFactory.Identifier("undoStack"))
-                        .WithInitializer(UndoStackField.Initializer))))
-                .WithModifiers(UndoStackField.Modifiers)
-                .WithLeadingTrivia(UndoStackField.DocumentationComment);
+                        .WithInitializer(
+                            SyntaxFactory.EqualsValueClause(
+                                SyntaxFactory.ObjectCreationExpression(
+                                    SyntaxFactory.GenericName(
+                                        SyntaxFactory.Identifier("Stack"))
+                                    .WithTypeArgumentList(
+                                        SyntaxFactory.TypeArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                SyntaxFactory.IdentifierName("Action")))))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList()))))))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
+                    }))
+            .WithLeadingTrivia(UndoStackField.DocumentationComment);
         }
 
         /// <summary>
@@ -102,43 +118,6 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the initializer.
-        /// </summary>
-        private static EqualsValueClauseSyntax Initializer
-        {
-            get
-            {
-                // = new object();
-                return SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.ObjectCreationExpression(
-                        SyntaxFactory.GenericName(
-                            SyntaxFactory.Identifier("Stack"))
-                        .WithTypeArgumentList(
-                            SyntaxFactory.TypeArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName("Action")))))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList()));
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
-                    });
             }
         }
     }
