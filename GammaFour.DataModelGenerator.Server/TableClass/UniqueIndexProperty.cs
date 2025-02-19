@@ -1,4 +1,4 @@
-// <copyright file="DeletedRowsField.cs" company="Gamma Four, Inc.">
+// <copyright file="UniqueIndexProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,66 +12,57 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field to hold the current contents of the record.
+    /// Creates a unique key for the set.
     /// </summary>
-    public class DeletedRowsField : SyntaxElement
+    public class UniqueIndexProperty : SyntaxElement
     {
         /// <summary>
-        /// The description of the table.
+        /// The unique key element.
         /// </summary>
-        private readonly TableElement tableElement;
+        private readonly UniqueIndexElement uniqueIndexElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DeletedRowsField"/> class.
+        /// Initializes a new instance of the <see cref="UniqueIndexProperty"/> class.
         /// </summary>
-        /// <param name="tableElement">The table element.</param>
-        public DeletedRowsField(TableElement tableElement)
+        /// <param name="uniqueIndexElement">The unique key element.</param>
+        public UniqueIndexProperty(UniqueIndexElement uniqueIndexElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement;
-            this.Name = "deletedRows";
+            this.uniqueIndexElement = uniqueIndexElement;
+            this.Name = this.uniqueIndexElement.Name;
 
             //        /// <summary>
-            //        /// The collection of deleted records.
+            //        /// Gets the AccountNameIndex index.
             //        /// </summary>
-            //        private readonly LinkedList<Account> deletedRows = new LinkedList<Account>();
-            this.Syntax = SyntaxFactory.FieldDeclaration(
-                SyntaxFactory.VariableDeclaration(
-                    SyntaxFactory.GenericName(
-                        SyntaxFactory.Identifier("LinkedList"))
-                    .WithTypeArgumentList(
-                        SyntaxFactory.TypeArgumentList(
-                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                SyntaxFactory.IdentifierName(this.tableElement.Name)))))
-                .WithVariables(
-                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                        SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier(this.Name))
-                        .WithInitializer(
-                            SyntaxFactory.EqualsValueClause(
-                                SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.GenericName(
-                                        SyntaxFactory.Identifier("LinkedList"))
-                                    .WithTypeArgumentList(
-                                        SyntaxFactory.TypeArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name)))))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList()))))))
+            //        public AccountNameIndex AccountNameIndex { get; } = new AccountNameIndex();
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
+                SyntaxFactory.IdentifierName(this.uniqueIndexElement.Name),
+                SyntaxFactory.Identifier(this.uniqueIndexElement.Name))
             .WithModifiers(
                 SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
-                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
-                    }))
-            .WithLeadingTrivia(DeletedRowsField.DocumentationComment);
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithAccessorList(
+                SyntaxFactory.AccessorList(
+                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
+                        SyntaxFactory.AccessorDeclaration(
+                            SyntaxKind.GetAccessorDeclaration)
+                        .WithSemicolonToken(
+                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
+            .WithInitializer(
+                SyntaxFactory.EqualsValueClause(
+                    SyntaxFactory.ObjectCreationExpression(
+                        SyntaxFactory.IdentifierName(this.uniqueIndexElement.Name))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList())))
+            .WithSemicolonToken(
+                SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+            .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -79,7 +70,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// The collection of deleted records.
+                    //        /// Gets the AccountNameIndex index.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -102,7 +93,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " The deleted rows.",
+                                                $" Gets the {this.uniqueIndexElement.Name} index.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

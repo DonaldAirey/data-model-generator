@@ -298,11 +298,11 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                             SyntaxFactory.ThisExpression(),
                                                             SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
                                                         SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                                    SyntaxFactory.IdentifierName(this.tableElement.PrimaryKey.Name)),
+                                                    SyntaxFactory.IdentifierName(this.tableElement.PrimaryIndex.Name)),
                                                 SyntaxFactory.IdentifierName("Find")))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
-                                                RestService.UniqueKeyExpression.GetMemberSyntax(this.tableElement.PrimaryKey, this.tableElement.Name.ToVariableName())))))))),
+                                                RestService.UniqueKeyExpression.GetMemberSyntax(this.tableElement.PrimaryIndex, this.tableElement.Name.ToVariableName())))))))),
 
                     //                        if (serverAccount != null)
                     //                        {

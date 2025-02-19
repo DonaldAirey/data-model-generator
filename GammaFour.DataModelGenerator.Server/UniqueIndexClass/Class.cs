@@ -1,78 +1,66 @@
-// <copyright file="RecordChangedEvent.cs" company="Gamma Four, Inc.">
+// <copyright file="Class.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.TableClass
+namespace GammaFour.DataModelGenerator.Server.UniqueIndexClass
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field that holds the column.
+    /// Creates a row.
     /// </summary>
-    public class RecordChangedEvent : SyntaxElement
+    public class Class : SyntaxElement
     {
-        /// <summary>
-        /// The event type.
-        /// </summary>
-        private readonly SimpleNameSyntax eventType;
-
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private readonly TableElement tableElement;
+        private readonly UniqueIndexElement uniqueIndexElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RecordChangedEvent"/> class.
+        /// Initializes a new instance of the <see cref="Class"/> class.
         /// </summary>
-        /// <param name="tableElement">The column schema.</param>
-        public RecordChangedEvent(TableElement tableElement)
+        /// <param name="uniqueIndexElement">A description of a unique constraint.</param>
+        public Class(UniqueIndexElement uniqueIndexElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement;
-            this.Name = "RecordChanged";
+            this.uniqueIndexElement = uniqueIndexElement;
+            this.Name = uniqueIndexElement.Name;
 
-            // The type of event.
-            this.eventType = SyntaxFactory.GenericName(
-                SyntaxFactory.Identifier("EventHandler"))
-            .WithTypeArgumentList(
-                SyntaxFactory.TypeArgumentList(
-                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                        SyntaxFactory.IdentifierName(this.tableElement.Name + "RecordChangeEventArgs")))
-                .WithLessThanToken(SyntaxFactory.Token(SyntaxKind.LessThanToken))
-                .WithGreaterThanToken(SyntaxFactory.Token(SyntaxKind.GreaterThanToken)));
-
-            //        /// <summary>
-            //        /// Occurs when a row has changed.
-            //        /// </summary>
-            //        public event EventHandler<ConfigurationRecordChangeEventArgs> RecordChanged;
-            this.Syntax = SyntaxFactory.EventFieldDeclaration(
-                SyntaxFactory.VariableDeclaration(this.eventType)
-                .WithVariables(
-                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                        SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(this.Name)))))
-            .WithModifiers(RecordChangedEvent.Modifiers)
-            .WithEventKeyword(SyntaxFactory.Token(SyntaxKind.EventKeyword))
-            .WithLeadingTrivia(RecordChangedEvent.DocumentationComment);
+            //    /// <summary>
+            //    /// The AccountNameIndex index.
+            //    /// </summary>
+            //    public class AccountNameIndex
+            //    {
+            //        <Members>
+            //    }
+            this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+                .WithMembers(this.Members)
+                .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private SyntaxTriviaList DocumentationComment
         {
             get
             {
                 // The document comment trivia is collected in this list.
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
-                    //        /// <summary>
-                    //        /// Occurs when a row has changed.
-                    //        /// </summary>
+                    //    /// <summary>
+                    //    /// /// The AccountNameIndex index.
+                    //    /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -94,7 +82,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " Occurs when a row has changed.",
+                                                $" The <see cref=\"{this.uniqueIndexElement.Name}\"/> index.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -121,19 +109,66 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         }
 
         /// <summary>
-        /// Gets the modifiers.
+        /// Gets the members syntax.
         /// </summary>
-        private static SyntaxTokenList Modifiers
+        private SyntaxList<MemberDeclarationSyntax> Members
         {
             get
             {
-                // internal
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                    });
+                // Create the members.
+                SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
+                members = this.CreatePrivateReadonlyInstanceFields(members);
+                members = this.CreatePublicInstanceMethods(members);
+                return members;
             }
+        }
+
+        /// <summary>
+        /// Create the private instance fields.
+        /// </summary>
+        /// <param name="members">The structure members.</param>
+        /// <returns>The syntax for creating the internal instance properties.</returns>
+        private SyntaxList<MemberDeclarationSyntax> CreatePrivateReadonlyInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            // This will create the private instance fields.
+            List<SyntaxElement> fields = new List<SyntaxElement>
+            {
+                new DictionaryField(this.uniqueIndexElement),
+            };
+
+            // Alphabetize and add the fields as members of the class.
+            foreach (var syntaxElement in fields.OrderBy(m => m.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
+            }
+
+            // Return the new collection of members.
+            return members;
+        }
+
+        /// <summary>
+        /// Create the public instance methods.
+        /// </summary>
+        /// <param name="members">The structure members.</param>
+        /// <returns>The structure members with the methods added.</returns>
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            // This will create the public instance methods.
+            List<SyntaxElement> syntaxElements = new List<SyntaxElement>
+            {
+                new AddMethod(this.uniqueIndexElement),
+                new FindMethod(this.uniqueIndexElement),
+                new RemoveMethod(this.uniqueIndexElement),
+            };
+
+            // Alphabetize and add the methods as members of the class.
+            foreach (var syntaxElement in syntaxElements.OrderBy(m => m.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
+            }
+
+            // Return the new collection of members.
+            return members;
         }
     }
 }

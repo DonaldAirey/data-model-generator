@@ -19,13 +19,13 @@ namespace GammaFour.DataModelGenerator.Common.UniqueIndexClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private readonly UniqueElement uniqueKeyElement;
+        private readonly UniqueIndexElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DictionaryField"/> class.
         /// </summary>
         /// <param name="uniqueKeyElement">The table schema.</param>
-        public DictionaryField(UniqueElement uniqueKeyElement)
+        public DictionaryField(UniqueIndexElement uniqueKeyElement)
         {
             // Initialize the object.
             this.uniqueKeyElement = uniqueKeyElement;
@@ -152,7 +152,7 @@ namespace GammaFour.DataModelGenerator.Common.UniqueIndexClass
                 // Keys with a single element don't require a compound key in order to access the dictionary.
                 if (this.uniqueKeyElement.Columns.Count == 1)
                 {
-                    types.Add(Conversions.FromType(this.uniqueKeyElement.Columns.First().Column.ColumnType));
+                    types.Add(this.uniqueKeyElement.Columns.First().Column.GetTypeSyntax());
                 }
                 else
                 {

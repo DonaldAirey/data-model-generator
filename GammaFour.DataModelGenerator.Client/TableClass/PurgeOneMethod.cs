@@ -192,7 +192,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                             SyntaxFactory.ThisExpression(),
                                                             SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
                                                         SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                                    SyntaxFactory.IdentifierName(this.tableElement.PrimaryKey.Name)),
+                                                    SyntaxFactory.IdentifierName(this.tableElement.PrimaryIndex.Name)),
                                                 SyntaxFactory.IdentifierName("Find")))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(

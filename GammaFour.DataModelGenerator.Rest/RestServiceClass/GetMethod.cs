@@ -20,13 +20,13 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private readonly UniqueElement uniqueKeyElement;
+        private readonly UniqueIndexElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetMethod"/> class.
         /// </summary>
         /// <param name="uniqueKeyElement">The unique constraint schema.</param>
-        public GetMethod(UniqueElement uniqueKeyElement)
+        public GetMethod(UniqueIndexElement uniqueKeyElement)
         {
             // Initialize the object.  Note that we decorate the name of every method that's not the primary key to prevent ambiguous signatures.
             this.uniqueKeyElement = uniqueKeyElement;
@@ -285,7 +285,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
                                             SyntaxFactory.Attribute(
                                                 SyntaxFactory.IdentifierName("FromRoute"))))))
-                            .WithType(Conversions.FromType(columnReferenceElement.Column.ColumnType)));
+                            .WithType(columnReferenceElement.Column.GetTypeSyntax()));
                 }
 
                 // This is the complete parameter specification for this constructor.

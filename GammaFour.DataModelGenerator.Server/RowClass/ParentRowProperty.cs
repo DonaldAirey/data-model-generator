@@ -1,4 +1,4 @@
-// <copyright file="ParentTableProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="ParentRowProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,22 +14,22 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
     /// <summary>
     /// Creates a property that navigates to the parent record.
     /// </summary>
-    public class ParentTableProperty : SyntaxElement
+    public class ParentRowProperty : SyntaxElement
     {
         /// <summary>
         /// The foreign key description.
         /// </summary>
-        private readonly TableElement tableElement;
+        private readonly ForeignIndexElement foreignIndexElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ParentTableProperty"/> class.
+        /// Initializes a new instance of the <see cref="ParentRowProperty"/> class.
         /// </summary>
-        /// <param name="tableElement">The table element.</param>
-        public ParentTableProperty(TableElement tableElement)
+        /// <param name="foreignIndexElement">The foreign index element.</param>
+        public ParentRowProperty(ForeignIndexElement foreignIndexElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement;
-            this.Name = this.tableElement.Name.ToPlural();
+            this.foreignIndexElement = foreignIndexElement;
+            this.Name = this.foreignIndexElement.UniqueParentName;
 
             //        /// <summary>
             //        /// Gets or sets the parent <see cref="Account"/> row.
@@ -49,8 +49,8 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             //        }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
                 SyntaxFactory.NullableType(
-                    SyntaxFactory.IdentifierName(this.Name)),
-                SyntaxFactory.Identifier(this.tableElement.Name.ToPlural()))
+                    SyntaxFactory.IdentifierName(this.foreignIndexElement.UniqueIndex.Table.Name)),
+                SyntaxFactory.Identifier(this.foreignIndexElement.UniqueParentName))
             .WithAttributeLists(
                 SyntaxFactory.SingletonList<AttributeListSyntax>(
                     SyntaxFactory.AttributeList(
@@ -105,7 +105,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Gets or sets the parent <see cref=\"{this.tableElement.Name.ToPlural()}\"/> table.",
+                                                $" Gets or sets the parent <see cref=\"{this.foreignIndexElement.UniqueIndex.Table.Name}\"/> row.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -146,7 +146,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.ThisExpression(),
-                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToCamelCase()))),
+                            SyntaxFactory.IdentifierName(this.foreignIndexElement.UniqueParentName.ToCamelCase()))),
                 };
 
                 //            get
@@ -183,7 +183,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToCamelCase())),
+                                SyntaxFactory.IdentifierName(this.foreignIndexElement.UniqueParentName.ToCamelCase())),
                             SyntaxFactory.IdentifierName("value")),
                         SyntaxFactory.Block(
                             SyntaxFactory.LocalDeclarationStatement(
@@ -198,13 +198,13 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                 .WithVariables(
                                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                         SyntaxFactory.VariableDeclarator(
-                                            SyntaxFactory.Identifier(this.tableElement.Name.ToPlural().ToVariableName()))
+                                            SyntaxFactory.Identifier(this.foreignIndexElement.UniqueParentName.ToCamelCase()))
                                         .WithInitializer(
                                             SyntaxFactory.EqualsValueClause(
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToCamelCase()))))))),
+                                                    SyntaxFactory.IdentifierName(this.foreignIndexElement.UniqueParentName.ToCamelCase()))))))),
                             SyntaxFactory.ExpressionStatement(
                                 SyntaxFactory.InvocationExpression(
                                     SyntaxFactory.MemberAccessExpression(
@@ -225,15 +225,15 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToCamelCase())),
-                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToVariableName())))))))),
+                                                            SyntaxFactory.IdentifierName(this.foreignIndexElement.UniqueParentName.ToCamelCase())),
+                                                        SyntaxFactory.IdentifierName(this.foreignIndexElement.UniqueParentName.ToVariableName())))))))),
                             SyntaxFactory.ExpressionStatement(
                                 SyntaxFactory.AssignmentExpression(
                                     SyntaxKind.SimpleAssignmentExpression,
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToCamelCase())),
+                                        SyntaxFactory.IdentifierName(this.foreignIndexElement.UniqueParentName.ToCamelCase())),
                                     SyntaxFactory.IdentifierName("value"))))),
                 };
 

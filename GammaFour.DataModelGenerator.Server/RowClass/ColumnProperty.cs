@@ -48,7 +48,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             //            }
             //        }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                Conversions.FromType(columnElement.ColumnType),
+                columnElement.GetTypeSyntax(),
                 SyntaxFactory.Identifier(this.Name))
             .WithAttributeLists(
                 SyntaxFactory.SingletonList<AttributeListSyntax>(
@@ -217,7 +217,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 //                    }
                 foreach (var foreignKey in this.columnElement.Table.ForeignKeys)
                 {
-                    foreach (var columnReferenceElement in foreignKey.UniqueKey.Columns)
+                    foreach (var columnReferenceElement in foreignKey.UniqueIndex.Columns)
                     {
                         if (columnReferenceElement.Column.Name == this.columnElement.Name)
                         {

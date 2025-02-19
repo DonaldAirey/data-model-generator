@@ -86,7 +86,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 
                 //        [HttpDelete("provinceExternalKey/{name}/{countryCode}")]
                 string literal = string.Empty;
-                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryIndex.Columns)
                 {
                     if (!string.IsNullOrEmpty(literal))
                     {
@@ -125,7 +125,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 List<SyntaxNodeOrToken> parameters = new List<SyntaxNodeOrToken>();
 
                 // [FromRoute] string countryCode
-                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryIndex.Columns)
                 {
                     if (parameters.Count != 0)
                     {
@@ -141,7 +141,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
                                             SyntaxFactory.Attribute(
                                                 SyntaxFactory.IdentifierName("FromRoute"))))))
-                            .WithType(Conversions.FromType(columnReferenceElement.Column.ColumnType)));
+                            .WithType(columnReferenceElement.Column.GetTypeSyntax()));
                 }
 
                 // ,
@@ -254,7 +254,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 };
 
                 //        /// <param name="insideOrderId">The InsideOrderId key.</param>
-                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryIndex.Columns)
                 {
                     ColumnElement columnElement = columnReferenceElement.Column;
                     comments.Add(
@@ -363,11 +363,11 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                             SyntaxFactory.ThisExpression(),
                                                             SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
                                                         SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                                    SyntaxFactory.IdentifierName(this.tableElement.PrimaryKey.Name)),
+                                                    SyntaxFactory.IdentifierName(this.tableElement.PrimaryIndex.Name)),
                                                 SyntaxFactory.IdentifierName("Find")))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
-                                                RestService.UniqueKeyExpression.GetSyntax(this.tableElement.PrimaryKey)))))))),
+                                                RestService.UniqueKeyExpression.GetSyntax(this.tableElement.PrimaryIndex)))))))),
 
                     //                    if (serverAlert == null)
                     //                    {

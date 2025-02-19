@@ -19,13 +19,13 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
         /// <summary>
         /// The unique key element.
         /// </summary>
-        private readonly UniqueElement uniqueKeyElement;
+        private readonly UniqueIndexElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GenericUniqueIndexProperty"/> class.
         /// </summary>
         /// <param name="uniqueKeyElement">The unique key element.</param>
-        public GenericUniqueIndexProperty(UniqueElement uniqueKeyElement)
+        public GenericUniqueIndexProperty(UniqueIndexElement uniqueKeyElement)
         {
             // Initialize the object.
             this.uniqueKeyElement = uniqueKeyElement;

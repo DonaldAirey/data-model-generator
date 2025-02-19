@@ -19,13 +19,13 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         /// <summary>
         /// The foreign key description.
         /// </summary>
-        private readonly ForeignElement foreignKeyElement;
+        private readonly ForeignIndexElement foreignKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ChildrenProperty"/> class.
         /// </summary>
         /// <param name="foreignKeyElement">The column schema.</param>
-        public ChildrenProperty(ForeignElement foreignKeyElement)
+        public ChildrenProperty(ForeignIndexElement foreignKeyElement)
         {
             // Initialize the object.
             this.foreignKeyElement = foreignKeyElement;

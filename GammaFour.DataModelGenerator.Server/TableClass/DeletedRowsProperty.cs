@@ -1,7 +1,7 @@
-// <copyright file="AsyncReaderWriterLockField.cs" company="Gamma Four, Inc.">
+// <copyright file="DeletedRowsProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
-// <author>Donald Airey</author>
+// <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Server.TableClass
 {
     using System;
@@ -14,32 +14,62 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
     /// <summary>
     /// Creates a field that holds the column.
     /// </summary>
-    public class AsyncReaderWriterLockField : SyntaxElement
+    public class DeletedRowsProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AsyncReaderWriterLockField"/> class.
+        /// The description of the table.
         /// </summary>
-        public AsyncReaderWriterLockField()
+        private readonly TableElement tableElement;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DeletedRowsProperty"/> class.
+        /// </summary>
+        /// <param name="tableElement">The table element.</param>
+        public DeletedRowsProperty(TableElement tableElement)
         {
+            // Initialize the object.
+            this.tableElement = tableElement;
+            this.Name = "DeletedRows";
+
             //        /// <summary>
-            //        /// Locks this resource for the duration of a transaction.
+            //        /// Gets the list of deleted rows.
             //        /// </summary>
-            //        private readonly AsyncReaderWriterLock Lock = new AsyncReaderWriterLock();
-            this.Syntax = SyntaxFactory.FieldDeclaration(
-                SyntaxFactory.VariableDeclaration(
-                    SyntaxFactory.IdentifierName("AsyncReaderWriterLock"))
-                .WithVariables(
-                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                        SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier("asyncReaderWriterLock"))
-                        .WithInitializer(
-                            SyntaxFactory.EqualsValueClause(
-                                SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.IdentifierName("AsyncReaderWriterLock"))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList()))))))
-            .WithModifiers(AsyncReaderWriterLockField.Modifiers)
-            .WithLeadingTrivia(AsyncReaderWriterLockField.DocumentationComment);
+            //        public LinkedList<Account> DeletedRows = new LinkedList<Account>();
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
+                SyntaxFactory.GenericName(
+                    SyntaxFactory.Identifier("LinkedList"))
+                .WithTypeArgumentList(
+                    SyntaxFactory.TypeArgumentList(
+                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                            SyntaxFactory.IdentifierName(this.tableElement.Name)))),
+                SyntaxFactory.Identifier(this.Name))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithAccessorList(
+                SyntaxFactory.AccessorList(
+                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
+                        SyntaxFactory.AccessorDeclaration(
+                            SyntaxKind.GetAccessorDeclaration)
+                        .WithSemicolonToken(
+                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
+            .WithInitializer(
+                SyntaxFactory.EqualsValueClause(
+                    SyntaxFactory.ObjectCreationExpression(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("LinkedList"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name)))))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList())))
+            .WithSemicolonToken(
+                SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithLeadingTrivia(DeletedRowsProperty.DocumentationComment);
         }
 
         /// <summary>
@@ -53,7 +83,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Locks this resource for the duration of a transaction.
+                    //        /// Gets the list of deleted rows.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -76,7 +106,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Locks this resource for the duration of a transaction.",
+                                                $" Gets the list of deleted rows.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -99,23 +129,6 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
-                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
-                    });
             }
         }
     }

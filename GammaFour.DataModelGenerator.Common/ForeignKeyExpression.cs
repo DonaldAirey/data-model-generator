@@ -20,7 +20,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// </summary>
         /// <param name="foreignKeyElement">The unique key element.</param>
         /// <returns>An argument that extracts a key from an object.</returns>
-        public static ExpressionSyntax GetForeignKey(ForeignElement foreignKeyElement)
+        public static ExpressionSyntax GetForeignKey(ForeignIndexElement foreignKeyElement)
         {
             // Used as a variable when constructing the lambda expression.
             string abbreviation = foreignKeyElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();

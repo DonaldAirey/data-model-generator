@@ -111,7 +111,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
 
                 // this.AccountCode == other.AccountCode && this.AssetCode == other.AssetCode && this.Date == other.Date;
                 ExpressionSyntax previousExpressions = null;
-                foreach (var colmnReferenceElement in this.tableElement.PrimaryKey.Columns.Reverse<ColumnReferenceElement>())
+                foreach (var colmnReferenceElement in this.tableElement.PrimaryIndex.Columns.Reverse<ColumnReferenceElement>())
                 {
                     var columnElement = colmnReferenceElement.Column;
                     if (previousExpressions == null)

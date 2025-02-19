@@ -2,66 +2,66 @@
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Common.ForeignIndexClass
+namespace GammaFour.DataModelGenerator.Server.TableClass
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
+    using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field to hold the parent table.
+    /// Creates a field to hold the current contents of the record.
     /// </summary>
     public class DictionaryField : SyntaxElement
     {
         /// <summary>
-        /// The table schema.
+        /// The description of the table.
         /// </summary>
-        private readonly ForeignIndexElement foreignKeyElement;
+        private readonly TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DictionaryField"/> class.
         /// </summary>
-        /// <param name="foreignKeyElement">The table schema.</param>
-        public DictionaryField(ForeignIndexElement foreignKeyElement)
+        /// <param name="tableElement">The table element.</param>
+        public DictionaryField(TableElement tableElement)
         {
             // Initialize the object.
-            this.foreignKeyElement = foreignKeyElement;
-
-            // This is the name of the field.
             this.Name = "dictionary";
+            this.tableElement = tableElement;
 
             //        /// <summary>
-            //        /// The dictionary containing the index.
+            //        /// The primary index.
             //        /// </summary>
-            //        private Dictionary<Guid, ProvinceRow> dictionary = new Dictionary<Guid, ProvinceRow>();
+            //        private readonly Dictionary<string, Asset> dictionary = new Dictionary<string, Asset>();
             this.Syntax = SyntaxFactory.FieldDeclaration(
-                    SyntaxFactory.VariableDeclaration(this.Type)
-                    .WithVariables(
-                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                            SyntaxFactory.VariableDeclarator(
-                                SyntaxFactory.Identifier(this.Name))
-                            .WithInitializer(this.Initializer))))
-                .WithModifiers(DictionaryField.Modifiers)
-                .WithLeadingTrivia(DictionaryField.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
+                SyntaxFactory.VariableDeclaration(
+                    SyntaxFactory.GenericName(
+                        SyntaxFactory.Identifier("Dictionary"))
+                    .WithTypeArgumentList(
+                        SyntaxFactory.TypeArgumentList(this.TypeArguments)))
+                .WithVariables(
+                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                        SyntaxFactory.VariableDeclarator(
+                            SyntaxFactory.Identifier("dictionary"))
+                        .WithInitializer(
+                            SyntaxFactory.EqualsValueClause(
+                                SyntaxFactory.ObjectCreationExpression(
+                                    SyntaxFactory.GenericName(
+                                        SyntaxFactory.Identifier("Dictionary"))
+                                    .WithTypeArgumentList(
+                                        SyntaxFactory.TypeArgumentList(this.TypeArguments)))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList()))))))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
                     new[]
                     {
                         SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
-                    });
-            }
+                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
+                    }))
+            .WithLeadingTrivia(DictionaryField.DocumentationComment);
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace GammaFour.DataModelGenerator.Common.ForeignIndexClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// The dictionary containing the index.
+                    //        /// The collection of records.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -98,7 +98,7 @@ namespace GammaFour.DataModelGenerator.Common.ForeignIndexClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " The dictionary containing the index.",
+                                                " The primary index.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -125,57 +125,51 @@ namespace GammaFour.DataModelGenerator.Common.ForeignIndexClass
         }
 
         /// <summary>
-        /// Gets the initializer.
+        /// Gets the type arguments for the dictionary.
         /// </summary>
-        private EqualsValueClauseSyntax Initializer
+        /// <returns>The type arguments for the dictionary.</returns>
+        private SeparatedSyntaxList<TypeSyntax> TypeArguments
         {
             get
             {
-                //  = new Dictionary<ProvinceExternalId0Key, ProvinceRow>();
-                return SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.ObjectCreationExpression(this.Type)
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList()));
-            }
-        }
-
-        /// <summary>
-        /// Gets the syntax for the field's type.
-        /// </summary>
-        private TypeSyntax Type
-        {
-            get
-            {
-                // Collect the datatypes used to create the dictionary.
-                List<TypeSyntax> types = new List<TypeSyntax>();
-
-                // The key of the dictionary is a simple or compound key that can uniquely identify the parent row.
-                if (this.foreignKeyElement.UniqueIndex.Columns.Count == 1)
+                // Create either a single element key, or a multiple element (tuple) key.
+                if (this.tableElement.PrimaryIndex.Columns.Count == 1)
                 {
-                    types.Add(this.foreignKeyElement.UniqueIndex.Columns.Single().Column.GetTypeSyntax());
+                    // <string, Account>
+                    return SyntaxFactory.SeparatedList<TypeSyntax>(
+                        new SyntaxNodeOrToken[]
+                        {
+                        SyntaxFactory.PredefinedType(
+                            SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                        SyntaxFactory.IdentifierName(this.tableElement.Name),
+                        });
                 }
                 else
                 {
-                    types.Add(SyntaxFactory.IdentifierName(this.foreignKeyElement.Refer + "Set"));
+                    // Gather up the elements of the tuple.
+                    var tokens = new List<SyntaxNodeOrToken>();
+                    foreach (var columnReferenceElement in this.tableElement.PrimaryIndex.Columns)
+                    {
+                        var columnElement = columnReferenceElement.Column;
+                        if (tokens.Count != 0)
+                        {
+                            tokens.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                        }
+
+                        tokens.Add(SyntaxFactory.TupleElement(columnElement.GetTypeSyntax()));
+                    }
+
+                    // <(string, string), Account>
+                    return SyntaxFactory.SeparatedList<TypeSyntax>(
+                        new SyntaxNodeOrToken[]
+                        {
+                            SyntaxFactory.TupleType(
+                            SyntaxFactory.SeparatedList<TupleElementSyntax>(tokens)),
+                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                            SyntaxFactory.IdentifierName(this.tableElement.Name),
+                        });
                 }
-
-                // This HashSet holds the child rows.
-                types.Add(
-                    SyntaxFactory.GenericName(
-                        SyntaxFactory.Identifier("HashSet"))
-                    .WithTypeArgumentList(
-                        SyntaxFactory.TypeArgumentList(
-                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name)))));
-
-                // Dictionary<Guid, HashSet<ProvinceRow>>
-                //                 or
-                // Dictionary<CustomerLastNameDateOfBirthKeySet, HashSet<MemberRow>>
-                return SyntaxFactory.GenericName(
-                        SyntaxFactory.Identifier("Dictionary"))
-                    .WithTypeArgumentList(
-                        SyntaxFactory.TypeArgumentList(
-                            SyntaxFactory.SeparatedList<TypeSyntax>(types)));
             }
         }
     }

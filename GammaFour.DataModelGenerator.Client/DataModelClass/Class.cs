@@ -147,7 +147,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             List<SyntaxElement> methods = new List<SyntaxElement>();
 
             // Alphabetize and add the methods as members of the class.
-            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
+            foreach (var syntaxElement in methods.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -171,7 +171,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             };
 
             // Alphabetize and add the fields as members of the class.
-            foreach (SyntaxElement syntaxElement in properties.OrderBy(m => m.Name))
+            foreach (var syntaxElement in properties.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -194,7 +194,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             };
 
             // Alphabetize and add the fields as members of the class.
-            foreach (SyntaxElement syntaxElement in properties.OrderBy(m => m.Name))
+            foreach (var syntaxElement in properties.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -214,7 +214,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             List<SyntaxElement> methods = new List<SyntaxElement>();
 
             // Alphabetize and add the methods as members of the class.
-            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
+            foreach (var syntaxElement in methods.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -234,7 +234,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             List<SyntaxElement> methods = new List<SyntaxElement>();
 
             // Alphabetize and add the methods as members of the class.
-            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
+            foreach (var syntaxElement in methods.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -258,7 +258,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             };
 
             // Alphabetize and add the methods as members of the class.
-            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
+            foreach (var syntaxElement in methods.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -308,7 +308,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             }
 
             // Alphabetize and add the fields as members of the class.
-            foreach (SyntaxElement syntaxElement in properties.OrderBy(m => m.Name))
+            foreach (var syntaxElement in properties.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }

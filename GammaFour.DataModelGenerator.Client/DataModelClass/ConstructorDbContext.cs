@@ -235,7 +235,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                     SyntaxFactory.IdentifierName("Enlist")))));
 
                     // Enlist each of the unique key indices
-                    foreach (UniqueElement uniqueKeyElement in tableElement.UniqueKeys)
+                    foreach (UniqueIndexElement uniqueKeyElement in tableElement.UniqueIndexes)
                     {
                         //                this.Buyers.BuyerKey.Enlist();
                         statements.Add(
@@ -254,7 +254,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                     }
 
                     // Enlist each of the foreign key indices.
-                    foreach (ForeignElement foreignKeyElement in tableElement.ParentKeys)
+                    foreach (ForeignIndexElement foreignKeyElement in tableElement.ParentKeys)
                     {
                         //                this.Buyers.CountryBuyerCountryIdKey.Enlist();
                         statements.Add(

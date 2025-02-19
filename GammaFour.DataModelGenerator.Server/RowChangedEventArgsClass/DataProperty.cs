@@ -1,8 +1,8 @@
-// <copyright file="AutoIncrementField.cs" company="Gamma Four, Inc.">
+// <copyright file="DataProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.TableClass
+namespace GammaFour.DataModelGenerator.Server.RowChangedEventArgsClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,45 +12,48 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field to hold the current contents of the record.
+    /// Creates a property that navigates to the parent record.
     /// </summary>
-    public class AutoIncrementField : SyntaxElement
+    public class DataProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AutoIncrementField"/> class.
+        /// Initializes a new instance of the <see cref="DataProperty"/> class.
         /// </summary>
-        /// <param name="columnElement">The table element.</param>
-        public AutoIncrementField(ColumnElement columnElement)
+        public DataProperty()
         {
-            // Validate the parameter
-            if (columnElement == null)
-            {
-                throw new ArgumentNullException(nameof(columnElement));
-            }
-
             // Initialize the object.
-            this.Name = columnElement.Name.ToCamelCase();
+            this.Name = "Data";
 
             //        /// <summary>
-            //        /// The autoincremented index.
+            //        /// Gets the data.
             //        /// </summary>
-            //        private int entityId;
-            this.Syntax = SyntaxFactory.FieldDeclaration(
-                SyntaxFactory.VariableDeclaration(
-                    SyntaxFactory.PredefinedType(
-                        SyntaxFactory.Token(SyntaxKind.IntKeyword)))
-                .WithVariables(
-                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                        SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier(this.Name)))))
-                .WithModifiers(AutoIncrementField.Modifiers)
-                .WithLeadingTrivia(AutoIncrementField.DocumentationComment);
+            //        public T? Data { get; } = row;
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
+                SyntaxFactory.NullableType(
+                    SyntaxFactory.IdentifierName("T")),
+                SyntaxFactory.Identifier(this.Name))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithAccessorList(
+                SyntaxFactory.AccessorList(
+                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
+                        SyntaxFactory.AccessorDeclaration(
+                            SyntaxKind.GetAccessorDeclaration)
+                        .WithSemicolonToken(
+                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
+            .WithInitializer(
+                SyntaxFactory.EqualsValueClause(
+                    SyntaxFactory.IdentifierName("row")))
+            .WithSemicolonToken(
+                SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+            .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -58,7 +61,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// The collection of records.
+                    //        /// Gets or sets the parent <see cref="Account"/> table.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -81,7 +84,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " The autoincremented index.",
+                                                "  Gets the data.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -104,22 +107,6 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
-                    });
             }
         }
     }

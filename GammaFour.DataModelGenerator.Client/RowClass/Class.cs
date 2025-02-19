@@ -168,7 +168,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             List<SyntaxElement> methods = new List<SyntaxElement>();
 
             // Alphabetize and add the methods as members of the class.
-            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
+            foreach (var syntaxElement in methods.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -188,7 +188,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             List<SyntaxElement> methods = new List<SyntaxElement>();
 
             // Alphabetize and add the methods as members of the class.
-            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
+            foreach (var syntaxElement in methods.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -228,7 +228,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             };
 
             // Alphabetize and add the methods as members of the class.
-            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
+            foreach (var syntaxElement in methods.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -254,13 +254,13 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             };
 
             // Create these fields for each child table.
-            foreach (ForeignElement foreignKeyElement in this.tableElement.ChildKeys)
+            foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ChildKeys)
             {
                 fields.Add(new GetChildrenFunctionField(foreignKeyElement));
             }
 
             // Alphabetize and add the fields as members of the class.
-            foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
+            foreach (var syntaxElement in fields.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -284,7 +284,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             };
 
             // Alphabetize and add the fields as members of the class.
-            foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
+            foreach (var syntaxElement in fields.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -304,13 +304,13 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             List<SyntaxElement> fields = new List<SyntaxElement>();
 
             // Create these fields for each child table.
-            foreach (ForeignElement foreignKeyElement in this.tableElement.ChildKeys)
+            foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ChildKeys)
             {
                 fields.Add(new DefaultChildrenField(foreignKeyElement));
             }
 
             // Alphabetize and add the fields as members of the class.
-            foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
+            foreach (var syntaxElement in fields.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -335,13 +335,13 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             };
 
             // Create a navigation property to each of the parent collections.
-            foreach (ForeignElement foreignKeyElement in this.tableElement.ParentKeys)
+            foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ParentKeys)
             {
                 properties.Add(new ParentProperty(foreignKeyElement));
             }
 
             // Create a navigation property to each of the child records.
-            foreach (ForeignElement foreignKeyElement in this.tableElement.ChildKeys)
+            foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ChildKeys)
             {
                 properties.Add(new ChildrenProperty(foreignKeyElement));
             }
@@ -353,7 +353,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             }
 
             // Alphabetize and add the properties as members of the class.
-            foreach (SyntaxElement syntaxElement in properties.OrderBy(m => m.Name))
+            foreach (var syntaxElement in properties.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }

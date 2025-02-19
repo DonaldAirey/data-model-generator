@@ -1,4 +1,4 @@
-//  <copyright file="ParentTableField.cs" company="Gamma Four, Inc.">
+//  <copyright file="ParentRowField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,33 +12,33 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field to hold the current contents of the record.
+    /// Creates a field to hold the parent row.
     /// </summary>
-    public class ParentTableField : SyntaxElement
+    public class ParentRowField : SyntaxElement
     {
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private readonly TableElement tableElement;
+        private readonly ForeignIndexElement foreignIndexElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ParentTableField"/> class.
+        /// Initializes a new instance of the <see cref="ParentRowField"/> class.
         /// </summary>
-        /// <param name="tableElement">The column schema.</param>
-        public ParentTableField(TableElement tableElement)
+        /// <param name="foreignIndexElement">The foreign index element.</param>
+        public ParentRowField(ForeignIndexElement foreignIndexElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement;
-            this.Name = this.tableElement.Name.ToPlural().ToVariableName();
+            this.foreignIndexElement = foreignIndexElement;
+            this.Name = this.foreignIndexElement.UniqueParentName.ToCamelCase();
 
             //        /// <summary>
-            //        /// The table to which this row belongs.
+            //        /// the parent <see cref="Asset"/> row.
             //        /// </summary>
-            //        private Accounts? accounts;
+            //        private Account? account;
             this.Syntax = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
                     SyntaxFactory.NullableType(
-                        SyntaxFactory.IdentifierName($"{this.tableElement.Name.ToPlural()}")))
+                        SyntaxFactory.IdentifierName($"{this.foreignIndexElement.UniqueIndex.Table.Name}")))
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                         SyntaxFactory.VariableDeclarator(
@@ -83,7 +83,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" The parent <see cref=\"{this.tableElement.Name.ToPlural()}\"/> table.",
+                                                $" The parent <see cref=\"{this.foreignIndexElement.UniqueIndex.Table.Name}\"/> row.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

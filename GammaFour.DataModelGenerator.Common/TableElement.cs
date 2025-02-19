@@ -23,7 +23,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// The foreign key elements.
         /// </summary>
-        private List<ForeignElement> foreignKeyElements;
+        private List<ForeignIndexElement> foreignKeyElements;
 
         /// <summary>
         /// The index of the table.
@@ -33,22 +33,22 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// The child foreign key elements.
         /// </summary>
-        private List<ForeignElement> childKeyElements;
+        private List<ForeignIndexElement> childKeyElements;
 
         /// <summary>
         /// The parent key elements.
         /// </summary>
-        private List<ForeignElement> parentKeyElements;
+        private List<ForeignIndexElement> parentKeyElements;
 
         /// <summary>
         /// The primary key element.
         /// </summary>
-        private UniqueElement primaryKeyElement;
+        private UniqueIndexElement primaryKeyElement;
 
         /// <summary>
         /// The unique key elements.
         /// </summary>
-        private List<UniqueElement> uniqueKeyElements;
+        private List<UniqueIndexElement> uniqueKeyElements;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TableElement"/> class.
@@ -106,14 +106,14 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the ForeignKey constraints.
         /// </summary>
-        public List<ForeignElement> ForeignKeys
+        public List<ForeignIndexElement> ForeignKeys
         {
             get
             {
                 if (this.foreignKeyElements == null)
                 {
                     this.foreignKeyElements = (from fke in this.XmlSchemaDocument.ForeignKeys
-                                               where fke.UniqueKey.Table == this
+                                               where fke.UniqueIndex.Table == this
                                                select fke).ToList();
                 }
 
@@ -150,14 +150,14 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the foreign keys which are children of this table.
         /// </summary>
-        public List<ForeignElement> ChildKeys
+        public List<ForeignIndexElement> ChildKeys
         {
             get
             {
                 if (this.childKeyElements == null)
                 {
                     this.childKeyElements = (from fke in this.XmlSchemaDocument.ForeignKeys
-                                             where fke.UniqueKey.Table == this
+                                             where fke.UniqueIndex.Table == this
                                              orderby fke.Name
                                              select fke).ToList();
                 }
@@ -169,7 +169,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the foreign keys which are the parents of this table.
         /// </summary>
-        public List<ForeignElement> ParentKeys
+        public List<ForeignIndexElement> ParentKeys
         {
             get
             {
@@ -188,14 +188,14 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the primary key on this table.
         /// </summary>
-        public UniqueElement PrimaryKey
+        public UniqueIndexElement PrimaryIndex
         {
             get
             {
                 if (this.primaryKeyElement == null)
                 {
-                    this.primaryKeyElement = (from uk in this.UniqueKeys
-                                              where uk.IsPrimaryKey
+                    this.primaryKeyElement = (from uk in this.UniqueIndexes
+                                              where uk.IsPrimaryIndex
                                               select uk).FirstOrDefault();
                 }
 
@@ -206,7 +206,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the unique constraints.
         /// </summary>
-        public List<UniqueElement> UniqueKeys
+        public List<UniqueIndexElement> UniqueIndexes
         {
             get
             {

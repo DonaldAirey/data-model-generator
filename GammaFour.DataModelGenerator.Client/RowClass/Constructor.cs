@@ -80,7 +80,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                         arrayElementList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
                     }
 
-                    arrayElementList.Add(SyntaxFactory.DefaultExpression(Conversions.FromType(columnElement.ColumnType)));
+                    arrayElementList.Add(SyntaxFactory.DefaultExpression(columnElement.GetTypeSyntax()));
                 }
 
                 //            this.currentData = new object[15]
@@ -129,7 +129,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                 //            this.getBuyers = () => Country.defaultBuyers;
                 //            this.getProvinces = () => Country.defaultProvinces;
                 //            this.getRegions = () => Country.defaultRegions;
-                foreach (ForeignElement foreignKeyElement in this.tableElement.ChildKeys)
+                foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ChildKeys)
                 {
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(

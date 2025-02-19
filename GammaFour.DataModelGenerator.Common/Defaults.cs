@@ -22,7 +22,11 @@ namespace GammaFour.DataModelGenerator.Common
         {
             if (columnType.FullName == "System.String")
             {
-                return SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(string.Empty));
+                return SyntaxFactory.MemberAccessExpression(
+                    SyntaxKind.SimpleMemberAccessExpression,
+                    SyntaxFactory.PredefinedType(
+                        SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                    SyntaxFactory.IdentifierName("Empty"));
             }
 
             // Not handled.

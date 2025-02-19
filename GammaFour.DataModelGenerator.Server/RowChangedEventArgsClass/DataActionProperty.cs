@@ -1,8 +1,8 @@
-// <copyright file="ForeignKeyProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="DataActionProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.RowClass
+namespace GammaFour.DataModelGenerator.Server.RowChangedEventArgsClass
 {
     using System;
     using System.Collections.Generic;
@@ -14,42 +14,23 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
     /// <summary>
     /// Creates a property that navigates to the parent record.
     /// </summary>
-    public class ForeignKeyProperty : SyntaxElement
+    public class DataActionProperty : SyntaxElement
     {
         /// <summary>
-        /// The column element.
+        /// Initializes a new instance of the <see cref="DataActionProperty"/> class.
         /// </summary>
-        private readonly ForeignIndexElement foreignElement;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ForeignKeyProperty"/> class.
-        /// </summary>
-        /// <param name="foreignElement">The column element.</param>
-        public ForeignKeyProperty(ForeignIndexElement foreignElement)
+        public DataActionProperty()
         {
             // Initialize the object.
-            this.foreignElement = foreignElement;
-            this.Name = this.foreignElement.Table.Name;
+            this.Name = "DataAction";
 
             //        /// <summary>
-            //        /// Gets the child <see cref="Order"/> rows.
+            //        /// Gets the action that caused the change.
             //        /// </summary>
-            //        [JsonIgnore]
-            //        public HashSet<Order> Orders { get; } = new HashSet<Order>();
+            //        public DataAction DataAction { get; } = dataAction;
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.GenericName(
-                    SyntaxFactory.Identifier("HashSet"))
-                .WithTypeArgumentList(
-                    SyntaxFactory.TypeArgumentList(
-                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                            SyntaxFactory.IdentifierName(this.Name)))),
-                SyntaxFactory.Identifier(foreignElement.Table.Name.ToPlural()))
-            .WithAttributeLists(
-                SyntaxFactory.SingletonList<AttributeListSyntax>(
-                    SyntaxFactory.AttributeList(
-                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
-                            SyntaxFactory.Attribute(
-                                SyntaxFactory.IdentifierName("JsonIgnore"))))))
+                SyntaxFactory.IdentifierName("DataAction"),
+                SyntaxFactory.Identifier("DataAction"))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
@@ -62,15 +43,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                             SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
             .WithInitializer(
                 SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.ObjectCreationExpression(
-                        SyntaxFactory.GenericName(
-                            SyntaxFactory.Identifier("HashSet"))
-                        .WithTypeArgumentList(
-                            SyntaxFactory.TypeArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName(foreignElement.Table.Name)))))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList())))
+                    SyntaxFactory.IdentifierName("dataAction")))
             .WithSemicolonToken(
                 SyntaxFactory.Token(SyntaxKind.SemicolonToken))
             .WithLeadingTrivia(this.DocumentationComment);
@@ -87,7 +60,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Gets or sets the parent <see cref="Account"/> table.
+                    //        /// Gets the action that caused the change.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -110,7 +83,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $"  Gets the child <see cref=\"{this.foreignElement.Table.Name}\"/> rows.",
+                                                " Gets the action that caused the change.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

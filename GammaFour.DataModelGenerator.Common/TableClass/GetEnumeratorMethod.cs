@@ -55,7 +55,7 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                 // The elements of the body are added to this collection as they are assembled.
                 List<StatementSyntax> statements = new List<StatementSyntax>
                 {
-                    //            return this.Rows.GetEnumerator();
+                    //            return this.dictionary.Values.GetEnumerator();
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -65,7 +65,7 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("collection")),
+                                        SyntaxFactory.IdentifierName("dictionary")),
                                     SyntaxFactory.IdentifierName("Values")),
                                 SyntaxFactory.IdentifierName("GetEnumerator")))),
                 };
@@ -110,22 +110,6 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                    });
             }
         }
     }

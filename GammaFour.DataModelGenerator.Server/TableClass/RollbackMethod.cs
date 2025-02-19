@@ -33,8 +33,16 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 SyntaxFactory.PredefinedType(
                     SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                 SyntaxFactory.Identifier(this.Name))
-            .WithModifiers(RollbackMethod.Modifiers)
-            .WithParameterList(RollbackMethod.Parameters)
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithParameterList(
+                SyntaxFactory.ParameterList(
+                    SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
+                        SyntaxFactory.Parameter(
+                            SyntaxFactory.Identifier("enlistment"))
+                        .WithType(
+                            SyntaxFactory.IdentifierName("Enlistment")))))
             .WithBody(RollbackMethod.Body)
             .WithLeadingTrivia(RollbackMethod.DocumentationComment);
         }
@@ -120,44 +128,6 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                    });
-            }
-        }
-
-        /// <summary>
-        /// Gets the list of parameters.
-        /// </summary>
-        private static ParameterListSyntax Parameters
-        {
-            get
-            {
-                // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>
-                {
-                    // Enlistment enlistment
-                    SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier("enlistment"))
-                    .WithType(
-                        SyntaxFactory.IdentifierName("Enlistment")),
-                };
-
-                // This is the complete parameter specification for this constructor.
-                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
             }
         }
     }

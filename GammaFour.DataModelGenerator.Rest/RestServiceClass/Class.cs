@@ -217,7 +217,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             };
 
             // Alphabetize and add the fields as members of the class.
-            foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
+            foreach (var syntaxElement in fields.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -254,14 +254,14 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 new DeleteOneMethod(this.tableElement),
                 new DeleteMethod(this.tableElement),
                 new GetAllMethod(this.tableElement),
-                new GetMethod(this.tableElement.PrimaryKey),
+                new GetMethod(this.tableElement.PrimaryIndex),
                 new PostMethod(this.tableElement),
                 new PutMethod(this.tableElement),
                 new PatchMethod(this.tableElement),
             };
 
             // Alphabetize and add the methods as members of the class.
-            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
+            foreach (var syntaxElement in methods.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }

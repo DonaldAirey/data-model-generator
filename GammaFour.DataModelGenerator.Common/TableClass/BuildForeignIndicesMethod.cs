@@ -110,7 +110,7 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 // Initialize the foreign index properties.
-                foreach (ForeignElement foreignKeyElement in this.tableElement.ParentKeys)
+                foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ParentKeys)
                 {
                     //            this.CountryCodeKey = new UniqueIndex<Country>("CountryCodeKey").HasIndex(c => c.Code);
                     statements.Add(
@@ -166,7 +166,7 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
         /// </summary>
         /// <param name="foreignKeyElement">The foreign index description.</param>
         /// <returns>Code to initialize a unique index.</returns>
-        private static ExpressionSyntax GetForeignKeyInitializer(ForeignElement foreignKeyElement)
+        private static ExpressionSyntax GetForeignKeyInitializer(ForeignIndexElement foreignKeyElement)
         {
             //        new ForeignIndex<Account,Item>("AccountSymbolKey")
             ExpressionSyntax expressionSyntax = SyntaxFactory.ObjectCreationExpression(
@@ -177,7 +177,7 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                         SyntaxFactory.SeparatedList<TypeSyntax>(
                             new SyntaxNodeOrToken[]
                             {
-                                    SyntaxFactory.IdentifierName(foreignKeyElement.UniqueKey.Table.Name),
+                                    SyntaxFactory.IdentifierName(foreignKeyElement.UniqueIndex.Table.Name),
                                     SyntaxFactory.Token(SyntaxKind.CommaToken),
                                     SyntaxFactory.IdentifierName(foreignKeyElement.Table.Name),
                             }))))
@@ -200,8 +200,8 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.ThisExpression(),
                                                 SyntaxFactory.IdentifierName(foreignKeyElement.XmlSchemaDocument.Name)),
-                                            SyntaxFactory.IdentifierName(foreignKeyElement.UniqueKey.Table.Name.ToPlural())),
-                                        SyntaxFactory.IdentifierName(foreignKeyElement.UniqueKey.Name))),
+                                            SyntaxFactory.IdentifierName(foreignKeyElement.UniqueIndex.Table.Name.ToPlural())),
+                                        SyntaxFactory.IdentifierName(foreignKeyElement.UniqueIndex.Name))),
                         })));
 
             // .HasIndex(a => a.ItemId)

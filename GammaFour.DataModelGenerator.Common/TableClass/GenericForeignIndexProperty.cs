@@ -19,13 +19,13 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
         /// <summary>
         /// The foreign key description.
         /// </summary>
-        private readonly ForeignElement foreignElement;
+        private readonly ForeignIndexElement foreignElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GenericForeignIndexProperty"/> class.
         /// </summary>
         /// <param name="foreignElement">The column schema.</param>
-        public GenericForeignIndexProperty(ForeignElement foreignElement)
+        public GenericForeignIndexProperty(ForeignIndexElement foreignElement)
         {
             // Initialize the object.
             this.foreignElement = foreignElement;
@@ -43,7 +43,7 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                         SyntaxFactory.SeparatedList<TypeSyntax>(
                             new SyntaxNodeOrToken[]
                             {
-                                SyntaxFactory.IdentifierName(foreignElement.UniqueKey.Table.Name),
+                                SyntaxFactory.IdentifierName(foreignElement.UniqueIndex.Table.Name),
                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                                 SyntaxFactory.IdentifierName(foreignElement.Table.Name),
                             }))),

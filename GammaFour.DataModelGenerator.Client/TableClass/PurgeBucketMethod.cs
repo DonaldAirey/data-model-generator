@@ -227,7 +227,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 // For each parent table, include a check to make sure the parent exists before adding the record.
-                foreach (ForeignElement foreignKeyElement in this.tableElement.ChildKeys)
+                foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ChildKeys)
                 {
                     //                if (entity.EntityTreesByChildId.Any())
                     //                {
@@ -317,7 +317,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                                             SyntaxFactory.ThisExpression(),
                                                             SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
                                                         SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                                    SyntaxFactory.IdentifierName(this.tableElement.PrimaryKey.Name)),
+                                                    SyntaxFactory.IdentifierName(this.tableElement.PrimaryIndex.Name)),
                                                 SyntaxFactory.IdentifierName("Find")))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(

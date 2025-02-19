@@ -394,7 +394,7 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
                 //            this.getBuyers = () => Country.defaultBuyers;
                 //            this.getProvinces = () => Country.defaultProvinces;
                 //            this.getRegions = () => Country.defaultRegions;
-                foreach (ForeignElement foreignKeyElement in this.tableElement.ChildKeys)
+                foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ChildKeys)
                 {
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
@@ -428,7 +428,7 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
                 //                this.getAccountCanonMaps = () => this.Accounts.DataModel.AccountCanonMaps.AccountAccountCanonMapIndex.GetChildren(this);
                 //                this.getAccountGroups = () => this.Accounts.DataModel.AccountGroups.AccountAccountGroupIndex.GetChildren(this);
                 //                this.getAlerts = () => this.Accounts.DataModel.Alerts.AccountAlertIndex.GetChildren(this);
-                foreach (ForeignElement foreignKeyElement in this.tableElement.ChildKeys)
+                foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ChildKeys)
                 {
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
@@ -452,7 +452,7 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(foreignKeyElement.UniqueKey.Table.Name.ToPlural())),
+                                                            SyntaxFactory.IdentifierName(foreignKeyElement.UniqueIndex.Table.Name.ToPlural())),
                                                         SyntaxFactory.IdentifierName(foreignKeyElement.XmlSchemaDocument.Name)),
                                                     SyntaxFactory.IdentifierName(foreignKeyElement.Table.Name.ToPlural())),
                                                 SyntaxFactory.IdentifierName(foreignKeyElement.Name)),

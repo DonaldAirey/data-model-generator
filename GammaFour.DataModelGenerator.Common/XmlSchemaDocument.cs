@@ -96,11 +96,11 @@ namespace GammaFour.DataModelGenerator.Common
             }
 
             // This will remove all the undecorated unique keys and replace them with decorated ones.
-            List<XElement> uniqueElements = rootElement.Elements(XmlSchemaDocument.UniqueName).ToList();
-            foreach (XElement xElement in uniqueElements)
+            List<XElement> uniqueIndexElements = rootElement.Elements(XmlSchemaDocument.UniqueName).ToList();
+            foreach (XElement xElement in uniqueIndexElements)
             {
                 // This creates the unique constraints.
-                rootElement.Add(new UniqueElement(xElement));
+                rootElement.Add(new UniqueIndexElement(xElement));
                 xElement.Remove();
             }
 
@@ -111,7 +111,7 @@ namespace GammaFour.DataModelGenerator.Common
                 // This will create the foreign key constraints if they're requested.
                 if (this.IsRelational)
                 {
-                    rootElement.Add(new ForeignElement(xElement));
+                    rootElement.Add(new ForeignIndexElement(xElement));
                 }
 
                 // Make sure we remove this node in any case.
@@ -121,7 +121,7 @@ namespace GammaFour.DataModelGenerator.Common
             // Validate the document.
             foreach (TableElement tableElement in this.Tables)
             {
-                if (tableElement.PrimaryKey == null)
+                if (tableElement.PrimaryIndex == null)
                 {
                     throw new InvalidOperationException($"Table '{tableElement.Name}' must have a primary key.");
                 }
@@ -217,7 +217,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the IsPrimaryKey attribute.
         /// </summary>
-        public static XName IsPrimaryKeyName { get; } = XName.Get("isPrimaryKey", XmlSchemaDocument.GammaFourDataNamespace);
+        public static XName IsPrimaryKeyName { get; } = XName.Get("isPrimaryIndex", XmlSchemaDocument.GammaFourDataNamespace);
 
         /// <summary>
         /// Gets the IsRelational attribute.
@@ -337,12 +337,12 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the constraint elements.
         /// </summary>
-        public List<ForeignElement> ForeignKeys
+        public List<ForeignIndexElement> ForeignKeys
         {
             get
             {
                 XElement rootElement = this.Root.Element(XmlSchemaDocument.ElementName);
-                return rootElement.Elements(XmlSchemaDocument.KeyrefName).Cast<ForeignElement>().ToList();
+                return rootElement.Elements(XmlSchemaDocument.KeyrefName).Cast<ForeignIndexElement>().ToList();
             }
         }
 
@@ -393,12 +393,12 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the unique key elements.
         /// </summary>
-        public List<UniqueElement> UniqueKeys
+        public List<UniqueIndexElement> UniqueKeys
         {
             get
             {
                 XElement rootElement = this.Root.Element(XmlSchemaDocument.ElementName);
-                return rootElement.Elements(XmlSchemaDocument.UniqueName).Cast<UniqueElement>().ToList();
+                return rootElement.Elements(XmlSchemaDocument.UniqueName).Cast<UniqueIndexElement>().ToList();
             }
         }
 

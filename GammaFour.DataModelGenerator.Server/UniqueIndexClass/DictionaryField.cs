@@ -1,8 +1,8 @@
-// <copyright file="CollectionField.cs" company="Gamma Four, Inc.">
+// <copyright file="DictionaryField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.TableClass
+namespace GammaFour.DataModelGenerator.Server.UniqueIndexClass
 {
     using System;
     using System.Collections.Generic;
@@ -14,48 +14,54 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
     /// <summary>
     /// Creates a field to hold the current contents of the record.
     /// </summary>
-    public class CollectionField : SyntaxElement
+    public class DictionaryField : SyntaxElement
     {
         /// <summary>
         /// The description of the table.
         /// </summary>
-        private readonly TableElement tableElement;
+        private readonly UniqueIndexElement uniqueIndexElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CollectionField"/> class.
+        /// Initializes a new instance of the <see cref="DictionaryField"/> class.
         /// </summary>
-        /// <param name="tableElement">The table element.</param>
-        public CollectionField(TableElement tableElement)
+        /// <param name="uniqueIndexElement">The table element.</param>
+        public DictionaryField(UniqueIndexElement uniqueIndexElement)
         {
             // Initialize the object.
-            this.Name = "collection";
-            this.tableElement = tableElement;
+            this.Name = "dictionary";
+            this.uniqueIndexElement = uniqueIndexElement;
 
             //        /// <summary>
-            //        /// The collection of records.
+            //        /// The non-primary index.
             //        /// </summary>
-            //        private SortedList<object, Buyer> collection = new SortedList<object, Buyer>();
+            //        private readonly Dictionary<string, Asset> dictionary = new Dictionary<string, Asset>();
             this.Syntax = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
                     SyntaxFactory.GenericName(
-                        SyntaxFactory.Identifier("SortedList"))
+                        SyntaxFactory.Identifier("Dictionary"))
                     .WithTypeArgumentList(
-                        SyntaxFactory.TypeArgumentList(
-                            SyntaxFactory.SeparatedList<TypeSyntax>(
-                                new SyntaxNodeOrToken[]
-                                {
-                                    SyntaxFactory.PredefinedType(
-                                        SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
-                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name),
-                                }))))
+                        SyntaxFactory.TypeArgumentList(this.TypeArguments)))
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                         SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier(this.Name))
-                            .WithInitializer(this.Initializer))))
-                .WithModifiers(CollectionField.Modifiers)
-                .WithLeadingTrivia(CollectionField.DocumentationComment);
+                            SyntaxFactory.Identifier("dictionary"))
+                        .WithInitializer(
+                            SyntaxFactory.EqualsValueClause(
+                                SyntaxFactory.ObjectCreationExpression(
+                                    SyntaxFactory.GenericName(
+                                        SyntaxFactory.Identifier("Dictionary"))
+                                    .WithTypeArgumentList(
+                                        SyntaxFactory.TypeArgumentList(this.TypeArguments)))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList()))))))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
+                    }))
+            .WithLeadingTrivia(DictionaryField.DocumentationComment);
         }
 
         /// <summary>
@@ -69,7 +75,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// The collection of records.
+                    //        /// The non-primary index.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -92,7 +98,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " The collection of records.",
+                                                " The non-primary index.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -119,45 +125,51 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         }
 
         /// <summary>
-        /// Gets the modifiers.
+        /// Gets the type arguments for the dictionary.
         /// </summary>
-        private static SyntaxTokenList Modifiers
+        /// <returns>The type arguments for the dictionary.</returns>
+        private SeparatedSyntaxList<TypeSyntax> TypeArguments
         {
             get
             {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
+                // Create either a single element key, or a multiple element (tuple) key.
+                if (this.uniqueIndexElement.Columns.Count == 1)
+                {
+                    // <string, Account>
+                    return SyntaxFactory.SeparatedList<TypeSyntax>(
+                        new SyntaxNodeOrToken[]
+                        {
+                        SyntaxFactory.PredefinedType(
+                            SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                        SyntaxFactory.IdentifierName(this.uniqueIndexElement.Table.Name),
+                        });
+                }
+                else
+                {
+                    // Gather up the elements of the tuple.
+                    var tokens = new List<SyntaxNodeOrToken>();
+                    foreach (var columnReferenceElement in this.uniqueIndexElement.Columns)
                     {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
-                    });
-            }
-        }
+                        var columnElement = columnReferenceElement.Column;
+                        if (tokens.Count != 0)
+                        {
+                            tokens.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                        }
 
-        /// <summary>
-        /// Gets the initializer.
-        /// </summary>
-        private EqualsValueClauseSyntax Initializer
-        {
-            get
-            {
-                // = new object();
-                return SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.ObjectCreationExpression(
-                        SyntaxFactory.GenericName(
-                            SyntaxFactory.Identifier("SortedList"))
-                        .WithTypeArgumentList(
-                            SyntaxFactory.TypeArgumentList(
-                                SyntaxFactory.SeparatedList<TypeSyntax>(
-                                    new SyntaxNodeOrToken[]
-                                    {
-                                        SyntaxFactory.PredefinedType(
-                                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
-                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name),
-                                    }))))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList()));
+                        tokens.Add(SyntaxFactory.TupleElement(columnElement.GetTypeSyntax()));
+                    }
+
+                    // <(string, string), Account>
+                    return SyntaxFactory.SeparatedList<TypeSyntax>(
+                        new SyntaxNodeOrToken[]
+                        {
+                            SyntaxFactory.TupleType(
+                            SyntaxFactory.SeparatedList<TupleElementSyntax>(tokens)),
+                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                            SyntaxFactory.IdentifierName(this.uniqueIndexElement.Table.Name),
+                        });
+                }
             }
         }
     }

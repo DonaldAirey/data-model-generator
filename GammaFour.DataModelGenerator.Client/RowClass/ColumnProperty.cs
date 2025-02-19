@@ -38,7 +38,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             //        /// </summary>
             //        public string ConfigurationId { get; set; }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                    Conversions.FromType(columnElement.ColumnType),
+                    columnElement.GetTypeSyntax(),
                     SyntaxFactory.Identifier(this.Name))
                 .WithAccessorList(this.AccessorList)
                 .WithModifiers(ColumnProperty.Modifiers)
@@ -190,7 +190,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                     statements.Add(
                         SyntaxFactory.ReturnStatement(
                             SyntaxFactory.CastExpression(
-                                Conversions.FromType(this.columnElement.ColumnType),
+                                this.columnElement.GetTypeSyntax(),
                                 SyntaxFactory.ElementAccessExpression(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
@@ -222,7 +222,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                                 SyntaxFactory.LiteralExpression(
                                                     SyntaxKind.NumericLiteralExpression,
                                                     SyntaxFactory.Literal(this.columnElement.Index)))))),
-                                Conversions.FromType(this.columnElement.ColumnType))));
+                                this.columnElement.GetTypeSyntax())));
                 }
 
                 //            get

@@ -88,7 +88,7 @@ namespace GammaFour.DataModelGenerator.RestService
 
             //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountKey).ConfigureAwait(false);
             //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountSymbolKey).ConfigureAwait(false);
-            foreach (UniqueElement uniqueElement in tableElement.UniqueKeys.OrderBy(ue => ue.Name))
+            foreach (UniqueIndexElement uniqueIndexElement in tableElement.UniqueIndexes.OrderBy(ue => ue.Name))
             {
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
@@ -113,8 +113,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.ThisExpression(),
                                                                 SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
-                                                            SyntaxFactory.IdentifierName(uniqueElement.Table.Name.ToPlural())),
-                                                        SyntaxFactory.IdentifierName(uniqueElement.Name)))))),
+                                                            SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToPlural())),
+                                                        SyntaxFactory.IdentifierName(uniqueIndexElement.Name)))))),
                                     SyntaxFactory.IdentifierName("ConfigureAwait")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
@@ -125,7 +125,7 @@ namespace GammaFour.DataModelGenerator.RestService
             }
 
             //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.ItemAccountKey).ConfigureAwait(false);
-            foreach (ForeignElement foreignElement in tableElement.ParentKeys.OrderBy(fe => fe.Name))
+            foreach (ForeignIndexElement foreignElement in tableElement.ParentKeys.OrderBy(fe => fe.Name))
             {
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
@@ -256,12 +256,12 @@ namespace GammaFour.DataModelGenerator.RestService
 
             // Alphabetize the unique and foreign indices so we can order them alphabetically.
             var names = new List<(string, object)>();
-            foreach (UniqueElement uniqueElement in tableElement.UniqueKeys.OrderBy(ue => ue.Name))
+            foreach (UniqueIndexElement uniqueIndexElement in tableElement.UniqueIndexes.OrderBy(ue => ue.Name))
             {
-                names.Add((uniqueElement.Name, uniqueElement));
+                names.Add((uniqueIndexElement.Name, uniqueIndexElement));
             }
 
-            foreach (ForeignElement foreignElement in tableElement.ParentKeys.OrderBy(fe => fe.Name))
+            foreach (ForeignIndexElement foreignElement in tableElement.ParentKeys.OrderBy(fe => fe.Name))
             {
                 names.Add((foreignElement.Name, foreignElement));
             }
@@ -271,7 +271,7 @@ namespace GammaFour.DataModelGenerator.RestService
             foreach (var name in names.OrderBy(n => n.Item1))
             {
                 //                     await lockingTransaction.WaitWriterAsync(this.dataModel.Positions.PositionIndex).ConfigureAwait(false);
-                if (name.Item2 is UniqueElement uniqueElement)
+                if (name.Item2 is UniqueIndexElement uniqueIndexElement)
                 {
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
@@ -296,8 +296,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                                     SyntaxFactory.ThisExpression(),
                                                                     SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
-                                                                SyntaxFactory.IdentifierName(uniqueElement.Table.Name.ToPlural())),
-                                                            SyntaxFactory.IdentifierName(uniqueElement.Name)))))),
+                                                                SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToPlural())),
+                                                            SyntaxFactory.IdentifierName(uniqueIndexElement.Name)))))),
                                         SyntaxFactory.IdentifierName("ConfigureAwait")))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
@@ -309,7 +309,7 @@ namespace GammaFour.DataModelGenerator.RestService
 
                 //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Positions.AccountPositionIndex).ConfigureAwait(false);
                 //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Positions.AssetPositionIndex).ConfigureAwait(false);
-                if (name.Item2 is ForeignElement foreignElement)
+                if (name.Item2 is ForeignIndexElement foreignElement)
                 {
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(

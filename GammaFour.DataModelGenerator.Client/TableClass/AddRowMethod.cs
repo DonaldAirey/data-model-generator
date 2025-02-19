@@ -171,7 +171,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 };
 
                 // Add the record to each of the unique key indices on this set.
-                foreach (UniqueElement uniqueKeyElement in this.tableElement.UniqueKeys)
+                foreach (UniqueIndexElement uniqueKeyElement in this.tableElement.UniqueIndexes)
                 {
                     //            this.BuyerKey.Add(buyer);
                     statements.Add(
@@ -192,7 +192,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 }
 
                 // Add the record to each of the foreign key indices on this set.
-                foreach (ForeignElement foreignKeyElement in this.tableElement.ParentKeys)
+                foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ParentKeys)
                 {
                     //            this.CountryBuyerCountryIdKey.Add(buyer);
                     statements.Add(

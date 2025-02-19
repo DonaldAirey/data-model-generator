@@ -176,10 +176,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         private SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the private instance fields.
-            List<SyntaxElement> fields = new List<SyntaxElement>
-            {
-                new ParentTableField(this.tableElement),
-            };
+            List<SyntaxElement> fields = new List<SyntaxElement>();
 
             // Create a field for each column.
             foreach (ColumnElement columnElement in this.tableElement.Columns)
@@ -187,8 +184,14 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                 fields.Add(new ColumnField(columnElement));
             }
 
+            // Create a field for each parent row.
+            foreach (var foreignIndexElement in this.tableElement.ParentKeys)
+            {
+                fields.Add(new ParentRowField(foreignIndexElement));
+            }
+
             // Alphabetize and add the fields as members of the class.
-            foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
+            foreach (var syntaxElement in fields.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -211,7 +214,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             };
 
             // Alphabetize and add the fields as members of the class.
-            foreach (SyntaxElement syntaxElement in fields.OrderBy(m => m.Name))
+            foreach (var syntaxElement in fields.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -239,7 +242,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             };
 
             // Alphabetize and add the methods as members of the class.
-            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
+            foreach (var syntaxElement in methods.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -256,15 +259,18 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceProperties(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
-            List<SyntaxElement> properties = new List<SyntaxElement>
-            {
-                new ParentTableProperty(this.tableElement),
-            };
+            List<SyntaxElement> properties = new List<SyntaxElement>();
 
             // Create a property for each column.
             foreach (ColumnElement columnElement in this.tableElement.Columns)
             {
                 properties.Add(new ColumnProperty(columnElement));
+            }
+
+            // Create a property for each parent row.
+            foreach (var foreignIndexElement in this.tableElement.ParentKeys)
+            {
+                properties.Add(new ParentRowProperty(foreignIndexElement));
             }
 
             // Create a property for each foriegn index.
@@ -274,7 +280,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             }
 
             // Alphabetize and add the properties as members of the class.
-            foreach (SyntaxElement syntaxElement in properties.OrderBy(m => m.Name))
+            foreach (var syntaxElement in properties.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }

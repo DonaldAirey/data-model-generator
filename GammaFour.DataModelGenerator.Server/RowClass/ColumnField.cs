@@ -52,7 +52,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             //        private string code = string.Empty;
             this.Syntax = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
-                    Conversions.FromType(columnElement.ColumnType))
+                    columnElement.GetTypeSyntax())
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(variableDeclarator)))
             .WithModifiers(

@@ -1,4 +1,4 @@
-// <copyright file="PurgedRowsProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="RowChangedEvent.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,59 +14,55 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
     /// <summary>
     /// Creates a field that holds the column.
     /// </summary>
-    public class PurgedRowsProperty : SyntaxElement
+    public class RowChangedEvent : SyntaxElement
     {
         /// <summary>
-        /// The description of the table.
+        /// The table element.
         /// </summary>
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PurgedRowsProperty"/> class.
+        /// Initializes a new instance of the <see cref="RowChangedEvent"/> class.
         /// </summary>
-        /// <param name="tableElement">The table element.</param>
-        public PurgedRowsProperty(TableElement tableElement)
+        /// <param name="tableElement">The column schema.</param>
+        public RowChangedEvent(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = "PurgedRows";
+            this.Name = "RowChanged";
 
             //        /// <summary>
-            //        /// Gets the collection of deleted records.
+            //        /// Occurs when a row has changed.
             //        /// </summary>
-            //        public List<(DateTime, Alert)> PurgedRows => this.purgedRows;
-            this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.GenericName(
-                    SyntaxFactory.Identifier("List"))
-                .WithTypeArgumentList(
-                    SyntaxFactory.TypeArgumentList(
-                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                            SyntaxFactory.TupleType(
-                                SyntaxFactory.SeparatedList<TupleElementSyntax>(
-                                    new SyntaxNodeOrToken[]
-                                    {
-                                        SyntaxFactory.TupleElement(
-                                            SyntaxFactory.IdentifierName("DateTime")),
-                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                        SyntaxFactory.TupleElement(
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name)),
-                                    }))))),
-                SyntaxFactory.Identifier("PurgedRows"))
-            .WithModifiers(PurgedRowsProperty.Modifiers)
-            .WithExpressionBody(
-                SyntaxFactory.ArrowExpressionClause(
-                    SyntaxFactory.MemberAccessExpression(
-                        SyntaxKind.SimpleMemberAccessExpression,
-                        SyntaxFactory.ThisExpression(),
-                        SyntaxFactory.IdentifierName("purgedRows"))))
-            .WithLeadingTrivia(PurgedRowsProperty.DocumentationComment)
-            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            //        public event EventHandler<RowChangedEventArgs<Asset>>? RecordChanged;
+            this.Syntax = SyntaxFactory.EventFieldDeclaration(
+                SyntaxFactory.VariableDeclaration(
+                    SyntaxFactory.NullableType(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("EventHandler"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                    SyntaxFactory.GenericName(
+                                        SyntaxFactory.Identifier("RowChangedEventArgs"))
+                                    .WithTypeArgumentList(
+                                        SyntaxFactory.TypeArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name)))))))))
+                .WithVariables(
+                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                        SyntaxFactory.VariableDeclarator(
+                            SyntaxFactory.Identifier(this.Name)))))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -74,7 +70,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Gets the collection of deleted records.
+                    //        /// Occurs when a row has changed.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -97,7 +93,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Gets the collection of deleted records.",
+                                                $" Occurs when a <see cref=\"{this.tableElement.Name}\"/> row has changed.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -120,22 +116,6 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                    });
             }
         }
     }

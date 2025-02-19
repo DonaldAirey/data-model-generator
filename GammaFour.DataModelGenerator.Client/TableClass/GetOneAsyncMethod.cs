@@ -92,7 +92,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                             $"rest/{this.tableElement.Name.ToCamelCase().ToPlural()}/",
                             SyntaxFactory.TriviaList())),
                 };
-                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryIndex.Columns)
                 {
                     if (interpolatedStringContentSyntax.Count > 1)
                     {
@@ -286,7 +286,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 List<SyntaxNodeOrToken> parameters = new List<SyntaxNodeOrToken>();
 
                 // string countryCode
-                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryIndex.Columns)
                 {
                     if (parameters.Count != 0)
                     {
@@ -296,7 +296,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                     parameters.Add(
                         SyntaxFactory.Parameter(
                             SyntaxFactory.Identifier(columnReferenceElement.Column.Name.ToVariableName()))
-                        .WithType(Conversions.FromType(columnReferenceElement.Column.ColumnType)));
+                        .WithType(columnReferenceElement.Column.GetTypeSyntax()));
                 }
 
                 // This is the complete parameter specification for this constructor.

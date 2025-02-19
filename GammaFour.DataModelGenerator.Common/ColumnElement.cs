@@ -64,7 +64,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// A value indicating whether ths column is part of the primary key.
         /// </summary>
-        private bool? isPrimaryKey;
+        private bool? isPrimaryIndex;
 
         /// <summary>
         /// Indicates that the type information has been initialized.
@@ -212,14 +212,14 @@ namespace GammaFour.DataModelGenerator.Common
             get
             {
                 // This will examine the primary key to see if the column is part of the key.
-                if (!this.isPrimaryKey.HasValue)
+                if (!this.isPrimaryIndex.HasValue)
                 {
-                    this.isPrimaryKey = (from ce in this.Table.PrimaryKey.Columns
+                    this.isPrimaryIndex = (from ce in this.Table.PrimaryIndex.Columns
                                          where ce.Column == this
                                          select ce).Any();
                 }
 
-                return this.isPrimaryKey.Value;
+                return this.isPrimaryIndex.Value;
             }
         }
 

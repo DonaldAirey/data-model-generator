@@ -19,13 +19,13 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
         /// <summary>
         /// The description of the table.
         /// </summary>
-        private readonly UniqueElement uniqueKeyElement;
+        private readonly UniqueIndexElement uniqueKeyElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PrimaryKeyFunctionField"/> class.
         /// </summary>
         /// <param name="uniqueKeyElement">The table element.</param>
-        public PrimaryKeyFunctionField(UniqueElement uniqueKeyElement)
+        public PrimaryKeyFunctionField(UniqueIndexElement uniqueKeyElement)
         {
             // Initialize the object.
             this.Name = "primaryKeyFunction";
@@ -142,7 +142,7 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
             get
             {
                 // = p => (p.Name, p.CountryCode)
-                return SyntaxFactory.EqualsValueClause(UniqueKeyExpression.GetUniqueKey(this.uniqueKeyElement));
+                return SyntaxFactory.EqualsValueClause(UniqueIndexElementExtensions.GetUniqueKey(this.uniqueKeyElement, false));
             }
         }
     }

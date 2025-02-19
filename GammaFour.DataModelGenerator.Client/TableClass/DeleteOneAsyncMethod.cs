@@ -93,7 +93,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                             $"rest/{this.tableElement.Name.ToCamelCase().ToPlural()}/",
                             SyntaxFactory.TriviaList())),
                 };
-                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryKey.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryIndex.Columns)
                 {
                     if (interpolatedStringContentSyntax.Count > 1)
                     {

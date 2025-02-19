@@ -20,7 +20,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// </summary>
         /// <param name="uniqueKeyElement">The unique key element.</param>
         /// <returns>An expression that creates a filter for an index.</returns>
-        public static ExpressionSyntax GetNullableKeyFilter(UniqueElement uniqueKeyElement)
+        public static ExpressionSyntax GetNullableKeyFilter(UniqueIndexElement uniqueKeyElement)
         {
             // Used as a variable when constructing the lambda expression.
             string abbreviation = uniqueKeyElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
@@ -71,7 +71,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// </summary>
         /// <param name="foreignKeyElement">The unique key element.</param>
         /// <returns>An expression that creates a filter for an index.</returns>
-        public static ExpressionSyntax GetNullableKeyFilter(ForeignElement foreignKeyElement)
+        public static ExpressionSyntax GetNullableKeyFilter(ForeignIndexElement foreignKeyElement)
         {
             // Used as a variable when constructing the lambda expression.
             string abbreviation = foreignKeyElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();

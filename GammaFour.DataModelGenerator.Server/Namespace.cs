@@ -141,7 +141,6 @@ namespace GammaFour.DataModelGenerator.Server
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Data")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json.Serialization")),
-                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")),
                 };
@@ -152,11 +151,7 @@ namespace GammaFour.DataModelGenerator.Server
                     systemUsingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")));
                 }
 
-                List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>
-                {
-                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("DotNext.Threading")),
-                };
-
+                List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>();
                 if (!this.xmlSchemaDocument.IsVolatile)
                 {
                     usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")));
@@ -189,40 +184,39 @@ namespace GammaFour.DataModelGenerator.Server
         /// <returns>The collection of members augmented with the classes.</returns>
         private SyntaxList<MemberDeclarationSyntax> CreatePublicClasses(SyntaxList<MemberDeclarationSyntax> members)
         {
-            // Create the record classes.
-            List<RowClass.Class> recordClasses = new List<RowClass.Class>();
+            List<SyntaxElement> syntaxElements = new List<SyntaxElement>();
+
+            // The data model class.
+            syntaxElements.Add(new DataModelClass.Class(this.xmlSchemaDocument));
+            syntaxElements.Add(new RowChangedEventArgsClass.Class());
+
+            // Create the row classes.
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                recordClasses.Add(new RowClass.Class(tableElement));
+                syntaxElements.Add(new RowClass.Class(tableElement));
             }
 
-            // Alphabetize the list of record classes and add them to the structure.
-            foreach (RowClass.Class recordClass in recordClasses.OrderBy(c => c.Name))
-            {
-                members = members.Add(recordClass.Syntax);
-            }
-
-            // Create the record set classes.
-            List<TableClass.Class> recordCollectionClasses = new List<TableClass.Class>();
+            // Create the table classes and non-primary unique indexes.
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                recordCollectionClasses.Add(new TableClass.Class(tableElement));
+                syntaxElements.Add(new TableClass.Class(tableElement));
+                foreach (var uniqueIndexElement in tableElement.UniqueIndexes.Where(uie => !uie.IsPrimaryIndex))
+                {
+                    syntaxElements.Add(new UniqueIndexClass.Class(uniqueIndexElement));
+                }
             }
-
-            // Alphabetize the list of record sets and add them to the structure.
-            foreach (TableClass.Class @class in recordCollectionClasses.OrderBy(c => c.Name))
-            {
-                members = members.Add(@class.Syntax);
-            }
-
-            // The actual data model class.
-            members = members.Add(new DataModelClass.Class(this.xmlSchemaDocument).Syntax);
 
             // The non-volatile data model doesn't need the ORM infrastructure.
             if (!this.xmlSchemaDocument.IsVolatile)
             {
                 // The DbContext class that provides access to the persistent store.
                 members = members.Add(new DbContextClass.Class(this.xmlSchemaDocument).Syntax);
+            }
+
+            // Alphabetize the list of classes and add them to the structure.
+            foreach (var syntaxElement in syntaxElements.OrderBy(se => se.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
             }
 
             // This is the collection of alphabetized fields.
@@ -240,7 +234,7 @@ namespace GammaFour.DataModelGenerator.Server
             List<SyntaxElement> syntaxElements = new List<SyntaxElement>();
             syntaxElements.Add(new DataActionEnum.Enum());
 
-            // Alphabetize the list of record classes and add them to the structure.
+            // Alphabetize the list of classes and add them to the structure.
             foreach (var syntaxElement in syntaxElements.OrderBy(se => se.Name))
             {
                 members = members.Add(syntaxElement.Syntax);

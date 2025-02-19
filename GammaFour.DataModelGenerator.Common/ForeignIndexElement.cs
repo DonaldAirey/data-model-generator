@@ -1,4 +1,4 @@
-﻿// <copyright file="ForeignElement.cs" company="Gamma Four, Inc.">
+﻿// <copyright file="ForeignIndexElement.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,12 +12,12 @@ namespace GammaFour.DataModelGenerator.Common
     /// <summary>
     /// Creates foreign key constraint on a table.
     /// </summary>
-    public class ForeignElement : ConstraintElement
+    public class ForeignIndexElement : ConstraintElement
     {
         /// <summary>
         /// A unique key element.
         /// </summary>
-        private UniqueElement uniqueKeyElement;
+        private UniqueIndexElement uniqueKeyElement;
 
         /// <summary>
         /// The name of the parent table.
@@ -30,10 +30,10 @@ namespace GammaFour.DataModelGenerator.Common
         private string uniqueChildName;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ForeignElement"/> class.
+        /// Initializes a new instance of the <see cref="ForeignIndexElement"/> class.
         /// </summary>
         /// <param name="xElement">The description of the unique constraint.</param>
-        public ForeignElement(XElement xElement)
+        public ForeignIndexElement(XElement xElement)
             : base(xElement)
         {
             // Initialize the object.
@@ -67,14 +67,14 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                return this.UniqueKey.Columns;
+                return this.UniqueIndex.Columns;
             }
         }
 
         /// <summary>
-        /// Gets the unique key that to whic this foreign key refers.
+        /// Gets the unique key that to which this foreign key refers.
         /// </summary>
-        public UniqueElement UniqueKey
+        public UniqueIndexElement UniqueIndex
         {
             get
             {
@@ -85,7 +85,7 @@ namespace GammaFour.DataModelGenerator.Common
                         this.uniqueKeyElement = (from uk in this.XmlSchemaDocument.UniqueKeys
                                                  where uk.Name == this.Refer
                                                  select uk).SingleOrDefault();
-                        if (this.uniqueKeyElement == default(UniqueElement))
+                        if (this.uniqueKeyElement == default(UniqueIndexElement))
                         {
                             throw new InvalidOperationException($"Foreign key constraint {this.Name} can't find referenced unique key constraint {this.Refer}");
                         }
@@ -110,7 +110,7 @@ namespace GammaFour.DataModelGenerator.Common
                 if (this.uniqueParentName == null)
                 {
                     // Determinesd if there is a distinct path to the parent table.
-                    var isDistinctPathToParent = (from fke in this.UniqueKey.Table.ForeignKeys
+                    var isDistinctPathToParent = (from fke in this.UniqueIndex.Table.ForeignKeys
                                                   where fke.Table == this.Table
                                                   select fke).Count() == 1;
 
@@ -118,11 +118,11 @@ namespace GammaFour.DataModelGenerator.Common
                     // key with the columns that will make it unique.
                     if (isDistinctPathToParent)
                     {
-                        this.uniqueParentName = this.UniqueKey.Table.Name;
+                        this.uniqueParentName = this.UniqueIndex.Table.Name;
                     }
                     else
                     {
-                        this.uniqueParentName = this.UniqueKey.Table.Name + "By";
+                        this.uniqueParentName = this.UniqueIndex.Table.Name + "By";
                         foreach (ColumnReferenceElement columnReferenceElement in this.Columns)
                         {
                             this.uniqueParentName += columnReferenceElement.Column.Name;
@@ -144,7 +144,7 @@ namespace GammaFour.DataModelGenerator.Common
                 if (this.uniqueChildName == null)
                 {
                     // Determines if there's a single path to the child tables.
-                    var isDistinctPathToChild = (from fke in this.UniqueKey.Table.ForeignKeys
+                    var isDistinctPathToChild = (from fke in this.UniqueIndex.Table.ForeignKeys
                                                  where fke.Table == this.Table
                                                  select fke).Count() == 1;
 

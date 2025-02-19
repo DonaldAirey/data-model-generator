@@ -89,7 +89,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 };
 
                 // Initialize the unique index properties.
-                foreach (UniqueElement uniqueKeyElement in this.tableElement.UniqueKeys)
+                foreach (UniqueIndexElement uniqueKeyElement in this.tableElement.UniqueIndexes)
                 {
                     //            this.CountryCodeKey = new UniqueIndex<Country>("CountryCodeKey").HasIndex(c => c.Code);
                     statements.Add(
@@ -191,9 +191,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         /// <summary>
         /// Constructs an initializer for a unique index.
         /// </summary>
-        /// <param name="uniqueElement">The unique index description.</param>
+        /// <param name="uniqueIndexElement">The unique index description.</param>
         /// <returns>Code to initialize a unique index.</returns>
-        private static ExpressionSyntax GetUniqueInitializer(UniqueElement uniqueElement)
+        private static ExpressionSyntax GetUniqueInitializer(UniqueIndexElement uniqueIndexElement)
         {
             //        new ForeignIndex<Account,Item>("AccountSymbolKey")
             ExpressionSyntax expressionSyntax = SyntaxFactory.ObjectCreationExpression(
@@ -202,14 +202,14 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                     .WithTypeArgumentList(
                         SyntaxFactory.TypeArgumentList(
                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                SyntaxFactory.IdentifierName(uniqueElement.Table.Name)))))
+                                SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name)))))
                 .WithArgumentList(
                     SyntaxFactory.ArgumentList(
                         SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                             SyntaxFactory.Argument(
                                 SyntaxFactory.LiteralExpression(
                                     SyntaxKind.StringLiteralExpression,
-                                    SyntaxFactory.Literal(uniqueElement.Name))))));
+                                    SyntaxFactory.Literal(uniqueIndexElement.Name))))));
 
             // .HasIndex(a => a.ItemId)
             expressionSyntax = SyntaxFactory.InvocationExpression(
@@ -218,12 +218,12 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                     expressionSyntax,
                     SyntaxFactory.IdentifierName("HasIndex")))
              .WithArgumentList(
-                    SyntaxFactory.ArgumentList(
-                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                            SyntaxFactory.Argument(UniqueKeyExpression.GetUniqueKey(uniqueElement)))));
+                SyntaxFactory.ArgumentList(
+                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                        SyntaxFactory.Argument(uniqueIndexElement.GetUniqueKey(false)))));
 
             //  .HasFilter(a => a.Symbol != null)
-            if (uniqueElement.IsNullable)
+            if (uniqueIndexElement.IsNullable)
             {
                 expressionSyntax = SyntaxFactory.InvocationExpression(
                     SyntaxFactory.MemberAccessExpression(
@@ -233,7 +233,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 .WithArgumentList(
                     SyntaxFactory.ArgumentList(
                         SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                            SyntaxFactory.Argument(NullableKeyFilterExpression.GetNullableKeyFilter(uniqueElement)))));
+                            SyntaxFactory.Argument(NullableKeyFilterExpression.GetNullableKeyFilter(uniqueIndexElement)))));
             }
 
             return expressionSyntax;

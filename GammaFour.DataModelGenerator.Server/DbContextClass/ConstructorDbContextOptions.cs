@@ -207,7 +207,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                     SyntaxFactory.IdentifierName("EnterWriteLock")))));
 
                     // Lock each of the unique key indices
-                    foreach (UniqueElement uniqueKeyElement in tableElement.UniqueKeys)
+                    foreach (UniqueIndexElement uniqueKeyElement in tableElement.UniqueIndexes)
                     {
                         //                this.Buyers.BuyerKey.Lock.EnterWriteLock();
                         statements.Add(
@@ -229,7 +229,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                     }
 
                     // Lock each of the foreign key indices.
-                    foreach (ForeignElement foreignKeyElement in tableElement.ParentKeys)
+                    foreach (ForeignIndexElement foreignKeyElement in tableElement.ParentKeys)
                     {
                         //                this.Buyers.CountryBuyerCountryIdKey.Lock.EnterWriteLock();
                         statements.Add(

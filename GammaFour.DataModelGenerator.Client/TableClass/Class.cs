@@ -189,7 +189,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             List<SyntaxElement> methods = new List<SyntaxElement>();
 
             // Alphabetize and add the methods as members of the class.
-            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
+            foreach (var syntaxElement in methods.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -220,7 +220,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         private SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the private instance fields.
-            members = members.Add(new PrimaryKeyFunctionField(this.tableElement.PrimaryKey).Syntax);
+            members = members.Add(new PrimaryKeyFunctionField(this.tableElement.PrimaryIndex).Syntax);
             return members.Add(new CollectionField(this.tableElement).Syntax);
         }
 
@@ -242,19 +242,19 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             };
 
             // Add a property for each of the unique keys indices.
-            foreach (UniqueElement uniqueKeyElement in this.tableElement.UniqueKeys)
+            foreach (UniqueIndexElement uniqueKeyElement in this.tableElement.UniqueIndexes)
             {
                 properties.Add(new GenericUniqueIndexProperty(uniqueKeyElement));
             }
 
             // Add a property for each of the foreign key indices.
-            foreach (ForeignElement foreignKeyElement in this.tableElement.ParentKeys)
+            foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ParentKeys)
             {
                 properties.Add(new GenericForeignIndexProperty(foreignKeyElement));
             }
 
             // Alphabetize and add the properties as members of the class.
-            foreach (SyntaxElement syntaxElement in properties.OrderBy(m => m.Name))
+            foreach (var syntaxElement in properties.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -279,7 +279,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             };
 
             // Alphabetize and add the methods as members of the class.
-            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
+            foreach (var syntaxElement in methods.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -302,7 +302,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             };
 
             // Alphabetize and add the events as members of the class.
-            foreach (SyntaxElement syntaxElement in events.OrderBy(m => m.Name))
+            foreach (var syntaxElement in events.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -347,7 +347,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             };
 
             // Alphabetize and add the methods as members of the class.
-            foreach (SyntaxElement syntaxElement in methods.OrderBy(m => m.Name))
+            foreach (var syntaxElement in methods.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
