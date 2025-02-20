@@ -33,22 +33,24 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             this.Name = xmlSchemaDocument.Name;
 
             //    /// <summary>
-            //    /// A thread-safe DataSet able to handle transactions.
+            //    /// A DataModel
             //    /// </summary>
-            //    public partial class DataModel : IDisposable
+            //    public class DataModel : IDisposable
             //    {
             //        <Members>
             //    }
             this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
-                .WithModifiers(Class.Modifiers)
-                .WithMembers(this.Members)
-                .WithLeadingTrivia(Class.DocumentationComment);
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithMembers(this.Members)
+            .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -77,7 +79,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " A thread-safe, transaction-oriented data dataModel.",
+                                                $" A {this.Name}.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -96,22 +98,6 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                         }))))));
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                        SyntaxFactory.Token(SyntaxKind.PartialKeyword),
-                    });
             }
         }
 

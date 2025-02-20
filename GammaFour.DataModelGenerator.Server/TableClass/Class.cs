@@ -316,6 +316,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 new GetEnumeratorMethod(this.tableElement),
                 new GenericGetEnumeratorMethod(this.tableElement),
                 new InDoubtMethod(),
+                new LoadMethod(this.tableElement),
                 new MergeMethod(this.tableElement),
                 new PrepareMethod(),
                 new RemoveMethod(this.tableElement),

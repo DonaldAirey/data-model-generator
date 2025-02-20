@@ -33,9 +33,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             this.Name = "Add";
 
             //        /// <summary>
-            //        /// Adds a <see cref="Buyer"/> to the set.
+            //        /// Adds a <see cref="Order"/> row to the table.
             //        /// </summary>
-            //        /// <param name="buyer">The buyer to be added.</param>
+            //        /// <param name="order">The <see cref="Order"/> row.</param>
             //        public void Add(Buyer buyer)
             //        {
             //            <Body>
@@ -54,8 +54,8 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                             SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()))
                         .WithType(
                             SyntaxFactory.IdentifierName(this.tableElement.Name)))))
-                .WithBody(this.Body)
-                .WithLeadingTrivia(this.DocumentationComment);
+            .WithBody(this.Body)
+            .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
@@ -124,6 +124,10 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                         foreignIndexElement.GetForeignKeyAsArguments(
                                                             this.tableElement.Name.ToVariableName()))))))))));
 
+                    //            if (account == null)
+                    //            {
+                    //                throw new ConstraintException("The add action conflicted with the constraint AccountIndex.");
+                    //            }
                     statements.Add(
                         SyntaxFactory.IfStatement(
                             SyntaxFactory.BinaryExpression(
@@ -309,7 +313,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                                 SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))))))))))));
                 }
 
-                //            this.commitStack.Push(() => this.RowChanged?.Invoke(this, new RowChangedEventArgs<Account>(DataAction.Delete, account)));
+                //            this.commitStack.Push(() => this.RowChanged?.Invoke(this, new RowChangedEventArgs<Account>(DataAction.Add, account)));
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -382,7 +386,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Adds a <see cref="Buyer"/> to the set.
+                    //        /// Adds a <see cref="Order"/> row to the table.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -405,7 +409,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Adds a <see cref=\"{this.tableElement.Name}\"/> to the set.",
+                                                $" Adds a <see cref=\"{this.tableElement.Name}\"/> row to the table.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -425,7 +429,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //        /// <param name="buyer">The buyer to be added.</param>
+                    //        /// <param name="order">The <see cref="Order"/> row.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -437,7 +441,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <param name=\"{this.tableElement.Name.ToCamelCase()}\">The {this.tableElement.Name.ToCamelCase()} to be added.</param>",
+                                                    $" The <see cref=\"{this.tableElement.Name}\"/> row.",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(

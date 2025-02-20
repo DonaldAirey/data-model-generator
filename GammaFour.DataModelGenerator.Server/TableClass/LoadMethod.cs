@@ -1,4 +1,4 @@
-// <copyright file="MergeMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="LoadMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -13,9 +13,9 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to merge a record.
+    /// Creates a method to load a record.
     /// </summary>
-    public class MergeMethod : SyntaxElement
+    public class LoadMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -23,20 +23,20 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MergeMethod"/> class.
+        /// Initializes a new instance of the <see cref="LoadMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public MergeMethod(TableElement tableElement)
+        public LoadMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = "Merge";
+            this.Name = "Load";
 
             //        /// <summary>
-            //        /// Merges a collection of <see cref="Order"/> rows.
+            //        /// Loads a collection of <see cref="Order"/> rows.
             //        /// </summary>
-            //        /// <param name="orders">The collection of <see cref="Order"/> rows to merge.</param>
-            //        /// <returns>The rows that could not be merged.</returns>
+            //        /// <param name="orders">The collection of <see cref="Order"/> rows to load.</param>
+            //        /// <returns>The rows that could not be loaded.</returns>
             //        public IEnumerable<Order> Load(IEnumerable<Order> orders)
             //        {
             //            <Body>
@@ -79,7 +79,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Merge a collection of <see cref="Order"/> rows.
+                    //        /// Load a collection of <see cref="Order"/> rows.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -102,7 +102,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Merge a collection of <see cref=\"{this.tableElement.Name}\"/> rows.",
+                                                $" Load a collection of <see cref=\"{this.tableElement.Name}\"/> rows.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -122,7 +122,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //        /// <param name="orders">The collection of <see cref="Order"/> rows to merge.</param>
+                    //        /// <param name="orders">The collection of <see cref="Order"/> rows to load.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -134,7 +134,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <param name=\"{this.tableElement.Name.ToPlural().ToVariableName()}\">The collection of <see cref=\"{this.tableElement.Name}\"/> rows to merge.</param>",
+                                                    $" <param name=\"{this.tableElement.Name.ToPlural().ToVariableName()}\">The collection of <see cref=\"{this.tableElement.Name}\"/> rows to load.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -146,7 +146,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
 
 
 
-                    //        /// <returns>The rows that could not be merged.</returns>
+                    //        /// <returns>The rows that could not be loaded.</returns>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -158,7 +158,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <returns>The rows that could not be merged.</returns>",
+                                                    $" <returns>The rows that could not be loaded.</returns>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -275,7 +275,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             {
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                // If the parent record doesn't yet exists for this record, then add it to the residuals.
+                // For each parent table, include a check to make sure the parent exists before adding the record.
                 foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ParentKeys)
                 {
                     //            var account = this.DataModel.Accounts.Find(order.AccountCode);
@@ -356,37 +356,6 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
 
-                    //            this.undoStack.Push(() => account.Orders.Remove(order));
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("undoStack")),
-                                    SyntaxFactory.IdentifierName("Push")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.ParenthesizedLambdaExpression()
-                                            .WithExpressionBody(
-                                                SyntaxFactory.InvocationExpression(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToVariableName()),
-                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                                        SyntaxFactory.IdentifierName("Remove")))
-                                                .WithArgumentList(
-                                                    SyntaxFactory.ArgumentList(
-                                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                            SyntaxFactory.Argument(
-                                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))))))))))));
-
                     //            order.Account = account;
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
@@ -420,37 +389,6 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                         SyntaxFactory.Argument(SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
                                     })))));
 
-                //            this.undoStack.Push(() => this.dictionary.Remove(account.Code));
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("undoStack")),
-                                SyntaxFactory.IdentifierName("Push")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.ParenthesizedLambdaExpression()
-                                        .WithExpressionBody(
-                                            SyntaxFactory.InvocationExpression(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.ThisExpression(),
-                                                        SyntaxFactory.IdentifierName("dictionary")),
-                                                    SyntaxFactory.IdentifierName("Remove")))
-                                            .WithArgumentList(
-                                                SyntaxFactory.ArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                        this.tableElement.PrimaryIndex.GetUniqueKeyAsArguments(
-                                                            this.tableElement.Name.ToVariableName())))))))))));
-
                 // Add the record to each of the unique key indices on this set.
                 foreach (var uniqueKeyElement in this.tableElement.UniqueIndexes.Where(ui => !ui.IsPrimaryIndex))
                 {
@@ -470,95 +408,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
-
-                    //            this.undoStack.Push(() => this.AccountNameIndex.Remove(account));
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("undoStack")),
-                                    SyntaxFactory.IdentifierName("Push")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.ParenthesizedLambdaExpression()
-                                            .WithExpressionBody(
-                                                SyntaxFactory.InvocationExpression(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
-                                                        SyntaxFactory.IdentifierName("Remove")))
-                                                .WithArgumentList(
-                                                    SyntaxFactory.ArgumentList(
-                                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                            SyntaxFactory.Argument(
-                                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))))))))))));
                 }
-
-                //            this.commitStack.Push(() => this.RowChanged?.Invoke(this, new RowChangedEventArgs<Account>(DataAction.Delete, account)));
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("commitStack")),
-                                SyntaxFactory.IdentifierName("Push")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.ParenthesizedLambdaExpression()
-                                        .WithExpressionBody(
-                                            SyntaxFactory.ConditionalAccessExpression(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName("RowChanged")),
-                                                SyntaxFactory.InvocationExpression(
-                                                    SyntaxFactory.MemberBindingExpression(
-                                                        SyntaxFactory.IdentifierName("Invoke")))
-                                                .WithArgumentList(
-                                                    SyntaxFactory.ArgumentList(
-                                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                            new SyntaxNodeOrToken[]
-                                                            {
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.ThisExpression()),
-                                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.ObjectCreationExpression(
-                                                                        SyntaxFactory.GenericName(
-                                                                            SyntaxFactory.Identifier("RowChangedEventArgs"))
-                                                                        .WithTypeArgumentList(
-                                                                            SyntaxFactory.TypeArgumentList(
-                                                                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                                                    SyntaxFactory.IdentifierName(this.tableElement.Name)))))
-                                                                    .WithArgumentList(
-                                                                        SyntaxFactory.ArgumentList(
-                                                                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                                                new SyntaxNodeOrToken[]
-                                                                                {
-                                                                                    SyntaxFactory.Argument(
-                                                                                        SyntaxFactory.MemberAccessExpression(
-                                                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                                                            SyntaxFactory.IdentifierName("DataAction"),
-                                                                                            SyntaxFactory.IdentifierName("Add"))),
-                                                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                                                    SyntaxFactory.Argument(
-                                                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
-                                                                                })))),
-                                                            })))))))))));
 
                 //                if (assetClass.RowVersion > this.DataModel.RowVersion)
                 //                {
@@ -580,6 +430,48 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                     SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
                                 SyntaxFactory.IdentifierName("RowVersion"))),
                         SyntaxFactory.Block(this.UpdateMasterRowVersion)));
+
+                //                this.RowChanged?.Invoke(this, new RowChangedEventArgs<Order>(DataAction.Add, order));
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.ConditionalAccessExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("RowChanged")),
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberBindingExpression(
+                                    SyntaxFactory.IdentifierName("Invoke")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                        new SyntaxNodeOrToken[]
+                                        {
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.ThisExpression()),
+                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.ObjectCreationExpression(
+                                                    SyntaxFactory.GenericName(
+                                                        SyntaxFactory.Identifier("RowChangedEventArgs"))
+                                                    .WithTypeArgumentList(
+                                                        SyntaxFactory.TypeArgumentList(
+                                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                                SyntaxFactory.IdentifierName(this.tableElement.Name)))))
+                                                .WithArgumentList(
+                                                    SyntaxFactory.ArgumentList(
+                                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                            new SyntaxNodeOrToken[]{
+                                                                SyntaxFactory.Argument(
+                                                                    SyntaxFactory.MemberAccessExpression(
+                                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                                        SyntaxFactory.IdentifierName("DataAction"),
+                                                                        SyntaxFactory.IdentifierName("Add"))),
+                                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                                SyntaxFactory.Argument(
+                                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
+                                                            })))),
+                                        }))))));
 
                 return statements;
             }

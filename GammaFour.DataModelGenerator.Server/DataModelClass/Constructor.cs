@@ -93,28 +93,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
                                             {
                                                 SyntaxFactory.Argument(
                                                     SyntaxFactory.ThisExpression()),
-                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.LiteralExpression(
-                                                        SyntaxKind.StringLiteralExpression,
-                                                        SyntaxFactory.Literal(tableElement.Name.ToPlural()))),
                                             }))))));
-                }
-
-                // Initialize each of the record sets.
-                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
-                {
-                    //            this.Buyers.BuildForeignIndices();
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                    SyntaxFactory.IdentifierName("BuildForeignIndices")))));
                 }
 
                 // This is the syntax for the body of the constructor.
