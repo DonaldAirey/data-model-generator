@@ -69,20 +69,20 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Creates an argument that creates a lambda expression for extracting the key from a class.
         /// </summary>
-        /// <param name="foreignKeyElement">The unique key element.</param>
+        /// <param name="foreignIndexElement">The unique key element.</param>
         /// <returns>An expression that creates a filter for an index.</returns>
-        public static ExpressionSyntax GetNullableKeyFilter(ForeignIndexElement foreignKeyElement)
+        public static ExpressionSyntax GetNullableKeyFilter(ForeignIndexElement foreignIndexElement)
         {
             // Used as a variable when constructing the lambda expression.
-            string abbreviation = foreignKeyElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
+            string abbreviation = foreignIndexElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
 
             // .HasFilter(s => s.Figi != null)
             // .HasFilter(p => p.BaseCurrencyCode != null && p.CurrencyCode != null)
             BinaryExpressionSyntax syntaxNode = default;
-            for (int index = 0; index < foreignKeyElement.Columns.Count; index++)
+            for (int index = 0; index < foreignIndexElement.Columns.Count; index++)
             {
                 // We can only filter nullable items.
-                if (foreignKeyElement.Columns[0].Column.ColumnType.IsNullable)
+                if (foreignIndexElement.Columns[0].Column.ColumnType.IsNullable)
                 {
                     if (index == 0)
                     {
@@ -91,7 +91,7 @@ namespace GammaFour.DataModelGenerator.Common
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName(abbreviation),
-                                SyntaxFactory.IdentifierName(foreignKeyElement.Columns[0].Column.Name)),
+                                SyntaxFactory.IdentifierName(foreignIndexElement.Columns[0].Column.Name)),
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.NullLiteralExpression));
                     }
@@ -106,7 +106,7 @@ namespace GammaFour.DataModelGenerator.Common
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName(abbreviation),
-                                SyntaxFactory.IdentifierName(foreignKeyElement.Columns[index].Column.Name)),
+                                SyntaxFactory.IdentifierName(foreignIndexElement.Columns[index].Column.Name)),
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.NullLiteralExpression)));
                     }

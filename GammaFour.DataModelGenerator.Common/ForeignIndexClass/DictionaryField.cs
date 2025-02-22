@@ -19,16 +19,16 @@ namespace GammaFour.DataModelGenerator.Common.ForeignIndexClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private readonly ForeignIndexElement foreignKeyElement;
+        private readonly ForeignIndexElement foreignIndexElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DictionaryField"/> class.
         /// </summary>
-        /// <param name="foreignKeyElement">The table schema.</param>
-        public DictionaryField(ForeignIndexElement foreignKeyElement)
+        /// <param name="foreignIndexElement">The table schema.</param>
+        public DictionaryField(ForeignIndexElement foreignIndexElement)
         {
             // Initialize the object.
-            this.foreignKeyElement = foreignKeyElement;
+            this.foreignIndexElement = foreignIndexElement;
 
             // This is the name of the field.
             this.Name = "dictionary";
@@ -150,13 +150,13 @@ namespace GammaFour.DataModelGenerator.Common.ForeignIndexClass
                 List<TypeSyntax> types = new List<TypeSyntax>();
 
                 // The key of the dictionary is a simple or compound key that can uniquely identify the parent row.
-                if (this.foreignKeyElement.UniqueIndex.Columns.Count == 1)
+                if (this.foreignIndexElement.UniqueIndex.Columns.Count == 1)
                 {
-                    types.Add(this.foreignKeyElement.UniqueIndex.Columns.Single().Column.GetTypeSyntax());
+                    types.Add(this.foreignIndexElement.UniqueIndex.Columns.Single().Column.GetTypeSyntax());
                 }
                 else
                 {
-                    types.Add(SyntaxFactory.IdentifierName(this.foreignKeyElement.Refer + "Set"));
+                    types.Add(SyntaxFactory.IdentifierName(this.foreignIndexElement.Refer + "Set"));
                 }
 
                 // This HashSet holds the child rows.
@@ -166,7 +166,7 @@ namespace GammaFour.DataModelGenerator.Common.ForeignIndexClass
                     .WithTypeArgumentList(
                         SyntaxFactory.TypeArgumentList(
                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name)))));
+                                SyntaxFactory.IdentifierName(this.foreignIndexElement.Table.Name)))));
 
                 // Dictionary<Guid, HashSet<ProvinceRow>>
                 //                 or

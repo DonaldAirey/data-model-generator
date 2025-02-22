@@ -55,7 +55,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            while (this.undoStack.Count != 0)
                     //            {

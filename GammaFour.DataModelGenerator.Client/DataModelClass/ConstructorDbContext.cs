@@ -71,7 +71,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
 
                 // Initialize each of the record sets.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
@@ -217,7 +217,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
 
                 // Enlist each of the tables and it's indices into the curren transaction.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
@@ -254,7 +254,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                     }
 
                     // Enlist each of the foreign key indices.
-                    foreach (ForeignIndexElement foreignKeyElement in tableElement.ParentKeys)
+                    foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentKeys)
                     {
                         //                this.Buyers.CountryBuyerCountryIdKey.Enlist();
                         statements.Add(
@@ -268,7 +268,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.ThisExpression(),
                                                 SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                            SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
+                                            SyntaxFactory.IdentifierName(foreignIndexElement.Name)),
                                         SyntaxFactory.IdentifierName("Enlist")))));
                     }
                 }
@@ -415,7 +415,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
 
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {

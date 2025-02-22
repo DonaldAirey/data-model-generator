@@ -4,9 +4,7 @@
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Common
 {
-    using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -21,7 +19,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// </summary>
         /// <param name="foreignIndexElement">The foreign key element.</param>
         /// <returns>An argument that extracts a key from an object.</returns>
-        public static ArgumentSyntax GetForeignKeyAsArguments(this ForeignIndexElement foreignIndexElement)
+        public static ArgumentSyntax GetKeyAsArguments(this ForeignIndexElement foreignIndexElement)
         {
             // This will create an expression for extracting the key from record.
             if (foreignIndexElement.Columns.Count == 1)
@@ -59,17 +57,33 @@ namespace GammaFour.DataModelGenerator.Common
         /// <param name="foreignIndexElement">The foreign key element.</param>
         /// <param name="variableName">The name of the variable used in the expression.</param>
         /// <returns>An argument that extracts a key from an object.</returns>
-        public static ArgumentSyntax GetForeignKeyAsArguments(this ForeignIndexElement foreignIndexElement, string variableName)
+        public static ArgumentSyntax GetKeyAsArguments(this ForeignIndexElement foreignIndexElement, string variableName)
         {
             // This will create an expression for extracting the key from record.
             if (foreignIndexElement.Columns.Count == 1)
             {
-                // account.Account
-                return SyntaxFactory.Argument(
-                    SyntaxFactory.MemberAccessExpression(
-                        SyntaxKind.SimpleMemberAccessExpression,
-                        SyntaxFactory.IdentifierName(variableName),
-                        SyntaxFactory.IdentifierName(foreignIndexElement.Columns[0].Column.Name)));
+                var columnElement = foreignIndexElement.Columns[0].Column;
+                if (columnElement.ColumnType.IsNullable && columnElement.ColumnType.IsValueType)
+                {
+                    // account.Account.Value
+                    return SyntaxFactory.Argument(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(variableName),
+                                SyntaxFactory.IdentifierName(columnElement.Name)),
+                            SyntaxFactory.IdentifierName("Value")));
+                }
+                else
+                {
+                    // account.Account
+                    return SyntaxFactory.Argument(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName(variableName),
+                            SyntaxFactory.IdentifierName(columnElement.Name)));
+                }
             }
             else
             {
@@ -77,17 +91,34 @@ namespace GammaFour.DataModelGenerator.Common
                 List<SyntaxNodeOrToken> keyElements = new List<SyntaxNodeOrToken>();
                 foreach (ColumnReferenceElement columnReferenceElement in foreignIndexElement.Columns)
                 {
+                    // Add a comma between key elements.
                     if (keyElements.Count != 0)
                     {
                         keyElements.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
                     }
 
-                    keyElements.Add(
-                        SyntaxFactory.Argument(
+                    var columnElement = columnReferenceElement.Column;
+                    if (columnElement.ColumnType.IsNullable && columnElement.ColumnType.IsValueType)
+                    {
+                        // account.Account.Value
+                        keyElements.Add(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName(variableName),
+                                    SyntaxFactory.IdentifierName(columnElement.Name)),
+                                SyntaxFactory.IdentifierName("Value")));
+                    }
+                    else
+                    {
+                        // account.Account
+                        keyElements.Add(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName(variableName),
-                                SyntaxFactory.IdentifierName(columnReferenceElement.Column.Name))));
+                                SyntaxFactory.IdentifierName(columnElement.Name)));
+                    }
                 }
 
                 // (account.Code, account.Name)
@@ -98,11 +129,101 @@ namespace GammaFour.DataModelGenerator.Common
         }
 
         /// <summary>
+        /// Creates an argument for a foreign key using the members of a value.
+        /// </summary>
+        /// <param name="foreignIndexElement">The foreign key element.</param>
+        /// <param name="variableName">The name of the variable used in the expression.</param>
+        /// <returns>An argument that extracts a key from an object.</returns>
+        public static ExpressionSyntax GetKeyAsInequalityConditional(this ForeignIndexElement foreignIndexElement, string variableName)
+        {
+            ExpressionSyntax expressionSyntax = null;
+            foreach (var columnReferenceElement in foreignIndexElement.Columns)
+            {
+                var columnElement = columnReferenceElement.Column;
+                if (columnElement.ColumnType.IsNullable)
+                {
+                    if (expressionSyntax == null)
+                    {
+                        expressionSyntax = SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(variableName),
+                                SyntaxFactory.IdentifierName(columnElement.Name)),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression));
+                    }
+                    else
+                    {
+                        expressionSyntax = SyntaxFactory.BinaryExpression(
+                            SyntaxKind.LogicalAndExpression,
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.NotEqualsExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName(variableName),
+                                    SyntaxFactory.IdentifierName(columnElement.Name)),
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.NullLiteralExpression)),
+                            expressionSyntax);
+                    }
+                }
+            }
+
+            return expressionSyntax;
+        }
+
+        /// <summary>
+        /// Creates an argument for a foreign key using the members of a value.
+        /// </summary>
+        /// <param name="foreignIndexElement">The foreign key element.</param>
+        /// <param name="variableName">The name of the variable used in the expression.</param>
+        /// <returns>An argument that extracts a key from an object.</returns>
+        public static ExpressionSyntax GetKeyAsEqualityConditional(this ForeignIndexElement foreignIndexElement, string variableName)
+        {
+            ExpressionSyntax expressionSyntax = null;
+            foreach (var columnReferenceElement in foreignIndexElement.Columns)
+            {
+                var columnElement = columnReferenceElement.Column;
+                if (columnElement.ColumnType.IsNullable)
+                {
+                    if (expressionSyntax == null)
+                    {
+                        expressionSyntax = SyntaxFactory.BinaryExpression(
+                            SyntaxKind.EqualsExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(variableName),
+                                SyntaxFactory.IdentifierName(columnElement.Name)),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression));
+                    }
+                    else
+                    {
+                        expressionSyntax = SyntaxFactory.BinaryExpression(
+                            SyntaxKind.LogicalOrExpression,
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.EqualsExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName(variableName),
+                                    SyntaxFactory.IdentifierName(columnElement.Name)),
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.NullLiteralExpression)),
+                            expressionSyntax);
+                    }
+                }
+            }
+
+            return expressionSyntax;
+        }
+
+        /// <summary>
         /// Creates a parameter list for a foreign key.
         /// </summary>
         /// <param name="foreignIndexElement">The foreign key element.</param>
         /// <returns>An argument that extracts a key from an object.</returns>
-        public static ParameterListSyntax GetForeignKeyAsParameters(this ForeignIndexElement foreignIndexElement)
+        public static ParameterListSyntax GetKeyAsParameters(this ForeignIndexElement foreignIndexElement)
         {
             // This will create an expression for extracting the key from record.
             if (foreignIndexElement.Columns.Count == 1)

@@ -64,7 +64,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                this.logger.LogError(exception, "{message}", exception.Message);
                     SyntaxFactory.ExpressionStatement(
@@ -148,7 +148,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                this.logger.LogError(operationCanceledException, "{message}", operationCanceledException.Message);
                     SyntaxFactory.ExpressionStatement(

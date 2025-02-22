@@ -24,7 +24,7 @@ namespace GammaFour.DataModelGenerator.RestService
         public static List<StatementSyntax> GetSyntax(TableElement tableElement)
         {
             // This is used to collect the statements.
-            List<StatementSyntax> statements = new List<StatementSyntax>
+            var statements = new List<StatementSyntax>
             {
                 //            using var lockingTransaction = new LockingTransaction(this.transactionTimeout);
                 SyntaxFactory.LocalDeclarationStatement(
@@ -125,7 +125,7 @@ namespace GammaFour.DataModelGenerator.RestService
             }
 
             //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.ItemAccountKey).ConfigureAwait(false);
-            foreach (ForeignIndexElement foreignElement in tableElement.ParentKeys.OrderBy(fe => fe.Name))
+            foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentKeys.OrderBy(fe => fe.Name))
             {
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
@@ -150,8 +150,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.ThisExpression(),
                                                                 SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
-                                                            SyntaxFactory.IdentifierName(foreignElement.Table.Name.ToPlural())),
-                                                        SyntaxFactory.IdentifierName(foreignElement.Name)))))),
+                                                            SyntaxFactory.IdentifierName(foreignIndexElement.Table.Name.ToPlural())),
+                                                        SyntaxFactory.IdentifierName(foreignIndexElement.Name)))))),
                                     SyntaxFactory.IdentifierName("ConfigureAwait")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
@@ -174,7 +174,7 @@ namespace GammaFour.DataModelGenerator.RestService
         public static List<StatementSyntax> GetUsingSyntax(TableElement tableElement, List<StatementSyntax> usingBlock)
         {
             // This is used to collect the statements.
-            List<StatementSyntax> statements = new List<StatementSyntax>
+            var statements = new List<StatementSyntax>
             {
                 //                using (var lockingTransaction = new LockingTransaction(this.transactionTimeout))
                 //                {
@@ -221,7 +221,7 @@ namespace GammaFour.DataModelGenerator.RestService
         private static List<StatementSyntax> UsingBody(TableElement tableElement, List<StatementSyntax> usingBlock)
         {
             // The elements of the body are added to this collection as they are assembled.
-            List<StatementSyntax> statements = new List<StatementSyntax>
+            var statements = new List<StatementSyntax>
             {
                 //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts).ConfigureAwait(false);
                 SyntaxFactory.ExpressionStatement(
@@ -261,9 +261,9 @@ namespace GammaFour.DataModelGenerator.RestService
                 names.Add((uniqueIndexElement.Name, uniqueIndexElement));
             }
 
-            foreach (ForeignIndexElement foreignElement in tableElement.ParentKeys.OrderBy(fe => fe.Name))
+            foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentKeys.OrderBy(fe => fe.Name))
             {
-                names.Add((foreignElement.Name, foreignElement));
+                names.Add((foreignIndexElement.Name, foreignIndexElement));
             }
 
             //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.AccountKey).ConfigureAwait(false);
@@ -309,7 +309,7 @@ namespace GammaFour.DataModelGenerator.RestService
 
                 //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Positions.AccountPositionIndex).ConfigureAwait(false);
                 //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Positions.AssetPositionIndex).ConfigureAwait(false);
-                if (name.Item2 is ForeignIndexElement foreignElement)
+                if (name.Item2 is ForeignIndexElement foreignIndexElement)
                 {
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
@@ -334,8 +334,8 @@ namespace GammaFour.DataModelGenerator.RestService
                                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                                     SyntaxFactory.ThisExpression(),
                                                                     SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
-                                                                SyntaxFactory.IdentifierName(foreignElement.Table.Name.ToPlural())),
-                                                            SyntaxFactory.IdentifierName(foreignElement.Name)))))),
+                                                                SyntaxFactory.IdentifierName(foreignIndexElement.Table.Name.ToPlural())),
+                                                            SyntaxFactory.IdentifierName(foreignIndexElement.Name)))))),
                                         SyntaxFactory.IdentifierName("ConfigureAwait")))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(

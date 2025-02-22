@@ -69,7 +69,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
 
                 // This constructs the list of default elements for each of the properties.
                 List<SyntaxNodeOrToken> arrayElementList = new List<SyntaxNodeOrToken>();
@@ -129,7 +129,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                 //            this.getBuyers = () => Country.defaultBuyers;
                 //            this.getProvinces = () => Country.defaultProvinces;
                 //            this.getRegions = () => Country.defaultRegions;
-                foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ChildKeys)
+                foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ChildKeys)
                 {
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
@@ -138,13 +138,13 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName($"get{foreignKeyElement.UniqueChildName}")),
+                                    SyntaxFactory.IdentifierName($"get{foreignIndexElement.UniqueChildName}")),
                                 SyntaxFactory.ParenthesizedLambdaExpression(
                                     SyntaxFactory.ParameterList(),
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.IdentifierName(this.tableElement.Name),
-                                        SyntaxFactory.IdentifierName($"Default{foreignKeyElement.UniqueChildName}"))))));
+                                        SyntaxFactory.IdentifierName($"Default{foreignIndexElement.UniqueChildName}"))))));
                 }
 
                 // This is the syntax for the body of the constructor.

@@ -106,7 +106,7 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
             get
             {
                 // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                return this.countries;
                     SyntaxFactory.ReturnStatement(

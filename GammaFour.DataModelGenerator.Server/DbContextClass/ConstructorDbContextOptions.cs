@@ -57,7 +57,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
 
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -186,7 +186,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
 
                 // Create a write lock for each of the tables and it's indices.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
@@ -229,7 +229,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                     }
 
                     // Lock each of the foreign key indices.
-                    foreach (ForeignIndexElement foreignKeyElement in tableElement.ParentKeys)
+                    foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentKeys)
                     {
                         //                this.Buyers.CountryBuyerCountryIdKey.Lock.EnterWriteLock();
                         statements.Add(
@@ -245,7 +245,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
                                                     SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                                SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
+                                                SyntaxFactory.IdentifierName(foreignIndexElement.Name)),
                                             SyntaxFactory.IdentifierName("Lock")),
                                         SyntaxFactory.IdentifierName("EnterWriteLock")))));
                     }
@@ -396,7 +396,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
 
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {

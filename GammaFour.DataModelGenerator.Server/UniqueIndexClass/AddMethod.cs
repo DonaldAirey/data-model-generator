@@ -65,29 +65,43 @@ namespace GammaFour.DataModelGenerator.Server.UniqueIndexClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
-                {
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
+                var statements = new List<StatementSyntax>();
+
+                // The unconditional body of this method.
+                var addStatement = SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("dictionary")),
-                                SyntaxFactory.IdentifierName("Add")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                        new SyntaxNodeOrToken[]
-                                        {
-                                            this.uniqueIndexElement.GetUniqueKeyAsArguments(
-                                                this.uniqueIndexElement.Table.Name.ToVariableName()),
-                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName(this.uniqueIndexElement.Table.Name.ToCamelCase())),
-                                        })))),
-                };
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("dictionary")),
+                            SyntaxFactory.IdentifierName("Add")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                new SyntaxNodeOrToken[]
+                                {
+                                    this.uniqueIndexElement.GetKeyAsArguments(
+                                        this.uniqueIndexElement.Table.Name.ToVariableName()),
+                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName(this.uniqueIndexElement.Table.Name.ToCamelCase())),
+                                }))));
+
+                //            if (creditRating.Symbol != null && creditRating.Factor != null)
+                //            {
+                //                <Add Statement>
+                //            }
+                var conditionalExpression = this.uniqueIndexElement.GetKeyAsInequalityConditional(this.uniqueIndexElement.Table.Name.ToVariableName());
+                if (conditionalExpression == null)
+                {
+                    statements.Add(addStatement);
+                }
+                else
+                {
+                    statements.Add(SyntaxFactory.IfStatement(conditionalExpression, SyntaxFactory.Block(addStatement)));
+                }
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));

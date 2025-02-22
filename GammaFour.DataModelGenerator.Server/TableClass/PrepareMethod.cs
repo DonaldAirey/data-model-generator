@@ -47,7 +47,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            if (this.undoStack.Count == 0)
                     //            {
@@ -126,7 +126,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                preparingEnlistment.Done();
                     SyntaxFactory.ExpressionStatement(

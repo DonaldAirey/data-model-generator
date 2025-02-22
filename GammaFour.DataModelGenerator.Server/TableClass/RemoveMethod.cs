@@ -65,7 +65,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            this.dictionary.Remove((order.AccountCode, order.AssetCode, order.Date));
                     SyntaxFactory.ExpressionStatement(
@@ -80,7 +80,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    this.tableElement.PrimaryIndex.GetUniqueKeyAsArguments(this.tableElement.Name.ToVariableName()))))),
+                                    this.tableElement.PrimaryIndex.GetKeyAsArguments(this.tableElement.Name.ToVariableName()))))),
 
                     //            this.undoStack.Push(() => this.dictionary.Add((order.AccountCode, order.AssetCode, order.Date), order));
                     SyntaxFactory.ExpressionStatement(
@@ -111,7 +111,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                     SyntaxFactory.SeparatedList<ArgumentSyntax>(
                                                         new SyntaxNodeOrToken[]
                                                         {
-                                                            this.tableElement.PrimaryIndex.GetUniqueKeyAsArguments(
+                                                            this.tableElement.PrimaryIndex.GetKeyAsArguments(
                                                                 this.tableElement.Name.ToVariableName()),
                                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                             SyntaxFactory.Argument(
@@ -122,114 +122,18 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 // Remove this record from each of the parent rows.
                 foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ParentKeys)
                 {
-                    //            var account = this.DataModel.Accounts.Find(order.AccountCode);
-                    var uniqueIndexElement = foreignIndexElement.UniqueIndex;
-                    statements.Add(
-                        SyntaxFactory.LocalDeclarationStatement(
-                            SyntaxFactory.VariableDeclaration(
-                                SyntaxFactory.IdentifierName(
-                                    SyntaxFactory.Identifier(
-                                        SyntaxFactory.TriviaList(),
-                                        SyntaxKind.VarKeyword,
-                                        "var",
-                                        "var",
-                                        SyntaxFactory.TriviaList())))
-                            .WithVariables(
-                                SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                    SyntaxFactory.VariableDeclarator(
-                                        SyntaxFactory.Identifier(uniqueIndexElement.Table.Name.ToVariableName()))
-                                    .WithInitializer(
-                                        SyntaxFactory.EqualsValueClause(
-                                            SyntaxFactory.InvocationExpression(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(uniqueIndexElement.Table.XmlSchemaDocument.Name)),
-                                                        SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToPlural())),
-                                                    SyntaxFactory.IdentifierName("Find")))
-                                            .WithArgumentList(
-                                                SyntaxFactory.ArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                        foreignIndexElement.GetForeignKeyAsArguments(
-                                                            this.tableElement.Name.ToVariableName()))))))))));
-
-                    //            ArgumentNullException.ThrowIfNull(account);
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("ArgumentNullException"),
-                                    SyntaxFactory.IdentifierName("ThrowIfNull")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToVariableName())))))));
-
-                    //                account.Orders.Remove(order);
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToVariableName()),
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                    SyntaxFactory.IdentifierName("Remove")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
-
-                    //            this.undoStack.Push(() => account.Orders.Remove(order));
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("undoStack")),
-                                    SyntaxFactory.IdentifierName("Push")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.ParenthesizedLambdaExpression()
-                                            .WithExpressionBody(
-                                                SyntaxFactory.InvocationExpression(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToVariableName()),
-                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                                        SyntaxFactory.IdentifierName("Add")))
-                                                .WithArgumentList(
-                                                    SyntaxFactory.ArgumentList(
-                                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                            SyntaxFactory.Argument(
-                                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))))))))))));
-
-                    //            order.Account = null;
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                                    SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name)),
-                                SyntaxFactory.LiteralExpression(
-                                    SyntaxKind.NullLiteralExpression))));
+                    var condition = foreignIndexElement.GetKeyAsInequalityConditional(this.tableElement.Name.ToVariableName());
+                    if (condition == null)
+                    {
+                        statements.AddRange(this.RemoveFromParent(foreignIndexElement));
+                    }
+                    else
+                    {
+                        statements.Add(
+                            SyntaxFactory.IfStatement(
+                                condition,
+                                SyntaxFactory.Block(this.RemoveFromParent(foreignIndexElement))));
+                    }
                 }
 
                 //            assetClass.RowVersion = this.DataModel.IncrementRowVersion();
@@ -423,6 +327,127 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
             }
+        }
+
+        /// <summary>
+        /// Removes the row from the parent row.
+        /// </summary>
+        /// <param name="foreignIndexElement">The foreign index element.</param>
+        /// <returns>The statements to remove a row from the parent row.</returns>
+        private IEnumerable<StatementSyntax> RemoveFromParent(ForeignIndexElement foreignIndexElement)
+        {
+            var statements = new List<StatementSyntax>();
+
+            //            var account = this.DataModel.Accounts.Find(order.AccountCode);
+            var uniqueIndexElement = foreignIndexElement.UniqueIndex;
+            statements.Add(
+                SyntaxFactory.LocalDeclarationStatement(
+                    SyntaxFactory.VariableDeclaration(
+                        SyntaxFactory.IdentifierName(
+                            SyntaxFactory.Identifier(
+                                SyntaxFactory.TriviaList(),
+                                SyntaxKind.VarKeyword,
+                                "var",
+                                "var",
+                                SyntaxFactory.TriviaList())))
+                    .WithVariables(
+                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                            SyntaxFactory.VariableDeclarator(
+                                SyntaxFactory.Identifier(foreignIndexElement.UniqueParentName.ToVariableName()))
+                            .WithInitializer(
+                                SyntaxFactory.EqualsValueClause(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName(uniqueIndexElement.Table.XmlSchemaDocument.Name)),
+                                                SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToPlural())),
+                                            SyntaxFactory.IdentifierName("Find")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                foreignIndexElement.GetKeyAsArguments(
+                                                    this.tableElement.Name.ToVariableName()))))))))));
+
+            //            ArgumentNullException.ThrowIfNull(account);
+            statements.Add(
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName("ArgumentNullException"),
+                            SyntaxFactory.IdentifierName("ThrowIfNull")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName.ToVariableName())))))));
+
+            //                account.Orders.Remove(order);
+            statements.Add(
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName.ToVariableName()),
+                                SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
+                            SyntaxFactory.IdentifierName("Remove")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
+
+            //            this.undoStack.Push(() => account.Orders.Remove(order));
+            statements.Add(
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("undoStack")),
+                            SyntaxFactory.IdentifierName("Push")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.ParenthesizedLambdaExpression()
+                                    .WithExpressionBody(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName.ToVariableName()),
+                                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
+                                                SyntaxFactory.IdentifierName("Add")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))))))))))));
+
+            //            order.Account = null;
+            statements.Add(
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.AssignmentExpression(
+                        SyntaxKind.SimpleAssignmentExpression,
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                            SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName)),
+                        SyntaxFactory.LiteralExpression(
+                            SyntaxKind.NullLiteralExpression))));
+
+            return statements;
         }
     }
 }

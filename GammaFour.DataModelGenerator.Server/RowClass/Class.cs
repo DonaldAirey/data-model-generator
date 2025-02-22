@@ -261,6 +261,9 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
 
+            // Add the properties.
+            properties.Add(new IsModifiedProperty());
+
             // Create a property for each column.
             foreach (ColumnElement columnElement in this.tableElement.Columns)
             {
@@ -274,9 +277,9 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             }
 
             // Create a property for each foriegn index.
-            foreach (var foreignKeyConstraint in this.tableElement.ForeignKeys)
+            foreach (var foreignIndexElementConstraint in this.tableElement.ForeignKeys)
             {
-                properties.Add(new ForeignKeyProperty(foreignKeyConstraint));
+                properties.Add(new ForeignKeyProperty(foreignIndexElementConstraint));
             }
 
             // Alphabetize and add the properties as members of the class.

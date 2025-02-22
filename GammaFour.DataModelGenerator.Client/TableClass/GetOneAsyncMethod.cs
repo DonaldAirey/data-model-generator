@@ -78,7 +78,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
 
                 // $"rest/accountGroups/{provinceId}/{regionId}"
                 List<InterpolatedStringContentSyntax> interpolatedStringContentSyntax = new List<InterpolatedStringContentSyntax>
@@ -312,7 +312,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                    response.EnsureSuccessStatusCode();
                     SyntaxFactory.ExpressionStatement(

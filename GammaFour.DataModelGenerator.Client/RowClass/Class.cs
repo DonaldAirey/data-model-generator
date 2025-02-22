@@ -254,9 +254,9 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             };
 
             // Create these fields for each child table.
-            foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ChildKeys)
+            foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ChildKeys)
             {
-                fields.Add(new GetChildrenFunctionField(foreignKeyElement));
+                fields.Add(new GetChildrenFunctionField(foreignIndexElement));
             }
 
             // Alphabetize and add the fields as members of the class.
@@ -304,9 +304,9 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             List<SyntaxElement> fields = new List<SyntaxElement>();
 
             // Create these fields for each child table.
-            foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ChildKeys)
+            foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ChildKeys)
             {
-                fields.Add(new DefaultChildrenField(foreignKeyElement));
+                fields.Add(new DefaultChildrenField(foreignIndexElement));
             }
 
             // Alphabetize and add the fields as members of the class.
@@ -335,15 +335,16 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             };
 
             // Create a navigation property to each of the parent collections.
-            foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ParentKeys)
-            {
-                properties.Add(new ParentProperty(foreignKeyElement));
-            }
+            // [TODO] Fix this.
+            // foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ParentKeys)
+            // {
+            //    properties.Add(new ParentTableProperty(foreignIndexElement));
+            // }
 
             // Create a navigation property to each of the child records.
-            foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ChildKeys)
+            foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ChildKeys)
             {
-                properties.Add(new ChildrenProperty(foreignKeyElement));
+                properties.Add(new ChildrenProperty(foreignIndexElement));
             }
 
             // Create a property for each column.

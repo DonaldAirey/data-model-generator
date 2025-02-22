@@ -19,17 +19,17 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
         /// <summary>
         /// The foreign key description.
         /// </summary>
-        private readonly ForeignIndexElement foreignElement;
+        private readonly ForeignIndexElement foreignIndexElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GenericForeignIndexProperty"/> class.
         /// </summary>
-        /// <param name="foreignElement">The column schema.</param>
-        public GenericForeignIndexProperty(ForeignIndexElement foreignElement)
+        /// <param name="foreignIndexElement">The column schema.</param>
+        public GenericForeignIndexProperty(ForeignIndexElement foreignIndexElement)
         {
             // Initialize the object.
-            this.foreignElement = foreignElement;
-            this.Name = this.foreignElement.Name;
+            this.foreignIndexElement = foreignIndexElement;
+            this.Name = this.foreignIndexElement.Name;
 
             //        /// <summary>
             //        /// Gets the CountryBuyerCountryIdKey foreign index.
@@ -43,9 +43,9 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                         SyntaxFactory.SeparatedList<TypeSyntax>(
                             new SyntaxNodeOrToken[]
                             {
-                                SyntaxFactory.IdentifierName(foreignElement.UniqueIndex.Table.Name),
+                                SyntaxFactory.IdentifierName(foreignIndexElement.UniqueIndex.Table.Name),
                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                SyntaxFactory.IdentifierName(foreignElement.Table.Name),
+                                SyntaxFactory.IdentifierName(foreignIndexElement.Table.Name),
                             }))),
                 SyntaxFactory.Identifier(this.Name))
             .WithModifiers(GenericForeignIndexProperty.Modifiers)
@@ -129,7 +129,7 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Gets the {this.foreignElement.Name} foreign index.",
+                                                $" Gets the {this.foreignIndexElement.Name} foreign index.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

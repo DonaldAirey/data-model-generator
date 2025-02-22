@@ -133,7 +133,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            await lockingTransaction.WaitWriterAsync(account).ConfigureAwait(false);
                     SyntaxFactory.ExpressionStatement(
@@ -225,7 +225,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            if (!this.ModelState.IsValid)
                     //            {
@@ -362,7 +362,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                            var serverFungible = this.dataModel.Fungibles.FungibleKey.Find(clientFungible.FungibleId);
                     SyntaxFactory.LocalDeclarationStatement(
@@ -425,7 +425,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                    List<Fungible> fungibles = new List<Fungible>();
                     SyntaxFactory.LocalDeclarationStatement(
@@ -509,7 +509,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                        var clientFungible = jsonObject.GetValue<Fungible>();
                     SyntaxFactory.LocalDeclarationStatement(
@@ -563,7 +563,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
 
                 //                using (var lockingTransaction = new LockingTransaction(this.transactionTimeout))
                 //                {
@@ -594,7 +594,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                                this.dataModel.Fungibles.Update(serverFungible);
                     SyntaxFactory.ExpressionStatement(
@@ -661,7 +661,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                                await lockingTransaction.WaitWriterAsync(serverFungible).ConfigureAwait(false);
                     SyntaxFactory.ExpressionStatement(
@@ -786,7 +786,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         private static List<StatementSyntax> FindParentRecord(UniqueIndexElement uniqueKeyElement)
         {
             // This is used to collect the statements.
-            List<StatementSyntax> statements = new List<StatementSyntax>();
+            var statements = new List<StatementSyntax>();
 
             //                                var fungibleCurrencyCodeKeyCurrencyCode = (string)fungibleCurrencyCodeKey.GetValue("currencyCode", StringComparison.OrdinalIgnoreCase);
             foreach (ColumnReferenceElement columnReferenceElement in uniqueKeyElement.Columns)
@@ -865,7 +865,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         private static List<StatementSyntax> IfParentFound(ColumnElement columnElement, TableElement parentTable)
         {
             // This is used to collect the statements.
-            List<StatementSyntax> statements = new List<StatementSyntax>
+            var statements = new List<StatementSyntax>
             {
                 //                                if (!lockedFungibles.Contains(fungible))
                 //                                {
@@ -921,7 +921,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         private static List<StatementSyntax> LockParent(TableElement parentTable)
         {
             // This is used to collect the statements.
-            List<StatementSyntax> statements = new List<StatementSyntax>
+            var statements = new List<StatementSyntax>
             {
                 //            await lockingTransaction.WaitReaderAsync(account).ConfigureAwait(false);
                 SyntaxFactory.ExpressionStatement(
@@ -971,7 +971,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         private List<StatementSyntax> ProcessExternalKeysBlock(Dictionary<ColumnElement, List<UniqueIndexElement>> columnResolutionKeys)
         {
             // This is used to collect the statements.
-            List<StatementSyntax> statements = new List<StatementSyntax>();
+            var statements = new List<StatementSyntax>();
 
             // This attempts to resolve a parent record from a symbolic reference.  Sometimes a primary key index isn't available to the outside
             // world because the data comes from an external system or is kept in a script file.
@@ -1042,7 +1042,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         private List<StatementSyntax> ResolveColumnFromParent(ColumnElement columnElement, List<UniqueIndexElement> uniqueKeyElements)
         {
             // This is used to collect the statements.
-            List<StatementSyntax> statements = new List<StatementSyntax>
+            var statements = new List<StatementSyntax>
             {
                 //                            Fungible fungible = null;
                 SyntaxFactory.LocalDeclarationStatement(

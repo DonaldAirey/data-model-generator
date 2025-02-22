@@ -53,7 +53,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            return this.Rows.GetEnumerator();
                     SyntaxFactory.ReturnStatement(

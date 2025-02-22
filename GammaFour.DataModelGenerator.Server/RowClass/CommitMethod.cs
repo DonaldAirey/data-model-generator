@@ -27,6 +27,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             //        /// <inheritdoc/>
             //        public void Commit(Enlistment enlistment)
             //        {
+            //            this.IsModified = false;
             //            this.undoStack.Clear();
             //            enlistment.Done();
             //        }
@@ -46,6 +47,15 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                             SyntaxFactory.IdentifierName("Enlistment")))))
             .WithBody(
                 SyntaxFactory.Block(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("IsModified")),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.FalseLiteralExpression))),
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(

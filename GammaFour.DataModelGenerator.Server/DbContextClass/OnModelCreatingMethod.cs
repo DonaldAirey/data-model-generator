@@ -132,7 +132,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            modelBuilder.UseCollation("SQL_Latin1_General_CP1_CS_AS");
                     SyntaxFactory.ExpressionStatement(
@@ -261,7 +261,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                     // Add an Ignore invocation for each of the child set navigation properties.
                     // .Ignore(b => b.Subscriptions)
                     ExpressionSyntax ignoredProperties = null;
-                    foreach (ForeignIndexElement foreignKeyElement in tableElement.ChildKeys)
+                    foreach (ForeignIndexElement foreignIndexElement in tableElement.ChildKeys)
                     {
                         if (ignoredProperties == null)
                         {
@@ -289,7 +289,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.IdentifierName(abbreviation),
-                                                        SyntaxFactory.IdentifierName(foreignKeyElement.UniqueChildName)))))));
+                                                        SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)))))));
                         }
                         else
                         {
@@ -308,7 +308,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.IdentifierName(abbreviation),
-                                                    SyntaxFactory.IdentifierName(foreignKeyElement.UniqueChildName)))))));
+                                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)))))));
                         }
                     }
 
@@ -375,7 +375,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                     }
 
                     // Create a foreign key index for every parent table.
-                    foreach (ForeignIndexElement foreignKeyElement in tableElement.ParentKeys)
+                    foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentKeys)
                     {
                         //            modelBuilder.Entity<Province>()
                         ExpressionSyntax indexProperties = SyntaxFactory.InvocationExpression(
@@ -399,7 +399,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                     .WithTypeArgumentList(
                                         SyntaxFactory.TypeArgumentList(
                                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                SyntaxFactory.IdentifierName(foreignKeyElement.UniqueIndex.Table.Name))))));
+                                                SyntaxFactory.IdentifierName(foreignIndexElement.UniqueIndex.Table.Name))))));
 
                         //            ... .WithMany();
                         indexProperties = SyntaxFactory.InvocationExpression(
@@ -417,7 +417,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
                                         SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(OnModelCreatingMethod.GetForeignKey(foreignKeyElement)))));
+                                            SyntaxFactory.Argument(OnModelCreatingMethod.GetForeignKey(foreignIndexElement)))));
 
                         //            ... .OnDelete(DeleteBehavior.Restrict)
                         indexProperties = SyntaxFactory.InvocationExpression(
@@ -447,28 +447,28 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
         /// <summary>
         /// Creates an argument that creates a lambda expression for extracting the key from a class.
         /// </summary>
-        /// <param name="foreignKeyElement">The unique key element.</param>
+        /// <param name="foreignIndexElement">The unique key element.</param>
         /// <returns>An argument that extracts a key from an object.</returns>
-        public static ExpressionSyntax GetForeignKey(ForeignIndexElement foreignKeyElement)
+        public static ExpressionSyntax GetForeignKey(ForeignIndexElement foreignIndexElement)
         {
             // Used as a variable when constructing the lambda expression.
-            string abbreviation = foreignKeyElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
+            string abbreviation = foreignIndexElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
 
             // This will create an expression for extracting the key from record.
             CSharpSyntaxNode syntaxNode = null;
-            if (foreignKeyElement.Columns.Count == 1)
+            if (foreignIndexElement.Columns.Count == 1)
             {
                 // A simple key can be used like a value type.
                 syntaxNode = SyntaxFactory.MemberAccessExpression(
                     SyntaxKind.SimpleMemberAccessExpression,
                     SyntaxFactory.IdentifierName(abbreviation),
-                    SyntaxFactory.IdentifierName(foreignKeyElement.Columns[0].Column.Name));
+                    SyntaxFactory.IdentifierName(foreignIndexElement.Columns[0].Column.Name));
             }
             else
             {
                 // A Compound key must be constructed from an anomymous type.
                 List<SyntaxNodeOrToken> keyElements = new List<SyntaxNodeOrToken>();
-                foreach (ColumnReferenceElement columnReferenceElement in foreignKeyElement.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in foreignIndexElement.Columns)
                 {
                     if (keyElements.Count != 0)
                     {

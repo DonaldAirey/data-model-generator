@@ -71,7 +71,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            this.httpClient = httpClient;
                     SyntaxFactory.ExpressionStatement(

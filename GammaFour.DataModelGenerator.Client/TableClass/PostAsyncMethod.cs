@@ -79,7 +79,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            using var request = new HttpRequestMessage(HttpMethod.Post, "rest/events");
                     SyntaxFactory.LocalDeclarationStatement(

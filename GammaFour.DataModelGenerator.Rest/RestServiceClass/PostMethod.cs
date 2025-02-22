@@ -134,7 +134,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            if (!this.ModelState.IsValid)
                     //            {
@@ -271,7 +271,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                        Account account = jsonObject.GetValue<Account>();
                     SyntaxFactory.LocalDeclarationStatement(
@@ -424,7 +424,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
 
                 //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts).ConfigureAwait(false);
                 //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.ItemAccountKey).ConfigureAwait(false);
@@ -445,7 +445,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         private static List<StatementSyntax> FindParentRecord(UniqueIndexElement uniqueKeyElement)
         {
             // This is used to collect the statements.
-            List<StatementSyntax> statements = new List<StatementSyntax>
+            var statements = new List<StatementSyntax>
             {
                 //                                    if (securityExternalKey.HasValues)
                 //                                    {
@@ -471,7 +471,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         private static List<StatementSyntax> TranslateArgument(UniqueIndexElement uniqueKeyElement)
         {
             // This is used to collect the statements.
-            List<StatementSyntax> statements = new List<StatementSyntax>();
+            var statements = new List<StatementSyntax>();
 
             //                            var accountExternalKeyMnemonic = (string)accountExternalKey.GetValue("mnemonic", StringComparison.OrdinalIgnoreCase);
             foreach (ColumnReferenceElement columnReferenceElement in uniqueKeyElement.Columns)
@@ -584,7 +584,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         private static List<StatementSyntax> LockParentRecord(TableElement tableElement, ColumnElement columnElement)
         {
             // This is used to collect the statements.
-            List<StatementSyntax> statements = new List<StatementSyntax>
+            var statements = new List<StatementSyntax>
             {
                 //                        await lockingTransaction.WaitWriterAsync(account).ConfigureAwait(false);
                 SyntaxFactory.ExpressionStatement(
@@ -644,7 +644,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         private static List<StatementSyntax> ResolveParentRecord(ColumnElement columnElement, List<UniqueIndexElement> uniqueKeys)
         {
             // This is used to collect the statements.
-            List<StatementSyntax> statements = new List<StatementSyntax>
+            var statements = new List<StatementSyntax>
             {
                 //                        var childIdObject = jsonObject.GetValue("childId", StringComparison.InvariantCulture) as JsonObject;
                 SyntaxFactory.LocalDeclarationStatement(
@@ -707,7 +707,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         private static List<StatementSyntax> ResolveColumnFromParent(ColumnElement columnElement, List<UniqueIndexElement> uniqueKeyElements)
         {
             // This is used to collect the statements.
-            List<StatementSyntax> statements = new List<StatementSyntax>();
+            var statements = new List<StatementSyntax>();
 
             // All the unique indices in this list should share the same table 'cause that's how we grouped them.
             TableElement tableElement = uniqueKeyElements[0].Table;

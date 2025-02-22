@@ -144,8 +144,6 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                     SyntaxFactory.TriviaList()),
                                             }))))),
 
-
-
                     //        /// <returns>The rows that could not be loaded.</returns>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -182,7 +180,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            var residuals = new List<Order>();
                     SyntaxFactory.LocalDeclarationStatement(
@@ -212,7 +210,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
 
                     //            foreach (var order in orders)
                     //            {
-                    //                 <CheckForParents>
+                    //                 <LoadRow>
                     //            }
                     SyntaxFactory.ForEachStatement(
                         SyntaxFactory.IdentifierName(
@@ -224,7 +222,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                 SyntaxFactory.TriviaList())),
                         SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()),
                         SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToVariableName()),
-                        SyntaxFactory.Block(this.CheckForParents)),
+                        SyntaxFactory.Block(this.LoadRow)),
 
                     //            return residuals;
                     SyntaxFactory.ReturnStatement(
@@ -243,7 +241,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                    this.DataModel.RowVersion = assetClass.RowVersion;
                     SyntaxFactory.ExpressionStatement(
@@ -269,103 +267,47 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         /// <summary>
         /// Gets the statements checks to see if the parent record exists.
         /// </summary>
-        private List<StatementSyntax> CheckForParents
+        private List<StatementSyntax> LoadRow
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
 
                 // For each parent table, include a check to make sure the parent exists before adding the record.
                 foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ParentKeys)
                 {
-                    //            var account = this.DataModel.Accounts.Find(order.AccountCode);
-                    var uniqueIndexElement = foreignIndexElement.UniqueIndex;
-                    statements.Add(
-                        SyntaxFactory.LocalDeclarationStatement(
-                            SyntaxFactory.VariableDeclaration(
-                                SyntaxFactory.IdentifierName(
-                                    SyntaxFactory.Identifier(
-                                        SyntaxFactory.TriviaList(),
-                                        SyntaxKind.VarKeyword,
-                                        "var",
-                                        "var",
-                                        SyntaxFactory.TriviaList())))
-                            .WithVariables(
-                                SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                    SyntaxFactory.VariableDeclarator(
-                                        SyntaxFactory.Identifier(uniqueIndexElement.Table.Name.ToVariableName()))
-                                    .WithInitializer(
-                                        SyntaxFactory.EqualsValueClause(
-                                            SyntaxFactory.InvocationExpression(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(uniqueIndexElement.Table.XmlSchemaDocument.Name)),
-                                                        SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToPlural())),
-                                                    SyntaxFactory.IdentifierName("Find")))
-                                            .WithArgumentList(
-                                                SyntaxFactory.ArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                        foreignIndexElement.GetForeignKeyAsArguments(
-                                                            this.tableElement.Name.ToVariableName()))))))))));
-
-                    //                if (account == null)
-                    //                {
-                    //                    residuals.Add(order);
-                    //                    continue;
-                    //                }
-                    statements.Add(
-                        SyntaxFactory.IfStatement(
-                            SyntaxFactory.BinaryExpression(
-                                SyntaxKind.EqualsExpression,
-                                SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToVariableName()),
-                                SyntaxFactory.LiteralExpression(
-                                    SyntaxKind.NullLiteralExpression)),
-                            SyntaxFactory.Block(
-                                SyntaxFactory.ExpressionStatement(
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName("residuals"),
-                                            SyntaxFactory.IdentifierName("Add")))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))),
-                                SyntaxFactory.ContinueStatement())));
-
-                    //                account.Orders.Add(order);
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
+                    var conditional = foreignIndexElement.GetKeyAsEqualityConditional(this.tableElement.Name.ToVariableName());
+                    if (conditional == null)
+                    {
+                        statements.AddRange(this.CheckForParents(foreignIndexElement));
+                    }
+                    else
+                    {
+                        var setToNullStatements = new List<StatementSyntax>();
+                        foreach (var columnElementReference in foreignIndexElement.Columns)
+                        {
+                            var columnElement = columnElementReference.Column;
+                            setToNullStatements.Add(
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.AssignmentExpression(
+                                    SyntaxKind.SimpleAssignmentExpression,
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToVariableName()),
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                    SyntaxFactory.IdentifierName("Add")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                        SyntaxFactory.IdentifierName(columnElement.Name)),
+                                    SyntaxFactory.LiteralExpression(
+                                        SyntaxKind.NullLiteralExpression))));
+                        }
 
-                    //            order.Account = account;
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                                    SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name)),
-                                SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToVariableName()))));
+                        statements.Add(
+                            SyntaxFactory.IfStatement(
+                                conditional,
+                                SyntaxFactory.Block(setToNullStatements))
+                            .WithElse(
+                                SyntaxFactory.ElseClause(
+                                    SyntaxFactory.Block(
+                                        this.CheckForParents(foreignIndexElement)))));
+                    }
                 }
 
                 //            this.dictionary.Add(account.Code, account);
@@ -384,7 +326,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(
                                     new SyntaxNodeOrToken[]
                                     {
-                                        this.tableElement.PrimaryIndex.GetUniqueKeyAsArguments(this.tableElement.Name.ToVariableName()),
+                                        this.tableElement.PrimaryIndex.GetKeyAsArguments(this.tableElement.Name.ToVariableName()),
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.Argument(SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
                                     })))));
@@ -461,7 +403,8 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                                 .WithArgumentList(
                                                     SyntaxFactory.ArgumentList(
                                                         SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                            new SyntaxNodeOrToken[]{
+                                                            new SyntaxNodeOrToken[]
+                                                            {
                                                                 SyntaxFactory.Argument(
                                                                     SyntaxFactory.MemberAccessExpression(
                                                                         SyntaxKind.SimpleMemberAccessExpression,
@@ -475,6 +418,107 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
 
                 return statements;
             }
+        }
+
+        /// <summary>
+        /// Checks for parent row relations.
+        /// </summary>
+        /// <param name="foreignIndexElement">The foreign index.</param>
+        /// <returns>A list of statements.</returns>
+        private IEnumerable<StatementSyntax> CheckForParents(ForeignIndexElement foreignIndexElement)
+        {
+            var statements = new List<StatementSyntax>();
+
+            //            var account = this.DataModel.Accounts.Find(order.AccountCode);
+            var uniqueIndexElement = foreignIndexElement.UniqueIndex;
+            statements.Add(
+                SyntaxFactory.LocalDeclarationStatement(
+                    SyntaxFactory.VariableDeclaration(
+                        SyntaxFactory.IdentifierName(
+                            SyntaxFactory.Identifier(
+                                SyntaxFactory.TriviaList(),
+                                SyntaxKind.VarKeyword,
+                                "var",
+                                "var",
+                                SyntaxFactory.TriviaList())))
+                    .WithVariables(
+                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                            SyntaxFactory.VariableDeclarator(
+                                SyntaxFactory.Identifier(foreignIndexElement.UniqueParentName.ToVariableName()))
+                            .WithInitializer(
+                                SyntaxFactory.EqualsValueClause(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName(uniqueIndexElement.Table.XmlSchemaDocument.Name)),
+                                                SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToPlural())),
+                                            SyntaxFactory.IdentifierName("Find")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                foreignIndexElement.GetKeyAsArguments(
+                                                    this.tableElement.Name.ToVariableName()))))))))));
+
+            //                if (account == null)
+            //                {
+            //                    residuals.Add(order);
+            //                    continue;
+            //                }
+            statements.Add(
+                SyntaxFactory.IfStatement(
+                    SyntaxFactory.BinaryExpression(
+                        SyntaxKind.EqualsExpression,
+                        SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName.ToVariableName()),
+                        SyntaxFactory.LiteralExpression(
+                            SyntaxKind.NullLiteralExpression)),
+                    SyntaxFactory.Block(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("residuals"),
+                                    SyntaxFactory.IdentifierName("Add")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))),
+                        SyntaxFactory.ContinueStatement())));
+
+            //                account.Orders.Add(order);
+            statements.Add(
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName.ToVariableName()),
+                                SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
+                            SyntaxFactory.IdentifierName("Add")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
+
+            //            order.Account = account;
+            statements.Add(
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.AssignmentExpression(
+                        SyntaxKind.SimpleAssignmentExpression,
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                            SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName)),
+                        SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName.ToVariableName()))));
+
+            return statements;
         }
     }
 }

@@ -48,7 +48,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithParameterList(this.tableElement.PrimaryIndex.GetUniqueKeyAsParameters())
+            .WithParameterList(this.tableElement.PrimaryIndex.GetKeyAsParameters())
             .WithBody(this.Body)
             .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -60,45 +60,69 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
         {
             get
             {
+                var statements = new List<StatementSyntax>();
+
                 //            return this.dictionary.TryGetValue(code, out var account) ? account : null;
                 var variableName = this.tableElement.Name.ToVariableName();
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var findRowStatement = SyntaxFactory.ReturnStatement(
+                    SyntaxFactory.ConditionalExpression(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("dictionary")),
+                                SyntaxFactory.IdentifierName("TryGetValue")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                    this.tableElement.PrimaryIndex.GetKeyAsArguments(),
+                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.DeclarationExpression(
+                                            SyntaxFactory.IdentifierName(
+                                                SyntaxFactory.Identifier(
+                                                    SyntaxFactory.TriviaList(),
+                                                    SyntaxKind.VarKeyword,
+                                                    "var",
+                                                    "var",
+                                                    SyntaxFactory.TriviaList())),
+                                            SyntaxFactory.SingleVariableDesignation(
+                                                SyntaxFactory.Identifier(variableName))))
+                                    .WithRefOrOutKeyword(
+                                        SyntaxFactory.Token(SyntaxKind.OutKeyword)),
+                                    }))),
+                        SyntaxFactory.IdentifierName(variableName),
+                        SyntaxFactory.LiteralExpression(
+                            SyntaxKind.NullLiteralExpression)));
+
+                var condition = this.tableElement.PrimaryIndex.GetKeyAsEqualityConditional();
+                if (condition == null)
                 {
-                    SyntaxFactory.ReturnStatement(
-                         SyntaxFactory.ConditionalExpression(
-                             SyntaxFactory.InvocationExpression(
-                                 SyntaxFactory.MemberAccessExpression(
-                                     SyntaxKind.SimpleMemberAccessExpression,
-                                     SyntaxFactory.MemberAccessExpression(
-                                         SyntaxKind.SimpleMemberAccessExpression,
-                                         SyntaxFactory.ThisExpression(),
-                                         SyntaxFactory.IdentifierName("dictionary")),
-                                     SyntaxFactory.IdentifierName("TryGetValue")))
-                             .WithArgumentList(
-                                 SyntaxFactory.ArgumentList(
-                                     SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                         new SyntaxNodeOrToken[]
-                                         {
-                                            this.tableElement.PrimaryIndex.GetUniqueKeyAsArguments(),
-                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.DeclarationExpression(
-                                                    SyntaxFactory.IdentifierName(
-                                                        SyntaxFactory.Identifier(
-                                                            SyntaxFactory.TriviaList(),
-                                                            SyntaxKind.VarKeyword,
-                                                            "var",
-                                                            "var",
-                                                            SyntaxFactory.TriviaList())),
-                                                    SyntaxFactory.SingleVariableDesignation(
-                                                        SyntaxFactory.Identifier(variableName))))
-                                            .WithRefOrOutKeyword(
-                                                SyntaxFactory.Token(SyntaxKind.OutKeyword)),
-                                         }))),
-                             SyntaxFactory.IdentifierName(variableName),
-                             SyntaxFactory.LiteralExpression(
-                                 SyntaxKind.NullLiteralExpression))),
-                };
+                    //            return this.dictionary.TryGetValue(code, out var account) ? account : null;
+                    statements.Add(findRowStatement);
+                }
+                else
+                {
+                    //            if (symbol != null)
+                    //            {
+                    //              return this.dictionary.TryGetValue(code, out var account) ? account : null;
+                    //            }
+                    statements.Add(
+                        SyntaxFactory.IfStatement(
+                            condition,
+                            SyntaxFactory.Block(
+                                SyntaxFactory.SingletonList<StatementSyntax>(
+                                    SyntaxFactory.ReturnStatement(
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.NullLiteralExpression)))))
+                        .WithElse(
+                            SyntaxFactory.ElseClause(
+                                SyntaxFactory.Block(findRowStatement))));
+                }
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));

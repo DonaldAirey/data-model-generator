@@ -91,7 +91,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// </summary>
         /// <param name="uniqueIndexElement">The unique key element.</param>
         /// <returns>An argument that extracts a key from an object.</returns>
-        public static ArgumentSyntax GetUniqueKeyAsArguments(this UniqueIndexElement uniqueIndexElement)
+        public static ArgumentSyntax GetKeyAsArguments(this UniqueIndexElement uniqueIndexElement)
         {
             // This will create an expression for extracting the key from record.
             if (uniqueIndexElement.Columns.Count == 1)
@@ -129,17 +129,33 @@ namespace GammaFour.DataModelGenerator.Common
         /// <param name="uniqueIndexElement">The unique key element.</param>
         /// <param name="variableName">The name of the variable used in the expression.</param>
         /// <returns>An argument that extracts a key from an object.</returns>
-        public static ArgumentSyntax GetUniqueKeyAsArguments(this UniqueIndexElement uniqueIndexElement, string variableName)
+        public static ArgumentSyntax GetKeyAsArguments(this UniqueIndexElement uniqueIndexElement, string variableName)
         {
             // This will create an expression for extracting the key from record.
             if (uniqueIndexElement.Columns.Count == 1)
             {
-                // account.Account
-                return SyntaxFactory.Argument(
+                var columnElement = uniqueIndexElement.Columns[0].Column;
+                if (columnElement.ColumnType.IsNullable && columnElement.ColumnType.IsValueType)
+                {
+                    // account.Account.Value
+                    return SyntaxFactory.Argument(
                     SyntaxFactory.MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
-                        SyntaxFactory.IdentifierName(variableName),
-                        SyntaxFactory.IdentifierName(uniqueIndexElement.Columns[0].Column.Name)));
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName(variableName),
+                            SyntaxFactory.IdentifierName(columnElement.Name)),
+                        SyntaxFactory.IdentifierName("Value")));
+                }
+                else
+                {
+                    // account.Account
+                    return SyntaxFactory.Argument(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName(variableName),
+                            SyntaxFactory.IdentifierName(columnElement.Name)));
+                }
             }
             else
             {
@@ -147,17 +163,33 @@ namespace GammaFour.DataModelGenerator.Common
                 List<SyntaxNodeOrToken> keyElements = new List<SyntaxNodeOrToken>();
                 foreach (ColumnReferenceElement columnReferenceElement in uniqueIndexElement.Columns)
                 {
+                    var columnElement = columnReferenceElement.Column;
                     if (keyElements.Count != 0)
                     {
                         keyElements.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
                     }
 
-                    keyElements.Add(
-                        SyntaxFactory.Argument(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(variableName),
-                                SyntaxFactory.IdentifierName(columnReferenceElement.Column.Name))));
+                    if (columnElement.ColumnType.IsNullable && columnElement.ColumnType.IsValueType)
+                    {
+                        keyElements.Add(
+                            SyntaxFactory.Argument(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName(variableName),
+                                        SyntaxFactory.IdentifierName(columnElement.Name)),
+                                    SyntaxFactory.IdentifierName("Value"))));
+                    }
+                    else
+                    {
+                        keyElements.Add(
+                            SyntaxFactory.Argument(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName(variableName),
+                                    SyntaxFactory.IdentifierName(columnReferenceElement.Column.Name))));
+                    }
                 }
 
                 // (account.Code, account.Name)
@@ -168,11 +200,132 @@ namespace GammaFour.DataModelGenerator.Common
         }
 
         /// <summary>
+        /// Creates a conditional statement for a unique key using the members of a value.
+        /// </summary>
+        /// <param name="uniqueIndexElement">The unique key element.</param>
+        /// <returns>An argument that extracts a key from an object.</returns>
+        public static ExpressionSyntax GetKeyAsEqualityConditional(this UniqueIndexElement uniqueIndexElement)
+        {
+            ExpressionSyntax expressionSyntax = null;
+            foreach (var columnReferenceElement in uniqueIndexElement.Columns)
+            {
+                var columnElement = columnReferenceElement.Column;
+                if (columnElement.ColumnType.IsNullable)
+                {
+                    if (expressionSyntax == null)
+                    {
+                        expressionSyntax = SyntaxFactory.BinaryExpression(
+                            SyntaxKind.EqualsExpression,
+                            SyntaxFactory.IdentifierName(columnElement.Name.ToVariableName()),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression));
+                    }
+                    else
+                    {
+                        expressionSyntax = SyntaxFactory.BinaryExpression(
+                            SyntaxKind.LogicalOrExpression,
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.EqualsExpression,
+                                SyntaxFactory.IdentifierName(columnElement.Name.ToVariableName()),
+                                SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression)),
+                            expressionSyntax);
+                    }
+                }
+            }
+
+            return expressionSyntax;
+        }
+
+        /// <summary>
+        /// Creates a conditional statement for a unique key using the members of a value.
+        /// </summary>
+        /// <param name="uniqueIndexElement">The unique key element.</param>
+        /// <returns>An argument that extracts a key from an object.</returns>
+        public static ExpressionSyntax GetKeyAsInequalityConditional(this UniqueIndexElement uniqueIndexElement)
+        {
+            ExpressionSyntax expressionSyntax = null;
+            foreach (var columnReferenceElement in uniqueIndexElement.Columns)
+            {
+                var columnElement = columnReferenceElement.Column;
+                if (columnElement.ColumnType.IsNullable)
+                {
+                    if (expressionSyntax == null)
+                    {
+                        expressionSyntax = SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
+                            SyntaxFactory.IdentifierName(columnElement.Name.ToVariableName()),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression));
+                    }
+                    else
+                    {
+                        expressionSyntax = SyntaxFactory.BinaryExpression(
+                            SyntaxKind.LogicalAndExpression,
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.NotEqualsExpression,
+                                SyntaxFactory.IdentifierName(columnElement.Name.ToVariableName()),
+                                SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression)),
+                            expressionSyntax);
+                    }
+                }
+            }
+
+            return expressionSyntax;
+        }
+
+        /// <summary>
+        /// Creates a conditional statement for a unique key using the members of a value.
+        /// </summary>
+        /// <param name="uniqueIndexElement">The unique key element.</param>
+        /// <param name="variableName">The name of the variable used in the expression.</param>
+        /// <returns>An argument that extracts a key from an object.</returns>
+        public static ExpressionSyntax GetKeyAsInequalityConditional(this UniqueIndexElement uniqueIndexElement, string variableName)
+        {
+            ExpressionSyntax expressionSyntax = null;
+            foreach (var columnReferenceElement in uniqueIndexElement.Columns)
+            {
+                var columnElement = columnReferenceElement.Column;
+                if (columnElement.ColumnType.IsNullable)
+                {
+                    if (expressionSyntax == null)
+                    {
+                        expressionSyntax = SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(variableName),
+                                SyntaxFactory.IdentifierName(columnElement.Name)),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression));
+                    }
+                    else
+                    {
+                        expressionSyntax = SyntaxFactory.BinaryExpression(
+                            SyntaxKind.LogicalAndExpression,
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.NotEqualsExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName(variableName),
+                                    SyntaxFactory.IdentifierName(columnElement.Name)),
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.NullLiteralExpression)),
+                            expressionSyntax);
+                    }
+                }
+            }
+
+            return expressionSyntax;
+        }
+
+        /// <summary>
         /// Creates a parameter list for a unique key.
         /// </summary>
         /// <param name="uniqueIndexElement">The unique key element.</param>
         /// <returns>An argument that extracts a key from an object.</returns>
-        public static ParameterListSyntax GetUniqueKeyAsParameters(this UniqueIndexElement uniqueIndexElement)
+        public static ParameterListSyntax GetKeyAsParameters(this UniqueIndexElement uniqueIndexElement)
         {
             // This will create an expression for extracting the key from record.
             if (uniqueIndexElement.Columns.Count == 1)

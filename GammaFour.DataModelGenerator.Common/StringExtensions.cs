@@ -48,6 +48,12 @@ namespace GammaFour.DataModelGenerator.Common
         /// <returns>The input string with a lower case starting letter and an @ prepended if the variable is a keyword..</returns>
         public static string ToVariableName(this string text)
         {
+            // Value is a special case.
+            if (text == "Value")
+            {
+                return "localValue";
+            }
+
             // Convert the variable to its camel case equivalent.
             var name = text.Substring(0, 1).ToLower(CultureInfo.InvariantCulture) + text.Remove(0, 1);
             return StringExtensions.Keywords.Contains(name) ? "@" + name : name;

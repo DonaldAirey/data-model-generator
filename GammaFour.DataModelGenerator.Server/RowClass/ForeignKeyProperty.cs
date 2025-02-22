@@ -19,17 +19,17 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
         /// <summary>
         /// The column element.
         /// </summary>
-        private readonly ForeignIndexElement foreignElement;
+        private readonly ForeignIndexElement foreignIndexElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ForeignKeyProperty"/> class.
         /// </summary>
-        /// <param name="foreignElement">The column element.</param>
-        public ForeignKeyProperty(ForeignIndexElement foreignElement)
+        /// <param name="foreignIndexElement">The column element.</param>
+        public ForeignKeyProperty(ForeignIndexElement foreignIndexElement)
         {
             // Initialize the object.
-            this.foreignElement = foreignElement;
-            this.Name = this.foreignElement.Table.Name;
+            this.foreignIndexElement = foreignIndexElement;
+            this.Name = this.foreignIndexElement.Table.Name;
 
             //        /// <summary>
             //        /// Gets the child <see cref="Order"/> rows.
@@ -43,7 +43,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                     SyntaxFactory.TypeArgumentList(
                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                             SyntaxFactory.IdentifierName(this.Name)))),
-                SyntaxFactory.Identifier(foreignElement.Table.Name.ToPlural()))
+                SyntaxFactory.Identifier(this.foreignIndexElement.UniqueChildName))
             .WithAttributeLists(
                 SyntaxFactory.SingletonList<AttributeListSyntax>(
                     SyntaxFactory.AttributeList(
@@ -68,7 +68,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                         .WithTypeArgumentList(
                             SyntaxFactory.TypeArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName(foreignElement.Table.Name)))))
+                                    SyntaxFactory.IdentifierName(foreignIndexElement.Table.Name)))))
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList())))
             .WithSemicolonToken(
@@ -110,7 +110,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $"  Gets the child <see cref=\"{this.foreignElement.Table.Name}\"/> rows.",
+                                                $"  Gets the child <see cref=\"{this.foreignIndexElement.Table.Name}\"/> rows.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

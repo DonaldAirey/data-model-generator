@@ -72,7 +72,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            object key = this.primaryKeyFunction(buyer);
                     SyntaxFactory.LocalDeclarationStatement(
@@ -192,7 +192,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                 }
 
                 // Add the record to each of the foreign key indices on this set.
-                foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ParentKeys)
+                foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ParentKeys)
                 {
                     //            this.CountryBuyerCountryIdKey.Add(buyer);
                     statements.Add(
@@ -203,7 +203,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
+                                    SyntaxFactory.IdentifierName(foreignIndexElement.Name)),
                                 SyntaxFactory.IdentifierName("Add")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(

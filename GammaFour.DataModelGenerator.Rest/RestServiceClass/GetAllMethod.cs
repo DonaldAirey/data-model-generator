@@ -101,7 +101,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            await lockingTransaction.WaitReaderAsync(account).ConfigureAwait(false);
                     SyntaxFactory.ExpressionStatement(
@@ -171,7 +171,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            if (!this.ModelState.IsValid)
                     //            {
@@ -286,7 +286,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            using var lockingTransaction = new LockingTransaction(this.transactionTimeout);
                     SyntaxFactory.LocalDeclarationStatement(

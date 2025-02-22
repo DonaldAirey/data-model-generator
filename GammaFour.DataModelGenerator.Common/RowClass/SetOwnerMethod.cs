@@ -74,7 +74,7 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            if (this.RecordState == RecordState.Unchanged)
                     //            {
@@ -159,7 +159,7 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                this.State = provinces == null ? RecordState.Detached : RecordState.Added;
                     SyntaxFactory.ExpressionStatement(
@@ -300,7 +300,7 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            this.RecordState = countries == null ? RecordState.Deleted : RecordState.Added;
                     SyntaxFactory.ExpressionStatement(
@@ -389,12 +389,12 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
 
                 //            this.getBuyers = () => Country.defaultBuyers;
                 //            this.getProvinces = () => Country.defaultProvinces;
                 //            this.getRegions = () => Country.defaultRegions;
-                foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ChildKeys)
+                foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ChildKeys)
                 {
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
@@ -403,13 +403,13 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName($"get{foreignKeyElement.UniqueChildName}")),
+                                    SyntaxFactory.IdentifierName($"get{foreignIndexElement.UniqueChildName}")),
                                 SyntaxFactory.ParenthesizedLambdaExpression(
                                     SyntaxFactory.ParameterList(),
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.IdentifierName(this.tableElement.Name),
-                                        SyntaxFactory.IdentifierName($"Default{foreignKeyElement.UniqueChildName}"))))));
+                                        SyntaxFactory.IdentifierName($"Default{foreignIndexElement.UniqueChildName}"))))));
                 }
 
                 return statements;
@@ -423,12 +423,12 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
 
                 //                this.getAccountCanonMaps = () => this.Accounts.DataModel.AccountCanonMaps.AccountAccountCanonMapIndex.GetChildren(this);
                 //                this.getAccountGroups = () => this.Accounts.DataModel.AccountGroups.AccountAccountGroupIndex.GetChildren(this);
                 //                this.getAlerts = () => this.Accounts.DataModel.Alerts.AccountAlertIndex.GetChildren(this);
-                foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ChildKeys)
+                foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ChildKeys)
                 {
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
@@ -437,7 +437,7 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName($"get{foreignKeyElement.UniqueChildName}")),
+                                    SyntaxFactory.IdentifierName($"get{foreignIndexElement.UniqueChildName}")),
                                 SyntaxFactory.ParenthesizedLambdaExpression()
                                 .WithExpressionBody(
                                     SyntaxFactory.InvocationExpression(
@@ -452,10 +452,10 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(foreignKeyElement.UniqueIndex.Table.Name.ToPlural())),
-                                                        SyntaxFactory.IdentifierName(foreignKeyElement.XmlSchemaDocument.Name)),
-                                                    SyntaxFactory.IdentifierName(foreignKeyElement.Table.Name.ToPlural())),
-                                                SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
+                                                            SyntaxFactory.IdentifierName(foreignIndexElement.UniqueIndex.Table.Name.ToPlural())),
+                                                        SyntaxFactory.IdentifierName(foreignIndexElement.XmlSchemaDocument.Name)),
+                                                    SyntaxFactory.IdentifierName(foreignIndexElement.Table.Name.ToPlural())),
+                                                SyntaxFactory.IdentifierName(foreignIndexElement.Name)),
                                             SyntaxFactory.IdentifierName("GetChildren")))
                                     .WithArgumentList(
                                         SyntaxFactory.ArgumentList(

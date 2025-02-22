@@ -23,7 +23,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// The foreign key elements.
         /// </summary>
-        private List<ForeignIndexElement> foreignKeyElements;
+        private List<ForeignIndexElement> foreignIndexElements;
 
         /// <summary>
         /// The index of the table.
@@ -110,14 +110,14 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                if (this.foreignKeyElements == null)
+                if (this.foreignIndexElements == null)
                 {
-                    this.foreignKeyElements = (from fke in this.XmlSchemaDocument.ForeignKeys
+                    this.foreignIndexElements = (from fke in this.XmlSchemaDocument.ForeignKeys
                                                where fke.UniqueIndex.Table == this
                                                select fke).ToList();
                 }
 
-                return this.foreignKeyElements;
+                return this.foreignIndexElements;
             }
         }
 

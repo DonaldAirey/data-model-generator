@@ -143,7 +143,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            Dictionary<object, IEnumerable> bucket = new Dictionary<object, IEnumerable>();
                     SyntaxFactory.LocalDeclarationStatement(
@@ -282,7 +282,7 @@ namespace GammaFour.DataModelGenerator.Server.DataModelClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
                     //                bucket[this.Accounts] = this.Accounts.Load((IEnumerable<Account>)bucket[this.Accounts]);

@@ -75,7 +75,7 @@ namespace GammaFour.DataModelGenerator.Common
                 typeSyntax = SyntaxFactory.IdentifierName(columnType.FullName);
             }
 
-            return typeSyntax;
+            return columnType.IsNullable ? SyntaxFactory.NullableType(typeSyntax) : typeSyntax;
         }
     }
 }

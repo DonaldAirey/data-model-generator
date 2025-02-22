@@ -30,7 +30,7 @@ namespace GammaFour.DataModelGenerator.Common
             }
 
             // Not handled.
-            throw new NotFiniteNumberException();
+            throw new NotImplementedException();
         }
     }
 }

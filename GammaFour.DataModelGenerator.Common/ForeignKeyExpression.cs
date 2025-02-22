@@ -18,28 +18,28 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Creates an argument that creates a lambda expression for extracting the key from a class.
         /// </summary>
-        /// <param name="foreignKeyElement">The unique key element.</param>
+        /// <param name="foreignIndexElement">The unique key element.</param>
         /// <returns>An argument that extracts a key from an object.</returns>
-        public static ExpressionSyntax GetForeignKey(ForeignIndexElement foreignKeyElement)
+        public static ExpressionSyntax GetForeignKey(ForeignIndexElement foreignIndexElement)
         {
             // Used as a variable when constructing the lambda expression.
-            string abbreviation = foreignKeyElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
+            string abbreviation = foreignIndexElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
 
             // This will create an expression for extracting the key from record.
             CSharpSyntaxNode syntaxNode;
-            if (foreignKeyElement.Columns.Count == 1)
+            if (foreignIndexElement.Columns.Count == 1)
             {
                 // b.BuyerId
                 syntaxNode = SyntaxFactory.MemberAccessExpression(
                     SyntaxKind.SimpleMemberAccessExpression,
                     SyntaxFactory.IdentifierName(abbreviation),
-                    SyntaxFactory.IdentifierName(foreignKeyElement.Columns[0].Column.Name));
+                    SyntaxFactory.IdentifierName(foreignIndexElement.Columns[0].Column.Name));
             }
             else
             {
                 // A Compound key is constructed as a value tuple.
                 List<SyntaxNodeOrToken> keyElements = new List<SyntaxNodeOrToken>();
-                foreach (ColumnReferenceElement columnReferenceElement in foreignKeyElement.Columns)
+                foreach (ColumnReferenceElement columnReferenceElement in foreignIndexElement.Columns)
                 {
                     if (keyElements.Count != 0)
                     {

@@ -81,7 +81,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                using (var request = new HttpRequestMessage(HttpMethod.Patch, "rest/users"))
                     //                using (request.Content = new StringContent(JsonSerializer.Serialize(users), Encoding.Default, "application/json"))
@@ -315,7 +315,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                    response.EnsureSuccessStatusCode();
                     SyntaxFactory.ExpressionStatement(

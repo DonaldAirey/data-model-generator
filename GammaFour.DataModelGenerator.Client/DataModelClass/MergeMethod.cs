@@ -176,7 +176,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            Dictionary<ITable, IEnumerable<IRow>> mergeBuckets = new Dictionary<ITable, IEnumerable<IRow>>();
                     LocalDeclarationStatement(
@@ -470,7 +470,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
 
                 // Merge each of the tables explicitly.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
@@ -537,7 +537,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
 
                 // Purge each of the tables explicitly.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
@@ -602,7 +602,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         private static List<StatementSyntax> GetMergeTable(TableElement tableElement)
         {
             // The elements of the body are added to this collection as they are assembled.
-            List<StatementSyntax> statements = new List<StatementSyntax>
+            var statements = new List<StatementSyntax>
             {
                 //                mergeBuckets.Add(this.Accounts, this.Accounts.Merge(accountsNode.Deserialize<List<Account>>()));
                 ExpressionStatement(
@@ -663,7 +663,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         private static List<StatementSyntax> GetPurgeTable(TableElement tableElement)
         {
             // The elements of the body are added to this collection as they are assembled.
-            List<StatementSyntax> statements = new List<StatementSyntax>
+            var statements = new List<StatementSyntax>
             {
                 //                purgeBuckets.Add(this.Accounts, this.Accounts.Purge(deletedAccountsNode.Deserialize<List<Account>>()));
                 ExpressionStatement(
@@ -724,7 +724,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         private List<StatementSyntax> MergeBucket(TableElement tableElement)
         {
             // The elements of the body are added to this collection as they are assembled.
-            List<StatementSyntax> statements = new List<StatementSyntax>
+            var statements = new List<StatementSyntax>
             {
                 //                    mergeBuckets[this.Accounts] = this.Accounts.MergeBucket(mergeBuckets[this.Accounts]);
                 SyntaxFactory.ExpressionStatement(
@@ -812,7 +812,7 @@ namespace GammaFour.DataModelGenerator.Client.DataModelClass
         private List<StatementSyntax> PurgeBucket(TableElement tableElement)
         {
             // The elements of the body are added to this collection as they are assembled.
-            List<StatementSyntax> statements = new List<StatementSyntax>
+            var statements = new List<StatementSyntax>
             {
                 //                    purgeBuckets[this.Accounts] = this.Accounts.PurgeBucket(purgeBuckets[this.Accounts]);
                 SyntaxFactory.ExpressionStatement(

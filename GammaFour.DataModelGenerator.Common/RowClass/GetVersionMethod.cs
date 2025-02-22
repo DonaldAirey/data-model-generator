@@ -205,7 +205,7 @@ namespace GammaFour.DataModelGenerator.Common.RowClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            return new Buyer(Buyer.cloneVersions[recordVersion](this));
                     SyntaxFactory.ReturnStatement(

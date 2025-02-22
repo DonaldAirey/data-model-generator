@@ -63,7 +63,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
 
                 //            this.AccountCode = position.AccountCode;
                 //            this.AssetCode = position.AssetCode;
@@ -156,7 +156,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" /// <param name=\"{this.tableElement.Name.ToVariableName()}\">The {this.tableElement.Name.ToVariableName()}.</param>",
+                                                    $" /// <param name=\"{this.tableElement.Name.ToCamelCase()}\">The {this.tableElement.Name.ToVariableName()}.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(

@@ -19,17 +19,17 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private readonly ForeignIndexElement foreignKeyElement;
+        private readonly ForeignIndexElement foreignIndexElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetChildrenFunctionField"/> class.
         /// </summary>
-        /// <param name="foreignKeyElement">A description of a foreign key.</param>
-        public GetChildrenFunctionField(ForeignIndexElement foreignKeyElement)
+        /// <param name="foreignIndexElement">A description of a foreign key.</param>
+        public GetChildrenFunctionField(ForeignIndexElement foreignIndexElement)
         {
             // Initialize the object.
-            this.foreignKeyElement = foreignKeyElement;
-            this.Name = $"get{this.foreignKeyElement.UniqueChildName}";
+            this.foreignIndexElement = foreignIndexElement;
+            this.Name = $"get{this.foreignIndexElement.UniqueChildName}";
 
             //        /// <summary>
             //        /// Function to get child Buyers.
@@ -47,7 +47,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                     .WithTypeArgumentList(
                                         SyntaxFactory.TypeArgumentList(
                                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name))))))))
+                                                SyntaxFactory.IdentifierName(this.foreignIndexElement.Table.Name))))))))
                     .WithVariables(
                         SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                             SyntaxFactory.VariableDeclarator(
@@ -92,7 +92,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                         SyntaxFactory.SeparatedList<TypeSyntax>(
                                             new SyntaxNodeOrToken[]
                                             {
-                                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Name),
+                                                SyntaxFactory.IdentifierName(this.foreignIndexElement.Name),
                                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                 SyntaxFactory.ArrayType(
                                                     SyntaxFactory.PredefinedType(
@@ -141,7 +141,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Function to get child {this.foreignKeyElement.Table.Name.ToCamelCase().ToPlural()}.",
+                                                $" Function to get child {this.foreignIndexElement.Table.Name.ToCamelCase().ToPlural()}.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

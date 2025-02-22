@@ -47,7 +47,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            throw new NotImplementedException();
                     SyntaxFactory.ThrowStatement(

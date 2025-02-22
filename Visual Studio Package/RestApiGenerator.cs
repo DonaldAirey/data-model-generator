@@ -12,9 +12,7 @@ namespace GammaFour.VisualStudioPackage
     using GammaFour.DataModelGenerator.RestService;
     using GammaFour.VisualStudio;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp.Formatting;
     using Microsoft.CodeAnalysis.Formatting;
-    using Microsoft.CodeAnalysis.Options;
     using Microsoft.VisualStudio.Shell;
 
     /// <summary>

@@ -19,17 +19,17 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         /// <summary>
         /// The foreign key description.
         /// </summary>
-        private readonly ForeignIndexElement foreignKeyElement;
+        private readonly ForeignIndexElement foreignIndexElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ChildrenProperty"/> class.
         /// </summary>
-        /// <param name="foreignKeyElement">The column schema.</param>
-        public ChildrenProperty(ForeignIndexElement foreignKeyElement)
+        /// <param name="foreignIndexElement">The column schema.</param>
+        public ChildrenProperty(ForeignIndexElement foreignIndexElement)
         {
             // Initialize the object.
-            this.foreignKeyElement = foreignKeyElement;
-            this.Name = this.foreignKeyElement.UniqueChildName;
+            this.foreignIndexElement = foreignIndexElement;
+            this.Name = this.foreignIndexElement.UniqueChildName;
 
             //        /// <summary>
             //        /// Gets the child <see cref="Buyer"/> records.
@@ -41,7 +41,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                     .WithTypeArgumentList(
                         SyntaxFactory.TypeArgumentList(
                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name)))),
+                                SyntaxFactory.IdentifierName(this.foreignIndexElement.Table.Name)))),
                     SyntaxFactory.Identifier(this.Name))
                 .WithAccessorList(this.AccessorList)
                 .WithModifiers(ChildrenProperty.Modifiers)
@@ -137,7 +137,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Gets the child <see cref=\"{this.foreignKeyElement.Table.Name}\"/> records.",
+                                                $" Gets the child <see cref=\"{this.foreignIndexElement.Table.Name}\"/> records.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -171,7 +171,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             get
             {
                 // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                return this.getRegions();
                     SyntaxFactory.ReturnStatement(
@@ -179,7 +179,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName($"get{this.foreignKeyElement.UniqueChildName}")))),
+                                SyntaxFactory.IdentifierName($"get{this.foreignIndexElement.UniqueChildName}")))),
                 };
 
                 //            get

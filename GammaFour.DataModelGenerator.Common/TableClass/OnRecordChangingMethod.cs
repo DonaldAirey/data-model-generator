@@ -74,7 +74,7 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            this.RecordChanging?.Invoke(this, new RecordChangeEventArgs<Buyer> { DataAction = dataAction, Previous = previous, Current = current });
                     SyntaxFactory.ExpressionStatement(

@@ -107,10 +107,10 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
 
                 // Initialize the foreign index properties.
-                foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ParentKeys)
+                foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ParentKeys)
                 {
                     //            this.CountryCodeKey = new UniqueIndex<Country>("CountryCodeKey").HasIndex(c => c.Code);
                     statements.Add(
@@ -120,8 +120,8 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
-                                BuildForeignIndicesMethod.GetForeignKeyInitializer(foreignKeyElement))));
+                                    SyntaxFactory.IdentifierName(foreignIndexElement.Name)),
+                                BuildForeignIndicesMethod.GetForeignKeyInitializer(foreignIndexElement))));
 
                     //            this.ForeignIndex.Add(this.AccountAccountCanonMapKey.Name, this.AccountAccountCanonMapKey);
                     statements.Add(
@@ -145,14 +145,14 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                             SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(foreignKeyElement.Name)),
+                                                            SyntaxFactory.IdentifierName(foreignIndexElement.Name)),
                                                         SyntaxFactory.IdentifierName("Name"))),
                                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                 SyntaxFactory.Argument(
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.ThisExpression(),
-                                                        SyntaxFactory.IdentifierName(foreignKeyElement.Name))),
+                                                        SyntaxFactory.IdentifierName(foreignIndexElement.Name))),
                                             })))));
                 }
 
@@ -164,9 +164,9 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
         /// <summary>
         /// Constructs an initializer for a unique index.
         /// </summary>
-        /// <param name="foreignKeyElement">The foreign index description.</param>
+        /// <param name="foreignIndexElement">The foreign index description.</param>
         /// <returns>Code to initialize a unique index.</returns>
-        private static ExpressionSyntax GetForeignKeyInitializer(ForeignIndexElement foreignKeyElement)
+        private static ExpressionSyntax GetForeignKeyInitializer(ForeignIndexElement foreignIndexElement)
         {
             //        new ForeignIndex<Account,Item>("AccountSymbolKey")
             ExpressionSyntax expressionSyntax = SyntaxFactory.ObjectCreationExpression(
@@ -177,9 +177,9 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                         SyntaxFactory.SeparatedList<TypeSyntax>(
                             new SyntaxNodeOrToken[]
                             {
-                                    SyntaxFactory.IdentifierName(foreignKeyElement.UniqueIndex.Table.Name),
+                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueIndex.Table.Name),
                                     SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                    SyntaxFactory.IdentifierName(foreignKeyElement.Table.Name),
+                                    SyntaxFactory.IdentifierName(foreignIndexElement.Table.Name),
                             }))))
             .WithArgumentList(
                 SyntaxFactory.ArgumentList(
@@ -189,7 +189,7 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                 SyntaxFactory.Argument(
                                     SyntaxFactory.LiteralExpression(
                                         SyntaxKind.StringLiteralExpression,
-                                        SyntaxFactory.Literal(foreignKeyElement.Name))),
+                                        SyntaxFactory.Literal(foreignIndexElement.Name))),
                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                                 SyntaxFactory.Argument(
                                     SyntaxFactory.MemberAccessExpression(
@@ -199,9 +199,9 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName(foreignKeyElement.XmlSchemaDocument.Name)),
-                                            SyntaxFactory.IdentifierName(foreignKeyElement.UniqueIndex.Table.Name.ToPlural())),
-                                        SyntaxFactory.IdentifierName(foreignKeyElement.UniqueIndex.Name))),
+                                                SyntaxFactory.IdentifierName(foreignIndexElement.XmlSchemaDocument.Name)),
+                                            SyntaxFactory.IdentifierName(foreignIndexElement.UniqueIndex.Table.Name.ToPlural())),
+                                        SyntaxFactory.IdentifierName(foreignIndexElement.UniqueIndex.Name))),
                         })));
 
             // .HasIndex(a => a.ItemId)
@@ -214,10 +214,10 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                 SyntaxFactory.ArgumentList(
                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                         SyntaxFactory.Argument(
-                            ForeignKeyExpression.GetForeignKey(foreignKeyElement)))));
+                            ForeignKeyExpression.GetForeignKey(foreignIndexElement)))));
 
             //  .HasFilter(a => a.Symbol != null)
-            if (foreignKeyElement.IsNullable)
+            if (foreignIndexElement.IsNullable)
             {
                 expressionSyntax = SyntaxFactory.InvocationExpression(
                     SyntaxFactory.MemberAccessExpression(
@@ -227,7 +227,7 @@ namespace GammaFour.DataModelGenerator.Common.TableClass
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList(
                             SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                SyntaxFactory.Argument(NullableKeyFilterExpression.GetNullableKeyFilter(foreignKeyElement)))));
+                                SyntaxFactory.Argument(NullableKeyFilterExpression.GetNullableKeyFilter(foreignIndexElement)))));
             }
 
             // = new UniqueIndex("SecurityFigiKey").HasIndex(s => s.Figi).HasFilter(s => s.Figi != null);

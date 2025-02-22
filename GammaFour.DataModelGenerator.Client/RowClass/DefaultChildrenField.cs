@@ -19,17 +19,17 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         /// <summary>
         /// The table schema.
         /// </summary>
-        private readonly ForeignIndexElement foreignKeyElement;
+        private readonly ForeignIndexElement foreignIndexElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultChildrenField"/> class.
         /// </summary>
-        /// <param name="foreignKeyElement">A description of a foreign key.</param>
-        public DefaultChildrenField(ForeignIndexElement foreignKeyElement)
+        /// <param name="foreignIndexElement">A description of a foreign key.</param>
+        public DefaultChildrenField(ForeignIndexElement foreignIndexElement)
         {
             // Initialize the object.
-            this.foreignKeyElement = foreignKeyElement;
-            this.Name = $"Default{this.foreignKeyElement.UniqueChildName}";
+            this.foreignIndexElement = foreignIndexElement;
+            this.Name = $"Default{this.foreignIndexElement.UniqueChildName}";
 
             //        /// <summary>
             //        /// Default Buyers.
@@ -42,7 +42,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                         .WithTypeArgumentList(
                             SyntaxFactory.TypeArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name)))))
+                                    SyntaxFactory.IdentifierName(this.foreignIndexElement.Table.Name)))))
                     .WithVariables(this.Variables))
                 .WithModifiers(DefaultChildrenField.Modifiers)
                 .WithLeadingTrivia(this.DocumentationComment);
@@ -86,7 +86,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                         SyntaxFactory.SeparatedList<TypeSyntax>(
                                             new SyntaxNodeOrToken[]
                                             {
-                                                SyntaxFactory.IdentifierName(this.foreignKeyElement.Name),
+                                                SyntaxFactory.IdentifierName(this.foreignIndexElement.Name),
                                                 SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                 SyntaxFactory.ArrayType(
                                                     SyntaxFactory.PredefinedType(
@@ -135,7 +135,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Default {this.foreignKeyElement.Table.Name}.",
+                                                $" Default {this.foreignIndexElement.Table.Name}.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -180,7 +180,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
                                 .WithTypeArgumentList(
                                     SyntaxFactory.TypeArgumentList(
                                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                            SyntaxFactory.IdentifierName(this.foreignKeyElement.Table.Name)))))
+                                            SyntaxFactory.IdentifierName(this.foreignIndexElement.Table.Name)))))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList()))));
             }

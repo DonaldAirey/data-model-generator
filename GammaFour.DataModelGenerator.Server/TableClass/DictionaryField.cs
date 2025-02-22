@@ -136,13 +136,13 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 if (this.tableElement.PrimaryIndex.Columns.Count == 1)
                 {
                     // <string, Account>
+                    var columnElement = this.tableElement.PrimaryIndex.Columns[0].Column;
                     return SyntaxFactory.SeparatedList<TypeSyntax>(
                         new SyntaxNodeOrToken[]
                         {
-                        SyntaxFactory.PredefinedType(
-                            SyntaxFactory.Token(SyntaxKind.StringKeyword)),
-                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                        SyntaxFactory.IdentifierName(this.tableElement.Name),
+                            columnElement.GetTypeSyntax(),
+                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                            SyntaxFactory.IdentifierName(this.tableElement.Name),
                         });
                 }
                 else

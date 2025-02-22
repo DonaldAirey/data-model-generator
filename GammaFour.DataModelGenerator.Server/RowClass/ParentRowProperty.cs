@@ -139,7 +139,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                return this.account;
                     SyntaxFactory.ReturnStatement(
@@ -169,7 +169,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                if (this.account != value)
                     //                {

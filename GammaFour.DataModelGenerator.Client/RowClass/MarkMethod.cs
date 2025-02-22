@@ -48,7 +48,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            this.previousData = this.RecordState == RecordState.Added ? null : (object[])this.currentData.Clone();                statements.Add(
                     ExpressionStatement(

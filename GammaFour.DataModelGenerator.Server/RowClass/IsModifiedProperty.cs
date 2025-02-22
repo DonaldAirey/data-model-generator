@@ -1,8 +1,8 @@
-// <copyright file="DataProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="IsModifiedProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Server.RowChangedEventArgsClass
+namespace GammaFour.DataModelGenerator.Server.RowClass
 {
     using System;
     using System.Collections.Generic;
@@ -14,45 +14,58 @@ namespace GammaFour.DataModelGenerator.Server.RowChangedEventArgsClass
     /// <summary>
     /// Creates a property that navigates to the parent record.
     /// </summary>
-    public class DataProperty : SyntaxElement
+    public class IsModifiedProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DataProperty"/> class.
+        /// Initializes a new instance of the <see cref="IsModifiedProperty"/> class.
         /// </summary>
-        public DataProperty()
+        public IsModifiedProperty()
         {
             // Initialize the object.
-            this.Name = "Data";
+            this.Name = "IsModified";
 
             //        /// <summary>
-            //        /// Gets the data.
+            //        /// Gets the modified state.
             //        /// </summary>
-            //        public T Data { get; } = row;
+            //        [JsonIgnore]
+            //        public bool IsModified { get; private set; }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.IdentifierName("T"),
-                SyntaxFactory.Identifier("Data"))
+                SyntaxFactory.PredefinedType(
+                    SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
+                SyntaxFactory.Identifier(this.Name))
+            .WithAttributeLists(
+                SyntaxFactory.SingletonList<AttributeListSyntax>(
+                    SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                SyntaxFactory.IdentifierName("JsonIgnore"))))))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
             .WithAccessorList(
                 SyntaxFactory.AccessorList(
-                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
-                        SyntaxFactory.AccessorDeclaration(
-                            SyntaxKind.GetAccessorDeclaration)
-                        .WithSemicolonToken(
-                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
-            .WithInitializer(
-                SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.IdentifierName("row")))
-            .WithSemicolonToken(
-                SyntaxFactory.Token(SyntaxKind.SemicolonToken))
-            .WithLeadingTrivia(this.DocumentationComment);
+                    SyntaxFactory.List<AccessorDeclarationSyntax>(
+                        new AccessorDeclarationSyntax[]
+                        {
+                            SyntaxFactory.AccessorDeclaration(
+                                SyntaxKind.GetAccessorDeclaration)
+                            .WithSemicolonToken(
+                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                            SyntaxFactory.AccessorDeclaration(
+                                SyntaxKind.SetAccessorDeclaration)
+                            .WithModifiers(
+                                SyntaxFactory.TokenList(
+                                    SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
+                            .WithSemicolonToken(
+                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                        })))
+            .WithLeadingTrivia(IsModifiedProperty.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private static SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -60,7 +73,7 @@ namespace GammaFour.DataModelGenerator.Server.RowChangedEventArgsClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Gets or sets the parent <see cref="Account"/> table.
+                    //        /// Gets the modified state.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -83,7 +96,7 @@ namespace GammaFour.DataModelGenerator.Server.RowChangedEventArgsClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                "  Gets the data.",
+                                                " Gets the modified state.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

@@ -136,7 +136,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            foreach (Buyer oldBuyer in rows)
                     //            {
@@ -161,7 +161,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                this.Remove(proposedOrder);
                     SyntaxFactory.ExpressionStatement(
@@ -188,7 +188,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            object key = this.primaryKeyFunction(buyer);
                     LocalDeclarationStatement(
@@ -286,7 +286,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                    this.AlertDataModel.RowVersion = entity.RowVersion;
                     ExpressionStatement(

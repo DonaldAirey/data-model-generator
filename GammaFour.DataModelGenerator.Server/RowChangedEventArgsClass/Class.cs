@@ -32,7 +32,7 @@ namespace GammaFour.DataModelGenerator.Server.RowChangedEventArgsClass
             //    {
             //        <Members>
             //    }
-            this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
+            this.Syntax = SyntaxFactory.ClassDeclaration("RowChangedEventArgs")
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
@@ -54,8 +54,7 @@ namespace GammaFour.DataModelGenerator.Server.RowChangedEventArgsClass
                             SyntaxFactory.Parameter(
                                 SyntaxFactory.Identifier("row"))
                             .WithType(
-                                SyntaxFactory.NullableType(
-                                    SyntaxFactory.IdentifierName("T"))),
+                                SyntaxFactory.IdentifierName("T")),
                         })))
             .WithBaseList(
                 SyntaxFactory.BaseList(

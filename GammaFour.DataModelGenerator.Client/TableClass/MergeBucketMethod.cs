@@ -139,7 +139,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                    residuals.Add(newBuyer);
                     ExpressionStatement(
@@ -170,7 +170,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            List<IRow> residuals = new List<IRow>();
                     LocalDeclarationStatement(
@@ -224,7 +224,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                this.Add(buyer = newBuyer);
                     ExpressionStatement(
@@ -254,10 +254,10 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
 
                 // For each parent table, include a check to make sure the parent exists before adding the record.
-                foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ParentKeys)
+                foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ParentKeys)
                 {
                     //                if (!this.CountryBuyerCountryIdKey.HasParent(newBuyer))
                     //                {
@@ -273,7 +273,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
                                         MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             ThisExpression(),
-                                            IdentifierName(foreignKeyElement.Name)),
+                                            IdentifierName(foreignIndexElement.Name)),
                                         IdentifierName("HasParent")))
                                 .WithArgumentList(
                                     ArgumentList(
@@ -383,7 +383,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                    if (outsideOrder.RowVersion < newOutsideOrder.RowVersion)
                     //                    {
@@ -414,7 +414,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
 
                 //                        account.AccountTypeCode = newAccount.AccountTypeCode;
                 //                        account.Mnemonic = newAccount.Mnemonic;
@@ -460,7 +460,7 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                    this.AlertDataModel.RowVersion = entity.RowVersion;
                     ExpressionStatement(

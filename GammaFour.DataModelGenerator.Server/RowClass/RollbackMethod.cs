@@ -55,8 +55,19 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
+                    //            this.IsModified = false;
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("IsModified")),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.FalseLiteralExpression))),
+
                     //            while (this.undoStack.Count != 0)
                     //            {
                     //                this.undoStack.Pop()();

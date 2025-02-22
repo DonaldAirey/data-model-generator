@@ -66,7 +66,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //            account.RowVersion = this.DataModel.IncrementRowVersion();
                     SyntaxFactory.ExpressionStatement(
@@ -91,122 +91,14 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 {
                     //            var account = this.DataModel.Accounts.Find(order.AccountCode);
                     var uniqueIndexElement = foreignIndexElement.UniqueIndex;
-                    statements.Add(
-                        SyntaxFactory.LocalDeclarationStatement(
-                            SyntaxFactory.VariableDeclaration(
-                                SyntaxFactory.IdentifierName(
-                                    SyntaxFactory.Identifier(
-                                        SyntaxFactory.TriviaList(),
-                                        SyntaxKind.VarKeyword,
-                                        "var",
-                                        "var",
-                                        SyntaxFactory.TriviaList())))
-                            .WithVariables(
-                                SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                    SyntaxFactory.VariableDeclarator(
-                                        SyntaxFactory.Identifier(uniqueIndexElement.Table.Name.ToVariableName()))
-                                    .WithInitializer(
-                                        SyntaxFactory.EqualsValueClause(
-                                            SyntaxFactory.InvocationExpression(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(uniqueIndexElement.Table.XmlSchemaDocument.Name)),
-                                                        SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToPlural())),
-                                                    SyntaxFactory.IdentifierName("Find")))
-                                            .WithArgumentList(
-                                                SyntaxFactory.ArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                        foreignIndexElement.GetForeignKeyAsArguments(
-                                                            this.tableElement.Name.ToVariableName()))))))))));
-
-                    //            if (account == null)
-                    //            {
-                    //                throw new ConstraintException("The add action conflicted with the constraint AccountIndex.");
-                    //            }
-                    statements.Add(
-                        SyntaxFactory.IfStatement(
-                            SyntaxFactory.BinaryExpression(
-                                SyntaxKind.EqualsExpression,
-                                SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToVariableName()),
-                                SyntaxFactory.LiteralExpression(
-                                    SyntaxKind.NullLiteralExpression)),
-                            SyntaxFactory.Block(
-                                SyntaxFactory.SingletonList<StatementSyntax>(
-                                    SyntaxFactory.ThrowStatement(
-                                        SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName("ConstraintException"))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.LiteralExpression(
-                                                            SyntaxKind.StringLiteralExpression,
-                                                            SyntaxFactory.Literal(
-                                                                $"The add action conflicted with the constraint {uniqueIndexElement.Name}.")))))))))));
-
-                    //            account.Orders.Add(order);
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToVariableName()),
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                    SyntaxFactory.IdentifierName("Add")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
-
-                    //            this.undoStack.Push(() => account.Orders.Remove(order));
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("undoStack")),
-                                    SyntaxFactory.IdentifierName("Push")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.ParenthesizedLambdaExpression()
-                                            .WithExpressionBody(
-                                                SyntaxFactory.InvocationExpression(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToVariableName()),
-                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                                        SyntaxFactory.IdentifierName("Remove")))
-                                                .WithArgumentList(
-                                                    SyntaxFactory.ArgumentList(
-                                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                            SyntaxFactory.Argument(
-                                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))))))))))));
-
-                    //            order.Account = account;
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                                    SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name)),
-                                SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToVariableName()))));
+                    if (foreignIndexElement.Columns.Where(ce => ce.Column.ColumnType.IsNullable).Any())
+                    {
+                        statements.AddRange(this.GetNullableConstraintCheck(foreignIndexElement));
+                    }
+                    else
+                    {
+                        statements.AddRange(this.GetNonNullableConstraintCheck(foreignIndexElement));
+                    }
                 }
 
                 //            this.dictionary.Add(account.Code, account);
@@ -225,7 +117,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(
                                     new SyntaxNodeOrToken[]
                                     {
-                                        this.tableElement.PrimaryIndex.GetUniqueKeyAsArguments(this.tableElement.Name.ToVariableName()),
+                                        this.tableElement.PrimaryIndex.GetKeyAsArguments(this.tableElement.Name.ToVariableName()),
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.Argument(SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
                                     })))));
@@ -258,7 +150,7 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                                             .WithArgumentList(
                                                 SyntaxFactory.ArgumentList(
                                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                        this.tableElement.PrimaryIndex.GetUniqueKeyAsArguments(
+                                                        this.tableElement.PrimaryIndex.GetKeyAsArguments(
                                                             this.tableElement.Name.ToVariableName())))))))))));
 
                 // Add the record to each of the unique key indices on this set.
@@ -455,6 +347,274 @@ namespace GammaFour.DataModelGenerator.Server.TableClass
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
             }
+        }
+
+        /// <summary>
+        /// Gets the constraint check for a non-nullable index.
+        /// </summary>
+        /// <param name="foreignIndexElement">The foreign index element.</param>
+        /// <returns>The code for a constraint check.</returns>
+        private IEnumerable<StatementSyntax> GetNonNullableConstraintCheck(ForeignIndexElement foreignIndexElement)
+        {
+            var uniqueIndexElement = foreignIndexElement.UniqueIndex;
+            return new List<StatementSyntax>
+            {
+                //            var account = this.DataModel.Accounts.Find(order.AccountCode);
+                SyntaxFactory.LocalDeclarationStatement(
+                    SyntaxFactory.VariableDeclaration(
+                        SyntaxFactory.IdentifierName(
+                            SyntaxFactory.Identifier(
+                                SyntaxFactory.TriviaList(),
+                                SyntaxKind.VarKeyword,
+                                "var",
+                                "var",
+                                SyntaxFactory.TriviaList())))
+                    .WithVariables(
+                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                            SyntaxFactory.VariableDeclarator(
+                                SyntaxFactory.Identifier(foreignIndexElement.UniqueParentName.ToVariableName()))
+                            .WithInitializer(
+                                SyntaxFactory.EqualsValueClause(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName(uniqueIndexElement.Table.XmlSchemaDocument.Name)),
+                                                SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToPlural())),
+                                            SyntaxFactory.IdentifierName("Find")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                foreignIndexElement.GetKeyAsArguments(
+                                                    this.tableElement.Name.ToVariableName()))))))))),
+
+                //            if (account == null)
+                //            {
+                //                throw new ConstraintException("The add action conflicted with the constraint AccountIndex.");
+                //            }
+                SyntaxFactory.IfStatement(
+                    SyntaxFactory.BinaryExpression(
+                        SyntaxKind.EqualsExpression,
+                        SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName.ToVariableName()),
+                        SyntaxFactory.LiteralExpression(
+                            SyntaxKind.NullLiteralExpression)),
+                    SyntaxFactory.Block(
+                        SyntaxFactory.SingletonList<StatementSyntax>(
+                            SyntaxFactory.ThrowStatement(
+                                SyntaxFactory.ObjectCreationExpression(
+                                    SyntaxFactory.IdentifierName("ConstraintException"))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.LiteralExpression(
+                                                    SyntaxKind.StringLiteralExpression,
+                                                    SyntaxFactory.Literal(
+                                                        $"The add action conflicted with the constraint {foreignIndexElement.Name}.")))))))))),
+
+                //            account.Orders.Add(order);
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName.ToVariableName()),
+                                SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
+                            SyntaxFactory.IdentifierName("Add")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))),
+
+                //            this.undoStack.Push(() => account.Orders.Remove(order));
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("undoStack")),
+                            SyntaxFactory.IdentifierName("Push")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.ParenthesizedLambdaExpression()
+                                    .WithExpressionBody(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName.ToVariableName()),
+                                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
+                                                SyntaxFactory.IdentifierName("Remove")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))))))))))),
+
+                //            order.Account = account;
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.AssignmentExpression(
+                        SyntaxKind.SimpleAssignmentExpression,
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                            SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName)),
+                        SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName.ToVariableName()))),
+            };
+        }
+
+        /// <summary>
+        /// Gets the constraint check for a nullable index.
+        /// </summary>
+        /// <param name="foreignIndexElement">The foreign index element.</param>
+        /// <returns>The code for a constraint check.</returns>
+        private IEnumerable<StatementSyntax> GetNullableConstraintCheck(ForeignIndexElement foreignIndexElement)
+        {
+            var uniqueIndexElement = foreignIndexElement.UniqueIndex;
+            var statements = new List<StatementSyntax>
+            {
+                //            var account = this.DataModel.Accounts.Find(order.AccountCode);
+                SyntaxFactory.LocalDeclarationStatement(
+                    SyntaxFactory.VariableDeclaration(
+                        SyntaxFactory.IdentifierName(
+                            SyntaxFactory.Identifier(
+                                SyntaxFactory.TriviaList(),
+                                SyntaxKind.VarKeyword,
+                                "var",
+                                "var",
+                                SyntaxFactory.TriviaList())))
+                    .WithVariables(
+                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                            SyntaxFactory.VariableDeclarator(
+                                SyntaxFactory.Identifier(uniqueIndexElement.Table.Name.ToVariableName()))
+                            .WithInitializer(
+                                SyntaxFactory.EqualsValueClause(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName(uniqueIndexElement.Table.XmlSchemaDocument.Name)),
+                                                SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToPlural())),
+                                            SyntaxFactory.IdentifierName("Find")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                foreignIndexElement.GetKeyAsArguments(
+                                                    this.tableElement.Name.ToVariableName()))))))))),
+
+                //            if (account == null)
+                //            {
+                //                throw new ConstraintException("The add action conflicted with the constraint AccountIndex.");
+                //            }
+                SyntaxFactory.IfStatement(
+                    SyntaxFactory.BinaryExpression(
+                        SyntaxKind.EqualsExpression,
+                        SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToVariableName()),
+                        SyntaxFactory.LiteralExpression(
+                            SyntaxKind.NullLiteralExpression)),
+                    SyntaxFactory.Block(
+                        SyntaxFactory.SingletonList<StatementSyntax>(
+                            SyntaxFactory.ThrowStatement(
+                                SyntaxFactory.ObjectCreationExpression(
+                                    SyntaxFactory.IdentifierName("ConstraintException"))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.LiteralExpression(
+                                                    SyntaxKind.StringLiteralExpression,
+                                                    SyntaxFactory.Literal(
+                                                        $"The add action conflicted with the constraint {foreignIndexElement.Name}.")))))))))),
+
+                //            account.Orders.Add(order);
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName.ToVariableName()),
+                                SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
+                            SyntaxFactory.IdentifierName("Add")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))),
+
+                //            this.undoStack.Push(() => account.Orders.Remove(order));
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("undoStack")),
+                            SyntaxFactory.IdentifierName("Push")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.ParenthesizedLambdaExpression()
+                                    .WithExpressionBody(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName.ToVariableName()),
+                                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
+                                                SyntaxFactory.IdentifierName("Remove")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))))))))))),
+
+                //            order.Account = account;
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.AssignmentExpression(
+                        SyntaxKind.SimpleAssignmentExpression,
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                            SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name)),
+                        SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToVariableName()))),
+            };
+
+            //            if (account.BrokerFeedId != null)
+            //            {
+            //                  <Nullable Constraint Check>
+            //            }
+            return new StatementSyntax[]
+            {
+                SyntaxFactory.IfStatement(
+                    SyntaxFactory.BinaryExpression(
+                        SyntaxKind.NotEqualsExpression,
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                            SyntaxFactory.IdentifierName(foreignIndexElement.Columns[0].Column.Name)),
+                        SyntaxFactory.LiteralExpression(
+                            SyntaxKind.NullLiteralExpression)),
+                    SyntaxFactory.Block(statements)),
+            };
         }
     }
 }

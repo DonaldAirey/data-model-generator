@@ -248,9 +248,9 @@ namespace GammaFour.DataModelGenerator.Client.TableClass
             }
 
             // Add a property for each of the foreign key indices.
-            foreach (ForeignIndexElement foreignKeyElement in this.tableElement.ParentKeys)
+            foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ParentKeys)
             {
-                properties.Add(new GenericForeignIndexProperty(foreignKeyElement));
+                properties.Add(new GenericForeignIndexProperty(foreignIndexElement));
             }
 
             // Alphabetize and add the properties as members of the class.

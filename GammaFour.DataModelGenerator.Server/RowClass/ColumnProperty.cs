@@ -145,7 +145,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                return this.account;
                     SyntaxFactory.ReturnStatement(
@@ -175,13 +175,12 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
-
-                //                if (this.code != value)
-                //                {
-                //                    <ValueChangedBlock>
-                //                }
-                statements.Add(
+                var statements = new List<StatementSyntax>
+                {
+                    //                if (this.code != value)
+                    //                {
+                    //                    <ValueChangedBlock>
+                    //                }
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.NotEqualsExpression,
@@ -190,7 +189,8 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                 SyntaxFactory.ThisExpression(),
                                 SyntaxFactory.IdentifierName(this.columnElement.Name.ToCamelCase())),
                             SyntaxFactory.IdentifierName("value")),
-                        SyntaxFactory.Block(this.ValueChangedBlock)));
+                        SyntaxFactory.Block(this.ValueChangedBlock)),
+                };
 
                 //            set
                 //            {
@@ -209,15 +209,27 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
             get
             {
                 // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>
+                {
+                    //            this.IsModified = false;
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("IsModified")),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.TrueLiteralExpression))),
+                };
 
                 //                    if (this.Orders.Any())
                 //                    {
                 //                        throw new ConstraintException("The update action conflicted with the constraint AccountOrderIndex.");
                 //                    }
-                foreach (var foreignKey in this.columnElement.Table.ForeignKeys)
+                foreach (var foreignIndexElement in this.columnElement.Table.ForeignKeys)
                 {
-                    foreach (var columnReferenceElement in foreignKey.UniqueIndex.Columns)
+                    foreach (var columnReferenceElement in foreignIndexElement.UniqueIndex.Columns)
                     {
                         if (columnReferenceElement.Column.Name == this.columnElement.Name)
                         {
@@ -229,7 +241,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName(foreignKey.Table.Name.ToPlural())),
+                                                SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
                                             SyntaxFactory.IdentifierName("Any"))),
                                     SyntaxFactory.Block(
                                         SyntaxFactory.SingletonList<StatementSyntax>(
@@ -242,7 +254,7 @@ namespace GammaFour.DataModelGenerator.Server.RowClass
                                                             SyntaxFactory.Argument(
                                                                 SyntaxFactory.LiteralExpression(
                                                                     SyntaxKind.StringLiteralExpression,
-                                                                    SyntaxFactory.Literal($"The update action conflicted with the constraint {foreignKey.Name}.")))))))))));
+                                                                    SyntaxFactory.Literal($"The update action conflicted with the constraint {foreignIndexElement.Name}.")))))))))));
                         }
 
                         break;

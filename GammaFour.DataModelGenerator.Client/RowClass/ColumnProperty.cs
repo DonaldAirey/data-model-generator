@@ -53,7 +53,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
         {
             get
             {
-                List<StatementSyntax> statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
                 {
                     //                    this.RecordState = this.RecordState == RecordState.Added ? RecordState.Added : RecordState.Modified;
                     SyntaxFactory.ExpressionStatement(
@@ -181,7 +181,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             get
             {
                 // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
                 string property = this.columnElement.Name;
 
                 //                return this.currentData[0] as string;
@@ -307,7 +307,7 @@ namespace GammaFour.DataModelGenerator.Client.RowClass
             get
             {
                 // This list collects the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>();
                 string property = this.columnElement.Name;
 
                 //                if (this.State == RecordState.Unchanged)
