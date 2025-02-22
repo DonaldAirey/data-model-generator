@@ -276,10 +276,16 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 // This is used to collect the statements.
                 var statements = new List<StatementSyntax>
                 {
-                    //                            var serverFungible = this.dataModel.Fungibles.FungibleKey.Find(fungible.FungibleId);
+                    //                Province serverProvince = this.dataModel.Provinces.ProvinceKey.Find(provinceId);
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName("var"))
+                            SyntaxFactory.IdentifierName(
+                                SyntaxFactory.Identifier(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.VarKeyword,
+                                    "var",
+                                    "var",
+                                    SyntaxFactory.TriviaList())))
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
@@ -293,16 +299,15 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
-                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                                    SyntaxFactory.IdentifierName(this.tableElement.PrimaryIndex.Name)),
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName(
+                                                            this.tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                                                 SyntaxFactory.IdentifierName("Find")))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
-                                                RestService.UniqueKeyExpression.GetMemberSyntax(this.tableElement.PrimaryIndex, this.tableElement.Name.ToVariableName())))))))),
+                                                    this.tableElement.PrimaryIndex.GetKeyAsFindArguments(
+                                                        this.tableElement.Name.ToVariableName())))))))),
 
                     //                        if (serverAccount != null)
                     //                        {

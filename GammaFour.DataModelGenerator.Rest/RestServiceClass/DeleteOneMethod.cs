@@ -358,16 +358,13 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
-                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                                    SyntaxFactory.IdentifierName(this.tableElement.PrimaryIndex.Name)),
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                                                 SyntaxFactory.IdentifierName("Find")))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
-                                                RestService.UniqueKeyExpression.GetSyntax(this.tableElement.PrimaryIndex)))))))),
+                                                this.tableElement.PrimaryIndex.GetKeyAsFindArguments()))))))),
 
                     //                    if (serverAlert == null)
                     //                    {
@@ -534,17 +531,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 //                using (var lockingTransaction = new LockingTransaction(this.transactionTimeout))
                 //                {
                 //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities).ConfigureAwait(false);
-                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.IssuerSecurityKey).ConfigureAwait(false);
-                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.FungibleSecuritySettlementIdKey).ConfigureAwait(false);
-                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.FungibleSecurityFungibleIdKey).ConfigureAwait(false);
-                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.SecuritySymbolKey).ConfigureAwait(false);
-                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.SecuritySedolKey).ConfigureAwait(false);
-                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.SecurityRicKey).ConfigureAwait(false);
-                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.SecurityKey).ConfigureAwait(false);
-                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.SecurityIsinKey).ConfigureAwait(false);
-                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.SecurityFungibleIdKey).ConfigureAwait(false);
-                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.SecurityFigiKey).ConfigureAwait(false);
-                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities.SecurityCusipKey).ConfigureAwait(false);
                 statements.AddRange(LockTableStatements.GetUsingSyntax(this.tableElement, this.DeleteBody));
 
                 // This is the complete block.

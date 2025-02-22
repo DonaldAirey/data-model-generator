@@ -132,7 +132,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
             get
             {
                 // This is used to collect the statements.
-                var statements = new List<StatementSyntax>
+                List<StatementSyntax> statements = new List<StatementSyntax>
                 {
                     //            modelBuilder.UseCollation("SQL_Latin1_General_CP1_CS_AS");
                     SyntaxFactory.ExpressionStatement(
@@ -258,70 +258,86 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                         }
                     }
 
+                    // The next chunk of code produces a Fluent API call for ignoring all the navigation columns.  The core of all this is an
+                    // expression that will ignore the table that owns the records.
+                    //            modelBuilder.Entity<Buyer>().Ignore(b => b.Buyers)
+                    ExpressionSyntax ignoredProperties = SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("modelBuilder"),
+                                    SyntaxFactory.GenericName(
+                                        SyntaxFactory.Identifier("Entity"))
+                                    .WithTypeArgumentList(
+                                        SyntaxFactory.TypeArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                SyntaxFactory.IdentifierName(tableElement.Name)))))),
+                            SyntaxFactory.IdentifierName("Ignore")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.SimpleLambdaExpression(
+                                            SyntaxFactory.Parameter(
+                                                SyntaxFactory.Identifier(abbreviation)),
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName(abbreviation),
+                                                SyntaxFactory.IdentifierName("IsModified")))))));
+
+                    // Add an Ignore invocation for each of the owner (record set) navigation properties.
+                    // .Ignore(b => b.Country)
+                    foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentKeys)
+                    {
+                        ignoredProperties = SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                ignoredProperties,
+                                SyntaxFactory.IdentifierName("Ignore")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.SimpleLambdaExpression(
+                                            SyntaxFactory.Parameter(
+                                                SyntaxFactory.Identifier(abbreviation)),
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName(abbreviation),
+                                                SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName)))))));
+                    }
+
                     // Add an Ignore invocation for each of the child set navigation properties.
                     // .Ignore(b => b.Subscriptions)
-                    ExpressionSyntax ignoredProperties = null;
                     foreach (ForeignIndexElement foreignIndexElement in tableElement.ChildKeys)
                     {
-                        if (ignoredProperties == null)
-                        {
-                            ignoredProperties = SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName("modelBuilder"),
-                                            SyntaxFactory.GenericName(
-                                                SyntaxFactory.Identifier("Entity"))
-                                            .WithTypeArgumentList(
-                                                SyntaxFactory.TypeArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                        SyntaxFactory.IdentifierName(tableElement.Name)))))),
-                                    SyntaxFactory.IdentifierName("Ignore")))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.SimpleLambdaExpression(
-                                                    SyntaxFactory.Parameter(
-                                                        SyntaxFactory.Identifier(abbreviation)),
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.IdentifierName(abbreviation),
-                                                        SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)))))));
-                        }
-                        else
-                        {
-                            ignoredProperties = SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    ignoredProperties,
-                                    SyntaxFactory.IdentifierName("Ignore")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.SimpleLambdaExpression(
-                                                SyntaxFactory.Parameter(
-                                                    SyntaxFactory.Identifier(abbreviation)),
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.IdentifierName(abbreviation),
-                                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)))))));
-                        }
+                        ignoredProperties = SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                ignoredProperties,
+                                SyntaxFactory.IdentifierName("Ignore")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.SimpleLambdaExpression(
+                                            SyntaxFactory.Parameter(
+                                                SyntaxFactory.Identifier(abbreviation)),
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName(abbreviation),
+                                                SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)))))));
                     }
 
                     //            modelBuilder.Entity<Buyer>().Ignore(b => b.Buyers).Ignore(b => b.Country).Ignore(b => b.Province).Ignore(b => b.Subscriptions);
-                    if (ignoredProperties != null)
-                    {
-                        statements.Add(SyntaxFactory.ExpressionStatement(ignoredProperties));
-                    }
+                    statements.Add(SyntaxFactory.ExpressionStatement(ignoredProperties));
 
                     // Create a key for each index that is unique to the set.
-                    foreach (UniqueIndexElement uniqueKeyElement in tableElement.UniqueIndexes)
+                    foreach (var uniqueIndexElement in tableElement.UniqueIndexes)
                     {
-                        if (uniqueKeyElement.IsPrimaryIndex)
+                        if (uniqueIndexElement.IsPrimaryIndex)
                         {
                             statements.Add(
                                 SyntaxFactory.ExpressionStatement(
@@ -337,12 +353,12 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                     .WithTypeArgumentList(
                                                         SyntaxFactory.TypeArgumentList(
                                                             SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                                SyntaxFactory.IdentifierName(uniqueKeyElement.Table.Name)))))),
+                                                                SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name)))))),
                                             SyntaxFactory.IdentifierName("HasKey")))
                                     .WithArgumentList(
                                         SyntaxFactory.ArgumentList(
                                             SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                SyntaxFactory.Argument(UniqueIndexElementExtensions.GetUniqueKey(uniqueKeyElement, true)))))));
+                                                SyntaxFactory.Argument(uniqueIndexElement.GetUniqueKey(true)))))));
                         }
                         else
                         {
@@ -364,12 +380,12 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
                                                             .WithTypeArgumentList(
                                                                 SyntaxFactory.TypeArgumentList(
                                                                     SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                                        SyntaxFactory.IdentifierName(uniqueKeyElement.Table.Name)))))),
+                                                                        SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name)))))),
                                                     SyntaxFactory.IdentifierName("HasIndex")))
                                             .WithArgumentList(
                                                 SyntaxFactory.ArgumentList(
                                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                SyntaxFactory.Argument(UniqueIndexElementExtensions.GetUniqueKey(uniqueKeyElement, true))))),
+                                                SyntaxFactory.Argument(uniqueIndexElement.GetUniqueKey(true))))),
                                             SyntaxFactory.IdentifierName("IsUnique")))));
                         }
                     }
@@ -467,15 +483,15 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
             else
             {
                 // A Compound key must be constructed from an anomymous type.
-                List<SyntaxNodeOrToken> keyElements = new List<SyntaxNodeOrToken>();
+                List<SyntaxNodeOrToken> indexElements = new List<SyntaxNodeOrToken>();
                 foreach (ColumnReferenceElement columnReferenceElement in foreignIndexElement.Columns)
                 {
-                    if (keyElements.Count != 0)
+                    if (indexElements.Count != 0)
                     {
-                        keyElements.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                        indexElements.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
                     }
 
-                    keyElements.Add(
+                    indexElements.Add(
                         SyntaxFactory.AnonymousObjectMemberDeclarator(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -485,7 +501,7 @@ namespace GammaFour.DataModelGenerator.Server.DbContextClass
 
                 // b => b.BuyerId or b => new { b.BuyerId, b.ExternalId0 }
                 syntaxNode = SyntaxFactory.AnonymousObjectCreationExpression(
-                        SyntaxFactory.SeparatedList<AnonymousObjectMemberDeclaratorSyntax>(keyElements.ToArray()));
+                        SyntaxFactory.SeparatedList<AnonymousObjectMemberDeclaratorSyntax>(indexElements.ToArray()));
             }
 
             //            this.BuyerKey = new ForeignIndex<Buyer>("BuyerKey").HasIndex(b => b.BuyerId);

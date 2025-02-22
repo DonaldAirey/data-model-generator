@@ -364,10 +364,16 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 // This is used to collect the statements.
                 var statements = new List<StatementSyntax>
                 {
-                    //                            var serverFungible = this.dataModel.Fungibles.FungibleKey.Find(clientFungible.FungibleId);
+                    //                var serverProvince = this.dataModel.Provinces.Find(provinceId);
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName("var"))
+                            SyntaxFactory.IdentifierName(
+                                SyntaxFactory.Identifier(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.VarKeyword,
+                                    "var",
+                                    "var",
+                                    SyntaxFactory.TriviaList())))
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
@@ -381,16 +387,15 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
-                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                                    SyntaxFactory.IdentifierName(this.tableElement.PrimaryIndex.Name)),
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName(
+                                                            this.tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                                                 SyntaxFactory.IdentifierName("Find")))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
-                                                RestService.UniqueKeyExpression.GetMemberSyntax(this.tableElement.PrimaryIndex, $"client{this.tableElement.Name}")))))))),
+                                                    this.tableElement.PrimaryIndex.GetKeyAsFindArguments(
+                                                        $"client{this.tableElement.Name}")))))))),
 
                     //                        if (serverFungible == null)
                     //                        {
@@ -756,22 +761,17 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.IdentifierName(columnElement.Name)))));
                 }
 
-                //                                if (serverListMap.RecordState != RecordState.Unchanged)
+                //                                if (serverCreditRatingService.IsModified)
                 //                                {
                 //                                    <UpdateChangedRecord>
-                //                                {
-                statements.Add(SyntaxFactory.IfStatement(
-                    SyntaxFactory.BinaryExpression(
-                        SyntaxKind.NotEqualsExpression,
+                //                                }
+                statements.Add(
+                    SyntaxFactory.IfStatement(
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.IdentifierName($"server{this.tableElement.Name}"),
-                            SyntaxFactory.IdentifierName("RecordState")),
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName("RecordState"),
-                            SyntaxFactory.IdentifierName("Unchanged"))),
-                    SyntaxFactory.Block(this.UpdateChangedRecord)));
+                            SyntaxFactory.IdentifierName("IsModified")),
+                        SyntaxFactory.Block(this.UpdateChangedRecord)));
 
                 // This is the complete block.
                 return statements;

@@ -200,6 +200,62 @@ namespace GammaFour.DataModelGenerator.Common
         }
 
         /// <summary>
+        /// Creates an argument for a unique key.
+        /// </summary>
+        /// <param name="uniqueIndexElement">The unique key element.</param>
+        /// <returns>An argument that extracts a key from an object.</returns>
+        public static SeparatedSyntaxList<ArgumentSyntax> GetKeyAsFindArguments(this UniqueIndexElement uniqueIndexElement)
+        {
+            // This will create an expression for extracting the key from record.
+                // A Compound key is constructed as a tuple.
+                List<SyntaxNodeOrToken> keyElements = new List<SyntaxNodeOrToken>();
+                foreach (ColumnReferenceElement columnReferenceElement in uniqueIndexElement.Columns)
+                {
+                    if (keyElements.Count != 0)
+                    {
+                        keyElements.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                    }
+
+                    keyElements.Add(
+                        SyntaxFactory.Argument(
+                            SyntaxFactory.IdentifierName(columnReferenceElement.Column.Name.ToVariableName())));
+                }
+
+                // code, name
+                return SyntaxFactory.SeparatedList<ArgumentSyntax>(keyElements.ToArray());
+        }
+
+        /// <summary>
+        /// Creates an argument for a unique key.
+        /// </summary>
+        /// <param name="uniqueIndexElement">The unique key element.</param>
+        /// <param name="variableName">The name of the variable used in the expression.</param>
+        /// <returns>An argument that extracts a key from an object.</returns>
+        public static SeparatedSyntaxList<ArgumentSyntax> GetKeyAsFindArguments(this UniqueIndexElement uniqueIndexElement, string variableName)
+        {
+            // This will create an expression for extracting the key from record.
+            // A Compound key is constructed as a tuple.
+            List<SyntaxNodeOrToken> keyElements = new List<SyntaxNodeOrToken>();
+            foreach (ColumnReferenceElement columnReferenceElement in uniqueIndexElement.Columns)
+            {
+                if (keyElements.Count != 0)
+                {
+                    keyElements.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                }
+
+                keyElements.Add(
+                    SyntaxFactory.Argument(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName(variableName),
+                            SyntaxFactory.IdentifierName(columnReferenceElement.Column.Name))));
+            }
+
+            // code, name
+            return SyntaxFactory.SeparatedList<ArgumentSyntax>(keyElements.ToArray());
+        }
+
+        /// <summary>
         /// Creates a conditional statement for a unique key using the members of a value.
         /// </summary>
         /// <param name="uniqueIndexElement">The unique key element.</param>

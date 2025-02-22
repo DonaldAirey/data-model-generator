@@ -119,7 +119,6 @@ namespace GammaFour.DataModelGenerator.RestService
                 // Create the list of non-system namespaces.
                 List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>
                 {
-                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("GammaFour.Data.Server")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.AspNetCore.Http")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.AspNetCore.Mvc")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")),
