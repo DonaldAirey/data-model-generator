@@ -33,12 +33,13 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             this.Name = $"Delete{this.tableElement.Name}";
 
             //        /// <summary>
-            //        /// Deletes a specific <see cref="Province"/> record.
+            //        /// Deletes a <see cref="Account"/> record.
             //        /// </summary>
-            //        /// <param name="provinceId">The primary key identifier.</param>
-            //        /// <returns>The result of the DELETE verb.</returns>
-            //        [HttpDelete("{provinceId}")]
-            //        public async Task<IActionResult> DeleteProvince([FromRoute] int provinceId)
+            //        /// <param name="accountId">The AccountId key.</param>
+            //        /// <param name="account">The <see cref="Account"/> row to be deleted.</param>
+            //        /// <returns>The deleted row.</returns>
+            //        [HttpDelete("{accountId}")]
+            //        public async Task<IActionResult> DeleteAccount([FromRoute] System.Guid accountId, [FromBody] Account account)
             //        {
             //            <Body>
             //        }
@@ -50,119 +51,17 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                             SyntaxFactory.IdentifierName("IActionResult")))),
                 SyntaxFactory.Identifier(this.Name))
-            .WithAttributeLists(this.Attributes)
-            .WithModifiers(DeleteOneMethod.Modifiers)
-            .WithParameterList(this.Parameters)
-            .WithBody(this.Body)
-            .WithLeadingTrivia(this.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public async
-                return SyntaxFactory.TokenList(
+            .WithAttributeLists(this.tableElement.PrimaryIndex.GetKeyAsHttpAttributes("HttpDelete"))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
                     new[]
                     {
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                         SyntaxFactory.Token(SyntaxKind.AsyncKeyword),
-                    });
-            }
-        }
-
-        /// <summary>
-        /// Gets the data contract attribute syntax.
-        /// </summary>
-        private SyntaxList<AttributeListSyntax> Attributes
-        {
-            get
-            {
-                // This collects all the attributes.
-                List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
-
-                //        [HttpDelete("provinceExternalKey/{name}/{countryCode}")]
-                string literal = string.Empty;
-                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryIndex.Columns)
-                {
-                    if (!string.IsNullOrEmpty(literal))
-                    {
-                        literal += "/";
-                    }
-
-                    literal += $"{{{columnReferenceElement.Column.Name.ToCamelCase()}}}";
-                }
-
-                attributes.Add(
-                    SyntaxFactory.AttributeList(
-                    SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
-                        SyntaxFactory.Attribute(
-                            SyntaxFactory.IdentifierName("HttpDelete"))
-                        .WithArgumentList(
-                            SyntaxFactory.AttributeArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
-                                    SyntaxFactory.AttributeArgument(
-                                        SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.StringLiteralExpression,
-                                            SyntaxFactory.Literal(literal)))))))));
-
-                // The collection of attributes.
-                return SyntaxFactory.List<AttributeListSyntax>(attributes);
-            }
-        }
-
-        /// <summary>
-        /// Gets the list of parameters.
-        /// </summary>
-        private ParameterListSyntax Parameters
-        {
-            get
-            {
-                // Create a list of parameters.
-                List<SyntaxNodeOrToken> parameters = new List<SyntaxNodeOrToken>();
-
-                // [FromRoute] string countryCode
-                foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryIndex.Columns)
-                {
-                    if (parameters.Count != 0)
-                    {
-                        parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
-                    }
-
-                    parameters.Add(
-                        SyntaxFactory.Parameter(
-                                SyntaxFactory.Identifier(columnReferenceElement.Column.Name.ToVariableName()))
-                            .WithAttributeLists(
-                                SyntaxFactory.SingletonList<AttributeListSyntax>(
-                                    SyntaxFactory.AttributeList(
-                                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
-                                            SyntaxFactory.Attribute(
-                                                SyntaxFactory.IdentifierName("FromRoute"))))))
-                            .WithType(columnReferenceElement.Column.GetTypeSyntax()));
-                }
-
-                // ,
-                parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
-
-                // [FromBody] InsideOrder insideOrder
-                parameters.Add(
-                    SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()))
-                    .WithAttributeLists(
-                        SyntaxFactory.SingletonList<AttributeListSyntax>(
-                            SyntaxFactory.AttributeList(
-                                SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
-                                    SyntaxFactory.Attribute(
-                                        SyntaxFactory.IdentifierName("FromBody"))))))
-                    .WithType(
-                        SyntaxFactory.IdentifierName(this.tableElement.Name)));
-
-                // This is the complete parameter specification for this constructor.
-                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
-            }
+                    }))
+            .WithParameterList(this.Parameters)
+            .WithBody(this.Body)
+            .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
@@ -209,7 +108,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Deletes one or more <see cref="Alert"/> record(s).
+                    //        /// Deletes a <see cref="Account"/> row.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -232,7 +131,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Deletes a <see cref=\"{this.tableElement.Name}\"/> record.",
+                                                $" Deletes a <see cref=\"{this.tableElement.Name}\"/> row.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -253,7 +152,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         }))))),
                 };
 
-                //        /// <param name="insideOrderId">The InsideOrderId key.</param>
+                //        /// <param name="accountId">The AccountId key.</param>
                 foreach (ColumnReferenceElement columnReferenceElement in this.tableElement.PrimaryIndex.Columns)
                 {
                     ColumnElement columnElement = columnReferenceElement.Column;
@@ -262,69 +161,69 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.DocumentationCommentTrivia(
                                 SyntaxKind.SingleLineDocumentationCommentTrivia,
                                 SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                        SyntaxFactory.XmlText()
-                                        .WithTextTokens(
-                                            SyntaxFactory.TokenList(
-                                                new[]
-                                                {
-                                                    SyntaxFactory.XmlTextLiteral(
-                                                        SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                        $" <param name=\"{columnElement.Name.ToCamelCase()}\">The {columnElement.Name} key.</param>",
-                                                        string.Empty,
-                                                        SyntaxFactory.TriviaList()),
-                                                    SyntaxFactory.XmlTextNewLine(
-                                                        SyntaxFactory.TriviaList(),
-                                                        Environment.NewLine,
-                                                        string.Empty,
-                                                        SyntaxFactory.TriviaList()),
-                                                }))))));
+                                    SyntaxFactory.XmlText()
+                                    .WithTextTokens(
+                                        SyntaxFactory.TokenList(
+                                            new[]
+                                            {
+                                                SyntaxFactory.XmlTextLiteral(
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                    $" <param name=\"{columnElement.Name.ToCamelCase()}\">The {columnElement.Name} key.</param>",
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                                SyntaxFactory.XmlTextNewLine(
+                                                    SyntaxFactory.TriviaList(),
+                                                    Environment.NewLine,
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                            }))))));
                 }
 
-                //        /// <returns>The deleted record.</returns>
+                //        /// <param name="account">The <see cref="Account"/> row to be deleted.</param>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
                             SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                    SyntaxFactory.XmlText()
-                                    .WithTextTokens(
-                                        SyntaxFactory.TokenList(
-                                            new[]
-                                            {
-                                                    SyntaxFactory.XmlTextLiteral(
-                                                        SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                        $" <param name=\"{this.tableElement.Name.ToCamelCase()}\">The <see cref=\"{this.tableElement.Name}\"/> record to be deleted.</param>",
-                                                        string.Empty,
-                                                        SyntaxFactory.TriviaList()),
-                                                    SyntaxFactory.XmlTextNewLine(
-                                                        SyntaxFactory.TriviaList(),
-                                                        Environment.NewLine,
-                                                        string.Empty,
-                                                        SyntaxFactory.TriviaList()),
-                                            }))))));
+                                SyntaxFactory.XmlText()
+                                .WithTextTokens(
+                                    SyntaxFactory.TokenList(
+                                        new[]
+                                        {
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                $" <param name=\"{this.tableElement.Name.ToCamelCase()}\">The <see cref=\"{this.tableElement.Name}\"/> row to be deleted.</param>",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                        }))))));
 
-                //        /// <returns>The deleted record.</returns>
+                //        /// <returns>The deleted row.</returns>
                 comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
                             SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                    SyntaxFactory.XmlText()
-                                    .WithTextTokens(
-                                        SyntaxFactory.TokenList(
-                                            new[]
-                                            {
-                                                    SyntaxFactory.XmlTextLiteral(
-                                                        SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                        $" <returns>The deleted record.</returns>",
-                                                        string.Empty,
-                                                        SyntaxFactory.TriviaList()),
-                                                    SyntaxFactory.XmlTextNewLine(
-                                                        SyntaxFactory.TriviaList(),
-                                                        Environment.NewLine,
-                                                        string.Empty,
-                                                        SyntaxFactory.TriviaList()),
-                                            }))))));
+                                SyntaxFactory.XmlText()
+                                .WithTextTokens(
+                                    SyntaxFactory.TokenList(
+                                        new[]
+                                        {
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                $" <returns>The deleted row.</returns>",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                        }))))));
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -332,19 +231,106 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         }
 
         /// <summary>
+        /// Gets the list of parameters.
+        /// </summary>
+        private ParameterListSyntax Parameters
+        {
+            get
+            {
+                // Create a list of parameters.
+                List<SyntaxNodeOrToken> parameters = new List<SyntaxNodeOrToken>();
+
+                // Add the key elements to the parameter list.
+                parameters.AddRange(this.tableElement.PrimaryIndex.GetKeyAsHttpArguments());
+                parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+
+                // [FromBody] Account account
+                parameters.Add(
+                    SyntaxFactory.Parameter(
+                        SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()))
+                    .WithAttributeLists(
+                        SyntaxFactory.SingletonList<AttributeListSyntax>(
+                            SyntaxFactory.AttributeList(
+                                SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                                    SyntaxFactory.Attribute(
+                                        SyntaxFactory.IdentifierName("FromBody"))))))
+                    .WithType(
+                        SyntaxFactory.IdentifierName(this.tableElement.Name)));
+
+                // This is the complete parameter specification for this constructor.
+                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
+            }
+        }
+
+        /// <summary>
         /// Gets a block of code.
         /// </summary>
-        private List<StatementSyntax> DeleteBody
+        private List<StatementSyntax> TryBlock
         {
             get
             {
                 // This is used to collect the statements.
                 var statements = new List<StatementSyntax>
                 {
-                    //                Province province = this.dataModel.Provinces.ProvinceKey.Find(provinceId);
+                    //                using var lockingTransaction = new LockingTransaction(this.transactionTimeout);
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(this.tableElement.Name))
+                            SyntaxFactory.IdentifierName(
+                                SyntaxFactory.Identifier(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.VarKeyword,
+                                    "var",
+                                    "var",
+                                    SyntaxFactory.TriviaList())))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("lockingTransaction"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.IdentifierName("LockingTransaction"))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.ThisExpression(),
+                                                            SyntaxFactory.IdentifierName("transactionTimeout")))))))))))
+                    .WithUsingKeyword(
+                        SyntaxFactory.Token(SyntaxKind.UsingKeyword)),
+
+                    //                await lockingTransaction.WaitWriterAsync(this.dataModel.Things);
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AwaitExpression(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("lockingTransaction"),
+                                    SyntaxFactory.IdentifierName("WaitWriterAsync")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase())),
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())))))))),
+
+                    //                var serverProvince = this.dataModel.Provinces.Find(provinceId);
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(
+                                SyntaxFactory.Identifier(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.VarKeyword,
+                                    "var",
+                                    "var",
+                                    SyntaxFactory.TriviaList())))
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
@@ -359,17 +345,18 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.ThisExpression(),
-                                                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
+                                                        SyntaxFactory.IdentifierName(
+                                                            this.tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
                                                     SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                                                 SyntaxFactory.IdentifierName("Find")))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
-                                                this.tableElement.PrimaryIndex.GetKeyAsFindArguments()))))))),
+                                                    this.tableElement.PrimaryIndex.GetKeyAsFindArguments()))))))),
 
-                    //                    if (serverAlert == null)
-                    //                    {
-                    //                        return this.OK();
-                    //                    }
+                    //                if (serverAccount == null)
+                    //                {
+                    //                    return this.Ok();
+                    //                }
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.EqualsExpression,
@@ -385,34 +372,24 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             SyntaxFactory.ThisExpression(),
                                             SyntaxFactory.IdentifierName("Ok"))))))),
 
-                    //            await lockingTransaction.WaitReaderAsync(serverAccount).ConfigureAwait(false);
+                    //                        await lockingTransaction.WaitWriterAsync(serverThing);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName("lockingTransaction"),
-                                            SyntaxFactory.IdentifierName("WaitReaderAsync")))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.IdentifierName($"server{this.tableElement.Name}"))))),
-                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
+                                    SyntaxFactory.IdentifierName("lockingTransaction"),
+                                    SyntaxFactory.IdentifierName("WaitWriterAsync")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.FalseLiteralExpression))))))),
+                                            SyntaxFactory.IdentifierName($"server{this.tableElement.Name}"))))))),
 
-                    //                                if (serverFungible.RowVersion != clientFungible.RowVersion)
-                    //                                {
-                    //                                    return this.StatusCode(StatusCodes.Status412PreconditionFailed);
-                    //                                }
+                    //                        if (serverThing.RowVersion != clientThing.RowVersion)
+                    //                        {
+                    //                            return this.StatusCode(StatusCodes.Status412PreconditionFailed);
+                    //                        }
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.NotEqualsExpression,
@@ -441,7 +418,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxFactory.IdentifierName("StatusCodes"),
                                                         SyntaxFactory.IdentifierName("Status412PreconditionFailed")))))))))),
 
-                    //            this.dataModel.Provinces.Remove(serverProvince);
+                    //                this.dataModel.Accounts.Remove(serverAccount);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -460,7 +437,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.IdentifierName($"server{this.tableElement.Name}")))))),
 
-                    //                this.dataModelContext.Provinces.Remove(serverProvince);
+                    //                this.dataModelContext.Accounts.Remove(serverAccount);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -470,7 +447,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase()}Context")),
+                                        SyntaxFactory.IdentifierName(
+                                            $"{this.tableElement.XmlSchemaDocument.DataModel.ToVariableName()}Context")),
                                     SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                                 SyntaxFactory.IdentifierName("Remove")))
                         .WithArgumentList(
@@ -479,7 +457,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.IdentifierName($"server{this.tableElement.Name}")))))),
 
-                    //                            await this.dataModelContext.SaveChangesAsync();
+                    //                await this.dataModelContext.SaveChangesAsync();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
                             SyntaxFactory.InvocationExpression(
@@ -488,10 +466,11 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase()}Context")),
+                                        SyntaxFactory.IdentifierName(
+                                            $"{this.tableElement.XmlSchemaDocument.DataModel.ToVariableName()}Context")),
                                     SyntaxFactory.IdentifierName("SaveChangesAsync"))))),
 
-                    //                            lockingTransaction.Complete();
+                    //                    lockingTransaction.Complete();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -499,7 +478,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                 SyntaxFactory.IdentifierName("lockingTransaction"),
                                 SyntaxFactory.IdentifierName("Complete")))),
 
-                    //                    return this.Ok(serverProvince);
+                    //                    return this.Ok(accounts);
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -512,26 +491,6 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.IdentifierName($"server{this.tableElement.Name}")))))),
                 };
-
-                // This is the complete block.
-                return statements;
-            }
-        }
-
-        /// <summary>
-        /// Gets a block of code.
-        /// </summary>
-        private List<StatementSyntax> TryBlock
-        {
-            get
-            {
-                // This is used to collect the statements.
-                var statements = new List<StatementSyntax>();
-
-                //                using (var lockingTransaction = new LockingTransaction(this.transactionTimeout))
-                //                {
-                //                    await lockingTransaction.WaitWriterAsync(this.dataModel.Securities).ConfigureAwait(false);
-                statements.AddRange(LockTableStatements.GetUsingSyntax(this.tableElement, this.DeleteBody));
 
                 // This is the complete block.
                 return statements;

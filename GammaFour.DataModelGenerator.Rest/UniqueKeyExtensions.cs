@@ -13,7 +13,7 @@ namespace GammaFour.DataModelGenerator.RestService
     /// <summary>
     /// Creates a code block to throw a null argument exception.
     /// </summary>
-    public static class UniqueKeyExpression
+    public static class UniqueKeyExtensions
     {
         /// <summary>
         /// Gets the syntax for the creation of an anonymous type.
@@ -62,55 +62,76 @@ namespace GammaFour.DataModelGenerator.RestService
         }
 
         /// <summary>
-        /// Gets the syntax for the creation of an anonymous type.
+        /// Gets the REST parameter list.
         /// </summary>
-        /// <param name="uniqueKeyElement">The description of a unique key.</param>
-        /// <param name="variableName">The name of the variable holding the keys.</param>
-        /// <returns>An expression that builds an anonymous type from a table description.</returns>
-        public static SeparatedSyntaxList<ArgumentSyntax> GetMemberSyntax(UniqueIndexElement uniqueKeyElement, string variableName)
+        /// <param name="uniqueIndexElement">The unique index element.</param>
+        /// <param name="httpVerb">The HTTP verb.</param>
+        /// <returns>A list of HTTP attributes describing the key.</returns>
+        public static SyntaxList<AttributeListSyntax> GetKeyAsHttpAttributes(this UniqueIndexElement uniqueIndexElement, string httpVerb)
         {
-            SeparatedSyntaxList<ArgumentSyntax> findParameters;
-            if (uniqueKeyElement.Columns.Count == 1)
-            {
-                //                    country = this.dataModel.Countries.CountryCountryCodeKey.Find(countryCountryCodeKeyCountryCode);
-                ColumnElement columnElement = uniqueKeyElement.Columns[0].Column;
-                string propertyName = columnElement.Name;
-                findParameters = SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                    SyntaxFactory.Argument(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName(variableName),
-                            SyntaxFactory.IdentifierName(propertyName))));
-            }
-            else
-            {
-                //                    region = this.dataModel.Regions.RegionExternalKey.Find((regionExternalKeyName, regionExternalKeyCountryCode));
-                List<SyntaxNodeOrToken> keys = new List<SyntaxNodeOrToken>();
-                foreach (ColumnReferenceElement columnReferenceElement in uniqueKeyElement.Columns)
-                {
-                    if (keys.Count != 0)
-                    {
-                        keys.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
-                    }
+            // This collects all the attributes.
+            List<AttributeListSyntax> attributes = new List<AttributeListSyntax>();
 
-                    ColumnElement columnElement = columnReferenceElement.Column;
-                    string attributeName = columnElement.Name;
-                    keys.Add(
-                        SyntaxFactory.Argument(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(variableName),
-                                SyntaxFactory.IdentifierName(attributeName))));
+            string literal = string.Empty;
+            foreach (ColumnReferenceElement columnReferenceElement in uniqueIndexElement.Columns)
+            {
+                // Separate the key elements.
+                if (!string.IsNullOrEmpty(literal))
+                {
+                    literal += "/";
                 }
 
-                findParameters = SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                    SyntaxFactory.Argument(
-                        SyntaxFactory.TupleExpression(
-                            SyntaxFactory.SeparatedList<ArgumentSyntax>(keys))));
+                // A description of the key element.
+                literal += $"{{{columnReferenceElement.Column.Name.ToCamelCase()}}}";
             }
 
-            // This is either the parameter or a tuple that can be used as parameters to a 'Find' operation.
-            return findParameters;
+            //        [HttpDelete("{name}/{countryCode}")]
+            return SyntaxFactory.SingletonList<AttributeListSyntax>(
+                SyntaxFactory.AttributeList(
+                    SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                        SyntaxFactory.Attribute(
+                            SyntaxFactory.IdentifierName("HttpDelete"))
+                    .WithArgumentList(
+                        SyntaxFactory.AttributeArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
+                                SyntaxFactory.AttributeArgument(
+                                    SyntaxFactory.LiteralExpression(
+                                        SyntaxKind.StringLiteralExpression,
+                                        SyntaxFactory.Literal(literal)))))))));
+        }
+
+        /// <summary>
+        /// Gets the REST argument list.
+        /// </summary>
+        /// <param name="uniqueIndexElement">The unique index element.</param>
+        /// <returns>A list of HTTP arguments describing the key.</returns>
+        public static IEnumerable<SyntaxNodeOrToken> GetKeyAsHttpArguments(this UniqueIndexElement uniqueIndexElement)
+        {
+            // Collect the parameters here.
+            List<SyntaxNodeOrToken> parameters = new List<SyntaxNodeOrToken>();
+
+            // [FromRoute] System.Guid accountId
+            foreach (var columnElement in uniqueIndexElement.Columns)
+            {
+                if (parameters.Count != 0)
+                {
+                    parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                }
+
+                // [FromRoute] accountId
+                parameters.Add(
+                    SyntaxFactory.Parameter(
+                            SyntaxFactory.Identifier(columnElement.Column.Name.ToVariableName()))
+                        .WithAttributeLists(
+                            SyntaxFactory.SingletonList<AttributeListSyntax>(
+                                SyntaxFactory.AttributeList(
+                                    SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                                        SyntaxFactory.Attribute(
+                                            SyntaxFactory.IdentifierName("FromRoute"))))))
+                        .WithType(columnElement.Column.GetTypeSyntax()));
+            }
+
+            return parameters;
         }
     }
 }
