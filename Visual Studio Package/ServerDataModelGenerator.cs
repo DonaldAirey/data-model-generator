@@ -9,7 +9,7 @@ namespace GammaFour.VisualStudioPackage
     using System.Runtime.InteropServices;
     using System.Text;
     using GammaFour.DataModelGenerator.Common;
-    using GammaFour.DataModelGenerator.Server;
+    using GammaFour.DataModelGenerator.Model;
     using GammaFour.VisualStudio;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Formatting;

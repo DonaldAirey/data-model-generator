@@ -3,23 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client Compiler", "Client Compiler\Client Compiler.csproj", "{1CC3A4A2-CEBF-4CCB-BADA-99913C2A8441}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.Client", "GammaFour.DataModelGenerator.Client\GammaFour.DataModelGenerator.Client.csproj", "{C64C5ADD-EF45-4E06-810B-2365E0E87BBE}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.Common", "GammaFour.DataModelGenerator.Common\GammaFour.DataModelGenerator.Common.csproj", "{7ABFBE65-E3F4-4032-A8D2-1C71C9AB5C2D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.Rest", "GammaFour.DataModelGenerator.Rest\GammaFour.DataModelGenerator.Rest.csproj", "{F7B714F1-F295-4E97-80BC-C6CF9B79E6D7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.Server", "GammaFour.DataModelGenerator.Server\GammaFour.DataModelGenerator.Server.csproj", "{E9CAD114-499A-4C27-B68D-6B35D794357A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.DataModelGenerator.Model", "GammaFour.DataModelGenerator.Model\GammaFour.DataModelGenerator.Model.csproj", "{E9CAD114-499A-4C27-B68D-6B35D794357A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GammaFour.VisualStudio", "GammaFour.VisualStudio\GammaFour.VisualStudio.csproj", "{9B000BE8-CCEF-4501-B51C-8DAD0C51FBB6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rest Compiler", "Rest Compiler\Rest Compiler.csproj", "{88C860BA-E221-4165-BA6E-49EF7985D747}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server Compiler", "Server Compiler\Server Compiler.csproj", "{D22F40A4-6E69-4C1E-9E5C-F6836A928B71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model Compiler", "Model Compiler\Model Compiler.csproj", "{D22F40A4-6E69-4C1E-9E5C-F6836A928B71}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visual Studio Package", "Visual Studio Package\Visual Studio Package.csproj", "{C92B2AEA-723A-4787-92C7-274885B6A42A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GammaFour.DataModelGenerator.Adapter", "GammaFour.DataModelGenerator.Adapter\GammaFour.DataModelGenerator.Adapter.csproj", "{D3C376B2-22CE-41A7-B016-FF8A45ABA0D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapter Compiler", "Adapter Compiler\Adapter Compiler.csproj", "{E2BABE6E-89D9-4042-A110-DE27CE90C11E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,22 +29,6 @@ Global
 		Production|x86 = Production|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1CC3A4A2-CEBF-4CCB-BADA-99913C2A8441}.Development|Any CPU.ActiveCfg = Development|Any CPU
-		{1CC3A4A2-CEBF-4CCB-BADA-99913C2A8441}.Development|Any CPU.Build.0 = Development|Any CPU
-		{1CC3A4A2-CEBF-4CCB-BADA-99913C2A8441}.Development|x86.ActiveCfg = Development|Any CPU
-		{1CC3A4A2-CEBF-4CCB-BADA-99913C2A8441}.Development|x86.Build.0 = Development|Any CPU
-		{1CC3A4A2-CEBF-4CCB-BADA-99913C2A8441}.Production|Any CPU.ActiveCfg = Production|Any CPU
-		{1CC3A4A2-CEBF-4CCB-BADA-99913C2A8441}.Production|Any CPU.Build.0 = Production|Any CPU
-		{1CC3A4A2-CEBF-4CCB-BADA-99913C2A8441}.Production|x86.ActiveCfg = Production|Any CPU
-		{1CC3A4A2-CEBF-4CCB-BADA-99913C2A8441}.Production|x86.Build.0 = Production|Any CPU
-		{C64C5ADD-EF45-4E06-810B-2365E0E87BBE}.Development|Any CPU.ActiveCfg = Development|Any CPU
-		{C64C5ADD-EF45-4E06-810B-2365E0E87BBE}.Development|Any CPU.Build.0 = Development|Any CPU
-		{C64C5ADD-EF45-4E06-810B-2365E0E87BBE}.Development|x86.ActiveCfg = Development|Any CPU
-		{C64C5ADD-EF45-4E06-810B-2365E0E87BBE}.Development|x86.Build.0 = Development|Any CPU
-		{C64C5ADD-EF45-4E06-810B-2365E0E87BBE}.Production|Any CPU.ActiveCfg = Production|Any CPU
-		{C64C5ADD-EF45-4E06-810B-2365E0E87BBE}.Production|Any CPU.Build.0 = Production|Any CPU
-		{C64C5ADD-EF45-4E06-810B-2365E0E87BBE}.Production|x86.ActiveCfg = Production|Any CPU
-		{C64C5ADD-EF45-4E06-810B-2365E0E87BBE}.Production|x86.Build.0 = Production|Any CPU
 		{7ABFBE65-E3F4-4032-A8D2-1C71C9AB5C2D}.Development|Any CPU.ActiveCfg = Development|Any CPU
 		{7ABFBE65-E3F4-4032-A8D2-1C71C9AB5C2D}.Development|Any CPU.Build.0 = Development|Any CPU
 		{7ABFBE65-E3F4-4032-A8D2-1C71C9AB5C2D}.Development|x86.ActiveCfg = Development|Any CPU
@@ -100,6 +84,22 @@ Global
 		{C92B2AEA-723A-4787-92C7-274885B6A42A}.Production|Any CPU.Build.0 = Production|Any CPU
 		{C92B2AEA-723A-4787-92C7-274885B6A42A}.Production|x86.ActiveCfg = Production|x86
 		{C92B2AEA-723A-4787-92C7-274885B6A42A}.Production|x86.Build.0 = Production|x86
+		{D3C376B2-22CE-41A7-B016-FF8A45ABA0D1}.Development|Any CPU.ActiveCfg = Development|Any CPU
+		{D3C376B2-22CE-41A7-B016-FF8A45ABA0D1}.Development|Any CPU.Build.0 = Development|Any CPU
+		{D3C376B2-22CE-41A7-B016-FF8A45ABA0D1}.Development|x86.ActiveCfg = Development|Any CPU
+		{D3C376B2-22CE-41A7-B016-FF8A45ABA0D1}.Development|x86.Build.0 = Development|Any CPU
+		{D3C376B2-22CE-41A7-B016-FF8A45ABA0D1}.Production|Any CPU.ActiveCfg = Production|Any CPU
+		{D3C376B2-22CE-41A7-B016-FF8A45ABA0D1}.Production|Any CPU.Build.0 = Production|Any CPU
+		{D3C376B2-22CE-41A7-B016-FF8A45ABA0D1}.Production|x86.ActiveCfg = Production|Any CPU
+		{D3C376B2-22CE-41A7-B016-FF8A45ABA0D1}.Production|x86.Build.0 = Production|Any CPU
+		{E2BABE6E-89D9-4042-A110-DE27CE90C11E}.Development|Any CPU.ActiveCfg = Development|Any CPU
+		{E2BABE6E-89D9-4042-A110-DE27CE90C11E}.Development|Any CPU.Build.0 = Development|Any CPU
+		{E2BABE6E-89D9-4042-A110-DE27CE90C11E}.Development|x86.ActiveCfg = Development|Any CPU
+		{E2BABE6E-89D9-4042-A110-DE27CE90C11E}.Development|x86.Build.0 = Development|Any CPU
+		{E2BABE6E-89D9-4042-A110-DE27CE90C11E}.Production|Any CPU.ActiveCfg = Production|Any CPU
+		{E2BABE6E-89D9-4042-A110-DE27CE90C11E}.Production|Any CPU.Build.0 = Production|Any CPU
+		{E2BABE6E-89D9-4042-A110-DE27CE90C11E}.Production|x86.ActiveCfg = Production|Any CPU
+		{E2BABE6E-89D9-4042-A110-DE27CE90C11E}.Production|x86.Build.0 = Production|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

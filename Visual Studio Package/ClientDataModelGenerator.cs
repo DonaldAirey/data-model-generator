@@ -8,7 +8,7 @@ namespace GammaFour.VisualStudioPackage
     using System.IO;
     using System.Runtime.InteropServices;
     using System.Text;
-    using GammaFour.DataModelGenerator.Client;
+    using GammaFour.DataModelGenerator.Adapter;
     using GammaFour.DataModelGenerator.Common;
     using GammaFour.VisualStudio;
     using Microsoft.CodeAnalysis;

@@ -87,10 +87,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GammaFour.DataModelGenerator.Client\GammaFour.DataModelGenerator.Client.csproj">
-      <Project>{c64c5add-ef45-4e06-810b-2365e0e87bbe}</Project>
-      <Name>GammaFour.DataModelGenerator.Client</Name>
-    </ProjectReference>
     <ProjectReference Include="..\GammaFour.DataModelGenerator.Common\GammaFour.DataModelGenerator.Common.csproj">
       <Project>{7abfbe65-e3f4-4032-a8d2-1c71c9ab5c2d}</Project>
       <Name>GammaFour.DataModelGenerator.Common</Name>
@@ -99,9 +95,9 @@
       <Project>{f7b714f1-f295-4e97-80bc-c6cf9b79e6d7}</Project>
       <Name>GammaFour.DataModelGenerator.Rest</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GammaFour.DataModelGenerator.Server\GammaFour.DataModelGenerator.Server.csproj">
+    <ProjectReference Include="..\GammaFour.DataModelGenerator.Model\GammaFour.DataModelGenerator.Model.csproj">
       <Project>{e9cad114-499a-4c27-b68d-6b35d794357a}</Project>
-      <Name>GammaFour.DataModelGenerator.Server</Name>
+      <Name>GammaFour.DataModelGenerator.Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\GammaFour.VisualStudio\GammaFour.VisualStudio.csproj">
       <Project>{9b000be8-ccef-4501-b51c-8dad0c51fbb6}</Project>

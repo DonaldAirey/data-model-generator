@@ -38,22 +38,7 @@ namespace GammaFour.DataModelGenerator.Common
         {
             // Initialize the object.
             this.Refer = this.Attribute(XmlSchemaDocument.ReferName).Value;
-
-            // Parse the cascading delete rule out of the specification.
-            XAttribute deleteRuleAttribute = xElement.Attribute(XmlSchemaDocument.DeleteRuleName);
-            this.DeleteRule = deleteRuleAttribute == null ?
-                CascadeRule.Cascade : (CascadeRule)Enum.Parse(typeof(CascadeRule), deleteRuleAttribute.Value);
-
-            // Parse the cascading update rule out of the specification.
-            XAttribute updateRuleAttribute = xElement.Attribute(XmlSchemaDocument.UpdateRuleName);
-            this.UpdateRule = updateRuleAttribute == null ?
-                CascadeRule.None : (CascadeRule)Enum.Parse(typeof(CascadeRule), updateRuleAttribute.Value);
         }
-
-        /// <summary>
-        /// Gets the rule that describes what happens to child records when a record is deleted.
-        /// </summary>
-        public CascadeRule DeleteRule { get; } = CascadeRule.Cascade;
 
         /// <summary>
         /// Gets the name of the unique key.
@@ -167,11 +152,5 @@ namespace GammaFour.DataModelGenerator.Common
                 return this.uniqueChildName;
             }
         }
-
-        /// <summary>
-        /// Gets the rule that describes what happens to child records when a record is updated.
-        /// </summary>
-        /// <value>The rule that describes what happens to child records when a record is updated.</value>
-        public CascadeRule UpdateRule { get; } = CascadeRule.Cascade;
     }
 }
