@@ -72,7 +72,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                 // The elements of the body are added to this collection as they are assembled.
                 var statements = new List<StatementSyntax>();
 
-                // Initialize each of the record sets.
+                // Initialize each of the row sets.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
                     //            this.Buyers = new BuyerSet(this, "Buyers");

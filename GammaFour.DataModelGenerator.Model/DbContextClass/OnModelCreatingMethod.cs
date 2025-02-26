@@ -259,7 +259,7 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
                     }
 
                     // The next chunk of code produces a Fluent API call for ignoring all the navigation columns.  The core of all this is an
-                    // expression that will ignore the table that owns the records.
+                    // expression that will ignore the table that owns the rows.
                     //            modelBuilder.Entity<Buyer>().Ignore(b => b.Buyers)
                     ExpressionSyntax ignoredProperties = SyntaxFactory.InvocationExpression(
                         SyntaxFactory.MemberAccessExpression(
@@ -287,7 +287,7 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
                                                 SyntaxFactory.IdentifierName(abbreviation),
                                                 SyntaxFactory.IdentifierName("IsModified")))))));
 
-                    // Add an Ignore invocation for each of the owner (record set) navigation properties.
+                    // Add an Ignore invocation for each of the owner (row set) navigation properties.
                     // .Ignore(b => b.Country)
                     foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentKeys)
                     {
@@ -470,7 +470,7 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
             // Used as a variable when constructing the lambda expression.
             string abbreviation = foreignIndexElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
 
-            // This will create an expression for extracting the key from record.
+            // This will create an expression for extracting the key from row.
             CSharpSyntaxNode syntaxNode = null;
             if (foreignIndexElement.Columns.Count == 1)
             {

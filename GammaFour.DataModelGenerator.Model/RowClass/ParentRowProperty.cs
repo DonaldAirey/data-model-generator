@@ -12,7 +12,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a property that navigates to the parent record.
+    /// Creates a property that navigates to the parent row.
     /// </summary>
     public class ParentRowProperty : SyntaxElement
     {

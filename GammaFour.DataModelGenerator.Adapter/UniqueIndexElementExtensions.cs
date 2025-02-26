@@ -70,7 +70,6 @@ namespace GammaFour.DataModelGenerator.Adapter
                     SyntaxFactory.List(interpolatedStringContentSyntax)));
         }
 
-
         /// <summary>
         /// Creates an argument for a unique key.
         /// </summary>

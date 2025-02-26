@@ -35,7 +35,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             this.Name = tableElement.Name.ToPlural() + "Controller";
 
             //    /// <summary>
-            //    /// Controller for <see cref="AccountGroup"/> records.
+            //    /// Controller for <see cref="AccountGroup"/> rows.
             //    /// </summary>
             //    [Route("api/[controller]")]
             //    [ApiController]
@@ -138,7 +138,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             get
             {
                 //    /// <summary>
-                //    /// Controller for <see cref="AccountGroup"/> records.
+                //    /// Controller for <see cref="AccountGroup"/> rows.
                 //    /// </summary>
                 return SyntaxFactory.TriviaList(
                     SyntaxFactory.Trivia(
@@ -162,7 +162,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Controller for <see cref=\"{this.tableElement.Name}\"/> records.",
+                                                $" Controller for <see cref=\"{this.tableElement.Name}\"/> rows.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -252,9 +252,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             {
                 // Generate support for the HTTP verbs.
                 new DeleteOneMethod(this.tableElement),
-                new DeleteMethod(this.tableElement),
+                new DeleteManyMethod(this.tableElement),
                 new GetAllMethod(this.tableElement),
-                new GetMethod(this.tableElement.PrimaryIndex),
+                new GetOneMethod(this.tableElement),
                 new PostMethod(this.tableElement),
                 new PutMethod(this.tableElement),
                 new PatchMethod(this.tableElement),

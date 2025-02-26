@@ -1,4 +1,4 @@
-// <copyright file="DeleteMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="DeleteManyMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -13,9 +13,9 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// A method to create a record.
+    /// A method to create a row.
     /// </summary>
-    public class DeleteMethod : SyntaxElement
+    public class DeleteManyMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -23,10 +23,10 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DeleteMethod"/> class.
+        /// Initializes a new instance of the <see cref="DeleteManyMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The table schema.</param>
-        public DeleteMethod(TableElement tableElement)
+        public DeleteManyMethod(TableElement tableElement)
         {
             // Initialize the object.  Note that we decorate the name of every method that's not the primary key to prevent ambiguous signatures.
             this.tableElement = tableElement;
@@ -35,8 +35,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             //        /// <summary>
             //        /// Deletes a collection of <see cref="Account"/> rows.
             //        /// </summary>
-            //        /// <param name="accounts">A collection of <see cref="Account"/> records.</param>
-            //        /// <returns>The deleted records.</returns>
+            //        /// <param name="accounts">A collection of <see cref="Account"/> rows.</param>
+            //        /// <returns>The result of applying the delete action.</returns>
             //        [HttpDelete]
             //        public async Task<IActionResult> DeleteAccounts([FromBody] IEnumerable<Account> accounts)
             //        {
@@ -140,7 +140,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName($"server{this.tableElement.Name}"))))))),
+                                            SyntaxFactory.IdentifierName("existingRow"))))))),
 
                     //                        if (serverThing.RowVersion != clientThing.RowVersion)
                     //                        {
@@ -151,7 +151,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxKind.NotEqualsExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName($"server{this.tableElement.Name}"),
+                                SyntaxFactory.IdentifierName("existingRow"),
                                 SyntaxFactory.IdentifierName("RowVersion")),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -191,7 +191,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName($"server{this.tableElement.Name}")))))),
+                                        SyntaxFactory.IdentifierName("existingRow")))))),
 
                     //                this.dataModelContext.Accounts.Remove(serverAccount);
                     SyntaxFactory.ExpressionStatement(
@@ -211,20 +211,26 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName($"server{this.tableElement.Name}")))))),
+                                        SyntaxFactory.IdentifierName("existingRow")))))),
 
-                    //                            accounts.Add(serverThing);
+                    //                        existingRows.Add(new Account(existingRow));
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName($"server{this.tableElement.Name.ToPlural()}"),
+                                SyntaxFactory.IdentifierName("existingRows"),
                                 SyntaxFactory.IdentifierName("Add")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName($"server{this.tableElement.Name}")))))),
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName("existingRow")))))))))),
                 };
 
                 // This is the complete block.
@@ -255,7 +261,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier($"server{this.tableElement.Name}"))
+                                    SyntaxFactory.Identifier("existingRow"))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
                                         SyntaxFactory.InvocationExpression(
@@ -282,7 +288,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.NotEqualsExpression,
-                            SyntaxFactory.IdentifierName("serverAccount"),
+                            SyntaxFactory.IdentifierName("existingRow"),
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.NullLiteralExpression)),
                         SyntaxFactory.Block(this.DeleteRow)),
@@ -359,7 +365,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             {
                                                     SyntaxFactory.XmlTextLiteral(
                                                         SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                        $" <param name=\"{this.tableElement.Name.ToCamelCase().ToPlural()}\">A collection of <see cref=\"{this.tableElement.Name}\"/> records.</param>",
+                                                        $" <param name=\"{this.tableElement.Name.ToCamelCase().ToPlural()}\">A collection of <see cref=\"{this.tableElement.Name}\"/> rows.</param>",
                                                         string.Empty,
                                                         SyntaxFactory.TriviaList()),
                                                     SyntaxFactory.XmlTextNewLine(
@@ -369,7 +375,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxFactory.TriviaList()),
                                             }))))),
 
-                    //        /// <returns>The deleted rows.</returns>
+                    //        /// <returns>The result of applying the delete action.</returns>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -381,7 +387,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                             {
                                                     SyntaxFactory.XmlTextLiteral(
                                                         SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                        $" <returns>The deleted rows.</returns>",
+                                                        " <returns>The result of applying the delete action.</returns>",
                                                         string.Empty,
                                                         SyntaxFactory.TriviaList()),
                                                     SyntaxFactory.XmlTextNewLine(
@@ -469,7 +475,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier($"server{this.tableElement.Name.ToPlural()}"))
+                                    SyntaxFactory.Identifier("existingRows"))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
                                         SyntaxFactory.ObjectCreationExpression(
@@ -518,7 +524,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                 SyntaxFactory.IdentifierName("lockingTransaction"),
                                 SyntaxFactory.IdentifierName("Complete")))),
 
-                    //                    return this.Ok(serverAccounts);
+                    //                    return this.Ok(existingRows);
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -529,7 +535,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName($"server{this.tableElement.Name.ToPlural()}")))))),
+                                        SyntaxFactory.IdentifierName("existingRows")))))),
                 };
 
                 // This is the complete block.

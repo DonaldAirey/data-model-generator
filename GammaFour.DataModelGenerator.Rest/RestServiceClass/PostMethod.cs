@@ -13,7 +13,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// A method to create a record.
+    /// A method to create a row.
     /// </summary>
     public class PostMethod : SyntaxElement
     {
@@ -36,7 +36,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             //        /// Post a <see cref="Account"/> row.
             //        /// </summary>
             //        /// <param name="account">A <see cref="Account"/> row</param>
-            //        /// <returns>The result of the post.</returns>
+            //        /// <returns>The result of applying the post action.</returns>
             //        [HttpPost]
             //        public async Task<IActionResult> PostAccount([FromBody] Account account)
             //        {
@@ -201,7 +201,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         {
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" <returns>The result of the post.</returns>",
+                                                " <returns>The result of applying the post action.</returns>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -326,6 +326,19 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.ThisExpression(),
                                         SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase()}Context")),
                                     SyntaxFactory.IdentifierName("SaveChangesAsync"))))),
+
+                    //                account = new Account(account);
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                            SyntaxFactory.ObjectCreationExpression(
+                                SyntaxFactory.IdentifierName(this.tableElement.Name))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))))))),
 
                     //                    lockingTransaction.Complete();
                     SyntaxFactory.ExpressionStatement(

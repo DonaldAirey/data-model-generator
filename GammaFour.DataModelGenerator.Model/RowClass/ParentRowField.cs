@@ -60,7 +60,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// The current contents of the record.
+                    //        /// The current contents of the row.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(

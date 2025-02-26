@@ -1,4 +1,4 @@
-﻿// <copyright file="UniqueKeyExpression.cs" company="Gamma Four, Inc.">
+﻿// <copyright file="UniqueKeyExtensions.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -90,7 +90,7 @@ namespace GammaFour.DataModelGenerator.RestService
                 SyntaxFactory.AttributeList(
                     SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
                         SyntaxFactory.Attribute(
-                            SyntaxFactory.IdentifierName("HttpDelete"))
+                            SyntaxFactory.IdentifierName(httpVerb))
                     .WithArgumentList(
                         SyntaxFactory.AttributeArgumentList(
                             SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(

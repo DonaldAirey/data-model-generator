@@ -12,7 +12,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to add a record to the set.
+    /// Creates a method to add a row to the set.
     /// </summary>
     public class UpdateMethod : SyntaxElement
     {

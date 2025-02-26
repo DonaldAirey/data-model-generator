@@ -13,7 +13,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to load a record.
+    /// Creates a method to load a row.
     /// </summary>
     public class LoadMethod : SyntaxElement
     {
@@ -265,7 +265,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         }
 
         /// <summary>
-        /// Gets the statements checks to see if the parent record exists.
+        /// Gets the statements checks to see if the parent row exists.
         /// </summary>
         private List<StatementSyntax> LoadRow
         {
@@ -273,7 +273,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             {
                 var statements = new List<StatementSyntax>();
 
-                // For each parent table, include a check to make sure the parent exists before adding the record.
+                // For each parent table, include a check to make sure the parent exists before adding the row.
                 foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ParentKeys)
                 {
                     var conditional = foreignIndexElement.GetKeyAsEqualityConditional(this.tableElement.Name.ToVariableName());
@@ -331,7 +331,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.Argument(SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
                                     })))));
 
-                // Add the record to each of the unique key indices on this set.
+                // Add the row to each of the unique key indices on this set.
                 foreach (var uniqueKeyElement in this.tableElement.UniqueIndexes.Where(ui => !ui.IsPrimaryIndex))
                 {
                     //            this.AccountNameIndex.Add(account);

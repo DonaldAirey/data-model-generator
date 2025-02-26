@@ -1,20 +1,20 @@
 {
   "profiles": {
+    "Desktop": {
+      "commandName": "Project",
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Desktop\""
+    },
     "Loader": {
       "commandName": "Project",
       "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-loader\\OpenBook Loader\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-loader\\OpenBook Loader\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Loader\""
-    },
-    "Web API": {
-      "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-webapi\\ThetaRex.OpenBook.Data\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-webapi\\ThetaRex.OpenBook.Data\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Data\""
     },
     "Index Simulation": {
       "commandName": "Project",
       "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\index-simulation\\Index Simulation\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\index-simulation\\Index Simulation\\DataModel.Designer.cs\" -ns \"IndexSimulation\""
     },
-    "DataModel Prototype": {
+    "Web API": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\DataModelPrototype\\DataModelPrototype\\Generated\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\DataModelPrototype\\DataModelPrototype\\Generated\\DataModel.Designer.cs\" -ns \"DataModelPrototype.Generated\""
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-webapi\\ThetaRex.OpenBook.Data\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-webapi\\ThetaRex.OpenBook.Data\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Data\""
     }
   }
 }

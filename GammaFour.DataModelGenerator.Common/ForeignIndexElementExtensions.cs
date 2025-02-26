@@ -21,7 +21,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <returns>An argument that extracts a key from an object.</returns>
         public static ArgumentSyntax GetKeyAsArguments(this ForeignIndexElement foreignIndexElement)
         {
-            // This will create an expression for extracting the key from record.
+            // This will create an expression for extracting the key from row.
             if (foreignIndexElement.Columns.Count == 1)
             {
                 // code
@@ -59,7 +59,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <returns>An argument that extracts a key from an object.</returns>
         public static ArgumentSyntax GetKeyAsArguments(this ForeignIndexElement foreignIndexElement, string variableName)
         {
-            // This will create an expression for extracting the key from record.
+            // This will create an expression for extracting the key from row.
             if (foreignIndexElement.Columns.Count == 1)
             {
                 var columnElement = foreignIndexElement.Columns[0].Column;
@@ -225,7 +225,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <returns>An argument that extracts a key from an object.</returns>
         public static ParameterListSyntax GetKeyAsParameters(this ForeignIndexElement foreignIndexElement)
         {
-            // This will create an expression for extracting the key from record.
+            // This will create an expression for extracting the key from row.
             if (foreignIndexElement.Columns.Count == 1)
             {
                 // string code

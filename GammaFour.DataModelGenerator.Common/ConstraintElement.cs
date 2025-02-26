@@ -234,7 +234,7 @@ namespace GammaFour.DataModelGenerator.Common
         }
 
         /// <summary>
-        /// Compares two <see cref="ConstraintElement"/> records.
+        /// Compares two <see cref="ConstraintElement"/> rows.
         /// </summary>
         /// <param name="left">The left operand.</param>
         /// <param name="right">The right operand.</param>

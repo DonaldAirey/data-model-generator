@@ -27,7 +27,7 @@ namespace GammaFour.DataModelGenerator.Common
             // Used as a variable when constructing the lambda expression.
             string abbreviation = uniqueIndexElement.Table.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
 
-            // This will create an expression for extracting the key from record.
+            // This will create an expression for extracting the key from row.
             CSharpSyntaxNode syntaxNode;
             if (uniqueIndexElement.Columns.Count == 1)
             {
@@ -93,7 +93,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <returns>An argument that extracts a key from an object.</returns>
         public static ArgumentSyntax GetKeyAsArguments(this UniqueIndexElement uniqueIndexElement)
         {
-            // This will create an expression for extracting the key from record.
+            // This will create an expression for extracting the key from row.
             if (uniqueIndexElement.Columns.Count == 1)
             {
                 // code
@@ -131,7 +131,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <returns>An argument that extracts a key from an object.</returns>
         public static ArgumentSyntax GetKeyAsArguments(this UniqueIndexElement uniqueIndexElement, string variableName)
         {
-            // This will create an expression for extracting the key from record.
+            // This will create an expression for extracting the key from row.
             if (uniqueIndexElement.Columns.Count == 1)
             {
                 var columnElement = uniqueIndexElement.Columns[0].Column;
@@ -206,7 +206,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <returns>An argument that extracts a key from an object.</returns>
         public static SeparatedSyntaxList<ArgumentSyntax> GetKeyAsFindArguments(this UniqueIndexElement uniqueIndexElement)
         {
-            // This will create an expression for extracting the key from record.
+            // This will create an expression for extracting the key from row.
                 // A Compound key is constructed as a tuple.
                 List<SyntaxNodeOrToken> keyElements = new List<SyntaxNodeOrToken>();
                 foreach (ColumnReferenceElement columnReferenceElement in uniqueIndexElement.Columns)
@@ -233,7 +233,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <returns>An argument that extracts a key from an object.</returns>
         public static SeparatedSyntaxList<ArgumentSyntax> GetKeyAsFindArguments(this UniqueIndexElement uniqueIndexElement, string variableName)
         {
-            // This will create an expression for extracting the key from record.
+            // This will create an expression for extracting the key from row.
             // A Compound key is constructed as a tuple.
             List<SyntaxNodeOrToken> keyElements = new List<SyntaxNodeOrToken>();
             foreach (ColumnReferenceElement columnReferenceElement in uniqueIndexElement.Columns)
@@ -383,7 +383,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <returns>An argument that extracts a key from an object.</returns>
         public static ParameterListSyntax GetKeyAsParameters(this UniqueIndexElement uniqueIndexElement)
         {
-            // This will create an expression for extracting the key from record.
+            // This will create an expression for extracting the key from row.
             if (uniqueIndexElement.Columns.Count == 1)
             {
                 // string code

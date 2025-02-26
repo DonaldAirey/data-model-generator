@@ -230,7 +230,7 @@ namespace GammaFour.DataModelGenerator.Model
         /// <returns>The collection of members augmented with the enums.</returns>
         private SyntaxList<MemberDeclarationSyntax> CreatePublicEnums(SyntaxList<MemberDeclarationSyntax> members)
         {
-            // Create the record classes.
+            // Create the row classes.
             List<SyntaxElement> syntaxElements = new List<SyntaxElement>();
             syntaxElements.Add(new DataActionEnum.Enum());
 

@@ -12,7 +12,7 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a property that navigates to the parent record.
+    /// Creates a property that navigates to the parent row.
     /// </summary>
     public class DataActionProperty : SyntaxElement
     {

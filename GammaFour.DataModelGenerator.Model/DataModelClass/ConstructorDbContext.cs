@@ -84,7 +84,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                             SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToVariableName()}Context"))),
                 };
 
-                // Initialize each of the record sets.
+                // Initialize each of the row sets.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
                     //            this.Buyers = new BuyerSet(this, "Buyers");

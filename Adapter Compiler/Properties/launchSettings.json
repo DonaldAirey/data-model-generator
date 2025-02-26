@@ -1,16 +1,8 @@
 {
   "profiles": {
-    "ThetaRex.OpenBook": {
-      "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\ThetaRex.OpenBook\\ThetaRex.OpenBook\\Client\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\ThetaRex.OpenBook\\ThetaRex.OpenBook\\Client\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Client\""
-    },
     "Desktop": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Desktop\""
-    },
-    "Editor": {
-      "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-editor\\ThetaRex.OpenBook.Editor\\DataModel.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-editor\\ThetaRex.OpenBook.Editor\\DataModel.Designer.cs\" -ns \"ThetaRex.OpenBook.Editor\""
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop\\DataModelAdapter.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop\\DataModelAdapter.Designer.cs\" -ns \"ThetaRex.OpenBook.Desktop\""
     },
     "Loader": {
       "commandName": "Project",

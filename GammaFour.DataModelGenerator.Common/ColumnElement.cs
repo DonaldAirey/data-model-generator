@@ -410,7 +410,7 @@ namespace GammaFour.DataModelGenerator.Common
         }
 
         /// <summary>
-        /// Compares two <see cref="ColumnElement"/> records.
+        /// Compares two <see cref="ColumnElement"/> rows.
         /// </summary>
         /// <param name="left">The left operand.</param>
         /// <param name="right">The right operand.</param>

@@ -12,7 +12,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field to hold the current contents of the record.
+    /// Creates a field to hold the current contents of the row.
     /// </summary>
     public class UndoStackField : SyntaxElement
     {

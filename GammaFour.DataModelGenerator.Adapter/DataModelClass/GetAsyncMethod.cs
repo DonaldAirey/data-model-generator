@@ -12,7 +12,7 @@ namespace GammaFour.DataModelGenerator.Adapter.DataModelClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to add a record to the set.
+    /// Creates a method to add a row to the set.
     /// </summary>
     public class GetAsyncMethod : SyntaxElement
     {
@@ -260,7 +260,7 @@ namespace GammaFour.DataModelGenerator.Adapter.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Gets the set of <see cref=\"{this.tableElement.Name}\"/> records from the shared data model.",
+                                                $" Gets the collectin of <see cref=\"{this.tableElement.Name}\"/> rows.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

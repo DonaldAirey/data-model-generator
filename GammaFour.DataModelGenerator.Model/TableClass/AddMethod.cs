@@ -13,7 +13,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to add a record to the set.
+    /// Creates a method to add a row to the set.
     /// </summary>
     public class AddMethod : SyntaxElement
     {
@@ -153,7 +153,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                         this.tableElement.PrimaryIndex.GetKeyAsArguments(
                                                             this.tableElement.Name.ToVariableName())))))))))));
 
-                // Add the record to each of the unique key indices on this set.
+                // Add the row to each of the unique key indices on this set.
                 foreach (var uniqueKeyElement in this.tableElement.UniqueIndexes.Where(ui => !ui.IsPrimaryIndex))
                 {
                     //            this.AccountNameIndex.Add(account);

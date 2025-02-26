@@ -12,7 +12,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to remove a record from the set.
+    /// Creates a method to remove a row from the set.
     /// </summary>
     public class RemoveMethod : SyntaxElement
     {
@@ -119,7 +119,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                         }))))))))),
                 };
 
-                // Remove this record from each of the parent rows.
+                // Remove this row from each of the parent rows.
                 foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ParentKeys)
                 {
                     var condition = foreignIndexElement.GetKeyAsInequalityConditional(this.tableElement.Name.ToVariableName());
