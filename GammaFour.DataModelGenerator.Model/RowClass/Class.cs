@@ -234,6 +234,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             List<SyntaxElement> methods = new List<SyntaxElement>
             {
                 new CommitMethod(),
+                new CommitEnlistmentMethod(),
                 new EqualsMethod(this.tableElement),
                 new GetHashCodeMethod(this.tableElement),
                 new InDoubtMethod(),

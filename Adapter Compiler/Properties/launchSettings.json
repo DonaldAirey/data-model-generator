@@ -2,7 +2,7 @@
   "profiles": {
     "Desktop": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop\\DataModelAdapter.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop\\DataModelAdapter.Designer.cs\" -ns \"ThetaRex.OpenBook.Desktop\""
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop\\Data\\DataModelAdapter.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop\\Data\\DataModelAdapter.Designer.cs\" -ns \"ThetaRex.OpenBook.Desktop.Data\""
     },
     "Loader": {
       "commandName": "Project",

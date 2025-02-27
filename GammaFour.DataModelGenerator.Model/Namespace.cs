@@ -140,15 +140,15 @@ namespace GammaFour.DataModelGenerator.Model
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Data")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json.Serialization")),
-                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")),
                 };
 
                 // System.Linq is only needed with the persistent model.
                 if (!this.xmlSchemaDocument.IsVolatile)
                 {
-                    systemUsingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")));
+                    systemUsingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")));
                 }
 
                 List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>();

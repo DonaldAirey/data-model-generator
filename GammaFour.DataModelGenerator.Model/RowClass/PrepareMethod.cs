@@ -73,7 +73,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("undoStack")),
+                                    SyntaxFactory.IdentifierName("rollbackStack")),
                                 SyntaxFactory.IdentifierName("Count")),
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.NumericLiteralExpression,

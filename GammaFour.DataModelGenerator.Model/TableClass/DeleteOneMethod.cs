@@ -1,4 +1,4 @@
-// <copyright file="RemoveMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="DeleteOneMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,9 +12,9 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to remove a row from the set.
+    /// Creates a method to delete a row from the set.
     /// </summary>
-    public class RemoveMethod : SyntaxElement
+    public class DeleteOneMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -22,27 +22,27 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RemoveMethod"/> class.
+        /// Initializes a new instance of the <see cref="DeleteOneMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public RemoveMethod(TableElement tableElement)
+        public DeleteOneMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = "Remove";
+            this.Name = "Delete";
 
             //        /// <summary>
-            //        /// Removes a <see cref="Order"/> from the table.
+            //        /// Deletes a <see cref="Order"/> row.
             //        /// </summary>
             //        /// <param name="order">The <see cref="Order"/> row.</param>
-            //        public void Remove(Order order)
+            //        public void Delete(Order order)
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
                 SyntaxFactory.PredefinedType(
                     SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
-                SyntaxFactory.Identifier("Remove"))
+                SyntaxFactory.Identifier(this.Name))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
@@ -82,7 +82,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     this.tableElement.PrimaryIndex.GetKeyAsArguments(this.tableElement.Name.ToVariableName()))))),
 
-                    //            this.undoStack.Push(() => this.dictionary.Add((order.AccountCode, order.AssetCode, order.Date), order));
+                    //            this.rollbackStack.Push(() => this.dictionary.Add((order.AccountCode, order.AssetCode, order.Date), order));
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -90,7 +90,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("undoStack")),
+                                    SyntaxFactory.IdentifierName("rollbackStack")),
                                 SyntaxFactory.IdentifierName("Push")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -119,20 +119,20 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                         }))))))))),
                 };
 
-                // Remove this row from each of the parent rows.
+                // Delete this row from each of the parent rows.
                 foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ParentKeys)
                 {
                     var condition = foreignIndexElement.GetKeyAsInequalityConditional(this.tableElement.Name.ToVariableName());
                     if (condition == null)
                     {
-                        statements.AddRange(this.RemoveFromParent(foreignIndexElement));
+                        statements.AddRange(this.DeleteFromParent(foreignIndexElement));
                     }
                     else
                     {
                         statements.Add(
                             SyntaxFactory.IfStatement(
                                 condition,
-                                SyntaxFactory.Block(this.RemoveFromParent(foreignIndexElement))));
+                                SyntaxFactory.Block(this.DeleteFromParent(foreignIndexElement))));
                     }
                 }
 
@@ -154,7 +154,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
                                     SyntaxFactory.IdentifierName("IncrementRowVersion"))))));
 
-                //            this.purgedRows.Insert(0, (DateTime.Now, alert));
+                //                this.commitStack.Push(() => this.DeletedRows.AddFirst(allocation));
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -281,7 +281,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Removes a <see cref=\"{this.tableElement.Name}\"/> row from the table.",
+                                                $" Deletes a <see cref=\"{this.tableElement.Name}\"/> row.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -313,7 +313,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" The <see cref=\"{this.tableElement.Name}\"/> row.",
+                                                    $" <param name=\"{this.tableElement.Name.ToCamelCase()}\">The <see cref=\"{this.tableElement.Name}\"/> row.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -330,11 +330,11 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         }
 
         /// <summary>
-        /// Removes the row from the parent row.
+        /// Deletes the row from the parent row.
         /// </summary>
         /// <param name="foreignIndexElement">The foreign index element.</param>
-        /// <returns>The statements to remove a row from the parent row.</returns>
-        private IEnumerable<StatementSyntax> RemoveFromParent(ForeignIndexElement foreignIndexElement)
+        /// <returns>The statements to delete a row from the parent row.</returns>
+        private IEnumerable<StatementSyntax> DeleteFromParent(ForeignIndexElement foreignIndexElement)
         {
             var statements = new List<StatementSyntax>();
 
@@ -404,7 +404,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.Argument(
                                     SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
 
-            //            this.undoStack.Push(() => account.Orders.Remove(order));
+            //            this.rollbackStack.Push(() => account.Orders.Add(order));
             statements.Add(
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.InvocationExpression(
@@ -413,7 +413,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("undoStack")),
+                                SyntaxFactory.IdentifierName("rollbackStack")),
                             SyntaxFactory.IdentifierName("Push")))
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList(

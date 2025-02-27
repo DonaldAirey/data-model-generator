@@ -49,7 +49,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 // This is used to collect the statements.
                 var statements = new List<StatementSyntax>
                 {
-                    //            if (this.undoStack.Count == 0)
+                    //            if (this.rollbackStack.Count == 0)
                     //            {
                     //                <Enlistment is Done>
                     //            }
@@ -65,7 +65,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("undoStack")),
+                                    SyntaxFactory.IdentifierName("rollbackStack")),
                                 SyntaxFactory.IdentifierName("Count")),
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.NumericLiteralExpression,

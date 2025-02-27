@@ -25,11 +25,10 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             this.Name = "Commit";
 
             //        /// <inheritdoc/>
-            //        public void Commit(Enlistment enlistment)
+            //        public void Commit()
             //        {
             //            this.IsModified = false;
-            //            this.undoStack.Clear();
-            //            enlistment.Done();
+            //            this.rollbackStack.Clear();
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
                 SyntaxFactory.PredefinedType(
@@ -38,13 +37,6 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithParameterList(
-                SyntaxFactory.ParameterList(
-                    SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
-                        SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier("enlistment"))
-                        .WithType(
-                            SyntaxFactory.IdentifierName("Enlistment")))))
             .WithBody(
                 SyntaxFactory.Block(
                     SyntaxFactory.ExpressionStatement(
@@ -63,14 +55,8 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("undoStack")),
-                                SyntaxFactory.IdentifierName("Clear")))),
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("enlistment"),
-                                SyntaxFactory.IdentifierName("Done"))))))
+                                    SyntaxFactory.IdentifierName("rollbackStack")),
+                                SyntaxFactory.IdentifierName("Clear"))))))
             .WithLeadingTrivia(CommitMethod.DocumentationComment);
         }
 

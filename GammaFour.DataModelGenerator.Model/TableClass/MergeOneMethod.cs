@@ -1,4 +1,4 @@
-// <copyright file="MergeMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="MergeOneMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -15,7 +15,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     /// <summary>
     /// Creates a method to merge a row.
     /// </summary>
-    public class MergeMethod : SyntaxElement
+    public class MergeOneMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -23,32 +23,28 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MergeMethod"/> class.
+        /// Initializes a new instance of the <see cref="MergeOneMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public MergeMethod(TableElement tableElement)
+        public MergeOneMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
             this.Name = "Merge";
 
             //        /// <summary>
-            //        /// Merges a collection of <see cref="Order"/> rows.
+            //        /// Merge a <see cref="Account"/> row.
             //        /// </summary>
-            //        /// <param name="orders">The collection of <see cref="Order"/> rows to merge.</param>
-            //        /// <returns>The rows that could not be merged.</returns>
-            //        public IEnumerable<Order> Load(IEnumerable<Order> orders)
+            //        /// <param name="account">A <see cref="Account"/> rows.</param>
+            //        /// <returns>Null if successful, or the row if not.</returns>
+            //        public Account? Merge(Account account)
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
-                SyntaxFactory.GenericName(
-                    SyntaxFactory.Identifier("IEnumerable"))
-                .WithTypeArgumentList(
-                    SyntaxFactory.TypeArgumentList(
-                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                            SyntaxFactory.IdentifierName(this.tableElement.Name)))),
-                SyntaxFactory.Identifier(this.Name))
+                SyntaxFactory.NullableType(
+                    SyntaxFactory.IdentifierName(this.tableElement.Name)),
+                SyntaxFactory.Identifier("Merge"))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
@@ -56,14 +52,9 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 SyntaxFactory.ParameterList(
                     SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
                         SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier(this.tableElement.Name.ToPlural().ToVariableName()))
+                            SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()))
                         .WithType(
-                            SyntaxFactory.GenericName(
-                                SyntaxFactory.Identifier("IEnumerable"))
-                            .WithTypeArgumentList(
-                                SyntaxFactory.TypeArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name))))))))
+                            SyntaxFactory.IdentifierName(this.tableElement.Name)))))
             .WithBody(this.Body)
             .WithLeadingTrivia(this.DocumentationComment);
         }
@@ -79,7 +70,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Merge a collection of <see cref="Order"/> rows.
+                    //        /// Merge a <see cref="Account"/> row.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -102,7 +93,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Merge a collection of <see cref=\"{this.tableElement.Name}\"/> rows.",
+                                                $" Merge a <see cref=\"{this.tableElement.Name}\"/> row.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -122,7 +113,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //        /// <param name="orders">The collection of <see cref="Order"/> rows to merge.</param>
+                    //        /// <param name="account">A <see cref="Account"/> row.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -134,7 +125,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <param name=\"{this.tableElement.Name.ToPlural().ToVariableName()}\">The collection of <see cref=\"{this.tableElement.Name}\"/> rows to merge.</param>",
+                                                    $" <param name=\"{this.tableElement.Name.ToCamelCase()}\">A <see cref=\"{this.tableElement.Name}\"/> row.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -144,7 +135,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                     SyntaxFactory.TriviaList()),
                                             }))))),
 
-                    //        /// <returns>The rows that could not be merged.</returns>
+                    //        /// <returns>Null if successful, or the row if not.</returns>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -156,7 +147,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <returns>The rows that could not be merged.</returns>",
+                                                    $" <returns>Null if successful, or the row if not.</returns>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -180,97 +171,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                var statements = new List<StatementSyntax>
-                {
-                    //            var residuals = new List<Order>();
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(
-                                SyntaxFactory.Identifier(
-                                    SyntaxFactory.TriviaList(),
-                                    SyntaxKind.VarKeyword,
-                                    "var",
-                                    "var",
-                                    SyntaxFactory.TriviaList())))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("residuals"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.GenericName(
-                                                SyntaxFactory.Identifier("List"))
-                                            .WithTypeArgumentList(
-                                                SyntaxFactory.TypeArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                        SyntaxFactory.IdentifierName(this.tableElement.Name)))))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList())))))),
-
-                    //            foreach (var order in orders)
-                    //            {
-                    //                 <MergeRow>
-                    //            }
-                    SyntaxFactory.ForEachStatement(
-                        SyntaxFactory.IdentifierName(
-                            SyntaxFactory.Identifier(
-                                SyntaxFactory.TriviaList(),
-                                SyntaxKind.VarKeyword,
-                                "var",
-                                "var",
-                                SyntaxFactory.TriviaList())),
-                        SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()),
-                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToVariableName()),
-                        SyntaxFactory.Block(this.MergeRow)),
-
-                    //            return residuals;
-                    SyntaxFactory.ReturnStatement(
-                        SyntaxFactory.IdentifierName("residuals")),
-                };
-
-                // This is the syntax for the body of the method.
-                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
-            }
-        }
-
-        /// <summary>
-        /// Gets the statements that updates the master row version.
-        /// </summary>
-        private List<StatementSyntax> UpdateMasterRowVersion
-        {
-            get
-            {
-                var statements = new List<StatementSyntax>
-                {
-                    //                    this.DataModel.RowVersion = assetClass.RowVersion;
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
-                                SyntaxFactory.IdentifierName("RowVersion")),
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                                SyntaxFactory.IdentifierName("RowVersion")))),
-                };
-
-                return statements;
-            }
-        }
-
-        /// <summary>
-        /// Gets the statements checks to see if the parent row exists.
-        /// </summary>
-        private List<StatementSyntax> MergeRow
-        {
-            get
-            {
                 var statements = new List<StatementSyntax>();
 
                 // For each parent table, include a check to make sure the parent exists before adding the row.
@@ -331,7 +231,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.Argument(SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
                                     })))));
 
-                //            this.undoStack.Push(() => this.dictionary.Remove(account.Code));
+                //            this.rollbackStack.Push(() => this.dictionary.Remove(account.Code));
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -340,7 +240,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("undoStack")),
+                                    SyntaxFactory.IdentifierName("rollbackStack")),
                                 SyntaxFactory.IdentifierName("Push")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -382,7 +282,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
 
-                    //            this.undoStack.Push(() => this.AccountNameIndex.Remove(account));
+                    //            this.rollbackStack.Push(() => this.AccountNameIndex.Remove(account));
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.InvocationExpression(
@@ -391,7 +291,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("undoStack")),
+                                        SyntaxFactory.IdentifierName("rollbackStack")),
                                     SyntaxFactory.IdentifierName("Push")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
@@ -473,7 +373,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
 
                 //                if (assetClass.RowVersion > this.DataModel.RowVersion)
                 //                {
-                //                    <UpdateMasterRowVersion>
+                //                    <UpdateRowVersion>
                 //                }
                 statements.Add(
                     SyntaxFactory.IfStatement(
@@ -490,7 +390,44 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
                                 SyntaxFactory.IdentifierName("RowVersion"))),
-                        SyntaxFactory.Block(this.UpdateMasterRowVersion)));
+                        SyntaxFactory.Block(this.UpdateRowVersion)));
+
+                //            return null;
+                statements.Add(
+                    SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.LiteralExpression(
+                            SyntaxKind.NullLiteralExpression)));
+
+                // This is the syntax for the body of the method.
+                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
+            }
+        }
+
+        /// <summary>
+        /// Gets the statements that updates the master row version.
+        /// </summary>
+        private List<StatementSyntax> UpdateRowVersion
+        {
+            get
+            {
+                var statements = new List<StatementSyntax>
+                {
+                    //                    this.DataModel.RowVersion = assetClass.RowVersion;
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
+                                SyntaxFactory.IdentifierName("RowVersion")),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                SyntaxFactory.IdentifierName("RowVersion")))),
+                };
 
                 return statements;
             }
@@ -540,8 +477,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
 
             //                if (account == null)
             //                {
-            //                    residuals.Add(order);
-            //                    continue;
+            //                    return account;
             //                }
             statements.Add(
                 SyntaxFactory.IfStatement(
@@ -551,18 +487,8 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                         SyntaxFactory.LiteralExpression(
                             SyntaxKind.NullLiteralExpression)),
                     SyntaxFactory.Block(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("residuals"),
-                                    SyntaxFactory.IdentifierName("Add")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))),
-                        SyntaxFactory.ContinueStatement())));
+                        SyntaxFactory.ReturnStatement(
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))));
 
             //                account.Orders.Add(order);
             statements.Add(
@@ -581,7 +507,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.Argument(
                                     SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
 
-            //            this.undoStack.Push(() => account.Orders.Remove(order));
+            //            this.rollbackStack.Push(() => account.Orders.Remove(order));
             statements.Add(
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.InvocationExpression(
@@ -590,7 +516,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("undoStack")),
+                                SyntaxFactory.IdentifierName("rollbackStack")),
                             SyntaxFactory.IdentifierName("Push")))
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList(

@@ -174,7 +174,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                     //                if (this.account != value)
                     //                {
                     //                    var account = this.Account;
-                    //                    this.undoStack.Push(() => this.account = account);
+                    //                    this.rollbackStack.Push(() => this.account = account);
                     //                    this.account = value;
                     //                }
                     SyntaxFactory.IfStatement(
@@ -212,7 +212,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("undoStack")),
+                                            SyntaxFactory.IdentifierName("rollbackStack")),
                                         SyntaxFactory.IdentifierName("Push")))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(

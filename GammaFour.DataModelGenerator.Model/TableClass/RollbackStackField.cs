@@ -1,4 +1,4 @@
-// <copyright file="UndoStackField.cs" company="Gamma Four, Inc.">
+// <copyright file="RollbackStackField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,20 +14,20 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     /// <summary>
     /// Creates a field to hold the current contents of the row.
     /// </summary>
-    public class UndoStackField : SyntaxElement
+    public class RollbackStackField : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="UndoStackField"/> class.
+        /// Initializes a new instance of the <see cref="RollbackStackField"/> class.
         /// </summary>
-        public UndoStackField()
+        public RollbackStackField()
         {
             // Initialize the object.
-            this.Name = "undoStack";
+            this.Name = "rollbackStack";
 
             //        /// <summary>
-            //        ///  The undo stack.
+            //        ///  The rollback stack.
             //        /// </summary>
-            //        private readonly Stack<Action> undoStack = new Stack<Action>();
+            //        private readonly Stack<Action> rollbackStack = new Stack<Action>();
             this.Syntax = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
                     SyntaxFactory.GenericName(
@@ -39,7 +39,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                         SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier("undoStack"))
+                            SyntaxFactory.Identifier(this.Name))
                         .WithInitializer(
                             SyntaxFactory.EqualsValueClause(
                                 SyntaxFactory.ObjectCreationExpression(
@@ -58,7 +58,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                         SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
                         SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
                     }))
-            .WithLeadingTrivia(UndoStackField.DocumentationComment);
+            .WithLeadingTrivia(RollbackStackField.DocumentationComment);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// The undo stack.
+                    //        /// The rollback stack.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -95,7 +95,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " The undo stack.",
+                                                " The rollback stack.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

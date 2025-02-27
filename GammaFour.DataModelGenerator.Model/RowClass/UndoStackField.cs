@@ -22,12 +22,12 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
         public UndoStackField()
         {
             // Initialize the object.
-            this.Name = "undoStack";
+            this.Name = "rollbackStack";
 
             //        /// <summary>
             //        ///  The undo stack.
             //        /// </summary>
-            //        private readonly Stack<Action> undoStack = new Stack<Action>();
+            //        private readonly Stack<Action> rollbackStack = new Stack<Action>();
             this.Syntax = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
                     SyntaxFactory.GenericName(
@@ -39,7 +39,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                         SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier("undoStack"))
+                            SyntaxFactory.Identifier("rollbackStack"))
                         .WithInitializer(
                             SyntaxFactory.EqualsValueClause(
                                 SyntaxFactory.ObjectCreationExpression(

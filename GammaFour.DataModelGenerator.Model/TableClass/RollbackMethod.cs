@@ -57,9 +57,20 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 // This is used to collect the statements.
                 var statements = new List<StatementSyntax>
                 {
-                    //            while (this.undoStack.Count != 0)
+                    //        this.commitStack.Clear();
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("commitStack")),
+                                SyntaxFactory.IdentifierName("Clear")))),
+
+                    //            while (this.rollbackStack.Count != 0)
                     //            {
-                    //                this.undoStack.Pop()();
+                    //                this.rollbackStack.Pop()();
                     //            }
                     SyntaxFactory.WhileStatement(
                         SyntaxFactory.BinaryExpression(
@@ -69,7 +80,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("undoStack")),
+                                    SyntaxFactory.IdentifierName("rollbackStack")),
                                 SyntaxFactory.IdentifierName("Count")),
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.NumericLiteralExpression,
@@ -84,7 +95,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName("undoStack")),
+                                                    SyntaxFactory.IdentifierName("rollbackStack")),
                                                 SyntaxFactory.IdentifierName("Pop")))))))),
                 };
 

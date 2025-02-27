@@ -211,7 +211,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             {
                 new CommitStackField(),
                 new DictionaryField(this.tableElement),
-                new UndoStackField(),
+                new RollbackStackField(),
             };
 
             // Alphabetize and add the fields as members of the class.
@@ -311,14 +311,16 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             {
                 new AddMethod(this.tableElement),
                 new CommitMethod(),
+                new DeleteOneMethod(this.tableElement),
+                new DeleteManyMethod(this.tableElement),
                 new FindMethod(this.tableElement),
                 new GetEnumeratorMethod(this.tableElement),
                 new GenericGetEnumeratorMethod(this.tableElement),
                 new InDoubtMethod(),
                 new LoadMethod(this.tableElement),
-                new MergeMethod(this.tableElement),
+                new MergeManyMethod(this.tableElement),
+                new MergeOneMethod(this.tableElement),
                 new PrepareMethod(),
-                new RemoveMethod(this.tableElement),
                 new RollbackMethod(),
                 new UpdateMethod(this.tableElement),
             };

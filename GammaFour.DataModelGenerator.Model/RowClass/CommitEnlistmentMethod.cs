@@ -1,8 +1,8 @@
-// <copyright file="CommitMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="CommitEnlistmentMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.TableClass
+namespace GammaFour.DataModelGenerator.Model.RowClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,14 +12,14 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to prepare a resource for a transaction completion.
+    /// Creates a method to acquire a reader lock.
     /// </summary>
-    public class CommitMethod : SyntaxElement
+    public class CommitEnlistmentMethod : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommitMethod"/> class.
+        /// Initializes a new instance of the <see cref="CommitEnlistmentMethod"/> class.
         /// </summary>
-        public CommitMethod()
+        public CommitEnlistmentMethod()
         {
             // Initialize the object.
             this.Name = "Commit";
@@ -27,12 +27,14 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             //        /// <inheritdoc/>
             //        public void Commit(Enlistment enlistment)
             //        {
-            //            <Body>
+            //            this.IsModified = false;
+            //            this.rollbackStack.Clear();
+            //            enlistment.Done();
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
                 SyntaxFactory.PredefinedType(
                     SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
-                SyntaxFactory.Identifier(this.Name))
+                SyntaxFactory.Identifier("Commit"))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
@@ -43,21 +45,17 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxFactory.Identifier("enlistment"))
                         .WithType(
                             SyntaxFactory.IdentifierName("Enlistment")))))
-            .WithBody(CommitMethod.Body)
-            .WithLeadingTrivia(CommitMethod.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the body.
-        /// </summary>
-        private static BlockSyntax Body
-        {
-            get
-            {
-                // This is used to collect the statements.
-                var statements = new List<StatementSyntax>
-                {
-                    //        this.rollbackStack.Clear();
+            .WithBody(
+                SyntaxFactory.Block(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("IsModified")),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.FalseLiteralExpression))),
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -67,49 +65,13 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName("rollbackStack")),
                                 SyntaxFactory.IdentifierName("Clear")))),
-
-                    //            while (this.commitStack.Count != 0)
-                    //            {
-                    //                this.commitStack.Pop()();
-                    //            }
-                    SyntaxFactory.WhileStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.NotEqualsExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("commitStack")),
-                                SyntaxFactory.IdentifierName("Count")),
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.NumericLiteralExpression,
-                                SyntaxFactory.Literal(0))),
-                        SyntaxFactory.Block(
-                            SyntaxFactory.SingletonList<StatementSyntax>(
-                                SyntaxFactory.ExpressionStatement(
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.InvocationExpression(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName("commitStack")),
-                                                SyntaxFactory.IdentifierName("Pop")))))))),
-
-                    //            enlistment.Done();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("enlistment"),
-                                SyntaxFactory.IdentifierName("Done")))),
-                };
-
-                // This is the syntax for the body of the method.
-                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
-            }
+                                SyntaxFactory.IdentifierName("Done"))))))
+            .WithLeadingTrivia(CommitEnlistmentMethod.DocumentationComment);
         }
 
         /// <summary>

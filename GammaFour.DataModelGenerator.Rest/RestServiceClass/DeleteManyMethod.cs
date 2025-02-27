@@ -174,7 +174,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxFactory.IdentifierName("StatusCodes"),
                                                         SyntaxFactory.IdentifierName("Status412PreconditionFailed")))))))))),
 
-                    //                this.dataModel.Accounts.Remove(serverAccount);
+                    //                this.dataModel.Accounts.Delete(serverAccount);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -186,7 +186,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.ThisExpression(),
                                         SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
                                     SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                SyntaxFactory.IdentifierName("Remove")))
+                                SyntaxFactory.IdentifierName("Delete")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(

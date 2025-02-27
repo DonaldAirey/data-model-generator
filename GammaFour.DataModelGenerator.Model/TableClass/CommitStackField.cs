@@ -39,7 +39,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                         SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier("commitStack"))
+                            SyntaxFactory.Identifier(this.Name))
                         .WithInitializer(
                             SyntaxFactory.EqualsValueClause(
                                 SyntaxFactory.ObjectCreationExpression(

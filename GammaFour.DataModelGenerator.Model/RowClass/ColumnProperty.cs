@@ -283,7 +283,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                             SyntaxFactory.ThisExpression(),
                                             SyntaxFactory.IdentifierName(this.columnElement.Name.ToCamelCase()))))))));
 
-                //                    this.undoStack.Push(() => this.code = code);
+                //                    this.rollbackStack.Push(() => this.code = code);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -292,7 +292,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("undoStack")),
+                                    SyntaxFactory.IdentifierName("rollbackStack")),
                                 SyntaxFactory.IdentifierName("Push")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
