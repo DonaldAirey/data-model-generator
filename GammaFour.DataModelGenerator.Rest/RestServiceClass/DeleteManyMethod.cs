@@ -49,7 +49,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                     SyntaxFactory.TypeArgumentList(
                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                             SyntaxFactory.IdentifierName("IActionResult")))),
-                SyntaxFactory.Identifier("DeleteAccounts"))
+                SyntaxFactory.Identifier(this.Name))
             .WithAttributeLists(
                 SyntaxFactory.SingletonList<AttributeListSyntax>(
                     SyntaxFactory.AttributeList(
