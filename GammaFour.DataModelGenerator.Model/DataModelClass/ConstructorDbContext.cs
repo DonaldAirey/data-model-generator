@@ -34,33 +34,34 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
             //        /// <summary>
             //        /// Initializes a new instance of the <see cref="DataModel"/> class.
             //        /// </summary>
-            //        /// <param name="dataModelContext">The dataModel dabase context.</param>
-            //        public DataModel(DataModelContext dataModelContext)
+            //        /// <param name="configuration">The application configuration.</param>
+            //        /// <param name="dataModelContext">The Entity Framework context.</param>
+            //        public DataModel(IConfiguration configuration, DataModelContext dataModelContext)
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
-                    SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(ConstructorDbContext.Modifiers)
-                .WithParameterList(this.Parameters)
-                .WithBody(this.Body)
-                .WithLeadingTrivia(this.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                    });
-            }
+                SyntaxFactory.Identifier(this.xmlSchemaDocument.Name))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithParameterList(
+                SyntaxFactory.ParameterList(
+                    SyntaxFactory.SeparatedList<ParameterSyntax>(
+                        new SyntaxNodeOrToken[]
+                        {
+                            SyntaxFactory.Parameter(
+                                SyntaxFactory.Identifier("configuration"))
+                            .WithType(
+                                SyntaxFactory.IdentifierName("IConfiguration")),
+                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                            SyntaxFactory.Parameter(
+                                SyntaxFactory.Identifier($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context"))
+                            .WithType(
+                                SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name}Context")),
+                        })))
+            .WithBody(this.Body)
+            .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
@@ -104,7 +105,13 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                             new SyntaxNodeOrToken[]
                                             {
                                                 SyntaxFactory.Argument(
+                                                    SyntaxFactory.IdentifierName("configuration")),
+                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                SyntaxFactory.Argument(
                                                     SyntaxFactory.ThisExpression()),
+                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context")),
                                             }))))));
                 }
 
@@ -167,7 +174,29 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //        /// <param name="dataModelContext">The dataModel dabase context.</param>
+                    //        /// <param name="configuration">The application configuration.</param>
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                    SyntaxFactory.XmlText()
+                                    .WithTextTokens(
+                                        SyntaxFactory.TokenList(
+                                            new[]
+                                            {
+                                                SyntaxFactory.XmlTextLiteral(
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                    " <param name=\"configuration\">The application configuration.</param>",
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                                SyntaxFactory.XmlTextNewLine(
+                                                    SyntaxFactory.TriviaList(),
+                                                    Environment.NewLine,
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                            }))))),
+
+                    //        /// <param name="dataModelContext">The Entity Framework context.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -192,28 +221,6 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the list of parameters.
-        /// </summary>
-        private ParameterListSyntax Parameters
-        {
-            get
-            {
-                // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>
-                {
-                    // DataModelContext dataModelContext
-                    SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context"))
-                    .WithType(
-                        SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name}Context")),
-                };
-
-                // This is the complete parameter specification for this constructor.
-                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
             }
         }
     }

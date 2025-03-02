@@ -98,7 +98,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToVariableName())),
+                                        SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToCamelCase())),
                                     SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                                 SyntaxFactory.IdentifierName("Add")))
                         .WithArgumentList(

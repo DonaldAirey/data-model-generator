@@ -493,7 +493,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
                                             SyntaxFactory.IdentifierName(
-                                                $"{this.tableElement.Document.Name.ToVariableName()}Context")),
+                                                $"{this.tableElement.Document.Name.ToCamelCase()}Context")),
                                         SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                                     SyntaxFactory.IdentifierName("Remove")))
                             .WithArgumentList(

@@ -252,7 +252,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(this.tableElement.Document.Name)),
+                                    SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToCamelCase())),
                                 SyntaxFactory.IdentifierName("RowVersion")),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -488,7 +488,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(this.tableElement.Document.Name)),
+                                    SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToCamelCase())),
                                 SyntaxFactory.IdentifierName("RowVersion"))),
                         SyntaxFactory.Block(this.UpdateRowVersion)));
 
@@ -529,7 +529,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Document.Name)),
+                                                    SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Document.Name.ToCamelCase())),
                                                 SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToPlural())),
                                             SyntaxFactory.IdentifierName("Find")))
                                     .WithArgumentList(

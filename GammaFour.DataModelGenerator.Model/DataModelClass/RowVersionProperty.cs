@@ -31,132 +31,26 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
             //        {
             this.Syntax = SyntaxFactory.PropertyDeclaration(
                 SyntaxFactory.PredefinedType(
-                        SyntaxFactory.Token(SyntaxKind.LongKeyword)),
+                    SyntaxFactory.Token(SyntaxKind.LongKeyword)),
                 SyntaxFactory.Identifier(this.Name))
-            .WithAccessorList(RowVersionProperty.AccessorList)
-            .WithModifiers(RowVersionProperty.Modifiers)
-            .WithLeadingTrivia(RowVersionProperty.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the list of accessors.
-        /// </summary>
-        private static AccessorListSyntax AccessorList
-        {
-            get
-            {
-                return SyntaxFactory.AccessorList(
-                    SyntaxFactory.List(
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithAccessorList(
+                SyntaxFactory.AccessorList(
+                    SyntaxFactory.List<AccessorDeclarationSyntax>(
                         new AccessorDeclarationSyntax[]
                         {
-                            RowVersionProperty.GetAccessor,
-                            RowVersionProperty.SetAccessor,
-                        }));
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Get' accessor.
-        /// </summary>
-        private static AccessorDeclarationSyntax GetAccessor
-        {
-            get
-            {
-                //            get
-                //            {
-                //                return System.Threading.Interlocked.Read(ref this.rowVersion);
-                //            }
-                return SyntaxFactory.AccessorDeclaration(
-                    SyntaxKind.GetAccessorDeclaration)
-                .WithBody(
-                    SyntaxFactory.Block(
-                        SyntaxFactory.SingletonList<StatementSyntax>(
-                            SyntaxFactory.ReturnStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("System"),
-                                                SyntaxFactory.IdentifierName("Threading")),
-                                            SyntaxFactory.IdentifierName("Interlocked")),
-                                        SyntaxFactory.IdentifierName("Read")))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName("rowVersion")))
-                                            .WithRefOrOutKeyword(
-                                                SyntaxFactory.Token(SyntaxKind.RefKeyword)))))))));
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                    });
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Set' accessor.
-        /// </summary>
-        private static AccessorDeclarationSyntax SetAccessor
-        {
-            get
-            {
-                //            set
-                //            {
-                //                System.Threading.Interlocked.Exchange(ref this.rowVersion, value);
-                //            }
-                return SyntaxFactory.AccessorDeclaration(
-                    SyntaxKind.SetAccessorDeclaration)
-                .WithBody(
-                    SyntaxFactory.Block(
-                        SyntaxFactory.SingletonList<StatementSyntax>(
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("System"),
-                                                SyntaxFactory.IdentifierName("Threading")),
-                                            SyntaxFactory.IdentifierName("Interlocked")),
-                                        SyntaxFactory.IdentifierName("Exchange")))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                            new SyntaxNodeOrToken[]
-                                            {
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.ThisExpression(),
-                                                        SyntaxFactory.IdentifierName("rowVersion")))
-                                                .WithRefOrOutKeyword(
-                                                    SyntaxFactory.Token(SyntaxKind.RefKeyword)),
-                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.IdentifierName("value")),
-                                            })))))));
-            }
+                            SyntaxFactory.AccessorDeclaration(
+                                SyntaxKind.GetAccessorDeclaration)
+                            .WithBody(
+                                SyntaxFactory.Block(RowVersionProperty.GetAccessor)),
+                            SyntaxFactory.AccessorDeclaration(
+                                SyntaxKind.SetAccessorDeclaration)
+                            .WithBody(
+                                SyntaxFactory.Block(RowVersionProperty.SetAccessor)),
+                        })))
+            .WithLeadingTrivia(RowVersionProperty.DocumentationComment);
         }
 
         /// <summary>
@@ -216,6 +110,94 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
+            }
+        }
+
+        /// <summary>
+        /// Gets the statements for the 'Get' accessor.
+        /// </summary>
+        private static IEnumerable<StatementSyntax> GetAccessor
+        {
+            get
+            {
+                return new List<StatementSyntax>
+                {
+                    //                return System.Threading.Interlocked.Read(ref this.rowVersion);
+                    SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName("System"),
+                                        SyntaxFactory.IdentifierName("Threading")),
+                                    SyntaxFactory.IdentifierName("Interlocked")),
+                                SyntaxFactory.IdentifierName("Read")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName("rowVersion")))
+                                    .WithRefOrOutKeyword(
+                                        SyntaxFactory.Token(SyntaxKind.RefKeyword)))))),
+                };
+            }
+        }
+
+        /// <summary>
+        /// Gets the statements for the 'Set' accessor.
+        /// </summary>
+        private static IEnumerable<StatementSyntax> SetAccessor
+        {
+            get
+            {
+                return new List<StatementSyntax>
+                {
+                    //                    System.Threading.Interlocked.Exchange(ref this.rowVersion, value);
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.LessThanExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("rowVersion")),
+                            SyntaxFactory.IdentifierName("value")),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ExpressionStatement(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName("System"),
+                                                    SyntaxFactory.IdentifierName("Threading")),
+                                                SyntaxFactory.IdentifierName("Interlocked")),
+                                            SyntaxFactory.IdentifierName("Exchange")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                new SyntaxNodeOrToken[]
+                                                {
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.ThisExpression(),
+                                                            SyntaxFactory.IdentifierName("rowVersion")))
+                                                    .WithRefOrOutKeyword(
+                                                        SyntaxFactory.Token(SyntaxKind.RefKeyword)),
+                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName("value")),
+                                                }))))))),
+                };
             }
         }
     }

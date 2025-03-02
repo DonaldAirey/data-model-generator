@@ -492,7 +492,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
                                             SyntaxFactory.IdentifierName(
-                                                $"{this.tableElement.Document.Name.ToVariableName()}Context")),
+                                                $"{this.tableElement.Document.Name.ToCamelCase()}Context")),
                                         SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                                     SyntaxFactory.IdentifierName("Remove")))
                             .WithArgumentList(
@@ -658,7 +658,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName("Thing"))
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
                                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
@@ -706,7 +706,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Document.Name)),
+                                                    SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Document.Name.ToCamelCase())),
                                                 SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToPlural())),
                                             SyntaxFactory.IdentifierName("Find")))
                                     .WithArgumentList(
