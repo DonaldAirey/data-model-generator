@@ -26,16 +26,6 @@ namespace GammaFour.DataModelGenerator.Common
         private List<ColumnReferenceElement> columns;
 
         /// <summary>
-        /// A value indicating whether the column is autoincrementing.
-        /// </summary>
-        private bool? isAutoIncrementing;
-
-        /// <summary>
-        /// A value indicating whether the column can contain null.
-        /// </summary>
-        private bool? isNullable;
-
-        /// <summary>
         /// The table element.
         /// </summary>
         private TableElement tableElement;
@@ -83,42 +73,6 @@ namespace GammaFour.DataModelGenerator.Common
             get
             {
                 return this.Document as XmlSchemaDocument;
-            }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether the key has any autoincrementing components.
-        /// </summary>
-        public bool IsAutoIncrementing
-        {
-            get
-            {
-                if (!this.isAutoIncrementing.HasValue)
-                {
-                    // This determines if any of the columns in the index are autoincrementing.
-                    this.isAutoIncrementing = (from cre in this.Columns
-                                               where cre.Column.IsAutoIncrement
-                                               select cre).Any();
-                }
-
-                return this.isAutoIncrementing.Value;
-            }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether the constraint can contain null.
-        /// </summary>
-        public bool IsNullable
-        {
-            get
-            {
-                if (!this.isNullable.HasValue)
-                {
-                    // If any of the columns of a given constraint can contain null, then the constraint is nullable.
-                    this.isNullable = this.Columns.Select(cre => cre).Where(cre => cre.Column.ColumnType.IsNullable).Any();
-                }
-
-                return this.isNullable.Value;
             }
         }
 
@@ -187,74 +141,6 @@ namespace GammaFour.DataModelGenerator.Common
         public static bool operator !=(ConstraintElement left, ConstraintElement right)
         {
             return !(left == right);
-        }
-
-        /// <summary>
-        /// Less Than operation.
-        /// </summary>
-        /// <param name="left">The left operand.</param>
-        /// <param name="right">The right operand.</param>
-        /// <returns>true if the left operand is less than the right operand, false otherwise.</returns>
-        public static bool operator <(ConstraintElement left, ConstraintElement right)
-        {
-            return Compare(left, right) < 0;
-        }
-
-        /// <summary>
-        /// Less Than or Equal To operation.
-        /// </summary>
-        /// <param name="left">The left operand.</param>
-        /// <param name="right">The right operand.</param>
-        /// <returns>true if the left operand is less than the right operand, false otherwise.</returns>
-        public static bool operator <=(ConstraintElement left, ConstraintElement right)
-        {
-            return Compare(left, right) <= 0;
-        }
-
-        /// <summary>
-        /// Greater Than operation.
-        /// </summary>
-        /// <param name="left">The left operand.</param>
-        /// <param name="right">The right operand.</param>
-        /// <returns>true if the left operand is greater than the right operand, false otherwise.</returns>
-        public static bool operator >(ConstraintElement left, ConstraintElement right)
-        {
-            return Compare(left, right) > 0;
-        }
-
-        /// <summary>
-        /// Greater Than or Equal To operation.
-        /// </summary>
-        /// <param name="left">The left operand.</param>
-        /// <param name="right">The right operand.</param>
-        /// <returns>true if the left operand is greater than the right operand, false otherwise.</returns>
-        public static bool operator >=(ConstraintElement left, ConstraintElement right)
-        {
-            return Compare(left, right) >= 0;
-        }
-
-        /// <summary>
-        /// Compares two <see cref="ConstraintElement"/> rows.
-        /// </summary>
-        /// <param name="left">The left operand.</param>
-        /// <param name="right">The right operand.</param>
-        /// <returns>-1 if left &lt; right, 0 if left == right, 1 if left &gt; right.</returns>
-        public static int Compare(ConstraintElement left, ConstraintElement right)
-        {
-            // Don't use operators or you'll recurse.  If the left and right objects are the same object, then they're equal.
-            if (object.ReferenceEquals(left, right))
-            {
-                return 0;
-            }
-
-            // The left operand can never be equal to null.
-            if (object.ReferenceEquals(left, null))
-            {
-                return -1;
-            }
-
-            // Reference checking done.  This will compare the names to see if they're the same.
-            return left.CompareTo(right);
         }
 
         /// <inheritdoc/>

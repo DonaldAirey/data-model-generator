@@ -381,40 +381,25 @@ namespace GammaFour.DataModelGenerator.Common
         /// </summary>
         /// <param name="uniqueIndexElement">The unique key element.</param>
         /// <returns>An argument that extracts a key from an object.</returns>
-        public static ParameterListSyntax GetKeyAsParameters(this UniqueIndexElement uniqueIndexElement)
+        public static IEnumerable<SyntaxNodeOrToken> GetKeyAsParameters(this UniqueIndexElement uniqueIndexElement)
         {
-            // This will create an expression for extracting the key from row.
-            if (uniqueIndexElement.Columns.Count == 1)
+            List<SyntaxNodeOrToken> keyElements = new List<SyntaxNodeOrToken>();
+            foreach (ColumnReferenceElement columnReferenceElement in uniqueIndexElement.Columns)
             {
-                // string code
-                var columnElement = uniqueIndexElement.Columns[0].Column;
-                return SyntaxFactory.ParameterList(
-                    SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
-                        SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier(columnElement.Name.ToVariableName()))
-                        .WithType(columnElement.GetTypeSyntax())));
-            }
-            else
-            {
-                List<SyntaxNodeOrToken> keyElements = new List<SyntaxNodeOrToken>();
-                foreach (ColumnReferenceElement columnReferenceElement in uniqueIndexElement.Columns)
+                var columnElement = columnReferenceElement.Column;
+                if (keyElements.Count != 0)
                 {
-                    var columnElement = columnReferenceElement.Column;
-                    if (keyElements.Count != 0)
-                    {
-                        keyElements.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
-                    }
-
-                    keyElements.Add(
-                        SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier(columnReferenceElement.Column.Name.ToVariableName()))
-                        .WithType(columnElement.GetTypeSyntax()));
+                    keyElements.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
                 }
 
-                // string code, string name
-                return SyntaxFactory.ParameterList(
-                    SyntaxFactory.SeparatedList<ParameterSyntax>(keyElements.ToArray()));
+                keyElements.Add(
+                    SyntaxFactory.Parameter(
+                        SyntaxFactory.Identifier(columnReferenceElement.Column.Name.ToVariableName()))
+                    .WithType(columnElement.GetTypeSyntax()));
             }
+
+            // string code, string name
+            return keyElements.ToArray();
         }
     }
 }

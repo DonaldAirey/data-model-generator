@@ -1,4 +1,4 @@
-// <copyright file="DataModelProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="DataModelContextField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,7 +14,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     /// <summary>
     /// Creates a field that holds the column.
     /// </summary>
-    public class DataModelProperty : SyntaxElement
+    public class DataModelContextField : SyntaxElement
     {
         /// <summary>
         /// The data model schema.
@@ -22,44 +22,43 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         private readonly XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DataModelProperty"/> class.
+        /// Initializes a new instance of the <see cref="DataModelContextField"/> class.
         /// </summary>
         /// <param name="xmlSchemaDocument">The column schema.</param>
-        public DataModelProperty(XmlSchemaDocument xmlSchemaDocument)
+        public DataModelContextField(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
             this.xmlSchemaDocument = xmlSchemaDocument;
-            this.Name = this.xmlSchemaDocument.Name;
+            this.Name = $"{this.xmlSchemaDocument.Name.ToCamelCase()}Context";
 
             //        /// <summary>
-            //        /// Gets the DataModel.
+            //        /// The DataModel.
             //        /// </summary>
-            //        public DataModel DataModel { get; private set; }
-            this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name),
-                SyntaxFactory.Identifier(this.Name))
+            //        private readonly DataModelContext dataModelContext = dataModelContext;
+            this.Syntax = SyntaxFactory.FieldDeclaration(
+                SyntaxFactory.VariableDeclaration(
+                    SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name}Context"))
+                .WithVariables(
+                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                        SyntaxFactory.VariableDeclarator(
+                            SyntaxFactory.Identifier(this.Name))
+                        .WithInitializer(
+                            SyntaxFactory.EqualsValueClause(
+                                SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context"))))))
             .WithModifiers(
                 SyntaxFactory.TokenList(
-                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithAccessorList(
-                SyntaxFactory.AccessorList(
-                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
-                        SyntaxFactory.AccessorDeclaration(
-                            SyntaxKind.GetAccessorDeclaration)
-                        .WithSemicolonToken(
-                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
-            .WithInitializer(
-                SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToVariableName())))
-            .WithSemicolonToken(
-                SyntaxFactory.Token(SyntaxKind.SemicolonToken))
-            .WithLeadingTrivia(DataModelProperty.DocumentationComment);
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
+                    }))
+            .WithLeadingTrivia(this.DocumentationComment);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private SyntaxTriviaList DocumentationComment
         {
             get
             {
@@ -67,7 +66,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Gets the DataModel.
+                    //        /// The DataModel context.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -90,7 +89,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " Gets the data model.",
+                                                $" The data model context.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

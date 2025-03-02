@@ -1,4 +1,4 @@
-// <copyright file="MergeOneMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="PutOneMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -15,7 +15,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     /// <summary>
     /// Creates a method to merge a row.
     /// </summary>
-    public class MergeOneMethod : SyntaxElement
+    public class PutOneMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -23,14 +23,14 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MergeOneMethod"/> class.
+        /// Initializes a new instance of the <see cref="PutOneMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public MergeOneMethod(TableElement tableElement)
+        public PutOneMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = "Merge";
+            this.Name = "Put";
 
             //        /// <summary>
             //        /// Merge a <see cref="Account"/> row.
@@ -388,7 +388,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
+                                    SyntaxFactory.IdentifierName(this.tableElement.Document.Name)),
                                 SyntaxFactory.IdentifierName("RowVersion"))),
                         SyntaxFactory.Block(this.UpdateRowVersion)));
 
@@ -421,7 +421,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.Name)),
+                                    SyntaxFactory.IdentifierName(this.tableElement.Document.Name)),
                                 SyntaxFactory.IdentifierName("RowVersion")),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -466,7 +466,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(uniqueIndexElement.Table.XmlSchemaDocument.Name)),
+                                                    SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Document.Name)),
                                                 SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToPlural())),
                                             SyntaxFactory.IdentifierName("Find")))
                                     .WithArgumentList(

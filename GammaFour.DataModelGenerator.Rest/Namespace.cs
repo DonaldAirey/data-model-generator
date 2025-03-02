@@ -119,17 +119,13 @@ namespace GammaFour.DataModelGenerator.RestService
                 // Create the list of non-system namespaces.
                 List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>
                 {
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.AspNetCore.Authorization")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.AspNetCore.Http")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.AspNetCore.Mvc")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Configuration")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Logging")),
                 };
-
-                if (this.xmlSchemaDocument.IsSecure)
-                {
-                    usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.AspNetCore.Authorization")));
-                }
 
                 if (!string.IsNullOrEmpty(this.xmlSchemaDocument.DataModelNamespace))
                 {

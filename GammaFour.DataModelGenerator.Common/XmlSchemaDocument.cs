@@ -50,17 +50,13 @@ namespace GammaFour.DataModelGenerator.Common
                 this.DataModelNamespace = string.Join(".", dataModelParts, 0, dataModelParts.Length - 1);
             }
 
+            // This tells us whether to provide an interface to Entity Framework or not.
+            XAttribute isMasterAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.IsMasterName);
+            this.IsMaster = isMasterAttribute == null ? true : Convert.ToBoolean(isMasterAttribute.Value, CultureInfo.InvariantCulture);
+
             // This tells us whether the generated model should employ relational intergity.
             XAttribute isRelationalAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.IsRelationalName);
             this.IsRelational = isRelationalAttribute == null ? true : Convert.ToBoolean(isRelationalAttribute.Value, CultureInfo.InvariantCulture);
-
-            // This tells us whether the generated controllers should require authorization.
-            XAttribute isSecureAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.IsSecureName);
-            this.IsSecure = isSecureAttribute == null ? false : Convert.ToBoolean(isSecureAttribute.Value, CultureInfo.InvariantCulture);
-
-            // This tells us whether to provide an interface to Entity Framework or not.
-            XAttribute isVolatileAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.IsVolatileName);
-            this.IsVolatile = isVolatileAttribute == null ? false : Convert.ToBoolean(isVolatileAttribute.Value, CultureInfo.InvariantCulture);
 
             // This tells the generator what kind of naming convension to use for JSON properties.
             XAttribute jsonNamingPolicyAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.JsonNamingPolicyName);
@@ -135,29 +131,9 @@ namespace GammaFour.DataModelGenerator.Common
         }
 
         /// <summary>
-        /// Gets the AcceptRejectRule attribute.
-        /// </summary>
-        public static XName AcceptRejectRuleName { get; } = XName.Get("acceptRejectRule", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
         /// Gets the  indication that a custom type is specified.
         /// </summary>
         public static XName AnyTypeName { get; } = XName.Get("anyType", XmlSchemaDocument.XmlSchemaNamespace);
-
-        /// <summary>
-        /// Gets the AutoIncrement attribute.
-        /// </summary>
-        public static XName AutoIncrementName { get; } = XName.Get("autoIncrement", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
-        /// Gets the AutoIncrementSeed attribute.
-        /// </summary>
-        public static XName AutoIncrementSeedName { get; } = XName.Get("autoIncrementSeed", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
-        /// Gets the AutoIncrementStep attribute.
-        /// </summary>
-        public static XName AutoIncrementStepName { get; } = XName.Get("autoIncrementStep", XmlSchemaDocument.GammaFourDataNamespace);
 
         /// <summary>
         /// Gets the Base attribute.
@@ -175,11 +151,6 @@ namespace GammaFour.DataModelGenerator.Common
         public static XName ComplexTypeName { get; } = XName.Get("complexType", XmlSchemaDocument.XmlSchemaNamespace);
 
         /// <summary>
-        /// Gets the ConstraintOnly attribute.
-        /// </summary>
-        public static XName ConstraintOnlyName { get; } = XName.Get("constraintOnly", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
         /// Gets the DataType attribute.
         /// </summary>
         public static XName DataTypeName { get; } = XName.Get("dataType", XmlSchemaDocument.GammaFourDataNamespace);
@@ -188,11 +159,6 @@ namespace GammaFour.DataModelGenerator.Common
         /// Gets the Default attribute.
         /// </summary>
         public static XName DefaultName { get; } = XName.Get("default", string.Empty);
-
-        /// <summary>
-        /// Gets the DeleteRule attribute.
-        /// </summary>
-        public static XName DeleteRuleName { get; } = XName.Get("deleteRule", XmlSchemaDocument.GammaFourDataNamespace);
 
         /// <summary>
         /// Gets the DataModel attribute.
@@ -225,19 +191,14 @@ namespace GammaFour.DataModelGenerator.Common
         public static XName IsRelationalName { get; } = XName.Get("isRelational", XmlSchemaDocument.GammaFourDataNamespace);
 
         /// <summary>
+        /// Gets the IsMaster attribute.
+        /// </summary>
+        public static XName IsMasterName { get; } = XName.Get("isMaster", XmlSchemaDocument.GammaFourDataNamespace);
+
+        /// <summary>
         /// Gets the IsRowVersion attribute.
         /// </summary>
         public static XName IsRowVersionName { get; } = XName.Get("isRowVersion", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
-        /// Gets the IsSecure attribute.
-        /// </summary>
-        public static XName IsSecureName { get; } = XName.Get("isSecure", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
-        /// Gets the IsVolatile attribute.
-        /// </summary>
-        public static XName IsVolatileName { get; } = XName.Get("isVolatile", XmlSchemaDocument.GammaFourDataNamespace);
 
         /// <summary>
         /// Gets the JsonNamingPolicy attribute.
@@ -253,11 +214,6 @@ namespace GammaFour.DataModelGenerator.Common
         /// Gets the MaxLength element.
         /// </summary>
         public static XName MaxLengthName { get; } = XName.Get("maxLength", XmlSchemaDocument.XmlSchemaNamespace);
-
-        /// <summary>
-        /// Gets the MaxOccurs attribute.
-        /// </summary>
-        public static XName MaxOccursName { get; } = XName.Get("maxOccurs", XmlSchemaDocument.XmlSchemaNamespace);
 
         /// <summary>
         /// Gets the MinOccurs attribute.
@@ -310,11 +266,6 @@ namespace GammaFour.DataModelGenerator.Common
         public static XName UniqueName { get; } = XName.Get("unique", XmlSchemaDocument.XmlSchemaNamespace);
 
         /// <summary>
-        /// Gets the UpdateRule attribute.
-        /// </summary>
-        public static XName UpdateRuleName { get; } = XName.Get("updateRule", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
         /// Gets the Value attribute.
         /// </summary>
         public static XName ValueName { get; } = XName.Get("value", string.Empty);
@@ -347,19 +298,14 @@ namespace GammaFour.DataModelGenerator.Common
         }
 
         /// <summary>
-        /// Gets a value indicating whether the generated controllers require authentication.
+        /// Gets a value indicating whether this is a master data model or a slave.
+        /// </summary>
+        public bool IsMaster { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether enforces referential integrity.
         /// </summary>
         public bool IsRelational { get; private set; }
-
-        /// <summary>
-        /// Gets a value indicating whether the generated controllers require authentication.
-        /// </summary>
-        public bool IsSecure { get; private set; }
-
-        /// <summary>
-        /// Gets a value indicating whether the data model supports a persistent Entity Framework store.
-        /// </summary>
-        public bool IsVolatile { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether the generated controllers require authentication.

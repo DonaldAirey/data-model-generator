@@ -273,7 +273,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase())),
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Document.DataModel.ToCamelCase())),
                                                 SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())))))))),
 
                     //                        this.dataModel.Things.Add(thing);
@@ -286,7 +286,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
+                                        SyntaxFactory.IdentifierName(this.tableElement.Document.DataModel.ToVariableName())),
                                     SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                                 SyntaxFactory.IdentifierName("Add")))
                         .WithArgumentList(
@@ -306,7 +306,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase()}Context")),
+                                            SyntaxFactory.IdentifierName($"{this.tableElement.Document.DataModel.ToCamelCase()}Context")),
                                         SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                                     SyntaxFactory.IdentifierName("AddAsync")))
                             .WithArgumentList(
@@ -324,7 +324,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase()}Context")),
+                                        SyntaxFactory.IdentifierName($"{this.tableElement.Document.DataModel.ToCamelCase()}Context")),
                                     SyntaxFactory.IdentifierName("SaveChangesAsync"))))),
 
                     //                account = new Account(account);

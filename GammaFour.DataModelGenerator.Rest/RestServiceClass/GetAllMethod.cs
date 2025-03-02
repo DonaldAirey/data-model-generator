@@ -285,7 +285,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase())),
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Document.DataModel.ToCamelCase())),
                                                 SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())))))))),
 
                     //                var existingRows = new List<Account>();
@@ -332,7 +332,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase())),
+                                SyntaxFactory.IdentifierName(this.tableElement.Document.DataModel.ToCamelCase())),
                             SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                         SyntaxFactory.Block(this.AddRecordToList)),
 

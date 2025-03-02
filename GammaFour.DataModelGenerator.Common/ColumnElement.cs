@@ -108,29 +108,7 @@ namespace GammaFour.DataModelGenerator.Common
             // This determines if the column allows nulls.
             XAttribute minOccursAttribute = this.Attribute(XmlSchemaDocument.MinOccursName);
             this.columnType.IsNullable = minOccursAttribute == null ? false : Convert.ToInt32(minOccursAttribute.Value, CultureInfo.InvariantCulture) == 0;
-
-            // Determine the IsIdentityColumn property.
-            XAttribute autoIncrementAttribute = this.Attribute(XmlSchemaDocument.AutoIncrementName);
-            this.IsAutoIncrement = autoIncrementAttribute == null ? false : Convert.ToBoolean(autoIncrementAttribute.Value, CultureInfo.InvariantCulture);
-
-            // Determine the AutoIncrementSeed property.
-            XAttribute autoIncrementSeedAttribute = this.Attribute(XmlSchemaDocument.AutoIncrementSeedName);
-            this.AutoIncrementSeed = autoIncrementSeedAttribute == null ? 0 : Convert.ToInt32(autoIncrementSeedAttribute.Value, CultureInfo.InvariantCulture);
-
-            // Determine the AutoIncrementStop property
-            XAttribute autoIncrementStepAttribute = this.Attribute(XmlSchemaDocument.AutoIncrementStepName);
-            this.AutoIncrementStep = autoIncrementStepAttribute == null ? 1 : Convert.ToInt32(autoIncrementStepAttribute.Value, CultureInfo.InvariantCulture);
         }
-
-        /// <summary>
-        /// Gets a value used to see an auto incrementing column.
-        /// </summary>
-        public int AutoIncrementSeed { get; private set; }
-
-        /// <summary>
-        /// Gets the value used to increment the seed value for an auto-incrementing column.
-        /// </summary>
-        public int AutoIncrementStep { get; private set; }
 
         /// <summary>
         /// Gets the default value for a column.
@@ -198,11 +176,6 @@ namespace GammaFour.DataModelGenerator.Common
                 return this.index.Value;
             }
         }
-
-        /// <summary>
-        /// Gets a value indicating whether gets an indication of whether the column increments automatically as new rows are created.
-        /// </summary>
-        public bool IsAutoIncrement { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether the column is part of a primary key.

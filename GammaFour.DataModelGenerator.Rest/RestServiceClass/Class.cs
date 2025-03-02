@@ -106,7 +106,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.AttributeArgument(
                                             SyntaxFactory.LiteralExpression(
                                                 SyntaxKind.StringLiteralExpression,
-                                                SyntaxFactory.Literal($"{this.tableElement.XmlSchemaDocument.Name.ToCamelCase()}/[controller]")))))))),
+                                                SyntaxFactory.Literal($"{this.tableElement.Document.Name.ToCamelCase()}/[controller]")))))))),
 
                     //        [ApiController]
                     SyntaxFactory.AttributeList(
@@ -116,14 +116,11 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 };
 
                 //        [Authorize]
-                if (this.tableElement.XmlSchemaDocument.IsSecure)
-                {
-                    attributes.Add(
+                attributes.Add(
                     SyntaxFactory.AttributeList(
                     SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
                         SyntaxFactory.Attribute(
                             SyntaxFactory.IdentifierName("Authorize")))));
-                }
 
                 // The collection of attributes.
                 return SyntaxFactory.List<AttributeListSyntax>(attributes);
@@ -210,8 +207,8 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>
             {
-                new DbContextField(this.tableElement.XmlSchemaDocument),
-                new DataModelField(this.tableElement.XmlSchemaDocument),
+                new DbContextField(this.tableElement.Document),
+                new DataModelField(this.tableElement.Document),
                 new LoggerField(),
                 new TransactionTimeoutField(),
             };

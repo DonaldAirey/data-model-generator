@@ -133,7 +133,7 @@ namespace GammaFour.DataModelGenerator.Model
         {
             get
             {
-                // Create the 'using' statements.
+                // Add the system namespace references.
                 List<UsingDirectiveSyntax> systemUsingStatements = new List<UsingDirectiveSyntax>
                 {
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System")),
@@ -142,17 +142,14 @@ namespace GammaFour.DataModelGenerator.Model
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Data")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json.Serialization")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")),
                 };
 
-                // System.Linq is only needed with the persistent model.
-                if (!this.xmlSchemaDocument.IsVolatile)
-                {
-                    systemUsingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")));
-                }
-
+                // Add the non-system namespace references.
                 List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>();
-                if (!this.xmlSchemaDocument.IsVolatile)
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Configuration")));
+                if (this.xmlSchemaDocument.IsMaster)
                 {
                     usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")));
                 }
@@ -206,8 +203,8 @@ namespace GammaFour.DataModelGenerator.Model
                 }
             }
 
-            // The non-volatile data model doesn't need the ORM infrastructure.
-            if (!this.xmlSchemaDocument.IsVolatile)
+            // Use an Entity Framework initializer on the master.
+            if (this.xmlSchemaDocument.IsMaster)
             {
                 // The DbContext class that provides access to the persistent store.
                 members = members.Add(new DbContextClass.Class(this.xmlSchemaDocument).Syntax);

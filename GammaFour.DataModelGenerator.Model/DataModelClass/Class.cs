@@ -156,7 +156,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
             };
 
             // Only add a DB context for the non-volatile model.
-            if (!this.xmlSchemaDocument.IsVolatile)
+            if (this.xmlSchemaDocument.IsMaster)
             {
                 fields.Add(new DbContextField(this.xmlSchemaDocument));
             }
@@ -181,8 +181,8 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
 
-            // We only need an initialization with a non-volatile model.
-            if (!this.xmlSchemaDocument.IsVolatile)
+            // We only need an initialization method on the master.
+            if (this.xmlSchemaDocument.IsMaster)
             {
                 methods.Add(new InitializeAsyncMethod(this.xmlSchemaDocument));
             }
@@ -204,14 +204,14 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         /// <returns>The structure members with the fields added.</returns>
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
-            // The volatile data model doesn't try to load the data from a DbContext, the non-volatile data model does.
-            if (this.xmlSchemaDocument.IsVolatile)
+            // Initialize using the DB Context on the master.
+            if (this.xmlSchemaDocument.IsMaster)
             {
-                members = members.Add(new Constructor(this.xmlSchemaDocument).Syntax);
+                members = members.Add(new ConstructorDbContext(this.xmlSchemaDocument).Syntax);
             }
             else
             {
-                members = members.Add(new ConstructorDbContext(this.xmlSchemaDocument).Syntax);
+                members = members.Add(new Constructor(this.xmlSchemaDocument).Syntax);
             }
 
             // Return the new collection of members.

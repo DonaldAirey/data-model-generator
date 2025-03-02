@@ -48,7 +48,10 @@ namespace GammaFour.DataModelGenerator.Model.UniqueIndexClass
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithParameterList(this.uniqueIndexElement.GetKeyAsParameters())
+            .WithParameterList(
+                SyntaxFactory.ParameterList(
+                    SyntaxFactory.SeparatedList<ParameterSyntax>(
+                        uniqueIndexElement.GetKeyAsParameters())))
             .WithBody(this.Body)
             .WithLeadingTrivia(this.DocumentationComment);
         }

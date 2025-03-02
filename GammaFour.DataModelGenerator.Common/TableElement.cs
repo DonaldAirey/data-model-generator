@@ -60,10 +60,6 @@ namespace GammaFour.DataModelGenerator.Common
             // Extract the name from the schema.
             this.Name = this.Attribute(XmlSchemaDocument.ObjectName).Value;
 
-            // This tells us whether the table is persisted in a database or not.
-            XAttribute isVolatileAttribute = this.Attribute(XmlSchemaDocument.IsVolatileName);
-            this.IsVolatile = isVolatileAttribute == null ? false : Convert.ToBoolean(isVolatileAttribute.Value, CultureInfo.InvariantCulture);
-
             // This will navigate to the sequence of columns.
             XElement complexType = this.Element(XmlSchemaDocument.ComplexTypeName);
             XElement sequence = complexType.Element(XmlSchemaDocument.SequenceName);
@@ -112,7 +108,7 @@ namespace GammaFour.DataModelGenerator.Common
             {
                 if (this.foreignIndexElements == null)
                 {
-                    this.foreignIndexElements = (from fke in this.XmlSchemaDocument.ForeignKeys
+                    this.foreignIndexElements = (from fke in this.Document.ForeignKeys
                                                where fke.UniqueIndex.Table == this
                                                select fke).ToList();
                 }
@@ -130,17 +126,12 @@ namespace GammaFour.DataModelGenerator.Common
             {
                 if (!this.index.HasValue)
                 {
-                    this.index = this.XmlSchemaDocument.Tables.IndexOf(this);
+                    this.index = this.Document.Tables.IndexOf(this);
                 }
 
                 return this.index.Value;
             }
         }
-
-        /// <summary>
-        /// Gets a value indicating whether the table supports write-through operations to a persistent store.
-        /// </summary>
-        public bool IsVolatile { get; private set; }
 
         /// <summary>
         /// Gets the name of the table.
@@ -156,7 +147,7 @@ namespace GammaFour.DataModelGenerator.Common
             {
                 if (this.childKeyElements == null)
                 {
-                    this.childKeyElements = (from fke in this.XmlSchemaDocument.ForeignKeys
+                    this.childKeyElements = (from fke in this.Document.ForeignKeys
                                              where fke.UniqueIndex.Table == this
                                              orderby fke.Name
                                              select fke).ToList();
@@ -175,7 +166,7 @@ namespace GammaFour.DataModelGenerator.Common
             {
                 if (this.parentKeyElements == null)
                 {
-                    this.parentKeyElements = (from fke in this.XmlSchemaDocument.ForeignKeys
+                    this.parentKeyElements = (from fke in this.Document.ForeignKeys
                                               where fke.Table == this
                                               orderby fke.Name
                                               select fke).ToList();
@@ -212,7 +203,7 @@ namespace GammaFour.DataModelGenerator.Common
             {
                 if (this.uniqueKeyElements == null)
                 {
-                    this.uniqueKeyElements = (from uke in this.XmlSchemaDocument.UniqueKeys
+                    this.uniqueKeyElements = (from uke in this.Document.UniqueKeys
                                               where uke.Table == this
                                               orderby uke.Name
                                               select uke).ToList();
@@ -225,11 +216,11 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the owner document.
         /// </summary>
-        public XmlSchemaDocument XmlSchemaDocument
+        public new XmlSchemaDocument Document
         {
             get
             {
-                return this.Document as XmlSchemaDocument;
+                return base.Document as XmlSchemaDocument;
             }
         }
 

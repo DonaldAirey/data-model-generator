@@ -75,7 +75,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.ThisExpression(),
-                                                        SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
+                                                        SyntaxFactory.IdentifierName(tableElement.Document.DataModel.ToVariableName())),
                                                     SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))),
                                 SyntaxFactory.IdentifierName("ConfigureAwait")))
                         .WithArgumentList(
@@ -112,7 +112,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.ThisExpression(),
-                                                                SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
+                                                                SyntaxFactory.IdentifierName(tableElement.Document.DataModel.ToVariableName())),
                                                             SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToPlural())),
                                                         SyntaxFactory.IdentifierName(uniqueIndexElement.Name)))))),
                                     SyntaxFactory.IdentifierName("ConfigureAwait")))
@@ -149,7 +149,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.ThisExpression(),
-                                                                SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
+                                                                SyntaxFactory.IdentifierName(tableElement.Document.DataModel.ToVariableName())),
                                                             SyntaxFactory.IdentifierName(foreignIndexElement.Table.Name.ToPlural())),
                                                         SyntaxFactory.IdentifierName(foreignIndexElement.Name)))))),
                                     SyntaxFactory.IdentifierName("ConfigureAwait")))
@@ -243,7 +243,7 @@ namespace GammaFour.DataModelGenerator.RestService
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.ThisExpression(),
-                                                        SyntaxFactory.IdentifierName(tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
+                                                        SyntaxFactory.IdentifierName(tableElement.Document.DataModel.ToVariableName())),
                                                     SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))),
                                 SyntaxFactory.IdentifierName("ConfigureAwait")))
                         .WithArgumentList(

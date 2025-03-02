@@ -54,7 +54,10 @@ namespace GammaFour.DataModelGenerator.Adapter.DataModelClass
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                         SyntaxFactory.Token(SyntaxKind.AsyncKeyword),
                     }))
-            .WithParameterList(this.tableElement.PrimaryIndex.GetKeyAsParameters())
+            .WithParameterList(
+                SyntaxFactory.ParameterList(
+                    SyntaxFactory.SeparatedList<ParameterSyntax>(
+                        this.tableElement.PrimaryIndex.GetKeyAsParameters())))
             .WithBody(this.Body)
             .WithLeadingTrivia(this.DocumentationComment);
         }

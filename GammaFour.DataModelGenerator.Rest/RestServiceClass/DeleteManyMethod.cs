@@ -184,7 +184,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
+                                        SyntaxFactory.IdentifierName(this.tableElement.Document.DataModel.ToVariableName())),
                                     SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                                 SyntaxFactory.IdentifierName("Delete")))
                         .WithArgumentList(
@@ -204,7 +204,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
                                         SyntaxFactory.IdentifierName(
-                                            $"{this.tableElement.XmlSchemaDocument.DataModel.ToVariableName()}Context")),
+                                            $"{this.tableElement.Document.DataModel.ToVariableName()}Context")),
                                     SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                                 SyntaxFactory.IdentifierName("Remove")))
                         .WithArgumentList(
@@ -273,7 +273,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.ThisExpression(),
                                                         SyntaxFactory.IdentifierName(
-                                                            this.tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
+                                                            this.tableElement.Document.DataModel.ToVariableName())),
                                                     SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                                                 SyntaxFactory.IdentifierName("Find")))
                                         .WithArgumentList(
@@ -459,7 +459,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase())),
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Document.DataModel.ToCamelCase())),
                                                 SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())))))))),
 
                     //                var serverAccounts = new List<Account>();
@@ -513,7 +513,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName($"{this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase()}Context")),
+                                        SyntaxFactory.IdentifierName($"{this.tableElement.Document.DataModel.ToCamelCase()}Context")),
                                     SyntaxFactory.IdentifierName("SaveChangesAsync"))))),
 
                     //                    lockingTransaction.Complete();

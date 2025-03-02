@@ -264,7 +264,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(this.tableElement.XmlSchemaDocument.DataModel.ToCamelCase())),
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Document.DataModel.ToCamelCase())),
                                                 SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())))))))),
 
                     //                var existingRow = this.dataModel.Accounts.Find(accountId);
@@ -292,7 +292,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.ThisExpression(),
                                                         SyntaxFactory.IdentifierName(
-                                                            this.tableElement.XmlSchemaDocument.DataModel.ToVariableName())),
+                                                            this.tableElement.Document.DataModel.ToVariableName())),
                                                     SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                                                 SyntaxFactory.IdentifierName("Find")))
                                         .WithArgumentList(
