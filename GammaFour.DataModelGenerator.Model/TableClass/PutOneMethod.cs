@@ -44,7 +44,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             this.Syntax = SyntaxFactory.MethodDeclaration(
                 SyntaxFactory.NullableType(
                     SyntaxFactory.IdentifierName(this.tableElement.Name)),
-                SyntaxFactory.Identifier("Merge"))
+                SyntaxFactory.Identifier(this.Name))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
@@ -174,7 +174,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 var statements = new List<StatementSyntax>();
 
                 // For each parent table, include a check to make sure the parent exists before adding the row.
-                foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ParentKeys)
+                foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ParentIndices)
                 {
                     var conditional = foreignIndexElement.GetKeyAsEqualityConditional(this.tableElement.Name.ToVariableName());
                     if (conditional == null)

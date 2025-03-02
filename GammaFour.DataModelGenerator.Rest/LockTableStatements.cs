@@ -125,7 +125,7 @@ namespace GammaFour.DataModelGenerator.RestService
             }
 
             //            await lockingTransaction.WaitWriterAsync(this.dataModel.Accounts.ItemAccountKey).ConfigureAwait(false);
-            foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentKeys.OrderBy(fe => fe.Name))
+            foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentIndices.OrderBy(fe => fe.Name))
             {
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(

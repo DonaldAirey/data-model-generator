@@ -6,6 +6,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -143,196 +144,70 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
             get
             {
                 // This is used to collect the statements.
-                var statements = new List<StatementSyntax>
-                {
-                    //            Dictionary<object, IEnumerable> bucket = new Dictionary<object, IEnumerable>();
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.GenericName(
-                                SyntaxFactory.Identifier("Dictionary"))
-                            .WithTypeArgumentList(
-                                SyntaxFactory.TypeArgumentList(
-                                    SyntaxFactory.SeparatedList<TypeSyntax>(
-                                        new SyntaxNodeOrToken[]
-                                        {
-                                            SyntaxFactory.PredefinedType(
-                                                SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
-                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                            SyntaxFactory.IdentifierName("IEnumerable"),
-                                        }))))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("bucket"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.GenericName(
-                                                SyntaxFactory.Identifier("Dictionary"))
-                                            .WithTypeArgumentList(
-                                                SyntaxFactory.TypeArgumentList(
-                                                    SyntaxFactory.SeparatedList<TypeSyntax>(
-                                                        new SyntaxNodeOrToken[]
-                                                        {
-                                                            SyntaxFactory.PredefinedType(
-                                                                SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
-                                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                            SyntaxFactory.IdentifierName("IEnumerable"),
-                                                        }))))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList())))))),
-                };
+                var statements = new List<StatementSyntax>();
 
-                // Merge each of the tables.
-                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
+                // Create a list of tables ordered by dependencies on other tables.
+                var orderedTables = new List<TableElement>();
+                var resolvedTables = new HashSet<TableElement>();
+                var unresolvedTables = new HashSet<TableElement>(this.xmlSchemaDocument.Tables);
+                while (unresolvedTables.Count != 0)
                 {
-                    //            bucket.Add(this.Accounts, this.Accounts.Merge(await this.dataModelContext.Accounts.ToListAsync()));
+                    foreach (var tableElement in unresolvedTables.OrderBy(te => te.Name))
+                    {
+                        var isDependent = false;
+                        foreach (var foreignIndexElement in tableElement.ParentIndices)
+                        {
+                            var parentTable = foreignIndexElement.UniqueIndex.Table;
+                            if (!resolvedTables.Contains(parentTable))
+                            {
+                                isDependent = true;
+                                break;
+                            }
+                        }
+
+                        if (!isDependent)
+                        {
+                            orderedTables.Add(tableElement);
+                            resolvedTables.Add(tableElement);
+                            unresolvedTables.Remove(tableElement);
+                        }
+                    }
+                }
+
+                // Load each of the tables.
+                foreach (TableElement tableElement in orderedTables)
+                {
+                    //            this.Accounts.Load(await this.dataModelContext.Accounts.ToListAsync());
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("bucket"),
-                                    SyntaxFactory.IdentifierName("Add")))
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
+                                    SyntaxFactory.IdentifierName("Load")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                        new SyntaxNodeOrToken[]
-                                        {
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural()))),
-                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                            SyntaxFactory.Argument(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.AwaitExpression(
                                                 SyntaxFactory.InvocationExpression(
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.ThisExpression(),
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.ThisExpression(),
+                                                                SyntaxFactory.IdentifierName($"{tableElement.Document.Name.ToCamelCase()}Context")),
                                                             SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                                        SyntaxFactory.IdentifierName("Load")))
-                                                .WithArgumentList(
-                                                    SyntaxFactory.ArgumentList(
-                                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                            SyntaxFactory.Argument(
-                                                                SyntaxFactory.AwaitExpression(
-                                                                    SyntaxFactory.InvocationExpression(
-                                                                        SyntaxFactory.MemberAccessExpression(
-                                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                                            SyntaxFactory.MemberAccessExpression(
-                                                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                                                SyntaxFactory.MemberAccessExpression(
-                                                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                                                    SyntaxFactory.ThisExpression(),
-                                                                                    SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context")),
-                                                                                SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                                                            SyntaxFactory.IdentifierName("ToListAsync"))))))))),
-                                        })))));
+                                                        SyntaxFactory.IdentifierName("ToListAsync"))))))))));
                 }
-
-                //            while (bucket.Values.Where(v => v.GetEnumerator().MoveNext()).Any())
-                //            {
-                //                <MergeTables>
-                //            }
-                statements.Add(
-                    SyntaxFactory.WhileStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName("bucket"),
-                                            SyntaxFactory.IdentifierName("Values")),
-                                        SyntaxFactory.IdentifierName("Where")))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.SimpleLambdaExpression(
-                                                    SyntaxFactory.Parameter(
-                                                        SyntaxFactory.Identifier("v")))
-                                                .WithExpressionBody(
-                                                    SyntaxFactory.InvocationExpression(
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.InvocationExpression(
-                                                                SyntaxFactory.MemberAccessExpression(
-                                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                                    SyntaxFactory.IdentifierName("v"),
-                                                                    SyntaxFactory.IdentifierName("GetEnumerator"))),
-                                                            SyntaxFactory.IdentifierName("MoveNext")))))))),
-                                SyntaxFactory.IdentifierName("Any"))),
-                        SyntaxFactory.Block(this.MergeTables)));
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(statements);
-            }
-        }
-
-        /// <summary>
-        /// Gets the statements that load a dataModel from a DbContext.
-        /// </summary>
-        private List<StatementSyntax> MergeTables
-        {
-            get
-            {
-                var statements = new List<StatementSyntax>();
-                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
-                {
-                    //                bucket[this.Accounts] = this.Accounts.Load((IEnumerable<Account>)bucket[this.Accounts]);
-                    //                bucket[this.Assets] = this.Assets.Load((IEnumerable<Asset>)bucket[this.Assets]);
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                SyntaxFactory.ElementAccessExpression(
-                                    SyntaxFactory.IdentifierName("bucket"))
-                                .WithArgumentList(
-                                    SyntaxFactory.BracketedArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))),
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                        SyntaxFactory.IdentifierName("Load")))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.CastExpression(
-                                                    SyntaxFactory.GenericName(
-                                                        SyntaxFactory.Identifier("IEnumerable"))
-                                                    .WithTypeArgumentList(
-                                                        SyntaxFactory.TypeArgumentList(
-                                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                                SyntaxFactory.IdentifierName(tableElement.Name)))),
-                                                    SyntaxFactory.ElementAccessExpression(
-                                                        SyntaxFactory.IdentifierName("bucket"))
-                                                    .WithArgumentList(
-                                                        SyntaxFactory.BracketedArgumentList(
-                                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.MemberAccessExpression(
-                                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                                        SyntaxFactory.ThisExpression(),
-                                                                        SyntaxFactory.IdentifierName(tableElement.Name.ToPlural()))))))))))))));
-                }
-
-                return statements;
             }
         }
     }

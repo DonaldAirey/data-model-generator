@@ -95,7 +95,7 @@ namespace GammaFour.DataModelGenerator.Common
                 if (this.uniqueParentName == null)
                 {
                     // Determinesd if there is a distinct path to the parent table.
-                    var isDistinctPathToParent = (from fke in this.UniqueIndex.Table.ForeignKeys
+                    var isDistinctPathToParent = (from fke in this.UniqueIndex.Table.ForeignIndices
                                                   where fke.Table == this.Table
                                                   select fke).Count() == 1;
 
@@ -129,7 +129,7 @@ namespace GammaFour.DataModelGenerator.Common
                 if (this.uniqueChildName == null)
                 {
                     // Determines if there's a single path to the child tables.
-                    var isDistinctPathToChild = (from fke in this.UniqueIndex.Table.ForeignKeys
+                    var isDistinctPathToChild = (from fke in this.UniqueIndex.Table.ForeignIndices
                                                  where fke.Table == this.Table
                                                  select fke).Count() == 1;
 

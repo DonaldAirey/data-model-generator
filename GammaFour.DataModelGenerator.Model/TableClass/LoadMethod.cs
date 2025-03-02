@@ -33,22 +33,17 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             this.Name = "Load";
 
             //        /// <summary>
-            //        /// Loads a collection of <see cref="Order"/> rows.
+            //        /// Load a collection of <see cref="Issuer"/> rows.
             //        /// </summary>
-            //        /// <param name="orders">The collection of <see cref="Order"/> rows to load.</param>
-            //        /// <returns>The rows that could not be loaded.</returns>
-            //        public IEnumerable<Order> Load(IEnumerable<Order> orders)
+            //        /// <param name="issuers">The collection of <see cref="Issuer"/> rows to load.</param>
+            //        public void Load(IEnumerable<Issuer> issuers)
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
-                SyntaxFactory.GenericName(
-                    SyntaxFactory.Identifier("IEnumerable"))
-                .WithTypeArgumentList(
-                    SyntaxFactory.TypeArgumentList(
-                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                            SyntaxFactory.IdentifierName(this.tableElement.Name)))),
-                SyntaxFactory.Identifier(this.Name))
+                SyntaxFactory.PredefinedType(
+                    SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
+                SyntaxFactory.Identifier("Load"))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
@@ -79,7 +74,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Load a collection of <see cref="Order"/> rows.
+                    //        /// Load a collection of <see cref="Issuer"/> rows.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -122,49 +117,27 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //        /// <param name="orders">The collection of <see cref="Order"/> rows to load.</param>
+                    //        /// <param name="issuers">The collection of <see cref="Issuer"/> rows to load.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
                             SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                    SyntaxFactory.XmlText()
-                                    .WithTextTokens(
-                                        SyntaxFactory.TokenList(
-                                            new[]
-                                            {
-                                                SyntaxFactory.XmlTextLiteral(
-                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <param name=\"{this.tableElement.Name.ToPlural().ToVariableName()}\">The collection of <see cref=\"{this.tableElement.Name}\"/> rows to load.</param>",
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList()),
-                                                SyntaxFactory.XmlTextNewLine(
-                                                    SyntaxFactory.TriviaList(),
-                                                    Environment.NewLine,
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList()),
-                                            }))))),
-
-                    //        /// <returns>The rows that could not be loaded.</returns>
-                    SyntaxFactory.Trivia(
-                        SyntaxFactory.DocumentationCommentTrivia(
-                            SyntaxKind.SingleLineDocumentationCommentTrivia,
-                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                    SyntaxFactory.XmlText()
-                                    .WithTextTokens(
-                                        SyntaxFactory.TokenList(
-                                            new[]
-                                            {
-                                                SyntaxFactory.XmlTextLiteral(
-                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <returns>The rows that could not be loaded.</returns>",
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList()),
-                                                SyntaxFactory.XmlTextNewLine(
-                                                    SyntaxFactory.TriviaList(),
-                                                    Environment.NewLine,
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList()),
-                                            }))))),
+                                SyntaxFactory.XmlText()
+                                .WithTextTokens(
+                                    SyntaxFactory.TokenList(
+                                        new[]
+                                        {
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                $" <param name=\"{this.tableElement.Name.ToPlural().ToVariableName()}\">The collection of <see cref=\"{this.tableElement.Name}\"/> rows to load.</param>",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                        }))))),
                 };
 
                 // This is the complete document comment.
@@ -182,32 +155,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 // The elements of the body are added to this collection as they are assembled.
                 var statements = new List<StatementSyntax>
                 {
-                    //            var residuals = new List<Order>();
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(
-                                SyntaxFactory.Identifier(
-                                    SyntaxFactory.TriviaList(),
-                                    SyntaxKind.VarKeyword,
-                                    "var",
-                                    "var",
-                                    SyntaxFactory.TriviaList())))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("residuals"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.GenericName(
-                                                SyntaxFactory.Identifier("List"))
-                                            .WithTypeArgumentList(
-                                                SyntaxFactory.TypeArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                        SyntaxFactory.IdentifierName(this.tableElement.Name)))))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList())))))),
-
                     //            foreach (var order in orders)
                     //            {
                     //                 <LoadRow>
@@ -223,44 +170,10 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                         SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()),
                         SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToVariableName()),
                         SyntaxFactory.Block(this.LoadRow)),
-
-                    //            return residuals;
-                    SyntaxFactory.ReturnStatement(
-                        SyntaxFactory.IdentifierName("residuals")),
                 };
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
-            }
-        }
-
-        /// <summary>
-        /// Gets the statements that updates the master row version.
-        /// </summary>
-        private List<StatementSyntax> UpdateRowVersion
-        {
-            get
-            {
-                var statements = new List<StatementSyntax>
-                {
-                    //                    this.DataModel.RowVersion = assetClass.RowVersion;
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToCamelCase())),
-                                SyntaxFactory.IdentifierName("RowVersion")),
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                                SyntaxFactory.IdentifierName("RowVersion")))),
-                };
-
-                return statements;
             }
         }
 
@@ -274,7 +187,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 var statements = new List<StatementSyntax>();
 
                 // For each parent table, include a check to make sure the parent exists before adding the row.
-                foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ParentKeys)
+                foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ParentIndices)
                 {
                     var conditional = foreignIndexElement.GetKeyAsEqualityConditional(this.tableElement.Name.ToVariableName());
                     if (conditional == null)
@@ -352,35 +265,31 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
                 }
 
-                //                if (assetClass.RowVersion > this.DataModel.RowVersion)
-                //                {
-                //                    <UpdateRowVersion>
-                //                }
+                //                this.dataModel.RowVersion = thing.RowVersion;
                 statements.Add(
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.GreaterThanExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                                SyntaxFactory.IdentifierName("RowVersion")),
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToCamelCase())),
-                                SyntaxFactory.IdentifierName("RowVersion"))),
-                        SyntaxFactory.Block(this.UpdateRowVersion)));
+                                SyntaxFactory.IdentifierName("RowVersion")),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                SyntaxFactory.IdentifierName("RowVersion")))));
 
-                //                thing.Commit();
+                //                thing.Load();
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                                SyntaxFactory.IdentifierName("Commit")))));
+                                SyntaxFactory.IdentifierName("Load")))));
 
                 //                this.RowChanged?.Invoke(this, new RowChangedEventArgs<Order>(DataAction.Add, order));
                 statements.Add(
@@ -475,8 +384,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
 
             //                if (account == null)
             //                {
-            //                    residuals.Add(order);
-            //                    continue;
+            //                        throw new ConstraintException("The load action conflicted with the constraint AccountAlertIndex");
             //                }
             statements.Add(
                 SyntaxFactory.IfStatement(
@@ -486,18 +394,17 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                         SyntaxFactory.LiteralExpression(
                             SyntaxKind.NullLiteralExpression)),
                     SyntaxFactory.Block(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("residuals"),
-                                    SyntaxFactory.IdentifierName("Add")))
+                        SyntaxFactory.ThrowStatement(
+                            SyntaxFactory.ObjectCreationExpression(
+                                SyntaxFactory.IdentifierName("ConstraintException"))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))),
-                        SyntaxFactory.ContinueStatement())));
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                SyntaxFactory.Literal(
+                                                    $"The insert action conflicted with the constraint {foreignIndexElement.Name}"))))))))));
 
             //                account.Orders.Add(order);
             statements.Add(

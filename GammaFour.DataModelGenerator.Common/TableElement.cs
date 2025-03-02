@@ -102,7 +102,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the ForeignKey constraints.
         /// </summary>
-        public List<ForeignIndexElement> ForeignKeys
+        public List<ForeignIndexElement> ForeignIndices
         {
             get
             {
@@ -141,7 +141,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the foreign keys which are children of this table.
         /// </summary>
-        public List<ForeignIndexElement> ChildKeys
+        public List<ForeignIndexElement> ChildIndices
         {
             get
             {
@@ -160,7 +160,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the foreign keys which are the parents of this table.
         /// </summary>
-        public List<ForeignIndexElement> ParentKeys
+        public List<ForeignIndexElement> ParentIndices
         {
             get
             {

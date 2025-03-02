@@ -185,7 +185,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             }
 
             // Create a field for each parent row.
-            foreach (var foreignIndexElement in this.tableElement.ParentKeys)
+            foreach (var foreignIndexElement in this.tableElement.ParentIndices)
             {
                 fields.Add(new ParentRowField(foreignIndexElement));
             }
@@ -233,11 +233,11 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>
             {
-                new CommitMethod(),
                 new CommitEnlistmentMethod(),
                 new EqualsMethod(this.tableElement),
                 new GetHashCodeMethod(this.tableElement),
                 new InDoubtMethod(),
+                new LoadMethod(this.tableElement),
                 new PrepareMethod(),
                 new RollbackMethod(),
             };
@@ -272,13 +272,13 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             }
 
             // Create a property for each parent row.
-            foreach (var foreignIndexElement in this.tableElement.ParentKeys)
+            foreach (var foreignIndexElement in this.tableElement.ParentIndices)
             {
                 properties.Add(new ParentRowProperty(foreignIndexElement));
             }
 
             // Create a property for each foriegn index.
-            foreach (var foreignIndexElementConstraint in this.tableElement.ForeignKeys)
+            foreach (var foreignIndexElementConstraint in this.tableElement.ForeignIndices)
             {
                 properties.Add(new ForeignKeyProperty(foreignIndexElementConstraint));
             }

@@ -227,7 +227,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                 //                    {
                 //                        throw new ConstraintException("The update action conflicted with the constraint AccountOrderIndex.");
                 //                    }
-                foreach (var foreignIndexElement in this.columnElement.Table.ForeignKeys)
+                foreach (var foreignIndexElement in this.columnElement.Table.ForeignIndices)
                 {
                     foreach (var columnReferenceElement in foreignIndexElement.UniqueIndex.Columns)
                     {

@@ -229,7 +229,7 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
                     }
 
                     // Lock each of the foreign key indices.
-                    foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentKeys)
+                    foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentIndices)
                     {
                         //                this.Buyers.CountryBuyerCountryIdKey.Lock.EnterWriteLock();
                         statements.Add(

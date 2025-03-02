@@ -206,12 +206,12 @@ namespace GammaFour.DataModelGenerator.Common
                 if (!this.isInParentKey.HasValue)
                 {
                     // Examine each of the parent relations to see if the column is used.
-                    var list = from fke in this.Table.ParentKeys
+                    var list = from fke in this.Table.ParentIndices
                                from ce in fke.Columns
                                where ce.Column == this
                                select ce;
 
-                    this.isInParentKey = (from fke in this.Table.ParentKeys
+                    this.isInParentKey = (from fke in this.Table.ParentIndices
                                           from ce in fke.Columns
                                           where ce.Column == this
                                           select ce).Any();

@@ -280,8 +280,12 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 };
 
                 // Enforce referential integrity constraints.
-                foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ChildKeys)
+                foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ChildIndices)
                 {
+                    //                    if (existingRow.Alerts.Any())
+                    //                    {
+                    //                        throw new ConstraintException("The delete action conflicted with the constraint AccountAlertIndex");
+                    //                    }
                     statements.Add(
                         SyntaxFactory.IfStatement(
                             SyntaxFactory.InvocationExpression(
@@ -308,7 +312,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 }
 
                 // Delete this row from each of the parent rows.
-                foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ParentKeys)
+                foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ParentIndices)
                 {
                     var condition = foreignIndexElement.GetKeyAsInequalityConditional(this.tableElement.Name.ToVariableName());
                     if (condition == null)

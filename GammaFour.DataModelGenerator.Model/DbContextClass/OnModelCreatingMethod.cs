@@ -277,7 +277,7 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
 
                     // Add an Ignore invocation for each of the owner (row set) navigation properties.
                     // .Ignore(b => b.Country)
-                    foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentKeys)
+                    foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentIndices)
                     {
                         ignoredProperties = SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -299,7 +299,7 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
 
                     // Add an Ignore invocation for each of the child set navigation properties.
                     // .Ignore(b => b.Subscriptions)
-                    foreach (ForeignIndexElement foreignIndexElement in tableElement.ChildKeys)
+                    foreach (ForeignIndexElement foreignIndexElement in tableElement.ChildIndices)
                     {
                         ignoredProperties = SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -379,7 +379,7 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
                     }
 
                     // Create a foreign key index for every parent table.
-                    foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentKeys)
+                    foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentIndices)
                     {
                         //            modelBuilder.Entity<Province>()
                         ExpressionSyntax indexProperties = SyntaxFactory.InvocationExpression(
