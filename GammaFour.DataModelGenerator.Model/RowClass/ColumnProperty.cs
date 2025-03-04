@@ -74,13 +74,13 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                             this.GetAccessor,
                             this.SetAccessor,
                         })))
-            .WithLeadingTrivia(this.DocumentationComment);
+            .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

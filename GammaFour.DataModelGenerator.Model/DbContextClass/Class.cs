@@ -43,7 +43,7 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
                 .WithModifiers(Class.Modifiers)
                 .WithBaseList(Class.BaseList)
                 .WithMembers(this.Members)
-                .WithLeadingTrivia(this.DocumentationComment);
+                .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

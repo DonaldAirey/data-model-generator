@@ -36,7 +36,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             .WithModifiers(PrepareMethod.Modifiers)
             .WithParameterList(PrepareMethod.Parameters)
             .WithBody(PrepareMethod.Body)
-            .WithLeadingTrivia(PrepareMethod.DocumentationComment);
+            .WithLeadingTrivia(PrepareMethod.LeadingTrivia);
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

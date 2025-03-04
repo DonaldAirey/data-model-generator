@@ -38,13 +38,13 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                             SyntaxFactory.Identifier("rowVersion"))
                         .WithInitializer(RowVersionField.Initializer))))
                 .WithModifiers(RowVersionField.Modifiers)
-                .WithLeadingTrivia(RowVersionField.DocumentationComment);
+                .WithLeadingTrivia(RowVersionField.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

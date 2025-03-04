@@ -59,7 +59,7 @@ namespace GammaFour.DataModelGenerator.Adapter.DataModelClass
                     SyntaxFactory.SeparatedList<ParameterSyntax>(
                         this.tableElement.PrimaryIndex.GetKeyAsParameters())))
             .WithBody(this.Body)
-            .WithLeadingTrivia(this.DocumentationComment);
+            .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
@@ -220,7 +220,7 @@ namespace GammaFour.DataModelGenerator.Adapter.DataModelClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

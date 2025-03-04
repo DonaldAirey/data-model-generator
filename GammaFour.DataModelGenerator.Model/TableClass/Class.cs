@@ -36,10 +36,8 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             //    /// <summary>
             //    /// A table of <see cref="Thing"/> rows.
             //    /// </summary>
-            //    /// <param name="configuration">The configuration.</param>
             //    /// <param name="dataModel">The data model.</param>
-            //    /// <param name="dataModelContext">The data model context.</param>
-            //    public class Things(IConfiguration configuration, DataModel dataModel, DataModelContext dataModelContext) : IEnlistmentNotification, IEnumerable<Thing>
+            //    public class Things(DataModel dataModel) : IEnlistmentNotification, IEnumerable<Thing>
             //    {
             //        <Members>
             //    }
@@ -47,7 +45,21 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithParameterList(this.Parameters)
+            .WithParameterList(
+                SyntaxFactory.ParameterList(
+                    SyntaxFactory.SeparatedList<ParameterSyntax>(
+                        new SyntaxNodeOrToken[]
+                        {
+                            SyntaxFactory.Parameter(
+                                SyntaxFactory.Identifier("configuration"))
+                            .WithType(
+                                SyntaxFactory.IdentifierName("IConfiguration")),
+                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                            SyntaxFactory.Parameter(
+                                SyntaxFactory.Identifier(this.tableElement.Document.Name.ToVariableName()))
+                            .WithType(
+                                SyntaxFactory.IdentifierName(this.tableElement.Document.Name)),
+                        })))
             .WithBaseList(
                 SyntaxFactory.BaseList(
                     SyntaxFactory.SeparatedList<BaseTypeSyntax>(
@@ -64,14 +76,14 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                                             SyntaxFactory.IdentifierName(this.tableElement.Name))))),
                         })))
-                .WithMembers(this.Members)
-                .WithLeadingTrivia(this.DocumentationComment);
+            .WithMembers(this.Members)
+            .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {
@@ -170,33 +182,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         }))))),
                 };
 
-                // Add a comment for the Entity Framework context when persistent.
-                if (this.tableElement.Document.IsMaster)
-                {
-                    //    /// <param name="dataModelContext">The data model context.</param>
-                    comments.Add(
-                        SyntaxFactory.Trivia(
-                            SyntaxFactory.DocumentationCommentTrivia(
-                                SyntaxKind.SingleLineDocumentationCommentTrivia,
-                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                    SyntaxFactory.XmlText()
-                                    .WithTextTokens(
-                                        SyntaxFactory.TokenList(
-                                            new[]
-                                            {
-                                                SyntaxFactory.XmlTextLiteral(
-                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <param name=\"dataModelContext\">The data model context.</param>",
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList()),
-                                                SyntaxFactory.XmlTextNewLine(
-                                                    SyntaxFactory.TriviaList(),
-                                                    Environment.NewLine,
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList()),
-                                            }))))));
-                }
-
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
             }
@@ -218,47 +203,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 members = this.CreatePublicInstanceMethods(members);
                 members = Class.CreatePrivateInstanceMethods(members);
                 return members;
-            }
-        }
-
-        /// <summary>
-        /// Gets the list of parameters.
-        /// </summary>
-        private ParameterListSyntax Parameters
-        {
-            get
-            {
-                // Create a list of parameters.
-                List<SyntaxNodeOrToken> parameters = new List<SyntaxNodeOrToken>
-                {
-                    // IConfiguration configuration
-                    SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier("configuration"))
-                    .WithType(
-                        SyntaxFactory.IdentifierName("IConfiguration")),
-
-                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-
-                    // DataModel dataModel
-                    SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier("dataModel"))
-                    .WithType(
-                        SyntaxFactory.IdentifierName("DataModel")),
-                };
-
-                // Add the Entity Framework context to the master data model.
-                if (this.tableElement.Document.IsMaster)
-                {
-                    parameters.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
-                    parameters.Add(
-                        SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier("dataModelContext"))
-                        .WithType(
-                            SyntaxFactory.IdentifierName("DataModelContext")));
-                }
-
-                // This is the complete parameter specification for this constructor.
-                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
             }
         }
 
@@ -298,12 +242,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 new RollbackStackField(),
                 new TimeoutField(this.tableElement),
             };
-
-            // Add the Entity Framework context to the master data model.
-            if (this.tableElement.Document.IsMaster)
-            {
-                fields.Add(new DataModelContextField(this.tableElement.Document));
-            }
 
             // Alphabetize and add the fields as members of the class.
             foreach (var syntaxElement in fields.OrderBy(m => m.Name))
@@ -399,6 +337,8 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>
             {
+                new AddOneMethod(this.tableElement),
+                new AddManyMethod(this.tableElement),
                 new CommitMethod(),
                 new DeleteOneMethod(this.tableElement),
                 new DeleteManyMethod(this.tableElement),
@@ -408,9 +348,9 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 new InDoubtMethod(),
                 new LoadMethod(this.tableElement),
                 new PatchManyMethod(this.tableElement),
-                new PutOneMethod(this.tableElement),
                 new PrepareMethod(),
                 new RollbackMethod(),
+                new UpdateOneMethod(this.tableElement),
             };
 
             // Alphabetize and add the methods as members of the class.

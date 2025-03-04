@@ -69,13 +69,13 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithLeadingTrivia(DeletedRowsProperty.DocumentationComment);
+            .WithLeadingTrivia(DeletedRowsProperty.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

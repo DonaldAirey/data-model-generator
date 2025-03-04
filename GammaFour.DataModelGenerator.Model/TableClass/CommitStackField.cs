@@ -58,13 +58,13 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                         SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
                         SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
                     }))
-            .WithLeadingTrivia(CommitStackField.DocumentationComment);
+            .WithLeadingTrivia(CommitStackField.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

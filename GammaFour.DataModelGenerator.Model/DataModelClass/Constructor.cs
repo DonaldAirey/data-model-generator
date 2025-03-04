@@ -34,32 +34,25 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
             //        /// <summary>
             //        /// Initializes a new instance of the <see cref="DataModel"/> class.
             //        /// </summary>
-            //        /// <param name="dataModelContext">The dataModel dabase context.</param>
+            //        /// <param name="configuration">The application configuration.</param>
             //        public DataModel()
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
-                    SyntaxFactory.Identifier(this.Name))
-                .WithModifiers(Constructor.Modifiers)
-                .WithBody(this.Body)
-                .WithLeadingTrivia(this.DocumentationComment);
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                    });
-            }
+                SyntaxFactory.Identifier(this.Name))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithParameterList(
+                SyntaxFactory.ParameterList(
+                    SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
+                        SyntaxFactory.Parameter(
+                            SyntaxFactory.Identifier("configuration"))
+                        .WithType(
+                            SyntaxFactory.IdentifierName("IConfiguration")))))
+            .WithBody(this.Body)
+            .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
@@ -75,7 +68,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                 // Initialize each of the row sets.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
-                    //            this.Buyers = new BuyerSet(this, "Buyers");
+                    //            this.Things = new Things(configuraiton, this);
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.AssignmentExpression(
@@ -85,12 +78,15 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                                 SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.IdentifierName($"{tableElement.Name.ToPlural()}"))
+                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural()))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
                                         SyntaxFactory.SeparatedList<ArgumentSyntax>(
                                             new SyntaxNodeOrToken[]
                                             {
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.IdentifierName("configuration")),
+                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                 SyntaxFactory.Argument(
                                                     SyntaxFactory.ThisExpression()),
                                             }))))));
@@ -104,7 +100,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {
@@ -146,6 +142,28 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                        }))))),
+
+                    //        /// <param name="configuration">The application configuration.</param>
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                SyntaxFactory.XmlText()
+                                .WithTextTokens(
+                                    SyntaxFactory.TokenList(
+                                        new[]
+                                        {
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                $" <param name=\"configuration\">The application configuration.</param>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

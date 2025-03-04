@@ -59,13 +59,13 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                             .WithSemicolonToken(
                                 SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
                         })))
-            .WithLeadingTrivia(IsModifiedProperty.DocumentationComment);
+            .WithLeadingTrivia(IsModifiedProperty.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

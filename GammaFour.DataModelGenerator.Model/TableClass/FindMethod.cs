@@ -53,7 +53,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                     SyntaxFactory.SeparatedList<ParameterSyntax>(
                         this.tableElement.PrimaryIndex.GetKeyAsParameters())))
             .WithBody(this.Body)
-            .WithLeadingTrivia(this.DocumentationComment);
+            .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
@@ -135,63 +135,63 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Finds the row with the given key.
-                //        /// </summary>
-                comments.Add(
-                SyntaxFactory.Trivia(
-                    SyntaxFactory.DocumentationCommentTrivia(
-                        SyntaxKind.SingleLineDocumentationCommentTrivia,
-                        SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                            SyntaxFactory.XmlText()
-                            .WithTextTokens(
-                                SyntaxFactory.TokenList(
-                                    new[]
-                                    {
-                                        SyntaxFactory.XmlTextLiteral(
-                                            SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                            " <summary>",
-                                            string.Empty,
-                                            SyntaxFactory.TriviaList()),
-                                        SyntaxFactory.XmlTextNewLine(
-                                            SyntaxFactory.TriviaList(),
-                                            Environment.NewLine,
-                                            string.Empty,
-                                            SyntaxFactory.TriviaList()),
-                                        SyntaxFactory.XmlTextLiteral(
-                                            SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                            $" Finds a <see cref=\"{this.tableElement.Name}\"/> row using the unique key.",
-                                            string.Empty,
-                                            SyntaxFactory.TriviaList()),
-                                        SyntaxFactory.XmlTextNewLine(
-                                            SyntaxFactory.TriviaList(),
-                                            Environment.NewLine,
-                                            string.Empty,
-                                            SyntaxFactory.TriviaList()),
-                                        SyntaxFactory.XmlTextLiteral(
-                                            SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                            " </summary>",
-                                            string.Empty,
-                                            SyntaxFactory.TriviaList()),
-                                        SyntaxFactory.XmlTextNewLine(
-                                            SyntaxFactory.TriviaList(),
-                                            Environment.NewLine,
-                                            string.Empty,
-                                            SyntaxFactory.TriviaList()),
-                                    }))))));
+                var trivia = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Finds the row with the given key.
+                    //        /// </summary>
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                SyntaxFactory.XmlText()
+                                .WithTextTokens(
+                                    SyntaxFactory.TokenList(
+                                        new[]
+                                        {
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                " <summary>",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                $" Finds a <see cref=\"{this.tableElement.Name}\"/> row using the unique key.",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                " </summary>",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                        }))))),
+                };
 
                 foreach (var columnElementReference in this.tableElement.PrimaryIndex.Columns)
                 {
                     //        /// <param name="code">The code.</param>
                     var columnElement = columnElementReference.Column;
-                    comments.Add(
+                    trivia.Add(
                         SyntaxFactory.Trivia(
                             SyntaxFactory.DocumentationCommentTrivia(
                                 SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -214,8 +214,31 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             }))))));
                 }
 
+                //        /// <returns>The found <see cref="Thing"/> row, or null if not found.</returns>
+                trivia.Add(
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                SyntaxFactory.XmlText()
+                                .WithTextTokens(
+                                    SyntaxFactory.TokenList(
+                                        new[]
+                                        {
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                $" <returns>The found <see cref=\"{this.tableElement.Name}\"/> row, or null if not found.</returns>",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                        }))))));
+
                 // This is the complete document comment.
-                return SyntaxFactory.TriviaList(comments);
+                return SyntaxFactory.TriviaList(trivia);
             }
         }
     }

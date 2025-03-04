@@ -50,13 +50,13 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                             .WithBody(
                                 SyntaxFactory.Block(RowVersionProperty.SetAccessor)),
                         })))
-            .WithLeadingTrivia(RowVersionProperty.DocumentationComment);
+            .WithLeadingTrivia(RowVersionProperty.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

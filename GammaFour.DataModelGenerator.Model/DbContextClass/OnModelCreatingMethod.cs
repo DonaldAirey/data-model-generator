@@ -44,13 +44,13 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
             .WithModifiers(OnModelCreatingMethod.Modifiers)
             .WithParameterList(OnModelCreatingMethod.Parameters)
             .WithBody(this.Body)
-            .WithLeadingTrivia(OnModelCreatingMethod.DocumentationComment);
+            .WithLeadingTrivia(OnModelCreatingMethod.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

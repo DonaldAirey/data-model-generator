@@ -1,4 +1,4 @@
-// <copyright file="DeleteOneMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="AddOneMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -13,9 +13,9 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to delete a row from the set.
+    /// Creates a method to add a row to the set.
     /// </summary>
-    public class DeleteOneMethod : SyntaxElement
+    public class AddOneMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -23,21 +23,21 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DeleteOneMethod"/> class.
+        /// Initializes a new instance of the <see cref="AddOneMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public DeleteOneMethod(TableElement tableElement)
+        public AddOneMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = "DeleteAsync";
+            this.Name = "AddAsync";
 
             //        /// <summary>
-            //        /// Deletes a <see cref="Order"/> row.
+            //        /// Adds a <see cref="Thing"/> row.
             //        /// </summary>
-            //        /// <param name="order">The <see cref="Order"/> row.</param>
-            //        /// <returns>The deleted The <see cref="Thing"/> row.</returns>
-            //        public async Task<Thing> Delete(System.Guid thingId, Thing thing)
+            //        /// <param name="thing">The <see cref="Thing"/> row.</param>
+            //        /// <returns>The added The <see cref="Thing"/> row.</returns>
+            //        public async Task<Thing> Add(Thing thing)
             //        {
             //            <Body>
             //        }
@@ -107,13 +107,41 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                         SyntaxFactory.Token(SyntaxKind.UsingKeyword)),
                 };
 
-                // Create a cache for locked rows.
-                statements.AddRange(RowUtilities.GetParentRowCache(this.tableElement));
+                // This is used to keep track of the parent rows that were locked for this operation.
+                var parentTables = from parentIndex in this.tableElement.ParentIndices
+                                   group parentIndex by parentIndex.UniqueIndex.Table into grouping
+                                   select grouping.Key;
+                foreach (var parentTable in parentTables)
+                {
+                    //            var parentThings = new HashSet<Thing>();
+                    statements.Add(
+                        SyntaxFactory.LocalDeclarationStatement(
+                            SyntaxFactory.VariableDeclaration(
+                                SyntaxFactory.IdentifierName(
+                                    SyntaxFactory.Identifier(
+                                        SyntaxFactory.TriviaList(),
+                                        SyntaxKind.VarKeyword,
+                                        "var",
+                                        "var",
+                                        SyntaxFactory.TriviaList())))
+                            .WithVariables(
+                                SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                    SyntaxFactory.VariableDeclarator(
+                                        SyntaxFactory.Identifier($"parent{parentTable.Name.ToPlural()}"))
+                                    .WithInitializer(
+                                        SyntaxFactory.EqualsValueClause(
+                                            SyntaxFactory.ObjectCreationExpression(
+                                                SyntaxFactory.GenericName(
+                                                    SyntaxFactory.Identifier("HashSet"))
+                                                .WithTypeArgumentList(
+                                                    SyntaxFactory.TypeArgumentList(
+                                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                            SyntaxFactory.IdentifierName(parentTable.Name)))))
+                                            .WithArgumentList(
+                                                SyntaxFactory.ArgumentList())))))));
+                }
 
-                // Remove the row from the data model.
-                statements.AddRange(RowUtilities.DeleteRowFromDataModel(this.tableElement));
-
-                // Complete the transaction.
+                statements.AddRange(RowUtilities.AddRowToDataModel(this.tableElement));
                 statements.AddRange(
                     new StatementSyntax[]
                     {
@@ -125,16 +153,15 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.IdentifierName("lockingTransaction"),
                                     SyntaxFactory.IdentifierName("Complete")))),
 
-                        //                    return (new Thing(deletedThing));
+                        //            return new Thing(thing);
                         SyntaxFactory.ReturnStatement(
-                            SyntaxFactory.ParenthesizedExpression(
-                                SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName("deletedRow"))))))),
+                            SyntaxFactory.ObjectCreationExpression(
+                                SyntaxFactory.IdentifierName(this.tableElement.Name))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))),
                     });
 
                 // This is the syntax for the body of the method.
@@ -149,10 +176,11 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         {
             get
             {
+                // The document comment trivia is collected in this list.
                 return new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Adds a <see cref="Order"/> row to the table.
+                    //        /// Adds a <see cref="Thing"/> row.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -175,7 +203,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Deletes a <see cref=\"{this.tableElement.Name}\"/> row.",
+                                                $" Adds a <see cref=\"{this.tableElement.Name}\"/> row.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -195,7 +223,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //        /// <param name="order">The <see cref="Order"/> row.</param>
+                    //        /// <param name="thing">The <see cref="Thing"/> row.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -217,7 +245,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //        /// <returns>The deleted The <see cref="Thing"/> row.</returns>
+                    //        /// <returns>The added The <see cref="Thing"/> row.</returns>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -229,7 +257,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         {
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" <returns>The deleted <see cref=\"{this.tableElement.Name}\"/> row.</returns>",
+                                                $" <returns>The added <see cref=\"{this.tableElement.Name}\"/> row.</returns>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

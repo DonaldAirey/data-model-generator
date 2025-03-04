@@ -62,13 +62,13 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
                         SyntaxFactory.SimpleBaseType(
                             SyntaxFactory.IdentifierName("EventArgs")))))
             .WithMembers(this.Members)
-            .WithLeadingTrivia(this.DocumentationComment);
+            .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

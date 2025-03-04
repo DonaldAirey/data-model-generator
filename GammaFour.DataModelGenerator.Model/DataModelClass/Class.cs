@@ -44,13 +44,13 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
             .WithMembers(this.Members)
-            .WithLeadingTrivia(this.DocumentationComment);
+            .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {
@@ -155,12 +155,6 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                 new RowVersionField(),
             };
 
-            // Only add a DB context for the non-volatile model.
-            if (this.xmlSchemaDocument.IsMaster)
-            {
-                fields.Add(new DbContextField(this.xmlSchemaDocument));
-            }
-
             // Alphabetize and add the fields as members of the class.
             foreach (var syntaxElement in fields.OrderBy(f => f.Name))
             {
@@ -184,7 +178,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
             // We only need an initialization method on the master.
             if (this.xmlSchemaDocument.IsMaster)
             {
-                methods.Add(new InitializeAsyncMethod(this.xmlSchemaDocument));
+                methods.Add(new LoadAsyncMethod(this.xmlSchemaDocument));
             }
 
             // Alphabetize and add the methods as members of the class.
@@ -204,15 +198,8 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         /// <returns>The structure members with the fields added.</returns>
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
-            // Initialize using the DB Context on the master.
-            if (this.xmlSchemaDocument.IsMaster)
-            {
-                members = members.Add(new ConstructorDbContext(this.xmlSchemaDocument).Syntax);
-            }
-            else
-            {
-                members = members.Add(new Constructor(this.xmlSchemaDocument).Syntax);
-            }
+            // The constructors.
+            members = members.Add(new Constructor(this.xmlSchemaDocument).Syntax);
 
             // Return the new collection of members.
             return members;

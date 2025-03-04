@@ -42,7 +42,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 SyntaxFactory.ExplicitInterfaceSpecifier(
                     SyntaxFactory.IdentifierName("IEnumerable")))
                 .WithBody(GetEnumeratorMethod.Body)
-                .WithLeadingTrivia(GetEnumeratorMethod.DocumentationComment);
+                .WithLeadingTrivia(GetEnumeratorMethod.LeadingTrivia);
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

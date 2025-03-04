@@ -36,7 +36,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             .WithModifiers(InDoubtMethod.Modifiers)
             .WithParameterList(InDoubtMethod.Parameters)
             .WithBody(InDoubtMethod.Body)
-            .WithLeadingTrivia(InDoubtMethod.DocumentationComment);
+            .WithLeadingTrivia(InDoubtMethod.LeadingTrivia);
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

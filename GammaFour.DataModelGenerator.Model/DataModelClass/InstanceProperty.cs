@@ -43,7 +43,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                         SyntaxFactory.IdentifierName("Guid"),
                                         SyntaxFactory.IdentifierName("NewGuid"))))))))
             .WithModifiers(InstanceProperty.Modifiers)
-            .WithLeadingTrivia(InstanceProperty.DocumentationComment);
+            .WithLeadingTrivia(InstanceProperty.LeadingTrivia);
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

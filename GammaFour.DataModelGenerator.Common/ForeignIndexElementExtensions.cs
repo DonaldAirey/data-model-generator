@@ -132,41 +132,37 @@ namespace GammaFour.DataModelGenerator.Common
         /// Creates an argument for a foreign key using the members of a value.
         /// </summary>
         /// <param name="foreignIndexElement">The foreign key element.</param>
-        /// <param name="variableName">The name of the variable used in the expression.</param>
+        /// <param name="operand1">The first operand.</param>
+        /// <param name="operand2">The secodn operand.</param>
         /// <returns>An argument that extracts a key from an object.</returns>
-        public static ExpressionSyntax GetKeyAsInequalityConditional(this ForeignIndexElement foreignIndexElement, string variableName)
+        public static ExpressionSyntax GetKeyAsInequalityConditional(this ForeignIndexElement foreignIndexElement, string operand1, string operand2)
         {
             ExpressionSyntax expressionSyntax = null;
             foreach (var columnReferenceElement in foreignIndexElement.Columns)
             {
                 var columnElement = columnReferenceElement.Column;
-                if (columnElement.ColumnType.IsNullable)
+                ExpressionSyntax firstTerm = operand1 == null ?
+                    (ExpressionSyntax)SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression) :
+                    (ExpressionSyntax)SyntaxFactory.MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        SyntaxFactory.IdentifierName(operand1),
+                        SyntaxFactory.IdentifierName(columnElement.Name));
+                ExpressionSyntax secondTerm = operand2 == null ?
+                    (ExpressionSyntax)SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression) :
+                    (ExpressionSyntax)SyntaxFactory.MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        SyntaxFactory.IdentifierName(operand2),
+                        SyntaxFactory.IdentifierName(columnElement.Name));
+                if (expressionSyntax == null)
                 {
-                    if (expressionSyntax == null)
-                    {
-                        expressionSyntax = SyntaxFactory.BinaryExpression(
-                            SyntaxKind.NotEqualsExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(variableName),
-                                SyntaxFactory.IdentifierName(columnElement.Name)),
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.NullLiteralExpression));
-                    }
-                    else
-                    {
-                        expressionSyntax = SyntaxFactory.BinaryExpression(
-                            SyntaxKind.LogicalAndExpression,
-                            SyntaxFactory.BinaryExpression(
-                                SyntaxKind.NotEqualsExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(variableName),
-                                    SyntaxFactory.IdentifierName(columnElement.Name)),
-                                SyntaxFactory.LiteralExpression(
-                                    SyntaxKind.NullLiteralExpression)),
-                            expressionSyntax);
-                    }
+                    expressionSyntax = SyntaxFactory.BinaryExpression(SyntaxKind.NotEqualsExpression, firstTerm, secondTerm);
+                }
+                else
+                {
+                    expressionSyntax = SyntaxFactory.BinaryExpression(
+                        SyntaxKind.LogicalAndExpression,
+                        SyntaxFactory.BinaryExpression(SyntaxKind.NotEqualsExpression, firstTerm, secondTerm),
+                        expressionSyntax);
                 }
             }
 

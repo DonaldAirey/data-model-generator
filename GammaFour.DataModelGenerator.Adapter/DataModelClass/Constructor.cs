@@ -61,13 +61,13 @@ namespace GammaFour.DataModelGenerator.Adapter.DataModelClass
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName("httpClient")),
                                 SyntaxFactory.IdentifierName("httpClient"))))))
-            .WithLeadingTrivia(this.DocumentationComment);
+            .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

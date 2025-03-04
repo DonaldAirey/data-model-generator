@@ -49,13 +49,13 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                         SyntaxFactory.Token(SyntaxKind.OverrideKeyword),
                     }))
             .WithBody(this.Body)
-            .WithLeadingTrivia(GetHashCodeMethod.DocumentationComment);
+            .WithLeadingTrivia(GetHashCodeMethod.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

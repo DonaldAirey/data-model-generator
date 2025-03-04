@@ -244,13 +244,13 @@ namespace GammaFour.DataModelGenerator.Model.DataActionEnum
                                 SyntaxFactory.TriviaList())),
                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                     }))
-                .WithLeadingTrivia(this.DocumentationComment);
+                .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

@@ -40,7 +40,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                     SyntaxFactory.Identifier(this.Name))
                 .WithAccessorList(TableProperty.AccessorList)
                 .WithModifiers(TableProperty.Modifiers)
-                .WithLeadingTrivia(this.DocumentationComment);
+                .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

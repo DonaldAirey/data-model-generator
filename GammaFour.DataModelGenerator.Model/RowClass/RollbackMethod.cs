@@ -44,7 +44,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                         .WithType(
                             SyntaxFactory.IdentifierName("Enlistment")))))
             .WithBody(RollbackMethod.Body)
-            .WithLeadingTrivia(RollbackMethod.DocumentationComment);
+            .WithLeadingTrivia(RollbackMethod.LeadingTrivia);
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

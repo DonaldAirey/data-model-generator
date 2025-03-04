@@ -35,7 +35,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                 SyntaxFactory.Identifier(this.Name))
             .WithModifiers(IncrementRowVersionMethod.Modifiers)
             .WithBody(IncrementRowVersionMethod.Body)
-            .WithLeadingTrivia(IncrementRowVersionMethod.DocumentationComment);
+            .WithLeadingTrivia(IncrementRowVersionMethod.LeadingTrivia);
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static SyntaxTriviaList DocumentationComment
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

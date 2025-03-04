@@ -44,13 +44,13 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
             .WithBody(
                 SyntaxFactory.Block())
-            .WithLeadingTrivia(this.DocumentationComment);
+            .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

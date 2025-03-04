@@ -1,4 +1,4 @@
-// <copyright file="PatchManyMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="AddManyMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -13,9 +13,9 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to merge a row.
+    /// Creates a method to add a row to the set.
     /// </summary>
-    public class PatchManyMethod : SyntaxElement
+    public class AddManyMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -23,21 +23,20 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PatchManyMethod"/> class.
+        /// Initializes a new instance of the <see cref="AddManyMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public PatchManyMethod(TableElement tableElement)
+        public AddManyMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = "PatchAsync";
+            this.Name = "AddAsync";
 
             //        /// <summary>
-            //        /// Patches a collection of <see cref="Thing"/> rows.
+            //        /// Adds a collection of <see cref="Thing"/> rows.
             //        /// </summary>
-            //        /// <param name="things">The collection of <see cref="Thing"/> rows.</param>
-            //        /// <returns>The patched <see cref="Thing"/> rows.</returns>
-            //        public async Task<(IEnumerable<Thing> AddedRows, IEnumerable<Thing> UpdatedRows)> Patch(IEnumerable<Thing> things)
+            //        /// <param name="thing">The collection of <see cref="Thing"/> rows.</param>
+            //        public async Task<IEnumerable<Thing>> Add(IEnumerable<Thing> things)
             //        {
             //            <Body>
             //        }
@@ -47,30 +46,12 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 .WithTypeArgumentList(
                     SyntaxFactory.TypeArgumentList(
                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                            SyntaxFactory.TupleType(
-                                SyntaxFactory.SeparatedList<TupleElementSyntax>(
-                                    new SyntaxNodeOrToken[]
-                                    {
-                                        SyntaxFactory.TupleElement(
-                                            SyntaxFactory.GenericName(
-                                                SyntaxFactory.Identifier("IEnumerable"))
-                                            .WithTypeArgumentList(
-                                                SyntaxFactory.TypeArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                        SyntaxFactory.IdentifierName(this.tableElement.Name)))))
-                                        .WithIdentifier(
-                                            SyntaxFactory.Identifier("AddedRows")),
-                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                        SyntaxFactory.TupleElement(
-                                            SyntaxFactory.GenericName(
-                                                SyntaxFactory.Identifier("IEnumerable"))
-                                            .WithTypeArgumentList(
-                                                SyntaxFactory.TypeArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                        SyntaxFactory.IdentifierName(this.tableElement.Name)))))
-                                        .WithIdentifier(
-                                            SyntaxFactory.Identifier("UpdatedRows")),
-                                    }))))),
+                            SyntaxFactory.GenericName(
+                                SyntaxFactory.Identifier("IEnumerable"))
+                            .WithTypeArgumentList(
+                                SyntaxFactory.TypeArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name))))))),
                 SyntaxFactory.Identifier(this.Name))
             .WithModifiers(
                 SyntaxFactory.TokenList(
@@ -93,6 +74,40 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.IdentifierName(this.tableElement.Name))))))))
             .WithBody(this.Body)
             .WithLeadingTrivia(this.LeadingTrivia);
+        }
+
+        /// <summary>
+        /// Gets the statements to add a row.
+        /// </summary>
+        private IEnumerable<StatementSyntax> AddRow
+        {
+            get
+            {
+                var statements = new List<StatementSyntax>();
+                statements.AddRange(RowUtilities.AddRowToDataModel(this.tableElement));
+
+                //                addedRows.Add(new Thing(thing));
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("addedRows"),
+                                SyntaxFactory.IdentifierName("Add")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))))))));
+
+                return statements;
+            }
         }
 
         /// <summary>
@@ -159,32 +174,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                         SyntaxFactory.IdentifierName(this.tableElement.Name)))))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList())))))),
-
-                    //            var updatedRows = new List<Thing>();
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(
-                                SyntaxFactory.Identifier(
-                                    SyntaxFactory.TriviaList(),
-                                    SyntaxKind.VarKeyword,
-                                    "var",
-                                    "var",
-                                    SyntaxFactory.TriviaList())))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("updatedRows"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.GenericName(
-                                                SyntaxFactory.Identifier("List"))
-                                            .WithTypeArgumentList(
-                                                SyntaxFactory.TypeArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                        SyntaxFactory.IdentifierName(this.tableElement.Name)))))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList())))))),
                 };
 
                 // This is used to keep track of the parent rows that were locked for this operation.
@@ -226,21 +215,21 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                     {
                         //            foreach (var thing in things)
                         //            {
-                        //                <FindRow>
+                        //                <AddRow>
                         //            }
                         SyntaxFactory.ForEachStatement(
-                            SyntaxFactory.IdentifierName(
-                                SyntaxFactory.Identifier(
-                                    SyntaxFactory.TriviaList(),
-                                    SyntaxKind.VarKeyword,
-                                    "var",
-                                    "var",
-                                    SyntaxFactory.TriviaList())),
-                            SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()),
-                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToVariableName()),
-                            SyntaxFactory.Block(this.FindRow)),
+                                SyntaxFactory.IdentifierName(
+                                    SyntaxFactory.Identifier(
+                                        SyntaxFactory.TriviaList(),
+                                        SyntaxKind.VarKeyword,
+                                        "var",
+                                        "var",
+                                        SyntaxFactory.TriviaList())),
+                                SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToVariableName()),
+                                SyntaxFactory.Block(this.AddRow)),
 
-                        //            lockingTransaction.Complete();
+                        //                    lockingTransaction.Complete();
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
@@ -248,88 +237,13 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.IdentifierName("lockingTransaction"),
                                     SyntaxFactory.IdentifierName("Complete")))),
 
-                        //            return (AddedRows: addedRows, UpdatedRows: updatedRows);
+                        //            return addedRows;
                         SyntaxFactory.ReturnStatement(
-                            SyntaxFactory.TupleExpression(
-                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]
-                                    {
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName("addedRows"))
-                                        .WithNameColon(
-                                            SyntaxFactory.NameColon(
-                                                SyntaxFactory.IdentifierName("AddedRows"))),
-                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName("updatedRows"))
-                                        .WithNameColon(
-                                            SyntaxFactory.NameColon(
-                                                SyntaxFactory.IdentifierName("UpdatedRows"))),
-                                    }))),
+                            SyntaxFactory.IdentifierName("addedRows")),
                     });
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
-            }
-        }
-
-        /// <summary>
-        /// Gets a set of statements to delete a row.
-        /// </summary>
-        private IEnumerable<StatementSyntax> FindRow
-        {
-            get
-            {
-                // The elements of the body are added to this collection as they are assembled.
-                var statements = new List<StatementSyntax>
-                {
-                    //            if (this.dictionary.TryGetValue(Thing.ThingId, out var updatedRow))
-                    //            {
-                    //                <UpdateRow>
-                    //            }
-                    //            else
-                    //            {
-                    //                <AddRow>
-                    //            }
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("dictionary")),
-                                SyntaxFactory.IdentifierName("TryGetValue")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]
-                                    {
-                                        this.tableElement.PrimaryIndex.GetKeyAsArguments(
-                                            this.tableElement.Name.ToVariableName()),
-                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.DeclarationExpression(
-                                                SyntaxFactory.IdentifierName(
-                                                    SyntaxFactory.Identifier(
-                                                        SyntaxFactory.TriviaList(),
-                                                        SyntaxKind.VarKeyword,
-                                                        "var",
-                                                        "var",
-                                                        SyntaxFactory.TriviaList())),
-                                                SyntaxFactory.SingleVariableDesignation(
-                                                    SyntaxFactory.Identifier("updatedRow"))))
-                                        .WithRefOrOutKeyword(
-                                            SyntaxFactory.Token(SyntaxKind.OutKeyword)),
-                                    }))),
-                        SyntaxFactory.Block())
-                    .WithElse(
-                        SyntaxFactory.ElseClause(
-                            SyntaxFactory.Block(this.AddRow))),
-                };
-
-                // This is the syntax for the body of the method.
-                return SyntaxFactory.List<StatementSyntax>(statements);
             }
         }
 
@@ -343,7 +257,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 return new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Patches a collection of <see cref="Thing"/> rows.
+                    //        /// Adds a collection of <see cref="Thing"/> rows.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -366,7 +280,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Patches a collection of <see cref=\"{this.tableElement.Name}\"/> rows.",
+                                                $" Adds a collection of <see cref=\"{this.tableElement.Name}\"/> rows.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -398,7 +312,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         {
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" <param name=\"{this.tableElement.Name.ToPlural().ToVariableName()}\">The collection of <see cref=\"{this.tableElement.Name}\"/> rows.</param>",
+                                                $" <param name=\"{this.tableElement.Name.ToPlural().ToCamelCase()}\">The collection of <see cref=\"{this.tableElement.Name}\"/> rows.</param>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -408,7 +322,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //        /// <returns>The patched <see cref="Thing"/> rows.</returns>
+                    //        /// <returns>The added <see cref="Thing"/> row.</returns>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -420,7 +334,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         {
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" <returns>The patched <see cref=\"{this.tableElement.Name}\"/> rows.</returns>",
+                                                $" <returns>The added <see cref=\"{this.tableElement.Name}\"/> rows.</returns>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -430,40 +344,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
                 };
-            }
-        }
-
-        /// <summary>
-        /// Gets the statements to add a row.
-        /// </summary>
-        private IEnumerable<StatementSyntax> AddRow
-        {
-            get
-            {
-                var statements = new List<StatementSyntax>();
-                statements.AddRange(RowUtilities.AddRowToDataModel(this.tableElement));
-
-                //                addedRows.Add(new Thing(thing));
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("addedRows"),
-                                SyntaxFactory.IdentifierName("Add")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))))))));
-
-                return statements;
             }
         }
     }

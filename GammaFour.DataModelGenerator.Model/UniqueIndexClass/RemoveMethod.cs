@@ -54,7 +54,7 @@ namespace GammaFour.DataModelGenerator.Model.UniqueIndexClass
                         .WithType(
                             SyntaxFactory.IdentifierName(this.uniqueIndexElement.Table.Name)))))
             .WithBody(this.Body)
-            .WithLeadingTrivia(this.DocumentationComment);
+            .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace GammaFour.DataModelGenerator.Model.UniqueIndexClass
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {

@@ -60,13 +60,13 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                                         SyntaxFactory.IdentifierName(this.tableElement.Name))))))))
             .WithBody(this.Body)
-            .WithLeadingTrivia(this.DocumentationComment);
+            .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private SyntaxTriviaList DocumentationComment
+        private IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {
