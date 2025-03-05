@@ -43,11 +43,17 @@ namespace GammaFour.DataModelGenerator.Common
 
             // This tells us where the data dataModel when compiling the REST API.
             XAttribute dataModelAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.DataModelName);
-            if (dataModelAttribute != null)
+            this.DataModel = dataModelAttribute == null ? string.Empty : dataModelAttribute.Value;
+
+            // This tells us where the data dataModel when compiling the REST API.
+            XAttribute dataModelContextAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.DataModelName);
+            this.DataModelContext = dataModelContextAttribute == null ? string.Empty : dataModelContextAttribute.Value;
+
+            // This tells us where the data dataModel when compiling the REST API.
+            XAttribute usingAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.UsingName);
+            if (usingAttribute != null)
             {
-                string[] dataModelParts = dataModelAttribute.Value.Split('.');
-                this.DataModel = dataModelParts[dataModelParts.Length - 1];
-                this.DataModelNamespace = string.Join(".", dataModelParts, 0, dataModelParts.Length - 1);
+                this.UsingNamespaces.AddRange(usingAttribute.Value.Split(','));
             }
 
             // This tells us whether to provide an interface to Entity Framework or not.
@@ -166,6 +172,11 @@ namespace GammaFour.DataModelGenerator.Common
         public static XName DataModelName { get; } = XName.Get("dataModel", XmlSchemaDocument.GammaFourDataNamespace);
 
         /// <summary>
+        /// Gets the DataModel context attribute.
+        /// </summary>
+        public static XName DataModelContextName { get; } = XName.Get("dataModelContext", XmlSchemaDocument.GammaFourDataNamespace);
+
+        /// <summary>
         /// Gets the Element element.
         /// </summary>
         public static XName ElementName { get; } = XName.Get("element", XmlSchemaDocument.XmlSchemaNamespace);
@@ -266,6 +277,11 @@ namespace GammaFour.DataModelGenerator.Common
         public static XName UniqueName { get; } = XName.Get("unique", XmlSchemaDocument.XmlSchemaNamespace);
 
         /// <summary>
+        /// Gets the Using attribute.
+        /// </summary>
+        public static XName UsingName { get; } = XName.Get("using", XmlSchemaDocument.GammaFourDataNamespace);
+
+        /// <summary>
         /// Gets the Value attribute.
         /// </summary>
         public static XName ValueName { get; } = XName.Get("value", string.Empty);
@@ -281,9 +297,14 @@ namespace GammaFour.DataModelGenerator.Common
         public string DataModel { get; private set; }
 
         /// <summary>
+        /// Gets the name of the data dataModel context.
+        /// </summary>
+        public string DataModelContext { get; private set; }
+
+        /// <summary>
         /// Gets the namespace of the data dataModel.
         /// </summary>
-        public string DataModelNamespace { get; private set; }
+        public List<string> UsingNamespaces { get; } = new List<string>();
 
         /// <summary>
         /// Gets the constraint elements.

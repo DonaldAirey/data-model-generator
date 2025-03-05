@@ -110,8 +110,6 @@ namespace GammaFour.DataModelGenerator.RestService
                 {
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")),
-                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json")),
-                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json.Nodes")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")),
                 };
@@ -127,9 +125,10 @@ namespace GammaFour.DataModelGenerator.RestService
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Logging")),
                 };
 
-                if (!string.IsNullOrEmpty(this.xmlSchemaDocument.DataModelNamespace))
+                // Emit the using statements.
+                foreach (var usingNamespace in this.xmlSchemaDocument.UsingNamespaces)
                 {
-                    usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName(this.xmlSchemaDocument.DataModelNamespace)));
+                    usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName(usingNamespace)));
                 }
 
                 // This sorts and combines the two lists. The 'System' namespace comes before the rest.

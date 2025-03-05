@@ -41,7 +41,7 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
-                    SyntaxFactory.Identifier($"{this.xmlSchemaDocument.Name}Context"))
+                    SyntaxFactory.Identifier(this.xmlSchemaDocument.DataModelContext))
                 .WithModifiers(ConstructorDbContextOptions.Modifiers)
                 .WithParameterList(this.Parameters)
                 .WithInitializer(ConstructorDbContextOptions.Initializer)
@@ -462,7 +462,7 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
                         .WithTypeArgumentList(
                             SyntaxFactory.TypeArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name}Context"))))),
+                                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.DataModelContext))))),
                 };
 
                 // This is the complete parameter specification for this constructor.

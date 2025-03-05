@@ -30,7 +30,7 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
         {
             // Initialize the object.
             this.xmlSchemaDocument = xmlSchemaDocument;
-            this.Name = $"{xmlSchemaDocument.Name}Context";
+            this.Name = xmlSchemaDocument.DataModelContext;
 
             //    /// <summary>
             //    /// The DbContext for the DataModel dataModel.
