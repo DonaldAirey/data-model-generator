@@ -2,7 +2,7 @@
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.DataModelClass
+namespace GammaFour.DataModelGenerator.Model.DbContextClass
 {
     using System;
     using System.Collections.Generic;
@@ -33,11 +33,11 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
             this.Name = "LoadAsync";
 
             //        /// <summary>
-            //        /// Initializes the <see cref="DataModel"/>.
+            //        /// Loads the <see cref="DataModel"/>.
             //        /// </summary>
-            //        /// <param name="dataModelContext">The data model context.</param>
+            //        /// <param name="dataModel">The data model.</param>
             //        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-            //        public async Task InitializeAsync(DataModelContext dataModelContext)
+            //        public async Task LoadAsync(DataModel dataModel)
             //        {
             //            <Body>
             //        }
@@ -53,11 +53,11 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                     }))
             .WithParameterList(
                 SyntaxFactory.ParameterList(
-                    SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
+                    SyntaxFactory.SingletonSeparatedList(
                         SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier($"{this.xmlSchemaDocument.Name.ToCamelCase()}Context"))
+                            SyntaxFactory.Identifier(this.xmlSchemaDocument.Name.ToCamelCase()))
                         .WithType(
-                            SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name}Context")))))
+                            SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name)))))
             .WithBody(this.Body)
             .WithLeadingTrivia(this.LeadingTrivia);
         }
@@ -73,7 +73,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Initializes the <see cref="DataModel"/>.
+                    //        /// Loads the <see cref="DataModel"/>.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -96,7 +96,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Initializes the <see cref=\"{this.xmlSchemaDocument.Name}\"/>.",
+                                                $" Loads the <see cref=\"{this.xmlSchemaDocument.Name}\"/>.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -116,7 +116,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //        /// <param name="dataModelContext">The data model context.</param>
+                    //        /// <param name="dataModel">The data model.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -128,7 +128,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <param name=\"{this.xmlSchemaDocument.Name.ToCamelCase()}Context\">The data model context.</param>",
+                                                    $" <param name=\"{this.xmlSchemaDocument.Name.ToCamelCase()}\">The data model.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -215,7 +215,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("dataModel"),
                                         SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                                     SyntaxFactory.IdentifierName("Load")))
                             .WithArgumentList(
@@ -228,7 +228,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.IdentifierName($"{tableElement.Document.Name.ToCamelCase()}Context"),
+                                                            SyntaxFactory.ThisExpression(),
                                                             SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                                                         SyntaxFactory.IdentifierName("ToListAsync"))))))))));
                 }

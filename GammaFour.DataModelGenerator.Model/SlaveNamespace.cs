@@ -1,4 +1,4 @@
-﻿// <copyright file="Namespace.cs" company="Gamma Four, Inc.">
+﻿// <copyright file="SlaveNamespace.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,28 +14,37 @@ namespace GammaFour.DataModelGenerator.Model
     /// <summary>
     /// The root namespace.
     /// </summary>
-    public class Namespace
+    public class SlaveNamespace
     {
+        /// <summary>
+        /// The custom tool namespace.
+        /// </summary>
+        private readonly string customToolNamespace;
+
         /// <summary>
         /// The data model schema.
         /// </summary>
         private readonly XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Namespace"/> class.
+        /// Initializes a new instance of the <see cref="SlaveNamespace"/> class.
         /// </summary>
         /// <param name="xmlSchemaDocument">The name of the namespace.</param>
         /// <param name="customToolNamespace">The namespace of the generated module.</param>
-        public Namespace(XmlSchemaDocument xmlSchemaDocument, string customToolNamespace)
+        public SlaveNamespace(XmlSchemaDocument xmlSchemaDocument, string customToolNamespace)
         {
             // Initialize the object.
             this.xmlSchemaDocument = xmlSchemaDocument;
+            this.customToolNamespace = customToolNamespace;
+
+            // This is the slave data model.
+            this.xmlSchemaDocument.IsMaster = false;
 
             // This is the syntax of the namespace.
             this.Syntax = SyntaxFactory.NamespaceDeclaration(
-                    SyntaxFactory.IdentifierName(customToolNamespace))
-                .WithUsings(SyntaxFactory.List<UsingDirectiveSyntax>(this.UsingStatements))
-                .WithMembers(this.Members);
+                SyntaxFactory.IdentifierName(customToolNamespace + ".Slave"))
+            .WithUsings(SyntaxFactory.List<UsingDirectiveSyntax>(this.UsingStatements))
+            .WithMembers(this.Members);
         }
 
         /// <summary>
@@ -58,22 +67,22 @@ namespace GammaFour.DataModelGenerator.Model
                 List<UsingDirectiveSyntax> systemUsingStatements = new List<UsingDirectiveSyntax>
                 {
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")),
-                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Data")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json.Serialization")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")),
                 };
 
                 // Add the non-system namespace references.
-                List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>
-                {
-                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("DotNext.Threading")),
-                };
+                List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>();
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Configuration")));
+                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName(this.customToolNamespace)));
 
                 // This sorts and combines the two lists. The 'System' namespace comes before the rest.
-                return systemUsingStatements
-                    .OrderBy(ud => ud.Name.ToString())
-                    .Concat(usingStatements.OrderBy(ud => ud.Name.ToString())).ToList();
+                return systemUsingStatements.OrderBy(ud => ud.Name.ToString()).Concat(usingStatements.OrderBy(ud => ud.Name.ToString())).ToList();
             }
         }
 
@@ -86,7 +95,6 @@ namespace GammaFour.DataModelGenerator.Model
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = this.CreatePublicEnums(members);
                 members = this.CreatePublicClasses(members);
                 return members;
             }
@@ -99,37 +107,28 @@ namespace GammaFour.DataModelGenerator.Model
         /// <returns>The collection of members augmented with the classes.</returns>
         private SyntaxList<MemberDeclarationSyntax> CreatePublicClasses(SyntaxList<MemberDeclarationSyntax> members)
         {
-            // The common classes.
-            List<SyntaxElement> syntaxElements = new List<SyntaxElement>
-            {
-                new RowChangedEventArgsClass.Class(),
-                new LockingTransactionClass.Class(),
-            };
+            List<SyntaxElement> syntaxElements = new List<SyntaxElement>();
 
-            // Alphabetize the list of classes and add them to the structure.
-            foreach (var syntaxElement in syntaxElements.OrderBy(se => se.Name))
+            // The data model class.
+            syntaxElements.Add(new DataModelClass.Class(this.xmlSchemaDocument));
+
+            // Create the row classes.
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                members = members.Add(syntaxElement.Syntax);
+                syntaxElements.Add(new RowClass.Class(tableElement));
             }
 
-            // This is the collection of alphabetized fields.
-            return members;
-        }
-
-        /// <summary>
-        /// Creates the enums.
-        /// </summary>
-        /// <param name="members">The collection of members.</param>
-        /// <returns>The collection of members augmented with the enums.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicEnums(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // Create the common enums.
-            List<SyntaxElement> syntaxElements = new List<SyntaxElement>
+            // Create the table classes and non-primary unique indexes.
+            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                new DataActionEnum.Enum(),
-            };
+                syntaxElements.Add(new TableClass.Class(tableElement));
+                foreach (var uniqueIndexElement in tableElement.UniqueIndexes.Where(uie => !uie.IsPrimaryIndex))
+                {
+                    syntaxElements.Add(new UniqueIndexClass.Class(uniqueIndexElement));
+                }
+            }
 
-            // Alphabetize the list of enums.
+            // Alphabetize the list of classes and add them to the structure.
             foreach (var syntaxElement in syntaxElements.OrderBy(se => se.Name))
             {
                 members = members.Add(syntaxElement.Syntax);

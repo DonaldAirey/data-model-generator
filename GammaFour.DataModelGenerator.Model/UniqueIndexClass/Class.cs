@@ -6,7 +6,6 @@ namespace GammaFour.DataModelGenerator.Model.UniqueIndexClass
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;

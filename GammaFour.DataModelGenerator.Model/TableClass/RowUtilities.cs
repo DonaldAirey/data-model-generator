@@ -68,10 +68,10 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 }
             }
 
-            statements.AddRange(
-                new StatementSyntax[]
-                {
-                    //            thing.RowVersion = this.DataModel.IncrementRowVersion();
+            if (tableElement.Document.IsMaster)
+            {
+                //            thing.RowVersion = this.DataModel.IncrementRowVersion();
+                statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -86,8 +86,31 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
                                         SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
-                                    SyntaxFactory.IdentifierName("IncrementRowVersion"))))),
+                                    SyntaxFactory.IdentifierName("IncrementRowVersion"))))));
+            }
+            else
+            {
+                //            this.dataModel.RowVersion = account.RowVersion;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
+                                SyntaxFactory.IdentifierName("RowVersion")),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                SyntaxFactory.IdentifierName("RowVersion")))));
+            }
 
+            statements.AddRange(
+                new StatementSyntax[]
+                {
                     //            this.dictionary.Add(thing.Code, thing);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(

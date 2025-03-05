@@ -2,7 +2,7 @@
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.DbContextClass
+namespace GammaFour.DataModelGenerator.Model.LockingTransactionClass
 {
     using System;
     using System.Collections.Generic;
@@ -13,83 +13,51 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// The data model class.
+    /// Creates a row.
     /// </summary>
     public class Class : SyntaxElement
     {
         /// <summary>
-        /// The unique constraint schema.
-        /// </summary>
-        private readonly XmlSchemaDocument xmlSchemaDocument;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="Class"/> class.
         /// </summary>
-        /// <param name="xmlSchemaDocument">A description of a unique constraint.</param>
-        public Class(XmlSchemaDocument xmlSchemaDocument)
+        public Class()
         {
             // Initialize the object.
-            this.xmlSchemaDocument = xmlSchemaDocument;
-            this.Name = $"{xmlSchemaDocument.Name}Context";
+            this.Name = "LockingTransaction";
 
             //    /// <summary>
-            //    /// The DbContext for the DataModel dataModel.
+            //    /// An extension to the <see cref="TransactionScope"/> that manages resource locking.
             //    /// </summary>
-            //    public class DataModelContext : DbContext
+            //    public class LockingTransaction : IDisposable
             //    {
             //        <Members>
             //    }
             this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
-                .WithModifiers(Class.Modifiers)
-                .WithBaseList(Class.BaseList)
-                .WithMembers(this.Members)
-                .WithLeadingTrivia(this.LeadingTrivia);
-        }
-
-        /// <summary>
-        /// Gets the base class syntax.
-        /// </summary>
-        private static BaseListSyntax BaseList
-        {
-            get
-            {
-                // DbContext
-                return SyntaxFactory.BaseList(
-                        SyntaxFactory.SeparatedList<BaseTypeSyntax>(
-                            new SyntaxNodeOrToken[]
-                            {
-                                SyntaxFactory.SimpleBaseType(
-                                    SyntaxFactory.IdentifierName("DbContext")),
-                            }));
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                    });
-            }
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithBaseList(
+                SyntaxFactory.BaseList(
+                    SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(
+                        SyntaxFactory.SimpleBaseType(
+                            SyntaxFactory.IdentifierName("IDisposable")))))
+            .WithMembers(this.Members)
+            .WithLeadingTrivia(Class.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private IEnumerable<SyntaxTrivia> LeadingTrivia
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {
-                //    /// <summary>
-                //    /// The Entity Framework DbContext for the DataModel dataModel.
-                //    /// </summary>
-                return SyntaxFactory.TriviaList(
+                // The document comment trivia is collected in this list.
+                return new List<SyntaxTrivia>
+                {
+                    //    /// <summary>
+                    //    /// An extension to the <see cref="TransactionScope"/> that manages resource locking.
+                    //    /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -111,7 +79,7 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" The Entity Framework DbContext for the {this.xmlSchemaDocument.Name}.",
+                                                " An extension to the <see cref=\"TransactionScope\"/> that manages resource locking.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -129,7 +97,8 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
             }
         }
 
@@ -142,22 +111,22 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
+                members = this.CreatePrivateReadonlyInstanceFields(members);
                 members = this.CreateConstructors(members);
-                members = this.CreatePublicInstanceProperties(members);
-                members = this.CreateProtectedInstanceMethods(members);
+                members = this.CreatePublicInstanceMethods(members);
                 return members;
             }
         }
 
         /// <summary>
-        /// Create the private instance fields.
+        /// Create the constructors.
         /// </summary>
         /// <param name="members">The structure members.</param>
-        /// <returns>The structure members with the fields added.</returns>
+        /// <returns>The syntax for creating the constructors.</returns>
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
-            // These are the constructors.
-            members = members.Add(new ConstructorDbContextOptions(this.xmlSchemaDocument).Syntax);
+            // Add the constructors.
+            members = members.Add(new Constructor().Syntax);
 
             // Return the new collection of members.
             return members;
@@ -167,20 +136,20 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
         /// Create the private instance fields.
         /// </summary>
         /// <param name="members">The structure members.</param>
-        /// <returns>The structure members with the fields added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceProperties(SyntaxList<MemberDeclarationSyntax> members)
+        /// <returns>The syntax for creating the internal instance properties.</returns>
+        private SyntaxList<MemberDeclarationSyntax> CreatePrivateReadonlyInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
         {
-            // This will create the internal instance properties.
-            List<SyntaxElement> properties = new List<SyntaxElement>();
-
-            // Create a field for each of the tables.
-            foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
+            // This will create the private instance fields.
+            List<SyntaxElement> fields = new List<SyntaxElement>
             {
-                properties.Add(new DbSetProperty(tableElement));
-            }
+                new CancellationTokenField(),
+                new HoldersField(),
+                new TransactionField(),
+                new TransactionScopeField(),
+            };
 
             // Alphabetize and add the fields as members of the class.
-            foreach (var syntaxElement in properties.OrderBy(m => m.Name))
+            foreach (var syntaxElement in fields.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
@@ -194,16 +163,18 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The structure members with the methods added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreateProtectedInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>
             {
-                new OnModelCreatingMethod(this.xmlSchemaDocument),
-                new LoadAsyncMethod(this.xmlSchemaDocument),
+                new CompleteMethod(),
+                new DisposeMethod(),
+                new WaitReaderAsyncMethod(),
+                new WaitWriterAsyncMethod(),
             };
 
-            // Alphabetize and add the fields as members of the class.
+            // Alphabetize and add the methods as members of the class.
             foreach (var syntaxElement in methods.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);

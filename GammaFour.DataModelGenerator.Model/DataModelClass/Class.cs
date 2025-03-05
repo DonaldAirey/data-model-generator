@@ -113,7 +113,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                 members = this.CreatePrivateInstanceFields(members);
                 members = this.CreateConstructors(members);
                 members = this.CreatePublicInstanceProperties(members);
-                members = Class.CreatePublicInstanceMethods(members);
+                members = this.CreatePublicInstanceMethods(members);
                 members = this.CreatePrivateInstanceMethods(members);
                 return members;
             }
@@ -124,7 +124,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The structure members with the methods added.</returns>
-        private static SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>
@@ -174,12 +174,6 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
-
-            // We only need an initialization method on the master.
-            if (this.xmlSchemaDocument.IsMaster)
-            {
-                methods.Add(new LoadAsyncMethod(this.xmlSchemaDocument));
-            }
 
             // Alphabetize and add the methods as members of the class.
             foreach (var syntaxElement in methods.OrderBy(m => m.Name))

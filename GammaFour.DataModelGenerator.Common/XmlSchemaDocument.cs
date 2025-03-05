@@ -298,14 +298,14 @@ namespace GammaFour.DataModelGenerator.Common
         }
 
         /// <summary>
-        /// Gets a value indicating whether this is a master data model or a slave.
+        /// Gets or sets a value indicating whether this is a master data model or a slave.
         /// </summary>
-        public bool IsMaster { get; private set; }
+        public bool IsMaster { get; set; }
 
         /// <summary>
-        /// Gets a value indicating whether enforces referential integrity.
+        /// Gets or sets a value indicating whether enforces referential integrity.
         /// </summary>
-        public bool IsRelational { get; private set; }
+        public bool IsRelational { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the generated controllers require authentication.
