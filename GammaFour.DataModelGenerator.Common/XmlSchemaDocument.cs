@@ -46,7 +46,7 @@ namespace GammaFour.DataModelGenerator.Common
             this.DataModel = dataModelAttribute == null ? string.Empty : dataModelAttribute.Value;
 
             // This tells us where the data dataModel when compiling the REST API.
-            XAttribute dataModelContextAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.DataModelName);
+            XAttribute dataModelContextAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.DataModelContextName);
             this.DataModelContext = dataModelContextAttribute == null ? string.Empty : dataModelContextAttribute.Value;
 
             // This tells us where the data dataModel when compiling the REST API.
