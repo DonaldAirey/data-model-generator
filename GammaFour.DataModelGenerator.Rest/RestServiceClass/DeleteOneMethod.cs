@@ -418,24 +418,35 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                         SyntaxFactory.IdentifierName("StatusCodes"),
                                                         SyntaxFactory.IdentifierName("Status412PreconditionFailed")))))))))),
 
-                    //                this.dataModel.Accounts.Delete(existingRow);
+                    //                await this.dataModel.Accounts.DeleteAsync(existingRow).ConfigureAwait(false);
                     SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
+                        SyntaxFactory.AwaitExpression(
+                            SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.tableElement.Document.DataModel.ToVariableName())),
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                SyntaxFactory.IdentifierName("Delete")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("existingRow")))))),
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName($"{this.tableElement.Document.DataModel.ToCamelCase()}")),
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
+                                            SyntaxFactory.IdentifierName("DeleteAsync")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.IdentifierName("existingRow"))))),
+                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.FalseLiteralExpression))))))),
 
                     //                this.dataModelContext.Accounts.Remove(existingRow);
                     SyntaxFactory.ExpressionStatement(

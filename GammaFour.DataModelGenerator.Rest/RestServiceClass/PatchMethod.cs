@@ -109,24 +109,35 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))))))),
 
-                    //                        this.dataModel.Accounts.Add(account);
+                    //                        await this.dataModel.Accounts.AddAsync(account).ConfigureAwait(false);
                     SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
+                        SyntaxFactory.AwaitExpression(
+                            SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.tableElement.Document.DataModel.ToVariableName())),
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                SyntaxFactory.IdentifierName("Add")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))),
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName($"{this.tableElement.Document.DataModel.ToCamelCase()}")),
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
+                                            SyntaxFactory.IdentifierName("AddAsync")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))))),
+                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.FalseLiteralExpression))))))),
 
                     //                        await this.dataModelContext.Accounts.AddAsync(account);
                     SyntaxFactory.ExpressionStatement(
@@ -320,24 +331,35 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 // This is used to collect the statements.
                 var statements = new List<StatementSyntax>
                 {
-                    //                            this.dataModel.Accounts.Update(serverAccount);
+                    //                        await this.dataModel.Accounts.UpdateAsync(account).ConfigureAwait(false);
                     SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
+                        SyntaxFactory.AwaitExpression(
+                            SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.tableElement.Document.DataModel.ToVariableName())),
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                SyntaxFactory.IdentifierName("Update")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("existingRow")))))),
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName($"{this.tableElement.Document.DataModel.ToCamelCase()}")),
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
+                                            SyntaxFactory.IdentifierName("UpdateAsync")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.IdentifierName("existingRow"))))),
+                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.FalseLiteralExpression))))))),
 
                     //                            this.dataModelContext.Accounts.Update(serverAccount);
                     SyntaxFactory.ExpressionStatement(
