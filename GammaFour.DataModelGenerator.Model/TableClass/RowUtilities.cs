@@ -4,7 +4,6 @@
 // <author>Donald Roy Airey</author>
 namespace GammaFour.DataModelGenerator.Model.TableClass
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using GammaFour.DataModelGenerator.Common;
@@ -22,7 +21,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         /// </summary>
         /// <param name="tableElement">The table element.</param>
         /// <returns>A collection of statements that add a row.</returns>
-        public static IEnumerable<StatementSyntax> AddRowToDataModel(TableElement tableElement)
+        public static IEnumerable<StatementSyntax> AddRow(TableElement tableElement)
         {
             var statements = new List<StatementSyntax>
             {
@@ -278,93 +277,11 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         }
 
         /// <summary>
-        /// Adds a parent row to the child row.
-        /// </summary>
-        /// <param name="foreignIndexElement">The foreign index element.</param>
-        /// <returns>The statements that add a parent row to a child row.</returns>
-        public static IEnumerable<StatementSyntax> AddToParent(ForeignIndexElement foreignIndexElement)
-        {
-            var statements = new List<StatementSyntax>();
-
-            //            var thing = this.DataModel.Things.Find(order.ThingCode);
-            var uniqueIndexElement = foreignIndexElement.UniqueIndex;
-            if (foreignIndexElement.Columns.Where(ce => ce.Column.ColumnType.IsNullable).Any())
-            {
-                statements.AddRange(RowUtilities.GetNullableConstraintCheck(foreignIndexElement, "foundRow"));
-            }
-            else
-            {
-                statements.AddRange(RowUtilities.GetNonNullableConstraintCheck(foreignIndexElement, "foundRow"));
-            }
-
-            return statements;
-        }
-
-        /// <summary>
         /// A range of statements to add one row.
         /// </summary>
         /// <param name="tableElement">The table element.</param>
         /// <returns>A collection of statements that add a row.</returns>
-        public static IEnumerable<StatementSyntax> DeleteRowFromDataModel(TableElement tableElement)
-        {
-            // Find the row and delete it.
-            return new List<StatementSyntax>
-            {
-                //            if (this.dictionary.TryGetValue(thingId, out var deletedRow))
-                //            {
-                //                <DeleteRow>
-                //            }
-                //            {
-                //                deletedRow = thing;
-                //            }
-                SyntaxFactory.IfStatement(
-                    SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("dictionary")),
-                            SyntaxFactory.IdentifierName("TryGetValue")))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList(
-                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                new SyntaxNodeOrToken[]
-                                {
-                                    tableElement.PrimaryIndex.GetKeyAsArguments(tableElement.Name.ToVariableName()),
-                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.DeclarationExpression(
-                                            SyntaxFactory.IdentifierName(
-                                                SyntaxFactory.Identifier(
-                                                    SyntaxFactory.TriviaList(),
-                                                    SyntaxKind.VarKeyword,
-                                                    "var",
-                                                    "var",
-                                                    SyntaxFactory.TriviaList())),
-                                            SyntaxFactory.SingleVariableDesignation(
-                                                SyntaxFactory.Identifier("deletedRow"))))
-                                    .WithRefOrOutKeyword(
-                                        SyntaxFactory.Token(SyntaxKind.OutKeyword)),
-                                }))),
-                    SyntaxFactory.Block(RowUtilities.DeleteRow(tableElement)))
-                .WithElse(
-                    SyntaxFactory.ElseClause(
-                        SyntaxFactory.Block(
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.AssignmentExpression(
-                                    SyntaxKind.SimpleAssignmentExpression,
-                                    SyntaxFactory.IdentifierName("deletedRow"),
-                                    SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())))))),
-            };
-        }
-
-        /// <summary>
-        /// A range of statements to add one row.
-        /// </summary>
-        /// <param name="tableElement">The table element.</param>
-        /// <returns>A collection of statements that add a row.</returns>
-        public static IEnumerable<StatementSyntax> GetParentRowCache(TableElement tableElement)
+        public static IEnumerable<StatementSyntax> CreateParentRowCache(TableElement tableElement)
         {
             // Find the row and delete it.
             var statements = new List<StatementSyntax>();
@@ -409,138 +326,220 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         }
 
         /// <summary>
-        /// Deletes the row from the parent row.
+        /// A range of statements to add one row.
         /// </summary>
-        /// <param name="variableName">The variable name.</param>
-        /// <param name="foreignIndexElement">The foreign index element.</param>
-        /// <returns>The statements to delete a row from the parent row.</returns>
-        public static IEnumerable<StatementSyntax> RemoveFromParent(string variableName, ForeignIndexElement foreignIndexElement)
+        /// <param name="tableElement">The table element.</param>
+        /// <returns>A collection of statements that add a row.</returns>
+        public static IEnumerable<StatementSyntax> DeleteRow(TableElement tableElement)
         {
-            var uniqueIndexElement = foreignIndexElement.UniqueIndex;
-            var parentRowName = $"old{foreignIndexElement.UniqueParentName}";
-            var statements = new List<StatementSyntax>
+            // Find the row and delete it.
+            return new List<StatementSyntax>
             {
-                //            var thing = this.DataModel.Things.Find(order.ThingCode);
-                SyntaxFactory.LocalDeclarationStatement(
-                    SyntaxFactory.VariableDeclaration(
-                        SyntaxFactory.IdentifierName(
-                            SyntaxFactory.Identifier(
-                                SyntaxFactory.TriviaList(),
-                                SyntaxKind.VarKeyword,
-                                "var",
-                                "var",
-                                SyntaxFactory.TriviaList())))
-                    .WithVariables(
-                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                            SyntaxFactory.VariableDeclarator(
-                                SyntaxFactory.Identifier(parentRowName))
-                            .WithInitializer(
-                                SyntaxFactory.EqualsValueClause(
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Document.Name.ToCamelCase())),
-                                                SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToPlural())),
-                                            SyntaxFactory.IdentifierName("Find")))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                foreignIndexElement.GetKeyAsArguments(variableName))))))))),
-
-                //            ArgumentNullException.ThrowIfNull(thing);
-                SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName("ArgumentNullException"),
-                            SyntaxFactory.IdentifierName("ThrowIfNull")))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList(
-                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                SyntaxFactory.Argument(
-                                    SyntaxFactory.IdentifierName(parentRowName)))))),
-
-                //            if (!parentThings.Contains(thingByChildId))
+                //            if (this.dictionary.TryGetValue(thingId, out var deletedRow))
                 //            {
-                //                <LockParent>
+                //                <DeleteRow>
+                //            }
+                //            {
+                //                deletedRow = thing;
                 //            }
                 SyntaxFactory.IfStatement(
-                    SyntaxFactory.PrefixUnaryExpression(
-                        SyntaxKind.LogicalNotExpression,
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName($"parent{foreignIndexElement.UniqueIndex.Table.Name.ToPlural()}"),
-                                SyntaxFactory.IdentifierName("Contains")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(parentRowName)))))),
-                    SyntaxFactory.Block(RowUtilities.LockParent(foreignIndexElement, parentRowName))),
-
-                //                thing.Orders.Remove(order);
-                SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(parentRowName),
-                                SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
-                            SyntaxFactory.IdentifierName("Remove")))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList(
-                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                SyntaxFactory.Argument(
-                                    SyntaxFactory.IdentifierName(variableName)))))),
-
-                //            this.rollbackStack.Push(() => thing.Orders.Add(order));
-                SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.InvocationExpression(
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("rollbackStack")),
-                            SyntaxFactory.IdentifierName("Push")))
+                                SyntaxFactory.IdentifierName("dictionary")),
+                            SyntaxFactory.IdentifierName("TryGetValue")))
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList(
-                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                SyntaxFactory.Argument(
-                                    SyntaxFactory.ParenthesizedLambdaExpression()
-                                    .WithExpressionBody(
-                                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                new SyntaxNodeOrToken[]
+                                {
+                                    tableElement.PrimaryIndex.GetKeyAsArguments(tableElement.Name.ToVariableName()),
+                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.DeclarationExpression(
+                                            SyntaxFactory.IdentifierName(
+                                                SyntaxFactory.Identifier(
+                                                    SyntaxFactory.TriviaList(),
+                                                    SyntaxKind.VarKeyword,
+                                                    "var",
+                                                    "var",
+                                                    SyntaxFactory.TriviaList())),
+                                            SyntaxFactory.SingleVariableDesignation(
+                                                SyntaxFactory.Identifier("deletedRow"))))
+                                    .WithRefOrOutKeyword(
+                                        SyntaxFactory.Token(SyntaxKind.OutKeyword)),
+                                }))),
+                    SyntaxFactory.Block(RowUtilities.DeleteRowCore(tableElement)))
+                .WithElse(
+                    SyntaxFactory.ElseClause(
+                        SyntaxFactory.Block(
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.AssignmentExpression(
+                                    SyntaxKind.SimpleAssignmentExpression,
+                                    SyntaxFactory.IdentifierName("deletedRow"),
+                                    SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())))))),
+            };
+        }
+
+        /// <summary>
+        /// Gets the statements that updates a row.
+        /// </summary>
+        /// <param name="tableElement">The table element.</param>
+        /// <returns>The statements to update a row.</returns>
+        public static IEnumerable<StatementSyntax> UpdateRow(TableElement tableElement)
+        {
+            // Lock the row and perform optimistic concurrency check.
+            var statements = new List<StatementSyntax>
+                {
+                    //                await lockingTransaction.WaitWriterAsync(updatedRow).ConfigureAwait(false);
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AwaitExpression(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.IdentifierName("lockingTransaction"),
+                                            SyntaxFactory.IdentifierName("WaitWriterAsync")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.IdentifierName("updatedRow"))))),
+                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.FalseLiteralExpression))))))),
+
+                    //                if (updatedRow.RowVersion != thing.RowVersion)
+                    //                {
+                    //                    throw new DBConcurrencyException();
+                    //                }
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                SyntaxFactory.IdentifierName("RowVersion")),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("updatedRow"),
+                                SyntaxFactory.IdentifierName("RowVersion"))),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ThrowStatement(
+                                    SyntaxFactory.ObjectCreationExpression(
+                                        SyntaxFactory.IdentifierName("DBConcurrencyException"))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList()))))),
+                };
+
+            // Detach ourselves from the old parent row, and attach ourselves to the new parent row.
+            foreach (var foreignIndexElement in tableElement.ParentIndices)
+            {
+                // Disallow changes to the primary key.
+                if (!foreignIndexElement.Columns.Where(cre => cre.Column.IsPrimaryKey).Any())
+                {
+                    statements.AddRange(RowUtilities.UpdateParentRow(tableElement, foreignIndexElement));
+                }
+            }
+
+            // Update each of the columns.
+            foreach (var columnElement in tableElement.Columns)
+            {
+                if (columnElement.IsRowVersion)
+                {
+                    if (tableElement.Document.IsMaster)
+                    {
+                        //            thing.RowVersion = this.DataModel.IncrementRowVersion();
+                        statements.Add(
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.AssignmentExpression(
+                                    SyntaxKind.SimpleAssignmentExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                        SyntaxFactory.IdentifierName("RowVersion")),
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.IdentifierName(parentRowName),
-                                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
-                                                SyntaxFactory.IdentifierName("Add")))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.IdentifierName(variableName))))))))))),
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
+                                            SyntaxFactory.IdentifierName("IncrementRowVersion"))))));
+                    }
+                    else
+                    {
+                        //            this.dataModel.RowVersion = account.RowVersion;
+                        statements.Add(
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.AssignmentExpression(
+                                    SyntaxKind.SimpleAssignmentExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
+                                        SyntaxFactory.IdentifierName("RowVersion")),
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                        SyntaxFactory.IdentifierName("RowVersion")))));
+                    }
+                }
+                else
+                {
+                    // Disallow changes to the primary key.
+                    if (!columnElement.IsPrimaryKey)
+                    {
+                        //                    updatedRow.ModelId = account.ModelId;
+                        statements.Add(SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("updatedRow"),
+                                    SyntaxFactory.IdentifierName(columnElement.Name)),
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                    SyntaxFactory.IdentifierName(columnElement.Name)))));
+                    }
+                }
+            }
 
-                //            order.Thing = null;
-                SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.AssignmentExpression(
-                        SyntaxKind.SimpleAssignmentExpression,
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName(variableName),
-                            SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName)),
-                        SyntaxFactory.LiteralExpression(
-                            SyntaxKind.NullLiteralExpression))),
-            };
+            return statements;
+        }
+
+        /// <summary>
+        /// Adds a parent row to the child row.
+        /// </summary>
+        /// <param name="foreignIndexElement">The foreign index element.</param>
+        /// <returns>The statements that add a parent row to a child row.</returns>
+        private static IEnumerable<StatementSyntax> AddToParent(ForeignIndexElement foreignIndexElement)
+        {
+            var statements = new List<StatementSyntax>();
+
+            //            var thing = this.DataModel.Things.Find(order.ThingCode);
+            var uniqueIndexElement = foreignIndexElement.UniqueIndex;
+            if (foreignIndexElement.Columns.Where(ce => ce.Column.ColumnType.IsNullable).Any())
+            {
+                statements.AddRange(RowUtilities.GetNullableConstraintCheck(foreignIndexElement, "updatedRow"));
+            }
+            else
+            {
+                statements.AddRange(RowUtilities.GetNonNullableConstraintCheck(foreignIndexElement, "updatedRow"));
+            }
 
             return statements;
         }
@@ -549,7 +548,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         /// Gets the statements that deletes a row.
         /// </summary>
         /// <returns>The statements to delete a row.</returns>
-        private static IEnumerable<StatementSyntax> DeleteRow(TableElement tableElement)
+        private static IEnumerable<StatementSyntax> DeleteRowCore(TableElement tableElement)
         {
             // Lock the row and perform optimistic concurrency check.
             var statements = new List<StatementSyntax>
@@ -636,7 +635,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 // If any of the index elements are nullable, we'll want a test to see if values are provided for all elements of the key.
                 if (foreignIndexElement.Columns.Where(cre => cre.Column.ColumnType.IsNullable).Any())
                 {
-                    //                    if (foundRow.ModelId != null)
+                    //                    if (updatedRow.ModelId != null)
                     //                    {
                     //                    }
                     statements.Add(
@@ -703,8 +702,12 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                             SyntaxFactory.Argument(
                                                                 SyntaxFactory.IdentifierName("deletedRow")),
                                                         }))))))))),
+                });
 
-                    //            deletedRow.RowVersion = this.DataModel.IncrementRowVersion();
+            if (tableElement.Document.IsMaster)
+            {
+                //            deletedRow.RowVersion = this.DataModel.IncrementRowVersion();
+                statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -719,8 +722,31 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
                                         SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
-                                    SyntaxFactory.IdentifierName("IncrementRowVersion"))))),
+                                    SyntaxFactory.IdentifierName("IncrementRowVersion"))))));
+            }
+            else
+            {
+                //            this.DataModel.RowVersion = deletedRow.RowVersion;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
+                                SyntaxFactory.IdentifierName("RowVersion")),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("deletedRow"),
+                                SyntaxFactory.IdentifierName("RowVersion")))));
+            }
 
+            statements.AddRange(
+                new StatementSyntax[]
+                {
                     //                this.commitStack.Push(() => this.DeletedRows.AddFirst(allocation));
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -1171,6 +1197,182 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.LiteralExpression(
                                             SyntaxKind.FalseLiteralExpression))))))),
+            };
+        }
+
+        /// <summary>
+        /// Deletes the row from the parent row.
+        /// </summary>
+        /// <param name="variableName">The variable name.</param>
+        /// <param name="foreignIndexElement">The foreign index element.</param>
+        /// <returns>The statements to delete a row from the parent row.</returns>
+        private static IEnumerable<StatementSyntax> RemoveFromParent(string variableName, ForeignIndexElement foreignIndexElement)
+        {
+            var uniqueIndexElement = foreignIndexElement.UniqueIndex;
+            var parentRowName = $"old{foreignIndexElement.UniqueParentName}";
+            var statements = new List<StatementSyntax>
+            {
+                //            var thing = this.DataModel.Things.Find(order.ThingCode);
+                SyntaxFactory.LocalDeclarationStatement(
+                    SyntaxFactory.VariableDeclaration(
+                        SyntaxFactory.IdentifierName(
+                            SyntaxFactory.Identifier(
+                                SyntaxFactory.TriviaList(),
+                                SyntaxKind.VarKeyword,
+                                "var",
+                                "var",
+                                SyntaxFactory.TriviaList())))
+                    .WithVariables(
+                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                            SyntaxFactory.VariableDeclarator(
+                                SyntaxFactory.Identifier(parentRowName))
+                            .WithInitializer(
+                                SyntaxFactory.EqualsValueClause(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Document.Name.ToCamelCase())),
+                                                SyntaxFactory.IdentifierName(uniqueIndexElement.Table.Name.ToPlural())),
+                                            SyntaxFactory.IdentifierName("Find")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                foreignIndexElement.GetKeyAsArguments(variableName))))))))),
+
+                //            ArgumentNullException.ThrowIfNull(thing);
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName("ArgumentNullException"),
+                            SyntaxFactory.IdentifierName("ThrowIfNull")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.IdentifierName(parentRowName)))))),
+
+                //            if (!parentThings.Contains(thingByChildId))
+                //            {
+                //                <LockParent>
+                //            }
+                SyntaxFactory.IfStatement(
+                    SyntaxFactory.PrefixUnaryExpression(
+                        SyntaxKind.LogicalNotExpression,
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName($"parent{foreignIndexElement.UniqueIndex.Table.Name.ToPlural()}"),
+                                SyntaxFactory.IdentifierName("Contains")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName(parentRowName)))))),
+                    SyntaxFactory.Block(RowUtilities.LockParent(foreignIndexElement, parentRowName))),
+
+                //                thing.Orders.Remove(order);
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(parentRowName),
+                                SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
+                            SyntaxFactory.IdentifierName("Remove")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.IdentifierName(variableName)))))),
+
+                //            this.rollbackStack.Push(() => thing.Orders.Add(order));
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("rollbackStack")),
+                            SyntaxFactory.IdentifierName("Push")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.ParenthesizedLambdaExpression()
+                                    .WithExpressionBody(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName(parentRowName),
+                                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
+                                                SyntaxFactory.IdentifierName("Add")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName(variableName))))))))))),
+
+                //            order.Thing = null;
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.AssignmentExpression(
+                        SyntaxKind.SimpleAssignmentExpression,
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName(variableName),
+                            SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName)),
+                        SyntaxFactory.LiteralExpression(
+                            SyntaxKind.NullLiteralExpression))),
+            };
+
+            return statements;
+        }
+
+        /// <summary>
+        /// Gets the code to update the parent row.
+        /// </summary>
+        /// <param name="tableElement">The table element.</param>
+        /// <param name="foreignIndexElement">The foreign index element.</param>
+        /// <returns>The code to change the parent row if the index is not null.</returns>
+        private static IEnumerable<StatementSyntax> UpdateParentRow(TableElement tableElement, ForeignIndexElement foreignIndexElement)
+        {
+            // If any of the index elements are nullable, we'll want a test to see if values are provided for all elements of the key.
+            var changeParentStatements = new List<StatementSyntax>();
+            if (foreignIndexElement.Columns.Where(cre => cre.Column.ColumnType.IsNullable).Any())
+            {
+                //                    if (updatedRow.ModelId != null)
+                //                    {
+                //                        <RemoveFromParent>
+                //                    }
+                changeParentStatements.Add(
+                    SyntaxFactory.IfStatement(
+                        foreignIndexElement.GetKeyAsInequalityConditional("updatedRow", null),
+                        SyntaxFactory.Block(RowUtilities.RemoveFromParent("updatedRow", foreignIndexElement))));
+            }
+            else
+            {
+                changeParentStatements.AddRange(RowUtilities.RemoveFromParent("updatedRow", foreignIndexElement));
+            }
+
+            changeParentStatements.AddRange(RowUtilities.AddToParent(foreignIndexElement));
+
+            return new List<StatementSyntax>
+            {
+                //                if (account.ModelId != updatedRow.ModelId)
+                //                {
+                //                }
+                SyntaxFactory.IfStatement(
+                    foreignIndexElement.GetKeyAsInequalityConditional(tableElement.Name.ToVariableName(), "updatedRow"),
+                    SyntaxFactory.Block(changeParentStatements)),
             };
         }
     }

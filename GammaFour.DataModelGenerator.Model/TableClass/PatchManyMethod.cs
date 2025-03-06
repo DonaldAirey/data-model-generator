@@ -187,40 +187,10 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             SyntaxFactory.ArgumentList())))))),
                 };
 
-                // This is used to keep track of the parent rows that were locked for this operation.
-                var parentTables = from parentIndex in this.tableElement.ParentIndices
-                                   group parentIndex by parentIndex.UniqueIndex.Table into grouping
-                                   select grouping.Key;
-                foreach (var parentTable in parentTables)
-                {
-                    //            var parentThings = new HashSet<Thing>();
-                    statements.Add(
-                        SyntaxFactory.LocalDeclarationStatement(
-                            SyntaxFactory.VariableDeclaration(
-                                SyntaxFactory.IdentifierName(
-                                    SyntaxFactory.Identifier(
-                                        SyntaxFactory.TriviaList(),
-                                        SyntaxKind.VarKeyword,
-                                        "var",
-                                        "var",
-                                        SyntaxFactory.TriviaList())))
-                            .WithVariables(
-                                SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                    SyntaxFactory.VariableDeclarator(
-                                        SyntaxFactory.Identifier($"parent{parentTable.Name.ToPlural()}"))
-                                    .WithInitializer(
-                                        SyntaxFactory.EqualsValueClause(
-                                            SyntaxFactory.ObjectCreationExpression(
-                                                SyntaxFactory.GenericName(
-                                                    SyntaxFactory.Identifier("HashSet"))
-                                                .WithTypeArgumentList(
-                                                    SyntaxFactory.TypeArgumentList(
-                                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                            SyntaxFactory.IdentifierName(parentTable.Name)))))
-                                            .WithArgumentList(
-                                                SyntaxFactory.ArgumentList())))))));
-                }
+                // Create a cache for the parent rows to prevent recursive locking.
+                statements.AddRange(RowUtilities.CreateParentRowCache(this.tableElement));
 
+                // Process each element in the collection.
                 statements.AddRange(
                     new StatementSyntax[]
                     {
@@ -322,7 +292,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         .WithRefOrOutKeyword(
                                             SyntaxFactory.Token(SyntaxKind.OutKeyword)),
                                     }))),
-                        SyntaxFactory.Block())
+                        SyntaxFactory.Block(this.UpdateRow))
                     .WithElse(
                         SyntaxFactory.ElseClause(
                             SyntaxFactory.Block(this.AddRow))),
@@ -441,7 +411,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             get
             {
                 var statements = new List<StatementSyntax>();
-                statements.AddRange(RowUtilities.AddRowToDataModel(this.tableElement));
+                statements.AddRange(RowUtilities.AddRow(this.tableElement));
 
                 //                addedRows.Add(new Thing(thing));
                 statements.Add(
@@ -462,6 +432,40 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                     SyntaxFactory.Argument(
                                                         SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))))))));
+
+                return statements;
+            }
+        }
+
+        /// <summary>
+        /// Gets the statements to add a row.
+        /// </summary>
+        private IEnumerable<StatementSyntax> UpdateRow
+        {
+            get
+            {
+                var statements = new List<StatementSyntax>();
+                statements.AddRange(RowUtilities.UpdateRow(this.tableElement));
+
+                //                updatedRows.Add(new Thing(thing));
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("updatedRows"),
+                                SyntaxFactory.IdentifierName("Add")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName("updatedRow")))))))))));
 
                 return statements;
             }

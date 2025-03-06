@@ -144,7 +144,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 };
 
                 // Create a cache for locked rows.
-                statements.AddRange(RowUtilities.GetParentRowCache(this.tableElement));
+                statements.AddRange(RowUtilities.CreateParentRowCache(this.tableElement));
 
                 statements.AddRange(
                     new StatementSyntax[]
@@ -163,7 +163,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.TriviaList())),
                             SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()),
                             SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToVariableName()),
-                            SyntaxFactory.Block(RowUtilities.DeleteRowFromDataModel(this.tableElement))),
+                            SyntaxFactory.Block(RowUtilities.DeleteRow(this.tableElement))),
 
                         //                    lockingTransaction.Complete();
                         SyntaxFactory.ExpressionStatement(

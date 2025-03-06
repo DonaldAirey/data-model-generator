@@ -107,41 +107,13 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                         SyntaxFactory.Token(SyntaxKind.UsingKeyword)),
                 };
 
-                // This is used to keep track of the parent rows that were locked for this operation.
-                var parentTables = from parentIndex in this.tableElement.ParentIndices
-                                   group parentIndex by parentIndex.UniqueIndex.Table into grouping
-                                   select grouping.Key;
-                foreach (var parentTable in parentTables)
-                {
-                    //            var parentThings = new HashSet<Thing>();
-                    statements.Add(
-                        SyntaxFactory.LocalDeclarationStatement(
-                            SyntaxFactory.VariableDeclaration(
-                                SyntaxFactory.IdentifierName(
-                                    SyntaxFactory.Identifier(
-                                        SyntaxFactory.TriviaList(),
-                                        SyntaxKind.VarKeyword,
-                                        "var",
-                                        "var",
-                                        SyntaxFactory.TriviaList())))
-                            .WithVariables(
-                                SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                    SyntaxFactory.VariableDeclarator(
-                                        SyntaxFactory.Identifier($"parent{parentTable.Name.ToPlural()}"))
-                                    .WithInitializer(
-                                        SyntaxFactory.EqualsValueClause(
-                                            SyntaxFactory.ObjectCreationExpression(
-                                                SyntaxFactory.GenericName(
-                                                    SyntaxFactory.Identifier("HashSet"))
-                                                .WithTypeArgumentList(
-                                                    SyntaxFactory.TypeArgumentList(
-                                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                            SyntaxFactory.IdentifierName(parentTable.Name)))))
-                                            .WithArgumentList(
-                                                SyntaxFactory.ArgumentList())))))));
-                }
+                // Create a cache for the parent rows to prevent recursive locking.
+                statements.AddRange(RowUtilities.CreateParentRowCache(this.tableElement));
 
-                statements.AddRange(RowUtilities.AddRowToDataModel(this.tableElement));
+                // Add the row to the data model.
+                statements.AddRange(RowUtilities.AddRow(this.tableElement));
+
+                // Complete the transaction.
                 statements.AddRange(
                     new StatementSyntax[]
                     {

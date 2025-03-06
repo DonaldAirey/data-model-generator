@@ -108,10 +108,10 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 };
 
                 // Create a cache for locked rows.
-                statements.AddRange(RowUtilities.GetParentRowCache(this.tableElement));
+                statements.AddRange(RowUtilities.CreateParentRowCache(this.tableElement));
 
                 // Remove the row from the data model.
-                statements.AddRange(RowUtilities.DeleteRowFromDataModel(this.tableElement));
+                statements.AddRange(RowUtilities.DeleteRow(this.tableElement));
 
                 // Complete the transaction.
                 statements.AddRange(
