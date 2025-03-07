@@ -110,6 +110,7 @@ namespace GammaFour.DataModelGenerator.RestService
                 {
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")),
                 };

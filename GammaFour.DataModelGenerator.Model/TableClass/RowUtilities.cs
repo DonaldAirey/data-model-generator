@@ -280,17 +280,20 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         /// A range of statements to add one row.
         /// </summary>
         /// <param name="tableElement">The table element.</param>
+        /// <param name="includePrimaryIndex">True to include the primary index.</param>
         /// <returns>A collection of statements that add a row.</returns>
-        public static IEnumerable<StatementSyntax> CreateParentRowCache(TableElement tableElement)
+        public static IEnumerable<StatementSyntax> CreateParentRowCache(TableElement tableElement, bool includePrimaryIndex = true)
         {
             // Find the row and delete it.
             var statements = new List<StatementSyntax>();
 
-            //            var parentThings = new HashSet<Thing>();
             //            var parentAccounts = new HashSet<Account>();
             //            var parentAssets = new HashSet<Asset>();
+            //            var parentThings = new HashSet<Thing>();
             var parentTables = from parentIndex in tableElement.ParentIndices
+                               where includePrimaryIndex || !parentIndex.Columns.Where(cre => cre.Column.IsPrimaryKey).Any()
                                group parentIndex by parentIndex.UniqueIndex.Table into grouping
+                               orderby grouping.Key
                                select grouping.Key;
             foreach (var parentTable in parentTables)
             {
