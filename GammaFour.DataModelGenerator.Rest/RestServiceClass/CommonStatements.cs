@@ -24,6 +24,32 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                 // The catch clauses are collected in this list.
                 List<CatchClauseSyntax> clauses = new List<CatchClauseSyntax>
                 {
+                    //            catch (ConcurrencyException concurrencyException)
+                    //            {
+                    //                <HandleConcurrencyException>
+                    //            }
+                    SyntaxFactory.CatchClause()
+                        .WithDeclaration(
+                            SyntaxFactory.CatchDeclaration(
+                                SyntaxFactory.IdentifierName("ConcurrencyException"))
+                            .WithIdentifier(
+                                SyntaxFactory.Identifier("concurrencyException")))
+                        .WithBlock(
+                            SyntaxFactory.Block(CommonStatements.HandleConcurrencyException)),
+
+                    //            catch (ConstraintException constraintException)
+                    //            {
+                    //                <HandleOperationCancelledException>
+                    //            }
+                    SyntaxFactory.CatchClause()
+                        .WithDeclaration(
+                            SyntaxFactory.CatchDeclaration(
+                                SyntaxFactory.IdentifierName("ConstraintException"))
+                            .WithIdentifier(
+                                SyntaxFactory.Identifier("constraintException")))
+                        .WithBlock(
+                            SyntaxFactory.Block(CommonStatements.HandleConstraintException)),
+
                     //            catch (OperationCanceledException operationCanceledException)
                     //            {
                     //                <HandleOperationCancelledException>
@@ -35,7 +61,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             .WithIdentifier(
                                 SyntaxFactory.Identifier("operationCanceledException")))
                         .WithBlock(
-                            SyntaxFactory.Block(CommonStatements.HandleOperationCanceledExceptionException)),
+                            SyntaxFactory.Block(CommonStatements.HandleOperationCanceledException)),
 
                     //            catch (Exception exception)
                     //            {
@@ -53,6 +79,130 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
 
                 // This is the collection of catch clauses.
                 return SyntaxFactory.List<CatchClauseSyntax>(clauses);
+            }
+        }
+
+        /// <summary>
+        /// Gets the body.
+        /// </summary>
+        private static List<StatementSyntax> HandleConstraintException
+        {
+            get
+            {
+                // The elements of the body are added to this collection as they are assembled.
+                var statements = new List<StatementSyntax>
+                {
+                    //                this.logger.LogError(constraintException, "{message}", constraintException.Message);
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("logger")),
+                                SyntaxFactory.IdentifierName("LogError")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName("constraintException")),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                SyntaxFactory.Literal("{message}"))),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("constraintException"),
+                                                SyntaxFactory.IdentifierName("Message"))),
+                                    })))),
+
+                    ////                return this.StatusCode(StatusCodes.Status422UnprocessableEntity);
+                    SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("StatusCode")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.IdentifierName("StatusCodes"),
+                                            SyntaxFactory.IdentifierName("Status422UnprocessableEntity"))))))),
+                };
+
+                // This is the syntax for the body of the method.
+                return statements;
+            }
+        }
+
+        /// <summary>
+        /// Gets the body.
+        /// </summary>
+        private static List<StatementSyntax> HandleConcurrencyException
+        {
+            get
+            {
+                // The elements of the body are added to this collection as they are assembled.
+                var statements = new List<StatementSyntax>
+                {
+                    //                this.logger.LogError(concurrencyException, "{message}", concurrencyException.Message);
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("logger")),
+                                SyntaxFactory.IdentifierName("LogError")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName("concurrencyException")),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                SyntaxFactory.Literal("{message}"))),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("concurrencyException"),
+                                                SyntaxFactory.IdentifierName("Message"))),
+                                    })))),
+
+                    ////                return this.StatusCode(StatusCodes.Status412PreconditionFailed);
+                    SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("StatusCode")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.IdentifierName("StatusCodes"),
+                                            SyntaxFactory.IdentifierName("Status412PreconditionFailed"))))))),
+                };
+
+                // This is the syntax for the body of the method.
+                return statements;
             }
         }
 
@@ -143,7 +293,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
         /// <summary>
         /// Gets the body.
         /// </summary>
-        private static List<StatementSyntax> HandleOperationCanceledExceptionException
+        private static List<StatementSyntax> HandleOperationCanceledException
         {
             get
             {
@@ -180,7 +330,7 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                                                 SyntaxFactory.IdentifierName("Message"))),
                                     })))),
 
-                    //                return this.StatusCode(408);
+                    ////                return this.StatusCode(StatusCodes.Status408RequestTimeout);
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -191,9 +341,10 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.NumericLiteralExpression,
-                                            SyntaxFactory.Literal(408))))))),
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.IdentifierName("StatusCodes"),
+                                            SyntaxFactory.IdentifierName("Status408RequestTimeout"))))))),
                 };
 
                 // This is the syntax for the body of the method.
