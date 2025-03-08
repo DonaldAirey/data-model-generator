@@ -106,7 +106,7 @@ namespace GammaFour.DataModelGenerator.RestService
             get
             {
                 // Create the list of system namespaces.
-                List<UsingDirectiveSyntax> systemUsingStatements = new List<UsingDirectiveSyntax>
+                var systemUsingStatements = new List<UsingDirectiveSyntax>
                 {
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")),
@@ -116,7 +116,7 @@ namespace GammaFour.DataModelGenerator.RestService
                 };
 
                 // Create the list of non-system namespaces.
-                List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>
+                var usingStatements = new List<UsingDirectiveSyntax>
                 {
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.AspNetCore.Authorization")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.AspNetCore.Http")),

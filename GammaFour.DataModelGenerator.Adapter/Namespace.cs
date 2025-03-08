@@ -85,8 +85,15 @@ namespace GammaFour.DataModelGenerator.Adapter
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")),
                 };
 
+                // Emit the using statements.
+                var usingStatements = new List<UsingDirectiveSyntax>();
+                foreach (var usingNamespace in this.xmlSchemaDocument.UsingNamespaces)
+                {
+                    usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName(usingNamespace)));
+                }
+
                 // This sorts and combines the two lists. The 'System' namespace comes before the rest.
-                return systemUsingStatements.OrderBy(ud => ud.Name.ToString());
+                return systemUsingStatements.OrderBy(ud => ud.Name.ToString()).Concat(usingStatements.OrderBy(ud => ud.Name.ToString())).ToList();
             }
         }
 
