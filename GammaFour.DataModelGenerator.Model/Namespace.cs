@@ -102,6 +102,8 @@ namespace GammaFour.DataModelGenerator.Model
             // The common classes.
             List<SyntaxElement> syntaxElements = new List<SyntaxElement>
             {
+                new ConcurrencyExceptionClass.Class(),
+                new ConstraintExceptionClass.Class(),
                 new RowChangedEventArgsClass.Class(),
                 new LockingTransactionClass.Class(),
             };

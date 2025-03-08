@@ -49,7 +49,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 // This is used to collect the statements.
                 var statements = new List<StatementSyntax>
                 {
-                    //            if (this.rollbackStack.Count == 0)
+                    //            if (this.rollbackStack.Count == 0 && this.commitStack.Count == 0)
                     //            {
                     //                <Enlistment is Done>
                     //            }
@@ -59,17 +59,31 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                     //            }
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
-                            SyntaxKind.EqualsExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxKind.LogicalAndExpression,
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.EqualsExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("rollbackStack")),
-                                SyntaxFactory.IdentifierName("Count")),
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.NumericLiteralExpression,
-                                SyntaxFactory.Literal(0))),
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("rollbackStack")),
+                                    SyntaxFactory.IdentifierName("Count")),
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.NumericLiteralExpression,
+                                    SyntaxFactory.Literal(0))),
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.EqualsExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("commitStack")),
+                                    SyntaxFactory.IdentifierName("Count")),
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.NumericLiteralExpression,
+                                    SyntaxFactory.Literal(0)))),
                         SyntaxFactory.Block(PrepareMethod.EnlistmentDone))
                     .WithElse(
                         SyntaxFactory.ElseClause(

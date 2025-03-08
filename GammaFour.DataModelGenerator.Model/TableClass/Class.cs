@@ -348,6 +348,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 new InDoubtMethod(),
                 new LoadMethod(this.tableElement),
                 new PatchManyMethod(this.tableElement),
+                new PutOneMethod(this.tableElement),
                 new PrepareMethod(),
                 new RollbackMethod(),
                 new UpdateManyMethod(this.tableElement),

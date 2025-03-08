@@ -423,7 +423,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
 
                     //                if (updatedRow.RowVersion != thing.RowVersion)
                     //                {
-                    //                    throw new DBConcurrencyException();
+                    //                    throw new ConcurrencyException();
                     //                }
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
@@ -440,7 +440,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxFactory.SingletonList<StatementSyntax>(
                                 SyntaxFactory.ThrowStatement(
                                     SyntaxFactory.ObjectCreationExpression(
-                                        SyntaxFactory.IdentifierName("DBConcurrencyException"))
+                                        SyntaxFactory.IdentifierName("ConcurrencyException"))
                                     .WithArgumentList(
                                         SyntaxFactory.ArgumentList()))))),
                 };
@@ -469,7 +469,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxKind.SimpleAssignmentExpression,
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                        SyntaxFactory.IdentifierName("updatedRow"),
                                         SyntaxFactory.IdentifierName("RowVersion")),
                                     SyntaxFactory.InvocationExpression(
                                         SyntaxFactory.MemberAccessExpression(
@@ -582,7 +582,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
 
                 //                if (deletedRow.RowVersion != thing.RowVersion)
                 //                {
-                //                    throw new DBConcurrencyException();
+                //                    throw new ConcurrencyException();
                 //                }
                 SyntaxFactory.IfStatement(
                     SyntaxFactory.BinaryExpression(
@@ -599,7 +599,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                         SyntaxFactory.SingletonList<StatementSyntax>(
                             SyntaxFactory.ThrowStatement(
                                 SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.IdentifierName("DBConcurrencyException"))
+                                    SyntaxFactory.IdentifierName("ConcurrencyException"))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList()))))),
             };
