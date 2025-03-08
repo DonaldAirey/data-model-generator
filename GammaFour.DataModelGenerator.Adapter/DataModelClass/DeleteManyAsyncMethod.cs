@@ -1,4 +1,4 @@
-// <copyright file="PostAsyncMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="DeleteManyAsyncMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,7 +14,7 @@ namespace GammaFour.DataModelGenerator.Adapter.DataModelClass
     /// <summary>
     /// Creates a method to add a row to the set.
     /// </summary>
-    public class PostAsyncMethod : SyntaxElement
+    public class DeleteManyAsyncMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -22,21 +22,21 @@ namespace GammaFour.DataModelGenerator.Adapter.DataModelClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PostAsyncMethod"/> class.
+        /// Initializes a new instance of the <see cref="DeleteManyAsyncMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public PostAsyncMethod(TableElement tableElement)
+        public DeleteManyAsyncMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = "PostAsync";
+            this.Name = "DeleteAsync";
 
             //        /// <summary>
-            //        /// Posts a <see cref="Account"/> row.
+            //        /// Deletes a set of <see cref="Account"/> rows.
             //        /// </summary>
-            //        /// <param name="account">An <see cref="Account"/> row to post.</param>
+            //        /// <param name="accounts">The set of <see cref="Account"/> rows.</param>
             //        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-            //        public async Task<Account> PostAsync(Account account)
+            //        public async Task<IEnumerable<Account>> DeleteAsync(IEnumerable<Account> accounts)
             //        {
             //            <Body>
             //        }
@@ -46,8 +46,13 @@ namespace GammaFour.DataModelGenerator.Adapter.DataModelClass
                 .WithTypeArgumentList(
                     SyntaxFactory.TypeArgumentList(
                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                            SyntaxFactory.IdentifierName(this.tableElement.Name)))),
-                SyntaxFactory.Identifier("PostAsync"))
+                            SyntaxFactory.GenericName(
+                                SyntaxFactory.Identifier("IEnumerable"))
+                            .WithTypeArgumentList(
+                                SyntaxFactory.TypeArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name))))))),
+                SyntaxFactory.Identifier("DeleteAsync"))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     new[]
@@ -59,9 +64,14 @@ namespace GammaFour.DataModelGenerator.Adapter.DataModelClass
                 SyntaxFactory.ParameterList(
                     SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
                         SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()))
+                            SyntaxFactory.Identifier(this.tableElement.Name.ToPlural().ToVariableName()))
                         .WithType(
-                            SyntaxFactory.IdentifierName(this.tableElement.Name)))))
+                            SyntaxFactory.GenericName(
+                                SyntaxFactory.Identifier("IEnumerable"))
+                            .WithTypeArgumentList(
+                                SyntaxFactory.TypeArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name))))))))
                 .WithBody(this.Body)
                 .WithLeadingTrivia(this.LeadingTrivia);
         }
@@ -74,9 +84,145 @@ namespace GammaFour.DataModelGenerator.Adapter.DataModelClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                var statements = new List<StatementSyntax>()
+                var statements = new List<StatementSyntax>
                 {
-                    //            using var request = new HttpRequestMessage(HttpMethod.Post, "rest/accounts");
+                    //            if (positions.Any())
+                    //            {
+                    //                <IfAnyBlock>
+                    //            }
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase().ToPlural()),
+                                SyntaxFactory.IdentifierName("Any"))),
+                        SyntaxFactory.Block(this.IfAnyBlock)),
+
+                    //            return positions;
+                    SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToCamelCase().ToPlural())),
+                };
+
+                // This is the syntax for the body of the method.
+                return SyntaxFactory.Block(SyntaxFactory.List(statements));
+            }
+        }
+
+        /// <summary>
+        /// Gets the documentation comment.
+        /// </summary>
+        private IEnumerable<SyntaxTrivia> LeadingTrivia
+        {
+            get
+            {
+                // The document comment trivia is collected in this list.
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Adds a <see cref="Buyer"/> to the set.
+                    //        /// </summary>
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                SyntaxFactory.XmlText()
+                                .WithTextTokens(
+                                    SyntaxFactory.TokenList(
+                                        new[]
+                                        {
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                " <summary>",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                $" Deletes a set of <see cref=\"{this.tableElement.Name}\"/> rows.",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                " </summary>",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                        }))))),
+
+                    //        /// <param name="accounts">The set of <see cref="Account"/> rows to delete.</param>
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                    SyntaxFactory.XmlText()
+                                    .WithTextTokens(
+                                        SyntaxFactory.TokenList(
+                                            new[]
+                                            {
+                                                SyntaxFactory.XmlTextLiteral(
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                    $" <param name=\"{this.tableElement.Name.ToPlural().ToCamelCase()}\">The set of <see cref=\"{this.tableElement.Name}\"/> rows.</param>",
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                                SyntaxFactory.XmlTextNewLine(
+                                                    SyntaxFactory.TriviaList(),
+                                                    Environment.NewLine,
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                            }))))),
+
+                    //        /// <returns>A <see cref=\"Task\"/> representing the asynchronous operation.</returns>
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                    SyntaxFactory.XmlText()
+                                    .WithTextTokens(
+                                        SyntaxFactory.TokenList(
+                                            new[]
+                                            {
+                                                SyntaxFactory.XmlTextLiteral(
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                    $" <returns>A <see cref=\"Task\"/> representing the asynchronous operation.</returns>",
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                                SyntaxFactory.XmlTextNewLine(
+                                                    SyntaxFactory.TriviaList(),
+                                                    Environment.NewLine,
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                            }))))),
+                };
+
+                // This is the complete document comment.
+                return SyntaxFactory.TriviaList(comments);
+            }
+        }
+
+        /// <summary>
+        /// Gets the try block.
+        /// </summary>
+        private List<StatementSyntax> IfAnyBlock
+        {
+            get
+            {
+                // The elements of the body are added to this collection as they are assembled.
+                var statements = new List<StatementSyntax>
+                {
+                    //                using var request = new HttpRequestMessage(HttpMethod.Delete, "rest/accounts");
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(
@@ -103,13 +249,12 @@ namespace GammaFour.DataModelGenerator.Adapter.DataModelClass
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.IdentifierName("HttpMethod"),
-                                                                SyntaxFactory.IdentifierName("Post"))),
+                                                                SyntaxFactory.IdentifierName("Delete"))),
                                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                         SyntaxFactory.Argument(
                                                             SyntaxFactory.LiteralExpression(
                                                                 SyntaxKind.StringLiteralExpression,
-                                                                SyntaxFactory.Literal(
-                                                                    $"rest/{this.tableElement.Name.ToCamelCase().ToPlural()}"))),
+                                                                SyntaxFactory.Literal($"rest/{this.tableElement.Name.ToPlural().ToCamelCase()}"))),
                                                     }))))))))
                     .WithUsingKeyword(
                         SyntaxFactory.Token(SyntaxKind.UsingKeyword)),
@@ -139,7 +284,7 @@ namespace GammaFour.DataModelGenerator.Adapter.DataModelClass
                                                     SyntaxFactory.ArgumentList(
                                                         SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                             SyntaxFactory.Argument(
-                                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))),
+                                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToVariableName())))))),
                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.MemberAccessExpression(
@@ -240,7 +385,7 @@ namespace GammaFour.DataModelGenerator.Adapter.DataModelClass
                                                             SyntaxFactory.LiteralExpression(
                                                                 SyntaxKind.TrueLiteralExpression))))))))))),
 
-                    //            return JsonSerializer.Deserialize<Account>(responseString);
+                    //                return JsonSerializer.Deserialize<IEnumerable<Account>>(responseString);
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -251,7 +396,12 @@ namespace GammaFour.DataModelGenerator.Adapter.DataModelClass
                                 .WithTypeArgumentList(
                                     SyntaxFactory.TypeArgumentList(
                                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name))))))
+                                            SyntaxFactory.GenericName(
+                                                SyntaxFactory.Identifier("IEnumerable"))
+                                            .WithTypeArgumentList(
+                                                SyntaxFactory.TypeArgumentList(
+                                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                        SyntaxFactory.IdentifierName(this.tableElement.Name)))))))))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
@@ -260,111 +410,72 @@ namespace GammaFour.DataModelGenerator.Adapter.DataModelClass
                 };
 
                 // This is the syntax for the body of the method.
-                return SyntaxFactory.Block(SyntaxFactory.List(statements));
+                return statements;
             }
         }
 
         /// <summary>
-        /// Gets the documentation comment.
+        /// Gets a block of code.
         /// </summary>
-        private IEnumerable<SyntaxTrivia> LeadingTrivia
+        private List<StatementSyntax> HandleResultsBlock
         {
             get
             {
-                // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                // This is used to collect the statements.
+                var statements = new List<StatementSyntax>
                 {
-                    //        /// <summary>
-                    //        /// Posts a <see cref="Account"/> row.
-                    //        /// </summary>
-                    SyntaxFactory.Trivia(
-                        SyntaxFactory.DocumentationCommentTrivia(
-                            SyntaxKind.SingleLineDocumentationCommentTrivia,
-                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                SyntaxFactory.XmlText()
-                                .WithTextTokens(
-                                    SyntaxFactory.TokenList(
-                                        new[]
-                                        {
-                                            SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " <summary>",
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                            SyntaxFactory.XmlTextNewLine(
-                                                SyntaxFactory.TriviaList(),
-                                                Environment.NewLine,
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                            SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Posts a <see cref=\"{this.tableElement.Name}\"/> row.",
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                            SyntaxFactory.XmlTextNewLine(
-                                                SyntaxFactory.TriviaList(),
-                                                Environment.NewLine,
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                            SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " </summary>",
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                            SyntaxFactory.XmlTextNewLine(
-                                                SyntaxFactory.TriviaList(),
-                                                Environment.NewLine,
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                        }))))),
+                    //                    response.EnsureSuccessStatusCode();
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("response"),
+                                SyntaxFactory.IdentifierName("EnsureSuccessStatusCode")))),
 
-                    //        /// <param name="account">An <see cref="Account"/> row to post.</param>
-                    SyntaxFactory.Trivia(
-                        SyntaxFactory.DocumentationCommentTrivia(
-                            SyntaxKind.SingleLineDocumentationCommentTrivia,
-                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                    SyntaxFactory.XmlText()
-                                    .WithTextTokens(
-                                        SyntaxFactory.TokenList(
-                                            new[]
-                                            {
-                                                SyntaxFactory.XmlTextLiteral(
-                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <param name=\"{this.tableElement.Name.ToCamelCase()}\">A <see cref=\"{this.tableElement.Name}\"/> row to post.</param>",
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList()),
-                                                SyntaxFactory.XmlTextNewLine(
-                                                    SyntaxFactory.TriviaList(),
-                                                    Environment.NewLine,
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList()),
-                                            }))))),
-
-                    //        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-                    SyntaxFactory.Trivia(
-                        SyntaxFactory.DocumentationCommentTrivia(
-                            SyntaxKind.SingleLineDocumentationCommentTrivia,
-                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                    SyntaxFactory.XmlText()
-                                    .WithTextTokens(
-                                        SyntaxFactory.TokenList(
-                                            new[]
-                                            {
-                                                SyntaxFactory.XmlTextLiteral(
-                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    " <returns>A <see cref=\"Task\"/> representing the asynchronous operation.</returns>",
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList()),
-                                                SyntaxFactory.XmlTextNewLine(
-                                                    SyntaxFactory.TriviaList(),
-                                                    Environment.NewLine,
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList()),
-                                            }))))),
+                    //                    return JsonSerializer.Deserialize<IEnumerable<Account>>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                    SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("JsonSerializer"),
+                                SyntaxFactory.GenericName(
+                                    SyntaxFactory.Identifier("Deserialize"))
+                                .WithTypeArgumentList(
+                                    SyntaxFactory.TypeArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                            SyntaxFactory.GenericName(
+                                                SyntaxFactory.Identifier("IEnumerable"))
+                                            .WithTypeArgumentList(
+                                                SyntaxFactory.TypeArgumentList(
+                                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                        SyntaxFactory.IdentifierName(this.tableElement.Name)))))))))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.AwaitExpression(
+                                            SyntaxFactory.InvocationExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.InvocationExpression(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.IdentifierName("response"),
+                                                                SyntaxFactory.IdentifierName("Content")),
+                                                            SyntaxFactory.IdentifierName("ReadAsStringAsync"))),
+                                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
+                                            .WithArgumentList(
+                                                SyntaxFactory.ArgumentList(
+                                                    SyntaxFactory.SingletonSeparatedList(
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.LiteralExpression(
+                                                                SyntaxKind.FalseLiteralExpression))))))))))),
                 };
 
-                // This is the complete document comment.
-                return SyntaxFactory.TriviaList(comments);
+                // This is the complete block.
+                return statements;
             }
         }
     }
