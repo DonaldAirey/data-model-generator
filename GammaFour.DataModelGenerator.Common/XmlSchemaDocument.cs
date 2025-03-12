@@ -42,14 +42,6 @@ namespace GammaFour.DataModelGenerator.Common
             this.TargetNamespace = this.Root.Attribute("targetNamespace").Value;
 
             // This tells us where the data dataModel when compiling the REST API.
-            XAttribute dataModelAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.DataModelName);
-            this.DataModel = dataModelAttribute == null ? string.Empty : dataModelAttribute.Value;
-
-            // This tells us where the data dataModel when compiling the REST API.
-            XAttribute dataModelContextAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.DataModelContextName);
-            this.DataModelContext = dataModelContextAttribute == null ? string.Empty : dataModelContextAttribute.Value;
-
-            // This tells us where the data dataModel when compiling the REST API.
             XAttribute usingAttribute = this.Root.Element(XmlSchemaDocument.ElementName).Attribute(XmlSchemaDocument.UsingName);
             if (usingAttribute != null)
             {
@@ -167,16 +159,6 @@ namespace GammaFour.DataModelGenerator.Common
         public static XName DefaultName { get; } = XName.Get("default", string.Empty);
 
         /// <summary>
-        /// Gets the DataModel attribute.
-        /// </summary>
-        public static XName DataModelName { get; } = XName.Get("dataModel", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
-        /// Gets the DataModel context attribute.
-        /// </summary>
-        public static XName DataModelContextName { get; } = XName.Get("dataModelContext", XmlSchemaDocument.GammaFourDataNamespace);
-
-        /// <summary>
         /// Gets the Element element.
         /// </summary>
         public static XName ElementName { get; } = XName.Get("element", XmlSchemaDocument.XmlSchemaNamespace);
@@ -290,11 +272,6 @@ namespace GammaFour.DataModelGenerator.Common
         /// Gets the XPath attribute.
         /// </summary>
         public static XName XPathName { get; } = XName.Get("xpath", string.Empty);
-
-        /// <summary>
-        /// Gets the name of the data dataModel.
-        /// </summary>
-        public string DataModel { get; private set; }
 
         /// <summary>
         /// Gets the name of the data dataModel context.

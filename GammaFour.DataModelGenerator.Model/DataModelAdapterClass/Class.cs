@@ -2,7 +2,7 @@
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
+namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
 {
     using System;
     using System.Collections.Generic;
@@ -13,22 +13,29 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a row.
+    /// The data model class.
     /// </summary>
     public class Class : SyntaxElement
     {
         /// <summary>
+        /// The unique constraint schema.
+        /// </summary>
+        private readonly XmlSchemaDocument xmlSchemaDocument;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Class"/> class.
         /// </summary>
-        public Class()
+        /// <param name="xmlSchemaDocument">A description of a unique constraint.</param>
+        public Class(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.Name = "RowChangedEventArgs";
+            this.xmlSchemaDocument = xmlSchemaDocument;
+            this.Name = $"{this.xmlSchemaDocument.Name}Adapter";
 
             //    /// <summary>
-            //    /// A row of data in the Configuration table.
+            //    /// A <see cref="DataModelAdapter"/>.
             //    /// </summary>
-            //    public partial class AchEvent : IRow
+            //    public class DataModelAdapter
             //    {
             //        <Members>
             //    }
@@ -36,31 +43,6 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithTypeParameterList(
-                SyntaxFactory.TypeParameterList(
-                    SyntaxFactory.SingletonSeparatedList<TypeParameterSyntax>(
-                        SyntaxFactory.TypeParameter(
-                            SyntaxFactory.Identifier("T")))))
-            .WithParameterList(
-                SyntaxFactory.ParameterList(
-                    SyntaxFactory.SeparatedList<ParameterSyntax>(
-                        new SyntaxNodeOrToken[]
-                        {
-                            SyntaxFactory.Parameter(
-                                SyntaxFactory.Identifier("dataAction"))
-                            .WithType(
-                                SyntaxFactory.IdentifierName("DataAction")),
-                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                            SyntaxFactory.Parameter(
-                                SyntaxFactory.Identifier("row"))
-                            .WithType(
-                                SyntaxFactory.IdentifierName("T")),
-                        })))
-            .WithBaseList(
-                SyntaxFactory.BaseList(
-                    SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(
-                        SyntaxFactory.SimpleBaseType(
-                            SyntaxFactory.IdentifierName("EventArgs")))))
             .WithMembers(this.Members)
             .WithLeadingTrivia(this.LeadingTrivia);
         }
@@ -73,7 +55,7 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
             get
             {
                 //    /// <summary>
-                //    /// A key for finding objects in the Configuration table.
+                //    /// A thread-safe, transaction-oriented data dataModel.
                 //    /// </summary>
                 return SyntaxFactory.TriviaList(
                     SyntaxFactory.Trivia(
@@ -97,7 +79,7 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Arguments describing an event that changed a row.",
+                                                $" A <see cref=\"{this.xmlSchemaDocument.Name}\"/>.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -128,30 +110,76 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = this.CreatePublicInstanceProperties(members);
+                members = Class.CreatePrivateInstanceFields(members);
+                members = this.CreateConstructors(members);
+                members = this.CreatePublicInstanceMethods(members);
                 return members;
             }
         }
 
         /// <summary>
-        /// Create the public instance properties.
+        /// Create the private instance fields.
         /// </summary>
         /// <param name="members">The structure members.</param>
-        /// <returns>The syntax for creating the public instance properties.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceProperties(SyntaxList<MemberDeclarationSyntax> members)
+        /// <returns>The structure members with the fields added.</returns>
+        private static SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
         {
-            // This will create the public instance properties.
+            // This will create the private fields.
             List<SyntaxElement> properties = new List<SyntaxElement>
             {
-                new DataProperty(),
-                new DataActionProperty(),
+                new HttpClientField(),
             };
 
-            // Alphabetize and add the properties as members of the class.
+            // Alphabetize and add the fields as members of the class.
             foreach (var syntaxElement in properties.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }
+
+            // Return the new collection of members.
+            return members;
+        }
+
+        /// <summary>
+        /// Create the public instance methods.
+        /// </summary>
+        /// <param name="members">The structure members.</param>
+        /// <returns>The structure members with the methods added.</returns>
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            // This will create the public instance properties.
+            List<SyntaxElement> methods = new List<SyntaxElement>();
+
+            // Add a set of REST operations for each table.
+            foreach (var tableElement in this.xmlSchemaDocument.Tables)
+            {
+                methods.Add(new DeleteManyAsyncMethod(tableElement));
+                methods.Add(new DeleteOneAsyncMethod(tableElement));
+                methods.Add(new GetManyAsyncMethod(tableElement));
+                methods.Add(new GetOneAsyncMethod(tableElement));
+                methods.Add(new PatchManyAsyncMethod(tableElement));
+                methods.Add(new PutOneAsyncMethod(tableElement));
+            }
+
+            // Alphabetize and add the methods as members of the class.
+            foreach (var syntaxElement in methods.OrderBy(m => m.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
+            }
+
+            // Return the new collection of members.
+            return members;
+        }
+
+        /// <summary>
+        /// Create the private instance fields.
+        /// </summary>
+        /// <param name="members">The structure members.</param>
+        /// <returns>The structure members with the fields added.</returns>
+        private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            // The volatile data model doesn't try to load the data from a DbContext, the non-volatile data model does.
+            members = members.Add(new Constructor(this.xmlSchemaDocument).Syntax);
 
             // Return the new collection of members.
             return members;

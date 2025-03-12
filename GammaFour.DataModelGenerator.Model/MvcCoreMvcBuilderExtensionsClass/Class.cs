@@ -2,7 +2,7 @@
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
+namespace GammaFour.DataModelGenerator.Model.MvcCoreMvcBuilderExtensionsClass
 {
     using System;
     using System.Collections.Generic;
@@ -18,49 +18,35 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
     public class Class : SyntaxElement
     {
         /// <summary>
+        /// The XML Schema document.
+        /// </summary>
+        private XmlSchemaDocument xmlSchemaDocument;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Class"/> class.
         /// </summary>
-        public Class()
+        /// <param name="xmlSchemaDocument">The XML schema document.</param>
+        public Class(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.Name = "RowChangedEventArgs";
+            this.xmlSchemaDocument = xmlSchemaDocument;
+            this.Name = "MvcCoreMvcBuilderExtensions";
 
             //    /// <summary>
-            //    /// A row of data in the Configuration table.
+            //    /// Used to configure the MVC environment.
             //    /// </summary>
-            //    public partial class AchEvent : IRow
+            //    public static class MvcCoreMvcBuilderExtensions
             //    {
             //        <Members>
             //    }
             this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
             .WithModifiers(
                 SyntaxFactory.TokenList(
-                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithTypeParameterList(
-                SyntaxFactory.TypeParameterList(
-                    SyntaxFactory.SingletonSeparatedList<TypeParameterSyntax>(
-                        SyntaxFactory.TypeParameter(
-                            SyntaxFactory.Identifier("T")))))
-            .WithParameterList(
-                SyntaxFactory.ParameterList(
-                    SyntaxFactory.SeparatedList<ParameterSyntax>(
-                        new SyntaxNodeOrToken[]
-                        {
-                            SyntaxFactory.Parameter(
-                                SyntaxFactory.Identifier("dataAction"))
-                            .WithType(
-                                SyntaxFactory.IdentifierName("DataAction")),
-                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                            SyntaxFactory.Parameter(
-                                SyntaxFactory.Identifier("row"))
-                            .WithType(
-                                SyntaxFactory.IdentifierName("T")),
-                        })))
-            .WithBaseList(
-                SyntaxFactory.BaseList(
-                    SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(
-                        SyntaxFactory.SimpleBaseType(
-                            SyntaxFactory.IdentifierName("EventArgs")))))
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                        SyntaxFactory.Token(SyntaxKind.StaticKeyword),
+                    }))
             .WithMembers(this.Members)
             .WithLeadingTrivia(this.LeadingTrivia);
         }
@@ -73,7 +59,7 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
             get
             {
                 //    /// <summary>
-                //    /// A key for finding objects in the Configuration table.
+                //    /// Used to configure the MVC environment.
                 //    /// </summary>
                 return SyntaxFactory.TriviaList(
                     SyntaxFactory.Trivia(
@@ -97,7 +83,7 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Arguments describing an event that changed a row.",
+                                                " Used to configure the MVC environment.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -128,7 +114,7 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = this.CreatePublicInstanceProperties(members);
+                members = this.CreatePublicStaticMethods(members);
                 return members;
             }
         }
@@ -138,13 +124,12 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The syntax for creating the public instance properties.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceProperties(SyntaxList<MemberDeclarationSyntax> members)
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicStaticMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>
             {
-                new DataProperty(),
-                new DataActionProperty(),
+                new AddControllersMethod(this.xmlSchemaDocument),
             };
 
             // Alphabetize and add the properties as members of the class.

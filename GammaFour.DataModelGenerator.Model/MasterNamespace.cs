@@ -70,6 +70,7 @@ namespace GammaFour.DataModelGenerator.Model
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Reflection")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json.Serialization")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")),
@@ -79,8 +80,13 @@ namespace GammaFour.DataModelGenerator.Model
                 List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>
                 {
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("DotNext.Threading")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.AspNetCore.Authorization")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.AspNetCore.Http")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.AspNetCore.Mvc")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Configuration")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.DependencyInjection")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Logging")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName(this.customToolNamespace)),
                 };
 
@@ -115,14 +121,16 @@ namespace GammaFour.DataModelGenerator.Model
             // The classes.
             List<SyntaxElement> syntaxElements = new List<SyntaxElement>
             {
-                new DbContextClass.Class(this.xmlSchemaDocument),
                 new DataModelClass.Class(this.xmlSchemaDocument),
+                new DataModelContextClass.Class(this.xmlSchemaDocument),
+                new MvcCoreMvcBuilderExtensionsClass.Class(this.xmlSchemaDocument),
             };
 
             // Create the row classes.
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
                 syntaxElements.Add(new RowClass.Class(tableElement));
+                syntaxElements.Add(new RestClass.Class(tableElement));
             }
 
             // Create the table classes and non-primary unique indexes.

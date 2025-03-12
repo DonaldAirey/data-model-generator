@@ -70,6 +70,9 @@ namespace GammaFour.DataModelGenerator.Model
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Net.Http")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json.Serialization")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")),
@@ -113,6 +116,7 @@ namespace GammaFour.DataModelGenerator.Model
 
             // The data model class.
             syntaxElements.Add(new DataModelClass.Class(this.xmlSchemaDocument));
+            syntaxElements.Add(new DataModelAdapterClass.Class(this.xmlSchemaDocument));
 
             // Create the row classes.
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
