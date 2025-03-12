@@ -6,7 +6,6 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
 {
     using System;
     using System.Collections.Generic;
-    using System.Xml.XPath;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -85,7 +84,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                return new List<SyntaxTrivia>
                 {
                     //        /// <summary>
                     //        /// Gets or sets the parent <see cref="Account"/> table.
@@ -131,9 +130,6 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
                 };
-
-                // This is the complete document comment.
-                return SyntaxFactory.TriviaList(comments);
             }
         }
 
@@ -222,44 +218,6 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.TrueLiteralExpression))),
                 };
-
-                //                    if (this.Orders.Any())
-                //                    {
-                //                        throw new ConstraintException("The update action conflicted with the constraint AccountOrderIndex.");
-                //                    }
-                foreach (var foreignIndexElement in this.columnElement.Table.ForeignIndices)
-                {
-                    foreach (var columnReferenceElement in foreignIndexElement.UniqueIndex.Columns)
-                    {
-                        if (columnReferenceElement.Column.Name == this.columnElement.Name)
-                        {
-                            statements.Add(
-                                SyntaxFactory.IfStatement(
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
-                                            SyntaxFactory.IdentifierName("Any"))),
-                                    SyntaxFactory.Block(
-                                        SyntaxFactory.SingletonList<StatementSyntax>(
-                                            SyntaxFactory.ThrowStatement(
-                                                SyntaxFactory.ObjectCreationExpression(
-                                                    SyntaxFactory.IdentifierName("ConstraintException"))
-                                                .WithArgumentList(
-                                                    SyntaxFactory.ArgumentList(
-                                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                            SyntaxFactory.Argument(
-                                                                SyntaxFactory.LiteralExpression(
-                                                                    SyntaxKind.StringLiteralExpression,
-                                                                    SyntaxFactory.Literal($"The update action conflicted with the constraint {foreignIndexElement.Name}.")))))))))));
-                        }
-
-                        break;
-                    }
-                }
 
                 //                    var code = this.Code;
                 statements.Add(

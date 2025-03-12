@@ -236,6 +236,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>
             {
+                new AsyncReaderWriterLockField(),
                 new CommitStackField(),
                 new DataModelField(this.tableElement.Document),
                 new DictionaryField(this.tableElement),
@@ -342,6 +343,8 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 new CommitMethod(),
                 new DeleteOneMethod(this.tableElement),
                 new DeleteManyMethod(this.tableElement),
+                new EnterReadLockAsyncMethod(),
+                new EnterWriteLockAsyncMethod(),
                 new FindMethod(this.tableElement),
                 new GetEnumeratorMethod(this.tableElement),
                 new GenericGetEnumeratorMethod(this.tableElement),

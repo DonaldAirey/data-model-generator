@@ -76,9 +76,12 @@ namespace GammaFour.DataModelGenerator.Model
                 };
 
                 // Add the non-system namespace references.
-                List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>();
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Configuration")));
-                usingStatements.Add(SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName(this.customToolNamespace)));
+                List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>
+                {
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Configuration")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("DotNext.Threading")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName(this.customToolNamespace)),
+                };
 
                 // This sorts and combines the two lists. The 'System' namespace comes before the rest.
                 return systemUsingStatements.OrderBy(ud => ud.Name.ToString()).Concat(usingStatements.OrderBy(ud => ud.Name.ToString())).ToList();

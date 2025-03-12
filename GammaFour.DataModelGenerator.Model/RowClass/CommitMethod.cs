@@ -1,4 +1,4 @@
-// <copyright file="CommitEnlistmentMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="CommitMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,14 +12,14 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to acquire a reader lock.
+    /// Creates a method to prepare a resource for a transaction completion.
     /// </summary>
-    public class CommitEnlistmentMethod : SyntaxElement
+    public class CommitMethod : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommitEnlistmentMethod"/> class.
+        /// Initializes a new instance of the <see cref="CommitMethod"/> class.
         /// </summary>
-        public CommitEnlistmentMethod()
+        public CommitMethod()
         {
             // Initialize the object.
             this.Name = "Commit";
@@ -27,14 +27,12 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             //        /// <inheritdoc/>
             //        public void Commit(Enlistment enlistment)
             //        {
-            //            this.IsModified = false;
-            //            this.rollbackStack.Clear();
-            //            enlistment.Done();
+            //            <Body>
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
                 SyntaxFactory.PredefinedType(
                     SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
-                SyntaxFactory.Identifier("Commit"))
+                SyntaxFactory.Identifier(this.Name))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
@@ -45,17 +43,21 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                             SyntaxFactory.Identifier("enlistment"))
                         .WithType(
                             SyntaxFactory.IdentifierName("Enlistment")))))
-            .WithBody(
-                SyntaxFactory.Block(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("IsModified")),
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.FalseLiteralExpression))),
+            .WithBody(CommitMethod.Body)
+            .WithLeadingTrivia(CommitMethod.LeadingTrivia);
+        }
+
+        /// <summary>
+        /// Gets the body.
+        /// </summary>
+        private static BlockSyntax Body
+        {
+            get
+            {
+                // This is used to collect the statements.
+                var statements = new List<StatementSyntax>
+                {
+                    //        this.rollbackStack.Clear();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -65,13 +67,52 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName("rollbackStack")),
                                 SyntaxFactory.IdentifierName("Clear")))),
+
+                    //            enlistment.Done();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("enlistment"),
-                                SyntaxFactory.IdentifierName("Done"))))))
-            .WithLeadingTrivia(CommitEnlistmentMethod.LeadingTrivia);
+                                SyntaxFactory.IdentifierName("Done")))),
+
+                    //            if (this.asyncReaderWriterLock.IsReadLockHeld || this.asyncReaderWriterLock.IsWriteLockHeld)
+                    //            {
+                    //                this.asyncReaderWriterLock.Release();
+                    //            }
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.LogicalOrExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("asyncReaderWriterLock")),
+                                SyntaxFactory.IdentifierName("IsReadLockHeld")),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("asyncReaderWriterLock")),
+                                SyntaxFactory.IdentifierName("IsWriteLockHeld"))),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ExpressionStatement(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName("asyncReaderWriterLock")),
+                                            SyntaxFactory.IdentifierName("Release"))))))),
+                };
+
+                // This is the syntax for the body of the method.
+                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
+            }
         }
 
         /// <summary>
@@ -81,8 +122,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
         {
             get
             {
-                // This is used to collect the trivia.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                return new List<SyntaxTrivia>
                 {
                     //        /// <inheritdoc/>
                     SyntaxFactory.Trivia(
@@ -106,9 +146,6 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
                 };
-
-                // This is the complete document comment.
-                return SyntaxFactory.TriviaList(comments);
             }
         }
     }

@@ -104,35 +104,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 // The elements of the body are added to this collection as they are assembled.
                 var statements = new List<StatementSyntax>
                 {
-                    //                using var lockingTransaction = new LockingTransaction(this.transactionTimeout);
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(
-                                SyntaxFactory.Identifier(
-                                    SyntaxFactory.TriviaList(),
-                                    SyntaxKind.VarKeyword,
-                                    "var",
-                                    "var",
-                                    SyntaxFactory.TriviaList())))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("lockingTransaction"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName("LockingTransaction"))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName("timeout")))))))))))
-                    .WithUsingKeyword(
-                        SyntaxFactory.Token(SyntaxKind.UsingKeyword)),
-
                     //            var addedRows = new List<Thing>();
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
@@ -208,14 +179,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()),
                             SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToVariableName()),
                             SyntaxFactory.Block(this.FindRow)),
-
-                        //            lockingTransaction.Complete();
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("lockingTransaction"),
-                                    SyntaxFactory.IdentifierName("Complete")))),
 
                         //            return (AddedRows: addedRows, UpdatedRows: updatedRows);
                         SyntaxFactory.ReturnStatement(

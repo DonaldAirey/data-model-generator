@@ -33,8 +33,16 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 SyntaxFactory.PredefinedType(
                     SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                 SyntaxFactory.Identifier(this.Name))
-            .WithModifiers(PrepareMethod.Modifiers)
-            .WithParameterList(PrepareMethod.Parameters)
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithParameterList(
+                SyntaxFactory.ParameterList(
+                    SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
+                        SyntaxFactory.Parameter(
+                            SyntaxFactory.Identifier("preparingEnlistment"))
+                        .WithType(
+                            SyntaxFactory.IdentifierName("PreparingEnlistment")))))
             .WithBody(PrepareMethod.Body)
             .WithLeadingTrivia(PrepareMethod.LeadingTrivia);
         }
@@ -47,51 +55,17 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             get
             {
                 // This is used to collect the statements.
-                var statements = new List<StatementSyntax>
-                {
-                    //            if (this.rollbackStack.Count == 0 && this.commitStack.Count == 0)
-                    //            {
-                    //                <Enlistment is Done>
-                    //            }
-                    //            else
-                    //            {
-                    //                <Enlistment is Prepared>
-                    //            }
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.LogicalAndExpression,
-                            SyntaxFactory.BinaryExpression(
-                                SyntaxKind.EqualsExpression,
+                return SyntaxFactory.Block(
+                    new List<StatementSyntax>
+                    {
+                        //                preparingEnlistment.Prepared();
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("rollbackStack")),
-                                    SyntaxFactory.IdentifierName("Count")),
-                                SyntaxFactory.LiteralExpression(
-                                    SyntaxKind.NumericLiteralExpression,
-                                    SyntaxFactory.Literal(0))),
-                            SyntaxFactory.BinaryExpression(
-                                SyntaxKind.EqualsExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("commitStack")),
-                                    SyntaxFactory.IdentifierName("Count")),
-                                SyntaxFactory.LiteralExpression(
-                                    SyntaxKind.NumericLiteralExpression,
-                                    SyntaxFactory.Literal(0)))),
-                        SyntaxFactory.Block(PrepareMethod.EnlistmentDone))
-                    .WithElse(
-                        SyntaxFactory.ElseClause(
-                            SyntaxFactory.Block(PrepareMethod.EnlistmentPrepared))),
-                };
-
-                // This is the syntax for the body of the method.
-                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
+                                    SyntaxFactory.IdentifierName("preparingEnlistment"),
+                                    SyntaxFactory.IdentifierName("Prepared")))),
+                    });
             }
         }
 
@@ -103,7 +77,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             get
             {
                 // This is used to collect the trivia.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                return new List<SyntaxTrivia>
                 {
                     //        /// <inheritdoc/>
                     SyntaxFactory.Trivia(
@@ -127,87 +101,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
                 };
-
-                // This is the complete document comment.
-                return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the block of code that says the transaction is done.
-        /// </summary>
-        private static IEnumerable<StatementSyntax> EnlistmentDone
-        {
-            get
-            {
-                var statements = new List<StatementSyntax>
-                {
-                    //                preparingEnlistment.Done();
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("preparingEnlistment"),
-                                SyntaxFactory.IdentifierName("Done")))),
-                };
-
-                return statements;
-            }
-        }
-
-        /// <summary>
-        /// Gets the block of code that says the transaction is prepared.
-        /// </summary>
-        private static IEnumerable<StatementSyntax> EnlistmentPrepared
-        {
-            get
-            {
-                //                preparingEnlistment.Prepared();
-                return SyntaxFactory.SingletonList<StatementSyntax>(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("preparingEnlistment"),
-                                SyntaxFactory.IdentifierName("Prepared")))));
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                    });
-            }
-        }
-
-        /// <summary>
-        /// Gets the list of parameters.
-        /// </summary>
-        private static ParameterListSyntax Parameters
-        {
-            get
-            {
-                // Create a list of parameters from the columns in the unique constraint.
-                List<ParameterSyntax> parameters = new List<ParameterSyntax>
-                {
-                    // PreparingEnlistment preparingEnlistment
-                    SyntaxFactory.Parameter(
-                        SyntaxFactory.Identifier("preparingEnlistment"))
-                    .WithType(
-                        SyntaxFactory.IdentifierName("PreparingEnlistment")),
-                };
-
-                // This is the complete parameter specification for this constructor.
-                return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(parameters));
             }
         }
     }

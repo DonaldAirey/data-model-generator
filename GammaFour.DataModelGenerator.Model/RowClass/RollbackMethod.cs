@@ -97,6 +97,39 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                                     SyntaxFactory.ThisExpression(),
                                                     SyntaxFactory.IdentifierName("rollbackStack")),
                                                 SyntaxFactory.IdentifierName("Pop")))))))),
+
+                    //            if (this.asyncReaderWriterLock.IsReadLockHeld || this.asyncReaderWriterLock.IsWriteLockHeld)
+                    //            {
+                    //                this.asyncReaderWriterLock.Release();
+                    //            }
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.LogicalOrExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("asyncReaderWriterLock")),
+                                SyntaxFactory.IdentifierName("IsReadLockHeld")),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("asyncReaderWriterLock")),
+                                SyntaxFactory.IdentifierName("IsWriteLockHeld"))),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ExpressionStatement(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName("asyncReaderWriterLock")),
+                                            SyntaxFactory.IdentifierName("Release"))))))),
                 };
 
                 // This is the syntax for the body of the method.

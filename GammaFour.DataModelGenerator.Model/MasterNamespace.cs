@@ -78,6 +78,7 @@ namespace GammaFour.DataModelGenerator.Model
                 // Add the non-system namespace references.
                 List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>
                 {
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("DotNext.Threading")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.EntityFrameworkCore")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Configuration")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName(this.customToolNamespace)),

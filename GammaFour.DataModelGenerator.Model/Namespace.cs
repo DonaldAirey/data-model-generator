@@ -105,7 +105,9 @@ namespace GammaFour.DataModelGenerator.Model
                 new ConcurrencyExceptionClass.Class(),
                 new ConstraintExceptionClass.Class(),
                 new RowChangedEventArgsClass.Class(),
-                new LockingTransactionClass.Class(),
+
+                // [TODO] Remove this when obsolete.
+                // new LockingTransactionClass.Class(),
             };
 
             // Alphabetize the list of classes and add them to the structure.

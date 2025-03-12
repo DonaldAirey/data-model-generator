@@ -1,4 +1,4 @@
-// <copyright file="UndoStackField.cs" company="Gamma Four, Inc.">
+// <copyright file="RollbackStackField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,12 +14,12 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
     /// <summary>
     /// Creates a field to hold the current contents of the row.
     /// </summary>
-    public class UndoStackField : SyntaxElement
+    public class RollbackStackField : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="UndoStackField"/> class.
+        /// Initializes a new instance of the <see cref="RollbackStackField"/> class.
         /// </summary>
-        public UndoStackField()
+        public RollbackStackField()
         {
             // Initialize the object.
             this.Name = "rollbackStack";
@@ -58,7 +58,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                         SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
                         SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
                     }))
-            .WithLeadingTrivia(UndoStackField.LeadingTrivia);
+            .WithLeadingTrivia(RollbackStackField.LeadingTrivia);
         }
 
         /// <summary>

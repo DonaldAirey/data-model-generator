@@ -25,7 +25,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         {
             var statements = new List<StatementSyntax>
             {
-                //            await lockingTransaction.WaitWriterAsync(thing).ConfigureAwait(false);
+                //            await account.EnterWriteLockAsync().ConfigureAwait(false);
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AwaitExpression(
                         SyntaxFactory.InvocationExpression(
@@ -34,13 +34,8 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.InvocationExpression(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("lockingTransaction"),
-                                        SyntaxFactory.IdentifierName("WaitWriterAsync")))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()))))),
+                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                        SyntaxFactory.IdentifierName("EnterWriteLockAsync"))),
                                 SyntaxFactory.IdentifierName("ConfigureAwait")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -396,35 +391,35 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         {
             // Lock the row and perform optimistic concurrency check.
             var statements = new List<StatementSyntax>
-                {
-                    //                await lockingTransaction.WaitWriterAsync(updatedRow).ConfigureAwait(false);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AwaitExpression(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName("lockingTransaction"),
-                                            SyntaxFactory.IdentifierName("WaitWriterAsync")))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.IdentifierName("updatedRow"))))),
-                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.FalseLiteralExpression))))))),
+            {
+                //            await account.EnterWriteLockAsync().ConfigureAwait(false);
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.AwaitExpression(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                        SyntaxFactory.IdentifierName("EnterWriteLockAsync"))),
+                                SyntaxFactory.IdentifierName("ConfigureAwait")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.FalseLiteralExpression))))))),
+            };
 
-                    //                if (updatedRow.RowVersion != thing.RowVersion)
-                    //                {
-                    //                    throw new ConcurrencyException();
-                    //                }
+            // Only the master needs to check for concurrency.
+            if (tableElement.Document.IsMaster)
+            {
+                //                if (updatedRow.RowVersion != thing.RowVersion)
+                //                {
+                //                    throw new ConcurrencyException();
+                //                }
+                statements.Add(
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.NotEqualsExpression,
@@ -442,8 +437,8 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.ObjectCreationExpression(
                                         SyntaxFactory.IdentifierName("ConcurrencyException"))
                                     .WithArgumentList(
-                                        SyntaxFactory.ArgumentList()))))),
-                };
+                                        SyntaxFactory.ArgumentList()))))));
+            }
 
             // Detach ourselves from the old parent row, and attach ourselves to the new parent row.
             foreach (var foreignIndexElement in tableElement.ParentIndices)
@@ -556,7 +551,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             // Lock the row and perform optimistic concurrency check.
             var statements = new List<StatementSyntax>
             {
-                //                await lockingTransaction.WaitWriterAsync(deletedRow).ConfigureAwait(false);
+                //            await account.EnterWriteLockAsync().ConfigureAwait(false);
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AwaitExpression(
                         SyntaxFactory.InvocationExpression(
@@ -565,13 +560,8 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.InvocationExpression(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("lockingTransaction"),
-                                        SyntaxFactory.IdentifierName("WaitWriterAsync")))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName("deletedRow"))))),
+                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                        SyntaxFactory.IdentifierName("EnterWriteLockAsync"))),
                                 SyntaxFactory.IdentifierName("ConfigureAwait")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -579,30 +569,35 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.LiteralExpression(
                                             SyntaxKind.FalseLiteralExpression))))))),
+            };
 
+            // Only the master needs to check for concurrency.
+            if (tableElement.Document.IsMaster)
+            {
                 //                if (deletedRow.RowVersion != thing.RowVersion)
                 //                {
                 //                    throw new ConcurrencyException();
                 //                }
-                SyntaxFactory.IfStatement(
-                    SyntaxFactory.BinaryExpression(
-                        SyntaxKind.NotEqualsExpression,
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName("deletedRow"),
-                            SyntaxFactory.IdentifierName("RowVersion")),
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
-                            SyntaxFactory.IdentifierName("RowVersion"))),
-                    SyntaxFactory.Block(
-                        SyntaxFactory.SingletonList<StatementSyntax>(
-                            SyntaxFactory.ThrowStatement(
-                                SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.IdentifierName("ConcurrencyException"))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList()))))),
-            };
+                statements.Add(
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("deletedRow"),
+                                SyntaxFactory.IdentifierName("RowVersion")),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                SyntaxFactory.IdentifierName("RowVersion"))),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ThrowStatement(
+                                    SyntaxFactory.ObjectCreationExpression(
+                                        SyntaxFactory.IdentifierName("ConcurrencyException"))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList()))))));
+            }
 
             // Enforce referential integrity constraints.
             foreach (ForeignIndexElement foreignIndexElement in tableElement.ChildIndices)
@@ -1177,7 +1172,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.Argument(
                                     SyntaxFactory.IdentifierName(variableName)))))),
 
-                //                await lockingTransaction.WaitWriterAsync(thingByChildId).ConfigureAwait(false);
+                //            await account.EnterWriteLockAsync().ConfigureAwait(false);
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AwaitExpression(
                         SyntaxFactory.InvocationExpression(
@@ -1186,13 +1181,8 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.InvocationExpression(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("lockingTransaction"),
-                                        SyntaxFactory.IdentifierName("WaitWriterAsync")))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName(variableName))))),
+                                        SyntaxFactory.IdentifierName(variableName),
+                                        SyntaxFactory.IdentifierName("EnterWriteLockAsync"))),
                                 SyntaxFactory.IdentifierName("ConfigureAwait")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(

@@ -55,51 +55,17 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             get
             {
                 // This is used to collect the statements.
-                var statements = new List<StatementSyntax>
-                {
-                    //            if (this.State == RecordState.Unchanged)
-                    //            {
-                    //                <EnlistmentDone>
-                    //            }
-                    //            else
-                    //            {
-                    //                <EnlistmentPrepared>
-                    //            }
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.EqualsExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
+                return SyntaxFactory.Block(
+                    new List<StatementSyntax>
+                    {
+                        //                preparingEnlistment.Prepared();
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("rollbackStack")),
-                                SyntaxFactory.IdentifierName("Count")),
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.NumericLiteralExpression,
-                                SyntaxFactory.Literal(0))),
-                        SyntaxFactory.Block(
-                            SyntaxFactory.SingletonList<StatementSyntax>(
-                                SyntaxFactory.ExpressionStatement(
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName("preparingEnlistment"),
-                                            SyntaxFactory.IdentifierName("Done")))))))
-                    .WithElse(
-                        SyntaxFactory.ElseClause(
-                            SyntaxFactory.Block(
-                                SyntaxFactory.SingletonList<StatementSyntax>(
-                                    SyntaxFactory.ExpressionStatement(
-                                        SyntaxFactory.InvocationExpression(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("preparingEnlistment"),
-                                                SyntaxFactory.IdentifierName("Prepared")))))))),
-                };
-
-                // This is the syntax for the body of the method.
-                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
+                                    SyntaxFactory.IdentifierName("preparingEnlistment"),
+                                    SyntaxFactory.IdentifierName("Prepared")))),
+                    });
             }
         }
 
@@ -111,7 +77,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             get
             {
                 // This is used to collect the trivia.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                return new List<SyntaxTrivia>
                 {
                     //        /// <inheritdoc/>
                     SyntaxFactory.Trivia(
@@ -135,9 +101,6 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
                 };
-
-                // This is the complete document comment.
-                return SyntaxFactory.TriviaList(comments);
             }
         }
     }

@@ -210,7 +210,8 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>
             {
-                new UndoStackField(),
+                new AsyncReaderWriterLockField(),
+                new RollbackStackField(),
             };
 
             // Alphabetize and add the fields as members of the class.
@@ -233,7 +234,9 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>
             {
-                new CommitEnlistmentMethod(),
+                new CommitMethod(),
+                new EnterReadLockAsyncMethod(),
+                new EnterWriteLockAsyncMethod(),
                 new EqualsMethod(this.tableElement),
                 new GetHashCodeMethod(this.tableElement),
                 new InDoubtMethod(),
