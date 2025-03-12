@@ -77,9 +77,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 // The elements of the body are added to this collection as they are assembled.
                 var statements = new List<StatementSyntax>();
 
-                // Create a cache for locked rows.
-                statements.AddRange(RowUtilities.CreateParentRowCache(this.tableElement));
-
                 // Remove the row from the data model.
                 statements.AddRange(RowUtilities.DeleteRow(this.tableElement));
 

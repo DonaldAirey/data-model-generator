@@ -106,9 +106,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             SyntaxKind.NullLiteralExpression)))))),
                 };
 
-                // Create a cache for the parent rows to prevent recursive locking.
-                statements.AddRange(RowUtilities.CreateParentRowCache(this.tableElement));
-
                 // Find the row and either update it if it exists, or add it if it doesn't.
                 statements.AddRange(this.FindRow);
 

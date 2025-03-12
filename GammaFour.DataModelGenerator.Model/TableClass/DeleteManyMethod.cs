@@ -113,9 +113,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             SyntaxFactory.ArgumentList())))))),
                 };
 
-                // Create a cache for locked rows.
-                statements.AddRange(RowUtilities.CreateParentRowCache(this.tableElement));
-
                 statements.AddRange(
                     new StatementSyntax[]
                     {

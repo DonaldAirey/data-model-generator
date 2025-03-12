@@ -157,9 +157,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             SyntaxFactory.ArgumentList())))))),
                 };
 
-                // Create a cache for the parent rows to prevent recursive locking.
-                statements.AddRange(RowUtilities.CreateParentRowCache(this.tableElement));
-
                 // Process each element in the collection.
                 statements.AddRange(
                     new StatementSyntax[]

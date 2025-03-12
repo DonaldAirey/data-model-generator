@@ -77,9 +77,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 // The elements of the body are added to this collection as they are assembled.
                 var statements = new List<StatementSyntax>();
 
-                // Create a cache for the parent rows to prevent recursive locking.
-                statements.AddRange(RowUtilities.CreateParentRowCache(this.tableElement, false));
-
                 // Find the row and update it.
                 statements.AddRange(
                     new StatementSyntax[]

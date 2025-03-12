@@ -911,25 +911,26 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                     SyntaxFactory.Literal(
                                                         $"The add action conflicted with the constraint {foreignIndexElement.Name}.")))))))))),
 
-                //            if (!parentThings.Contains(thingByChildId))
-                //            {
-                //                <LockParent>
-                //            }
-                SyntaxFactory.IfStatement(
-                    SyntaxFactory.PrefixUnaryExpression(
-                        SyntaxKind.LogicalNotExpression,
+                //            await account.EnterWriteLockAsync().ConfigureAwait(false);
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.AwaitExpression(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName($"parent{foreignIndexElement.UniqueIndex.Table.Name.ToPlural()}"),
-                                SyntaxFactory.IdentifierName("Contains")))
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName(parentRowName),
+                                        SyntaxFactory.IdentifierName("EnterWriteLockAsync"))),
+                                SyntaxFactory.IdentifierName("ConfigureAwait")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(parentRowName)))))),
-                    SyntaxFactory.Block(
-                        RowUtilities.LockParent(foreignIndexElement, parentRowName))),
+                                        SyntaxFactory.LiteralExpression(
+                                            foreignIndexElement.Table.Document.IsMaster ?
+                                            SyntaxKind.FalseLiteralExpression :
+                                            SyntaxKind.TrueLiteralExpression))))))),
 
                 //            thing.Orders.Add(order);
                 SyntaxFactory.ExpressionStatement(
@@ -1059,25 +1060,26 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                     SyntaxFactory.Literal(
                                                         $"The add action conflicted with the constraint {foreignIndexElement.Name}.")))))))))),
 
-                //            if (!parentThings.Contains(thingByChildId))
-                //            {
-                //                <LockParent>
-                //            }
-                SyntaxFactory.IfStatement(
-                    SyntaxFactory.PrefixUnaryExpression(
-                        SyntaxKind.LogicalNotExpression,
+                //            await account.EnterWriteLockAsync().ConfigureAwait(false);
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.AwaitExpression(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName($"parent{foreignIndexElement.UniqueIndex.Table.Name.ToPlural()}"),
-                                SyntaxFactory.IdentifierName("Contains")))
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName(parentRowName),
+                                        SyntaxFactory.IdentifierName("EnterWriteLockAsync"))),
+                                SyntaxFactory.IdentifierName("ConfigureAwait")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(parentRowName)))))),
-                    SyntaxFactory.Block(
-                        RowUtilities.LockParent(foreignIndexElement, parentRowName))),
+                                        SyntaxFactory.LiteralExpression(
+                                            foreignIndexElement.Table.Document.IsMaster ?
+                                            SyntaxKind.FalseLiteralExpression :
+                                            SyntaxKind.TrueLiteralExpression))))))),
 
                 //            thing.Orders.Add(order);
                 SyntaxFactory.ExpressionStatement(
@@ -1156,52 +1158,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         }
 
         /// <summary>
-        /// Locks the parent table.
-        /// </summary>
-        /// <param name="foreignIndexElement">The foreign index element.</param>
-        /// <param name="variableName">The variable name.</param>
-        /// <returns>The statements to lock the parent.</returns>
-        private static IEnumerable<StatementSyntax> LockParent(ForeignIndexElement foreignIndexElement, string variableName)
-        {
-            return new StatementSyntax[]
-            {
-                //                parentThings.Add(thingByChildId);
-                SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName($"parent{foreignIndexElement.UniqueIndex.Table.Name.ToPlural()}"),
-                            SyntaxFactory.IdentifierName("Add")))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList(
-                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                SyntaxFactory.Argument(
-                                    SyntaxFactory.IdentifierName(variableName)))))),
-
-                //            await account.EnterWriteLockAsync().ConfigureAwait(false);
-                SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.AwaitExpression(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(variableName),
-                                        SyntaxFactory.IdentifierName("EnterWriteLockAsync"))),
-                                SyntaxFactory.IdentifierName("ConfigureAwait")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.LiteralExpression(
-                                            foreignIndexElement.Table.Document.IsMaster ?
-                                            SyntaxKind.FalseLiteralExpression :
-                                            SyntaxKind.TrueLiteralExpression))))))),
-            };
-        }
-
-        /// <summary>
         /// Deletes the row from the parent row.
         /// </summary>
         /// <param name="variableName">The variable name.</param>
@@ -1258,24 +1214,26 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.Argument(
                                     SyntaxFactory.IdentifierName(parentRowName)))))),
 
-                //            if (!parentThings.Contains(thingByChildId))
-                //            {
-                //                <LockParent>
-                //            }
-                SyntaxFactory.IfStatement(
-                    SyntaxFactory.PrefixUnaryExpression(
-                        SyntaxKind.LogicalNotExpression,
+                //            await account.EnterWriteLockAsync().ConfigureAwait(false);
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.AwaitExpression(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName($"parent{foreignIndexElement.UniqueIndex.Table.Name.ToPlural()}"),
-                                SyntaxFactory.IdentifierName("Contains")))
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName(parentRowName),
+                                        SyntaxFactory.IdentifierName("EnterWriteLockAsync"))),
+                                SyntaxFactory.IdentifierName("ConfigureAwait")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(parentRowName)))))),
-                    SyntaxFactory.Block(RowUtilities.LockParent(foreignIndexElement, parentRowName))),
+                                        SyntaxFactory.LiteralExpression(
+                                            foreignIndexElement.Table.Document.IsMaster ?
+                                            SyntaxKind.FalseLiteralExpression :
+                                            SyntaxKind.TrueLiteralExpression))))))),
 
                 //                thing.Orders.Remove(order);
                 SyntaxFactory.ExpressionStatement(
