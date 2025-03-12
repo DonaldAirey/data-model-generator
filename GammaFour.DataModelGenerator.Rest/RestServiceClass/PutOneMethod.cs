@@ -455,20 +455,32 @@ namespace GammaFour.DataModelGenerator.RestService.RestServiceClass
                     //                {
                     //                     <AddRow>
                     //                }
-                    //                else
-                    //                {
-                    //                     <UpdateRow>
-                    //                }
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.BinaryExpression(
                             SyntaxKind.NotEqualsExpression,
                             SyntaxFactory.IdentifierName("addedRow"),
                             SyntaxFactory.LiteralExpression(
                                 SyntaxKind.NullLiteralExpression)),
-                        SyntaxFactory.Block(this.AddRow))
-                    .WithElse(
-                        SyntaxFactory.ElseClause(
-                            SyntaxFactory.Block(this.UpdateRow))),
+                        SyntaxFactory.Block(this.AddRow)),
+
+                    //                if (updatedRow != null)
+                    //                {
+                    //                     <UpdateRow>
+                    //                }
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
+                            SyntaxFactory.IdentifierName("updatedRow"),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression)),
+                        SyntaxFactory.Block(this.UpdateRow)),
+
+                    //                throw new InvalidOperationException();
+                    SyntaxFactory.ThrowStatement(
+                        SyntaxFactory.ObjectCreationExpression(
+                            SyntaxFactory.IdentifierName("InvalidOperationException"))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList())),
                 };
 
                 // This is the complete block.

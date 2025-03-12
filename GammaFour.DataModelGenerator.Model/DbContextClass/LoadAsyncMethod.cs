@@ -207,7 +207,7 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
                 // Load each of the tables.
                 foreach (TableElement tableElement in orderedTables)
                 {
-                    //            this.Issuers.Load(await dataModelContext.Issuers.ToListAsync());
+                    //            this.Issuers.Load(await dataModelContext.Issuers.ToListAsync().ConfigureAwait(false));
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.InvocationExpression(
@@ -226,11 +226,21 @@ namespace GammaFour.DataModelGenerator.Model.DbContextClass
                                                 SyntaxFactory.InvocationExpression(
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                                        SyntaxFactory.IdentifierName("ToListAsync"))))))))));
+                                                        SyntaxFactory.InvocationExpression(
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxFactory.ThisExpression(),
+                                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
+                                                                SyntaxFactory.IdentifierName("ToListAsync"))),
+                                                        SyntaxFactory.IdentifierName("ConfigureAwait")))
+                                                .WithArgumentList(
+                                                    SyntaxFactory.ArgumentList(
+                                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.LiteralExpression(
+                                                                    SyntaxKind.FalseLiteralExpression))))))))))));
                 }
 
                 // This is the syntax for the body of the method.

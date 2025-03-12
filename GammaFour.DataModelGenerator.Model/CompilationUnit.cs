@@ -42,7 +42,7 @@ namespace GammaFour.DataModelGenerator.Model
                 SyntaxFactory.List<MemberDeclarationSyntax>(
                     new MemberDeclarationSyntax[]
                     {
-                        new Namespace(this.xmlSchemaDocument, this.customToolNamespace).Syntax,
+                        new Namespace(this.customToolNamespace).Syntax,
                         new MasterNamespace(this.xmlSchemaDocument, this.customToolNamespace).Syntax,
                         new SlaveNamespace(this.xmlSchemaDocument, this.customToolNamespace).Syntax,
                     }))

@@ -42,7 +42,9 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.FalseLiteralExpression))))))),
+                                                 tableElement.Document.IsMaster ?
+                                                 SyntaxKind.FalseLiteralExpression :
+                                                 SyntaxKind.TrueLiteralExpression))))))),
             };
 
             // Check the constraints and update foreign keys.
@@ -409,7 +411,9 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.FalseLiteralExpression))))))),
+                                                 tableElement.Document.IsMaster ?
+                                                 SyntaxKind.FalseLiteralExpression :
+                                                 SyntaxKind.TrueLiteralExpression))))))),
             };
 
             // Only the master needs to check for concurrency.
@@ -568,7 +572,9 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.FalseLiteralExpression))))))),
+                                                 tableElement.Document.IsMaster ?
+                                                 SyntaxKind.FalseLiteralExpression :
+                                                 SyntaxKind.TrueLiteralExpression))))))),
             };
 
             // Only the master needs to check for concurrency.
@@ -1189,7 +1195,9 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.FalseLiteralExpression))))))),
+                                            foreignIndexElement.Table.Document.IsMaster ?
+                                            SyntaxKind.FalseLiteralExpression :
+                                            SyntaxKind.TrueLiteralExpression))))))),
             };
         }
 
