@@ -2,15 +2,23 @@
   "profiles": {
     "Desktop": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop\\Data\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop\\Data\\Ledger.Designer.cs\" -ns \"ThetaRex.OpenBook.Ledger\""
-    },
-    "Loader": {
-      "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-loader\\OpenBook Loader\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-loader\\OpenBook Loader\\Ledger.Designer.cs\" -ns \"ThetaRex.OpenBook.Ledger\""
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop\\Data\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop\\Data\\Ledger.Designer.cs\" -ns \"ThetaRex.OpenBook\""
     },
     "Index Simulation": {
       "commandName": "Project",
       "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\index-simulation\\Index Simulation\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\index-simulation\\Index Simulation\\Ledger.Designer.cs\" -ns \"IndexSimulation\""
+    },
+    "Loader": {
+      "commandName": "Project",
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-loader\\OpenBook Loader\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-loader\\OpenBook Loader\\Ledger.Designer.cs\" -ns \"ThetaRex.OpenBook\""
+    },
+    "Market Ledger": {
+      "commandName": "Project",
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-market\\ThetaRex.Market\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-market\\ThetaRex.Market\\Ledger.Designer.cs\" -ns \"ThetaRex.OpenBook\""
+    },
+    "Market Market": {
+      "commandName": "Project",
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-market\\ThetaRex.Market\\Market.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-market\\ThetaRex.Market\\Market.Designer.cs\" -ns \"ThetaRex.Market.Data\""
     },
     "Prototype": {
       "commandName": "Project",
@@ -18,7 +26,7 @@
     },
     "Web API": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-webapi\\ThetaRex.OpenBook.Data\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\theta-rex\\openbook-webapi\\ThetaRex.OpenBook.Data\\Ledger.Designer.cs\" -ns \"ThetaRex.OpenBook.Ledger\""
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-webapi\\ThetaRex.OpenBook.Data\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-webapi\\ThetaRex.OpenBook.Data\\Ledger.Designer.cs\" -ns \"ThetaRex.OpenBook\""
     }
   }
 }
