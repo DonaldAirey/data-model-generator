@@ -82,7 +82,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("dataModelContext")),
+                                    SyntaxFactory.IdentifierName($"{this.tableElement.Document.Name.ToCamelCase()}Context")),
                                 SyntaxFactory.IdentifierName("Add")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(

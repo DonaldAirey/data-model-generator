@@ -215,7 +215,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelContextClass
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("dataModel"),
+                                        SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase()),
                                         SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
                                     SyntaxFactory.IdentifierName("Load")))
                             .WithArgumentList(
