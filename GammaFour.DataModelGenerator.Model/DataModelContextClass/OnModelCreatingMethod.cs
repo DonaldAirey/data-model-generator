@@ -132,23 +132,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelContextClass
             get
             {
                 // This is used to collect the statements.
-                List<StatementSyntax> statements = new List<StatementSyntax>
-                {
-                    //            modelBuilder.UseCollation("SQL_Latin1_General_CP1_CS_AS");
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("modelBuilder"),
-                                SyntaxFactory.IdentifierName("UseCollation")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.StringLiteralExpression,
-                                            SyntaxFactory.Literal("SQL_Latin1_General_CP1_CS_AS"))))))),
-                };
+                List<StatementSyntax> statements = new List<StatementSyntax>();
 
                 // This will configure each of the tables and their indices.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
@@ -376,70 +360,6 @@ namespace GammaFour.DataModelGenerator.Model.DataModelContextClass
                                                 SyntaxFactory.Argument(uniqueIndexElement.GetUniqueKey(true))))),
                                             SyntaxFactory.IdentifierName("IsUnique")))));
                         }
-                    }
-
-                    // Create a foreign key index for every parent table.
-                    foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentIndices)
-                    {
-                        //            modelBuilder.Entity<Province>()
-                        ExpressionSyntax indexProperties = SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("modelBuilder"),
-                                    SyntaxFactory.GenericName(
-                                        SyntaxFactory.Identifier("Entity"))
-                                    .WithTypeArgumentList(
-                                        SyntaxFactory.TypeArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                SyntaxFactory.IdentifierName(tableElement.Name))))));
-
-                        //            ... .HasOne<Country>()
-                        indexProperties = SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    indexProperties,
-                                    SyntaxFactory.GenericName(
-                                        SyntaxFactory.Identifier("HasOne"))
-                                    .WithTypeArgumentList(
-                                        SyntaxFactory.TypeArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                SyntaxFactory.IdentifierName(foreignIndexElement.UniqueIndex.Table.Name))))));
-
-                        //            ... .WithMany();
-                        indexProperties = SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    indexProperties,
-                                    SyntaxFactory.IdentifierName("WithMany")));
-
-                        //            ... .HasForeignKey(p => p.CountryId);
-                        indexProperties = SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    indexProperties,
-                                    SyntaxFactory.IdentifierName("HasForeignKey")))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(OnModelCreatingMethod.GetForeignKey(foreignIndexElement)))));
-
-                        //            ... .OnDelete(DeleteBehavior.Restrict)
-                        indexProperties = SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    indexProperties,
-                                    SyntaxFactory.IdentifierName("OnDelete")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("DeleteBehavior"),
-                                                SyntaxFactory.IdentifierName("Restrict"))))));
-
-                        //            modelBuilder.Entity<Province>().HasOne<Country>().WithMany().HasForeignKey(p => p.CountryId);
-                        statements.Add(SyntaxFactory.ExpressionStatement(indexProperties));
                     }
                 }
 
