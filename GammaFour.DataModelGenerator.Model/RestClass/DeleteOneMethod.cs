@@ -6,6 +6,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using GammaFour.DataModelGenerator.Model.RestClass;
     using Microsoft.CodeAnalysis;
@@ -415,45 +416,86 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.LiteralExpression(
                                                 SyntaxKind.FalseLiteralExpression))))))),
+                };
 
-                    //                if (this.dataModel.Accounts.Find(accountId) != null)
-                    //                {
-                    //                     <DeleteRow>
-                    //                }
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.NotEqualsExpression,
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
+                //                await this.ledger.Assets.EnterReadLockAsync().ConfigureAwait(false);
+                //                await this.ledger.BrokerFeeds.EnterReadLockAsync().ConfigureAwait(false);
+                //                await this.ledger.Models.EnterReadLockAsync().ConfigureAwait(false);
+                //                await this.ledger.Things.EnterReadLockAsync().ConfigureAwait(false);
+                var parentTables = from parentIndex in this.tableElement.ParentIndices
+                                   where !parentIndex.Columns.Where(cre => cre.Column.IsPrimaryKey).Any()
+                                   group parentIndex by parentIndex.UniqueIndex.Table into grouping
+                                   orderby grouping.Key
+                                   select grouping.Key;
+                foreach (var parentTable in parentTables)
+                {
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AwaitExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToCamelCase())),
+                                                    SyntaxFactory.IdentifierName(parentTable.Name.ToPlural())),
+                                                SyntaxFactory.IdentifierName("EnterReadLockAsync"))),
+                                        SyntaxFactory.IdentifierName("ConfigureAwait")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.LiteralExpression(
+                                                    SyntaxKind.FalseLiteralExpression))))))));
+                }
+
+                statements.AddRange(
+                    new StatementSyntax[]
+                    {
+                        //                if (this.dataModel.Accounts.Find(accountId) != null)
+                        //                {
+                        //                     <DeleteRow>
+                        //                }
+                        SyntaxFactory.IfStatement(
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.NotEqualsExpression,
+                                SyntaxFactory.InvocationExpression(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToCamelCase())),
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                    SyntaxFactory.IdentifierName("Find")))
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToCamelCase())),
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
+                                        SyntaxFactory.IdentifierName("Find")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        this.tableElement.PrimaryIndex.GetKeyAsFindArguments())),
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.NullLiteralExpression)),
+                            SyntaxFactory.Block(this.DeleteRow)),
+
+                        //                return this.Ok(account);
+                        SyntaxFactory.ReturnStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("Ok")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
-                                    this.tableElement.PrimaryIndex.GetKeyAsFindArguments())),
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.NullLiteralExpression)),
-                        SyntaxFactory.Block(this.DeleteRow)),
-
-                    //                return this.Ok(account);
-                    SyntaxFactory.ReturnStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("Ok")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))),
-                };
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))),
+                    });
 
                 // This is the complete block.
                 return statements;

@@ -6,6 +6,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using GammaFour.DataModelGenerator.Model.RestClass;
     using Microsoft.CodeAnalysis;
@@ -390,39 +391,21 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.LiteralExpression(
                                                 SyntaxKind.FalseLiteralExpression))))))),
+                };
 
-                    //                (var addedRow, var updatedRow) = await this.dataModel.Accounts.PutAsync(account).ConfigureAwait(false);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.TupleExpression(
-                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]
-                                    {
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.DeclarationExpression(
-                                                SyntaxFactory.IdentifierName(
-                                                    SyntaxFactory.Identifier(
-                                                        SyntaxFactory.TriviaList(),
-                                                        SyntaxKind.VarKeyword,
-                                                        "var",
-                                                        "var",
-                                                        SyntaxFactory.TriviaList())),
-                                                SyntaxFactory.SingleVariableDesignation(
-                                                    SyntaxFactory.Identifier("addedRow")))),
-                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.DeclarationExpression(
-                                                SyntaxFactory.IdentifierName(
-                                                    SyntaxFactory.Identifier(
-                                                        SyntaxFactory.TriviaList(),
-                                                        SyntaxKind.VarKeyword,
-                                                        "var",
-                                                        "var",
-                                                        SyntaxFactory.TriviaList())),
-                                                SyntaxFactory.SingleVariableDesignation(
-                                                    SyntaxFactory.Identifier("updatedRow")))),
-                                    })),
+                //                await this.ledger.Assets.EnterReadLockAsync().ConfigureAwait(false);
+                //                await this.ledger.BrokerFeeds.EnterReadLockAsync().ConfigureAwait(false);
+                //                await this.ledger.Models.EnterReadLockAsync().ConfigureAwait(false);
+                //                await this.ledger.Things.EnterReadLockAsync().ConfigureAwait(false);
+                var parentTables = from parentIndex in this.tableElement.ParentIndices
+                                   where !parentIndex.Columns.Where(cre => cre.Column.IsPrimaryKey).Any()
+                                   group parentIndex by parentIndex.UniqueIndex.Table into grouping
+                                   orderby grouping.Key
+                                   select grouping.Key;
+                foreach (var parentTable in parentTables)
+                {
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.AwaitExpression(
                                 SyntaxFactory.InvocationExpression(
                                     SyntaxFactory.MemberAccessExpression(
@@ -436,52 +419,111 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.ThisExpression(),
                                                         SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToCamelCase())),
-                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                                SyntaxFactory.IdentifierName("PutAsync")))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))))),
+                                                    SyntaxFactory.IdentifierName(parentTable.Name.ToPlural())),
+                                                SyntaxFactory.IdentifierName("EnterReadLockAsync"))),
                                         SyntaxFactory.IdentifierName("ConfigureAwait")))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
                                         SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                             SyntaxFactory.Argument(
                                                 SyntaxFactory.LiteralExpression(
-                                                    SyntaxKind.FalseLiteralExpression)))))))),
+                                                    SyntaxKind.FalseLiteralExpression))))))));
+                }
 
-                    //                if (addedRow != null)
-                    //                {
-                    //                     <AddRow>
-                    //                }
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.NotEqualsExpression,
-                            SyntaxFactory.IdentifierName("addedRow"),
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.NullLiteralExpression)),
-                        SyntaxFactory.Block(this.AddRow)),
+                statements.AddRange(
+                    new StatementSyntax[]
+                    {
+                        //                (var addedRow, var updatedRow) = await this.dataModel.Accounts.PutAsync(account).ConfigureAwait(false);
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.TupleExpression(
+                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                        new SyntaxNodeOrToken[]
+                                        {
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.DeclarationExpression(
+                                                    SyntaxFactory.IdentifierName(
+                                                        SyntaxFactory.Identifier(
+                                                            SyntaxFactory.TriviaList(),
+                                                            SyntaxKind.VarKeyword,
+                                                            "var",
+                                                            "var",
+                                                            SyntaxFactory.TriviaList())),
+                                                    SyntaxFactory.SingleVariableDesignation(
+                                                        SyntaxFactory.Identifier("addedRow")))),
+                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.DeclarationExpression(
+                                                    SyntaxFactory.IdentifierName(
+                                                        SyntaxFactory.Identifier(
+                                                            SyntaxFactory.TriviaList(),
+                                                            SyntaxKind.VarKeyword,
+                                                            "var",
+                                                            "var",
+                                                            SyntaxFactory.TriviaList())),
+                                                    SyntaxFactory.SingleVariableDesignation(
+                                                        SyntaxFactory.Identifier("updatedRow")))),
+                                        })),
+                                SyntaxFactory.AwaitExpression(
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.InvocationExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.ThisExpression(),
+                                                            SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToCamelCase())),
+                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
+                                                    SyntaxFactory.IdentifierName("PutAsync")))
+                                            .WithArgumentList(
+                                                SyntaxFactory.ArgumentList(
+                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))))),
+                                            SyntaxFactory.IdentifierName("ConfigureAwait")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.LiteralExpression(
+                                                        SyntaxKind.FalseLiteralExpression)))))))),
 
-                    //                if (updatedRow != null)
-                    //                {
-                    //                     <UpdateRow>
-                    //                }
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.NotEqualsExpression,
-                            SyntaxFactory.IdentifierName("updatedRow"),
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.NullLiteralExpression)),
-                        SyntaxFactory.Block(this.UpdateRow)),
+                        //                if (addedRow != null)
+                        //                {
+                        //                     <AddRow>
+                        //                }
+                        SyntaxFactory.IfStatement(
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.NotEqualsExpression,
+                                SyntaxFactory.IdentifierName("addedRow"),
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.NullLiteralExpression)),
+                            SyntaxFactory.Block(this.AddRow)),
 
-                    //                throw new InvalidOperationException();
-                    SyntaxFactory.ThrowStatement(
-                        SyntaxFactory.ObjectCreationExpression(
-                            SyntaxFactory.IdentifierName("InvalidOperationException"))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList())),
-                };
+                        //                if (updatedRow != null)
+                        //                {
+                        //                     <UpdateRow>
+                        //                }
+                        SyntaxFactory.IfStatement(
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.NotEqualsExpression,
+                                SyntaxFactory.IdentifierName("updatedRow"),
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.NullLiteralExpression)),
+                            SyntaxFactory.Block(this.UpdateRow)),
+
+                        //                throw new InvalidOperationException();
+                        SyntaxFactory.ThrowStatement(
+                            SyntaxFactory.ObjectCreationExpression(
+                                SyntaxFactory.IdentifierName("InvalidOperationException"))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList())),
+                    });
 
                 // This is the complete block.
                 return statements;

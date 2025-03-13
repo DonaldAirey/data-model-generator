@@ -6,6 +6,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using GammaFour.DataModelGenerator.Model.RestClass;
     using Microsoft.CodeAnalysis;
@@ -477,103 +478,144 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.LiteralExpression(
                                                 SyntaxKind.FalseLiteralExpression))))))),
+                };
 
-                    //                var deletedRows = await this.dataModel.Accounts.DeleteAsync(accounts).ConfigureAwait(false);
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(
-                                SyntaxFactory.Identifier(
-                                    SyntaxFactory.TriviaList(),
-                                    SyntaxKind.VarKeyword,
-                                    "var",
-                                    "var",
-                                    SyntaxFactory.TriviaList())))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("deletedRows"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.AwaitExpression(
-                                            SyntaxFactory.InvocationExpression(
+                //                await this.ledger.Assets.EnterReadLockAsync().ConfigureAwait(false);
+                //                await this.ledger.BrokerFeeds.EnterReadLockAsync().ConfigureAwait(false);
+                //                await this.ledger.Models.EnterReadLockAsync().ConfigureAwait(false);
+                //                await this.ledger.Things.EnterReadLockAsync().ConfigureAwait(false);
+                var parentTables = from parentIndex in this.tableElement.ParentIndices
+                                   where !parentIndex.Columns.Where(cre => cre.Column.IsPrimaryKey).Any()
+                                   group parentIndex by parentIndex.UniqueIndex.Table into grouping
+                                   orderby grouping.Key
+                                   select grouping.Key;
+                foreach (var parentTable in parentTables)
+                {
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AwaitExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.InvocationExpression(
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToCamelCase())),
+                                                    SyntaxFactory.IdentifierName(parentTable.Name.ToPlural())),
+                                                SyntaxFactory.IdentifierName("EnterReadLockAsync"))),
+                                        SyntaxFactory.IdentifierName("ConfigureAwait")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.LiteralExpression(
+                                                    SyntaxKind.FalseLiteralExpression))))))));
+                }
+
+                statements.AddRange(
+                    new StatementSyntax[]
+                    {
+                        //                var deletedRows = await this.dataModel.Accounts.DeleteAsync(accounts).ConfigureAwait(false);
+                        SyntaxFactory.LocalDeclarationStatement(
+                            SyntaxFactory.VariableDeclaration(
+                                SyntaxFactory.IdentifierName(
+                                    SyntaxFactory.Identifier(
+                                        SyntaxFactory.TriviaList(),
+                                        SyntaxKind.VarKeyword,
+                                        "var",
+                                        "var",
+                                        SyntaxFactory.TriviaList())))
+                            .WithVariables(
+                                SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                    SyntaxFactory.VariableDeclarator(
+                                        SyntaxFactory.Identifier("deletedRows"))
+                                    .WithInitializer(
+                                        SyntaxFactory.EqualsValueClause(
+                                            SyntaxFactory.AwaitExpression(
+                                                SyntaxFactory.InvocationExpression(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.InvocationExpression(
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.MemberAccessExpression(
                                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                                    SyntaxFactory.ThisExpression(),
-                                                                    SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToCamelCase())),
-                                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                                            SyntaxFactory.IdentifierName("DeleteAsync")))
-                                                    .WithArgumentList(
-                                                        SyntaxFactory.ArgumentList(
-                                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToVariableName()))))),
-                                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
-                                            .WithArgumentList(
-                                                SyntaxFactory.ArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                        SyntaxFactory.Argument(
-                                                            SyntaxFactory.LiteralExpression(
-                                                                SyntaxKind.FalseLiteralExpression))))))))))),
+                                                                    SyntaxFactory.MemberAccessExpression(
+                                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                                        SyntaxFactory.ThisExpression(),
+                                                                        SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToCamelCase())),
+                                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
+                                                                SyntaxFactory.IdentifierName("DeleteAsync")))
+                                                        .WithArgumentList(
+                                                            SyntaxFactory.ArgumentList(
+                                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                                    SyntaxFactory.Argument(
+                                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToVariableName()))))),
+                                                        SyntaxFactory.IdentifierName("ConfigureAwait")))
+                                                .WithArgumentList(
+                                                    SyntaxFactory.ArgumentList(
+                                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.LiteralExpression(
+                                                                    SyntaxKind.FalseLiteralExpression))))))))))),
 
-                    //                this.dataModelContext.Accounts.RemoveRange(deletedRows);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName($"{this.tableElement.Document.Name.ToCamelCase()}Context")),
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                SyntaxFactory.IdentifierName("RemoveRange")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("deletedRows")))))),
-
-                    //                    await this.dataModelContext.SaveChangesAsync();
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AwaitExpression(
+                        //                this.dataModelContext.Accounts.RemoveRange(deletedRows);
+                        SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName($"{this.tableElement.Document.Name.ToCamelCase()}Context")),
-                                    SyntaxFactory.IdentifierName("SaveChangesAsync"))))),
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName($"{this.tableElement.Document.Name.ToCamelCase()}Context")),
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
+                                    SyntaxFactory.IdentifierName("RemoveRange")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName("deletedRows")))))),
 
-                    //                transactionScope.Complete();
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("transactionScope"),
-                                SyntaxFactory.IdentifierName("Complete")))),
+                        //                    await this.dataModelContext.SaveChangesAsync();
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AwaitExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName($"{this.tableElement.Document.Name.ToCamelCase()}Context")),
+                                        SyntaxFactory.IdentifierName("SaveChangesAsync"))))),
 
-                    //                    return this.Ok(deletedRows);
-                    SyntaxFactory.ReturnStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("Ok")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("deletedRows")))))),
-                };
+                        //                transactionScope.Complete();
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("transactionScope"),
+                                    SyntaxFactory.IdentifierName("Complete")))),
+
+                        //                    return this.Ok(deletedRows);
+                        SyntaxFactory.ReturnStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("Ok")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName("deletedRows")))))),
+                    });
 
                 // This is the complete block.
                 return statements;

@@ -539,7 +539,10 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                                                 SyntaxKind.FalseLiteralExpression))))))),
                 };
 
-                // Lock each of the unique parents (that isn't associated with a primary key).
+                //                await this.ledger.Assets.EnterReadLockAsync().ConfigureAwait(false);
+                //                await this.ledger.BrokerFeeds.EnterReadLockAsync().ConfigureAwait(false);
+                //                await this.ledger.Models.EnterReadLockAsync().ConfigureAwait(false);
+                //                await this.ledger.Things.EnterReadLockAsync().ConfigureAwait(false);
                 var parentTables = from parentIndex in this.tableElement.ParentIndices
                                    where !parentIndex.Columns.Where(cre => cre.Column.IsPrimaryKey).Any()
                                    group parentIndex by parentIndex.UniqueIndex.Table into grouping
@@ -547,30 +550,30 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                                    select grouping.Key;
                 foreach (var parentTable in parentTables)
                 {
-                    //                await this.dataModel.Allocations.EnterWriteLockAsync().ConfigureAwait(false);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AwaitExpression(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AwaitExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.InvocationExpression(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToCamelCase())),
-                                                SyntaxFactory.IdentifierName(parentTable.Name.ToPlural())),
-                                            SyntaxFactory.IdentifierName("EnterWriteLockAsync"))),
-                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.FalseLiteralExpression)))))));
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToCamelCase())),
+                                                    SyntaxFactory.IdentifierName(parentTable.Name.ToPlural())),
+                                                SyntaxFactory.IdentifierName("EnterReadLockAsync"))),
+                                        SyntaxFactory.IdentifierName("ConfigureAwait")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.LiteralExpression(
+                                                    SyntaxKind.FalseLiteralExpression))))))));
                 }
 
                 statements.AddRange(

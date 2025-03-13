@@ -207,10 +207,9 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>
             {
-                new DbContextField(this.tableElement.Document),
                 new DataModelField(this.tableElement.Document),
+                new DbContextField(this.tableElement.Document),
                 new LoggerField(),
-                new TransactionTimeoutField(),
             };
 
             // Alphabetize and add the fields as members of the class.
@@ -231,7 +230,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // Add the constructors.
-            members = members.Add(new ConstructorDbContextEtc(this.tableElement).Syntax);
+            members = members.Add(new Constructor(this.tableElement).Syntax);
 
             // Return the new collection of members.
             return members;
