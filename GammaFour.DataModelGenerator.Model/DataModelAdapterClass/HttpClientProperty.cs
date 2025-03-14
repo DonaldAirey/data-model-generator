@@ -1,4 +1,4 @@
-// <copyright file="HttpClientField.cs" company="Gamma Four, Inc.">
+// <copyright file="HttpClientProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,29 +14,39 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
     /// <summary>
     /// Creates a field to hold the current contents of the row.
     /// </summary>
-    public class HttpClientField : SyntaxElement
+    public class HttpClientProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="HttpClientField"/> class.
+        /// Initializes a new instance of the <see cref="HttpClientProperty"/> class.
         /// </summary>
-        public HttpClientField()
+        public HttpClientProperty()
         {
             // Initialize the object.
-            this.Name = "httpClient";
+            this.Name = "HttpClient";
 
             //        /// <summary>
-            //        /// The current contents of the row.
+            //        /// Gets the HTTP client.
             //        /// </summary>
-            //        private HttpClient httpClient;
-            this.Syntax = SyntaxFactory.FieldDeclaration(
-                SyntaxFactory.VariableDeclaration(
-                    SyntaxFactory.IdentifierName("HttpClient"))
-                .WithVariables(
-                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                        SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier("httpClient")))))
-            .WithModifiers(HttpClientField.Modifiers)
-            .WithLeadingTrivia(HttpClientField.LeadingTrivia);
+            //        public HttpClient HttpClient { get; } = httpClient;
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
+                SyntaxFactory.IdentifierName("HttpClient"),
+                SyntaxFactory.Identifier(this.Name))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithAccessorList(
+                SyntaxFactory.AccessorList(
+                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
+                        SyntaxFactory.AccessorDeclaration(
+                            SyntaxKind.GetAccessorDeclaration)
+                        .WithSemicolonToken(
+                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
+            .WithInitializer(
+                SyntaxFactory.EqualsValueClause(
+                    SyntaxFactory.IdentifierName("httpClient")))
+            .WithSemicolonToken(
+                SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+            .WithLeadingTrivia(HttpClientProperty.LeadingTrivia);
         }
 
         /// <summary>
@@ -73,7 +83,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " The master row version.",
+                                                " Gets the HTTP client.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -96,22 +106,6 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // private
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
-                    });
             }
         }
     }

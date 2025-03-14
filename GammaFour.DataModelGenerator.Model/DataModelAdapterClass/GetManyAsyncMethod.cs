@@ -136,7 +136,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.ThisExpression(),
-                                                                SyntaxFactory.IdentifierName("httpClient")),
+                                                                SyntaxFactory.IdentifierName("HttpClient")),
                                                             SyntaxFactory.IdentifierName("SendAsync")))
                                                     .WithArgumentList(
                                                         SyntaxFactory.ArgumentList(

@@ -33,16 +33,23 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
             this.Name = $"{this.xmlSchemaDocument.Name}Adapter";
 
             //    /// <summary>
-            //    /// A <see cref="DataModelAdapter"/>.
+            //    /// A <see cref="DataModelAdapter"/> adapter.
             //    /// </summary>
-            //    public class DataModelAdapter
+            //    public class LedgerAdapter(HttpClient httpClient)
             //    {
             //        <Members>
             //    }
             this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
-            .WithModifiers(
-                SyntaxFactory.TokenList(
-                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+                .WithModifiers(
+                    SyntaxFactory.TokenList(
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+                .WithParameterList(
+                    SyntaxFactory.ParameterList(
+                        SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
+                            SyntaxFactory.Parameter(
+                                SyntaxFactory.Identifier("httpClient"))
+                            .WithType(
+                                SyntaxFactory.IdentifierName("HttpClient")))))
             .WithMembers(this.Members)
             .WithLeadingTrivia(this.LeadingTrivia);
         }
@@ -79,7 +86,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" A <see cref=\"{this.xmlSchemaDocument.Name}\"/>.",
+                                                $" A <see cref=\"{this.xmlSchemaDocument.Name}\"/> adapter.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -110,8 +117,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = Class.CreatePrivateInstanceFields(members);
-                members = this.CreateConstructors(members);
+                members = Class.CreatePublicInstanceProperties(members);
                 members = this.CreatePublicInstanceMethods(members);
                 return members;
             }
@@ -122,12 +128,12 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The structure members with the fields added.</returns>
-        private static SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
+        private static SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceProperties(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the private fields.
             List<SyntaxElement> properties = new List<SyntaxElement>
             {
-                new HttpClientField(),
+                new HttpClientProperty(),
             };
 
             // Alphabetize and add the fields as members of the class.
@@ -166,20 +172,6 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
             {
                 members = members.Add(syntaxElement.Syntax);
             }
-
-            // Return the new collection of members.
-            return members;
-        }
-
-        /// <summary>
-        /// Create the private instance fields.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The structure members with the fields added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // The volatile data model doesn't try to load the data from a DbContext, the non-volatile data model does.
-            members = members.Add(new Constructor(this.xmlSchemaDocument).Syntax);
 
             // Return the new collection of members.
             return members;
