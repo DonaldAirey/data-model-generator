@@ -394,7 +394,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             // Lock the row and perform optimistic concurrency check.
             var statements = new List<StatementSyntax>
             {
-                //            await account.EnterWriteLockAsync().ConfigureAwait(false);
+                //            await updatedRow.EnterWriteLockAsync().ConfigureAwait(false);
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AwaitExpression(
                         SyntaxFactory.InvocationExpression(
@@ -403,7 +403,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.InvocationExpression(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                        SyntaxFactory.IdentifierName("updatedRow"),
                                         SyntaxFactory.IdentifierName("EnterWriteLockAsync"))),
                                 SyntaxFactory.IdentifierName("ConfigureAwait")))
                         .WithArgumentList(
@@ -555,7 +555,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             // Lock the row and perform optimistic concurrency check.
             var statements = new List<StatementSyntax>
             {
-                //            await account.EnterWriteLockAsync().ConfigureAwait(false);
+                //            await deletedRow.EnterWriteLockAsync().ConfigureAwait(false);
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AwaitExpression(
                         SyntaxFactory.InvocationExpression(
@@ -564,7 +564,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.InvocationExpression(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                        SyntaxFactory.IdentifierName("deletedRow"),
                                         SyntaxFactory.IdentifierName("EnterWriteLockAsync"))),
                                 SyntaxFactory.IdentifierName("ConfigureAwait")))
                         .WithArgumentList(
