@@ -552,7 +552,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         /// <returns>The statements to delete a row.</returns>
         private static IEnumerable<StatementSyntax> DeleteRowCore(TableElement tableElement)
         {
-            // Lock the row and perform optimistic concurrency check.
+            // Lock the row.
             var statements = new List<StatementSyntax>
             {
                 //            await deletedRow.EnterWriteLockAsync().ConfigureAwait(false);
@@ -651,6 +651,58 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 {
                     statements.AddRange(RowUtilities.RemoveFromParent(tableElement.Name.ToVariableName(), foreignIndexElement));
                 }
+            }
+
+            // Delete the row from each of the unique key indices.
+            foreach (var uniqueKeyElement in tableElement.UniqueIndexes.Where(ui => !ui.IsPrimaryIndex))
+            {
+                //            this.ThingNameIndex.Remove(thing);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
+                                SyntaxFactory.IdentifierName("Remove")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())))))));
+
+                //            this.rollbackStack.Push(() => this.ThingNameIndex.Add(thing));
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("rollbackStack")),
+                                SyntaxFactory.IdentifierName("Push")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.ParenthesizedLambdaExpression()
+                                        .WithExpressionBody(
+                                            SyntaxFactory.InvocationExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.ThisExpression(),
+                                                        SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
+                                                    SyntaxFactory.IdentifierName("Add")))
+                                            .WithArgumentList(
+                                                SyntaxFactory.ArgumentList(
+                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()))))))))))));
             }
 
             // Delete the row from the table.

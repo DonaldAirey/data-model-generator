@@ -2,7 +2,7 @@
   "profiles": {
     "Desktop": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop\\Data\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop\\Data\\Ledger.Designer.cs\" -ns \"ThetaRex.OpenBook\""
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop.Data\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop.Data\\Ledger.Designer.cs\" -ns \"ThetaRex.OpenBook\""
     },
     "EOD History": {
       "commandName": "Project",
@@ -20,6 +20,10 @@
       "commandName": "Project",
       "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\index-simulation\\Index Simulation\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\index-simulation\\Index Simulation\\Ledger.Designer.cs\" -ns \"IndexSimulation\""
     },
+    "Ledger": {
+      "commandName": "Project",
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-ledger\\ThetaRex.OpenBook.Data\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-ledger\\ThetaRex.OpenBook.Data\\Ledger.Designer.cs\" -ns \"ThetaRex.OpenBook\""
+    },
     "Market Ledger": {
       "commandName": "Project",
       "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-market\\ThetaRex.Market.Data\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-market\\ThetaRex.Market.Data\\Ledger.Designer.cs\" -ns \"ThetaRex.OpenBook\""
@@ -31,10 +35,6 @@
     "Prototype": {
       "commandName": "Project",
       "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\LedgerPrototype\\LedgerPrototype\\Generated\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\LedgerPrototype\\LedgerPrototype\\Generated\\Ledger.Designer.cs\" -ns \"LedgerPrototype.Generated\""
-    },
-    "Web API": {
-      "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-webapi\\ThetaRex.OpenBook.Data\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-webapi\\ThetaRex.OpenBook.Data\\Ledger.Designer.cs\" -ns \"ThetaRex.OpenBook\""
     }
   }
 }
