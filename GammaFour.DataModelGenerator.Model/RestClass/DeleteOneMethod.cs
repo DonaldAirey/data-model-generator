@@ -60,7 +60,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                         SyntaxFactory.Token(SyntaxKind.AsyncKeyword),
                     }))
-            .WithParameterList(this.Parameters)
+            .WithParameterList(this.ParameterList)
             .WithBody(this.Body)
             .WithLeadingTrivia(this.LeadingTrivia);
         }
@@ -324,7 +324,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private ParameterListSyntax Parameters
+        private ParameterListSyntax ParameterList
         {
             get
             {

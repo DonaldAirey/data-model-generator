@@ -34,7 +34,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                     SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                 SyntaxFactory.Identifier(this.Name))
             .WithModifiers(InDoubtMethod.Modifiers)
-            .WithParameterList(InDoubtMethod.Parameters)
+            .WithParameterList(InDoubtMethod.ParameterList)
             .WithBody(InDoubtMethod.Body)
             .WithLeadingTrivia(InDoubtMethod.LeadingTrivia);
         }
@@ -119,7 +119,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private static ParameterListSyntax Parameters
+        private static ParameterListSyntax ParameterList
         {
             get
             {

@@ -43,7 +43,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelContextClass
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
                     SyntaxFactory.Identifier($"{xmlSchemaDocument.Name}Context"))
                 .WithModifiers(ConstructorDbContextOptions.Modifiers)
-                .WithParameterList(this.Parameters)
+                .WithParameterList(this.ParameterList)
                 .WithInitializer(ConstructorDbContextOptions.Initializer)
                 .WithBody(ConstructorDbContextOptions.Body)
                 .WithLeadingTrivia(this.LeadingTrivia);
@@ -446,7 +446,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelContextClass
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private ParameterListSyntax Parameters
+        private ParameterListSyntax ParameterList
         {
             get
             {

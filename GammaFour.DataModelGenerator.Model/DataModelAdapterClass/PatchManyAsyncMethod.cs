@@ -62,18 +62,31 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
                     }))
             .WithParameterList(
                 SyntaxFactory.ParameterList(
-                    SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
-                        SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier(this.tableElement.Name.ToPlural().ToVariableName()))
-                        .WithType(
-                            SyntaxFactory.GenericName(
-                                SyntaxFactory.Identifier("IEnumerable"))
-                            .WithTypeArgumentList(
-                                SyntaxFactory.TypeArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                        SyntaxFactory.IdentifierName(this.tableElement.Name))))))))
-                .WithBody(this.Body)
-                .WithLeadingTrivia(this.LeadingTrivia);
+                    SyntaxFactory.SeparatedList<ParameterSyntax>(
+                        new SyntaxNodeOrToken[]
+                        {
+                            SyntaxFactory.Parameter(
+                                SyntaxFactory.Identifier(this.tableElement.Name.ToPlural().ToVariableName()))
+                            .WithType(
+                                SyntaxFactory.GenericName(
+                                    SyntaxFactory.Identifier("IEnumerable"))
+                                .WithTypeArgumentList(
+                                    SyntaxFactory.TypeArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name))))),
+                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                            SyntaxFactory.Parameter(
+                                SyntaxFactory.Identifier("cancellationToken"))
+                            .WithType(
+                                SyntaxFactory.IdentifierName("CancellationToken"))
+                            .WithDefault(
+                                SyntaxFactory.EqualsValueClause(
+                                    SyntaxFactory.LiteralExpression(
+                                        SyntaxKind.DefaultLiteralExpression,
+                                        SyntaxFactory.Token(SyntaxKind.DefaultKeyword)))),
+                        })))
+            .WithBody(this.Body)
+            .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
@@ -175,6 +188,28 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                     $" <param name=\"{this.tableElement.Name.ToPlural().ToCamelCase()}\">The set of <see cref=\"{this.tableElement.Name}\"/> rows to delete.</param>",
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                                SyntaxFactory.XmlTextNewLine(
+                                                    SyntaxFactory.TriviaList(),
+                                                    Environment.NewLine,
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                            }))))),
+
+                    //        /// <param name="cancellationToken">The cancellation token.</param>
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                    SyntaxFactory.XmlText()
+                                    .WithTextTokens(
+                                        SyntaxFactory.TokenList(
+                                            new[]
+                                            {
+                                                SyntaxFactory.XmlTextLiteral(
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                    " <param name=\"cancellationToken\">The cancellation token.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -298,7 +333,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
                                                     SyntaxFactory.Literal("application/json"))),
                                         }))))),
 
-                    //                using var httpResponseMessage = await this.httpClient.SendAsync(httpRequestMessage).ConfigureAwait(true);
+                    //                using var httpResponseMessage = await this.HttpClient.SendAsync(httpRequestMessage, cancellationToken).ConfigureAwait(true);
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(
@@ -328,9 +363,15 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
                                                             SyntaxFactory.IdentifierName("SendAsync")))
                                                     .WithArgumentList(
                                                         SyntaxFactory.ArgumentList(
-                                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.IdentifierName("httpRequestMessage"))))),
+                                                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                                new SyntaxNodeOrToken[]
+                                                                {
+                                                                    SyntaxFactory.Argument(
+                                                                        SyntaxFactory.IdentifierName("httpRequestMessage")),
+                                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                                    SyntaxFactory.Argument(
+                                                                        SyntaxFactory.IdentifierName("cancellationToken")),
+                                                                }))),
                                                     SyntaxFactory.IdentifierName("ConfigureAwait")))
                                             .WithArgumentList(
                                                 SyntaxFactory.ArgumentList(

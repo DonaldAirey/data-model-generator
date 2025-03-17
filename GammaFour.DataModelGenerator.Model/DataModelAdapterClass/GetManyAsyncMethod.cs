@@ -35,7 +35,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
             //        /// Gets the <see cref="Account"/> rows.
             //        /// </summary>
             //        /// <returns>The collection of <see cref="Account"/> rows.</returns>
-            //        public async Task<IEnumerable<Account>> GetAccountsAsync()
+            //        public async Task<IEnumerable<Account>> GetAccountsAsync(CancellationToken cancellationToken = default)
             //        {
             //            <Body>
             //        }
@@ -59,6 +59,18 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                         SyntaxFactory.Token(SyntaxKind.AsyncKeyword),
                     }))
+            .WithParameterList(
+                SyntaxFactory.ParameterList(
+                    SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
+                        SyntaxFactory.Parameter(
+                            SyntaxFactory.Identifier("cancellationToken"))
+                        .WithType(
+                            SyntaxFactory.IdentifierName("CancellationToken"))
+                        .WithDefault(
+                                SyntaxFactory.EqualsValueClause(
+                                    SyntaxFactory.LiteralExpression(
+                                        SyntaxKind.DefaultLiteralExpression,
+                                        SyntaxFactory.Token(SyntaxKind.DefaultKeyword)))))))
             .WithBody(this.Body)
             .WithLeadingTrivia(this.LeadingTrivia);
         }
@@ -110,7 +122,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
                     .WithUsingKeyword(
                         SyntaxFactory.Token(SyntaxKind.UsingKeyword)),
 
-                    //            using var httpResponseMessage = await this.httpClient.SendAsync(httpRequestMessage).ConfigureAwait(true);
+                    //                using var httpResponseMessage = await this.HttpClient.SendAsync(httpRequestMessage, cancellationToken).ConfigureAwait(true);
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(
@@ -140,9 +152,15 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
                                                             SyntaxFactory.IdentifierName("SendAsync")))
                                                     .WithArgumentList(
                                                         SyntaxFactory.ArgumentList(
-                                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.IdentifierName("httpRequestMessage"))))),
+                                                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                                new SyntaxNodeOrToken[]
+                                                                {
+                                                                    SyntaxFactory.Argument(
+                                                                        SyntaxFactory.IdentifierName("httpRequestMessage")),
+                                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                                    SyntaxFactory.Argument(
+                                                                        SyntaxFactory.IdentifierName("cancellationToken")),
+                                                                }))),
                                                     SyntaxFactory.IdentifierName("ConfigureAwait")))
                                             .WithArgumentList(
                                                 SyntaxFactory.ArgumentList(
@@ -310,6 +328,28 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
+
+                    //        /// <param name="cancellationToken">The cancellation token.</param>
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                    SyntaxFactory.XmlText()
+                                    .WithTextTokens(
+                                        SyntaxFactory.TokenList(
+                                            new[]
+                                            {
+                                                SyntaxFactory.XmlTextLiteral(
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                    " <param name=\"cancellationToken\">The cancellation token.</param>",
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                                SyntaxFactory.XmlTextNewLine(
+                                                    SyntaxFactory.TriviaList(),
+                                                    Environment.NewLine,
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                            }))))),
 
                     //        /// <returns>A <see cref=\"Task\"/> representing the asynchronous operation.</returns>
                     SyntaxFactory.Trivia(

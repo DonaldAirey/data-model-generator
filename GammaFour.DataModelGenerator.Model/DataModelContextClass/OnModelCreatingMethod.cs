@@ -42,7 +42,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelContextClass
                     SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
                 SyntaxFactory.Identifier(this.Name))
             .WithModifiers(OnModelCreatingMethod.Modifiers)
-            .WithParameterList(OnModelCreatingMethod.Parameters)
+            .WithParameterList(OnModelCreatingMethod.ParameterList)
             .WithBody(this.Body)
             .WithLeadingTrivia(OnModelCreatingMethod.LeadingTrivia);
         }
@@ -105,7 +105,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelContextClass
         /// <summary>
         /// Gets the list of parameters.
         /// </summary>
-        private static ParameterListSyntax Parameters
+        private static ParameterListSyntax ParameterList
         {
             get
             {

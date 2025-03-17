@@ -10,7 +10,7 @@
     },
     "Loader Ledger": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-loader\\OpenBook Loader\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-loader\\OpenBook Loader\\Ledger.Designer.cs\" -ns \"ThetaRex.OpenBook\""
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-loader\\Loader\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-loader\\Loader\\Ledger.Designer.cs\" -ns \"ThetaRex.OpenBook\""
     },
     "Loader Market": {
       "commandName": "Project",
