@@ -333,7 +333,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         public static IEnumerable<StatementSyntax> DeleteRow(TableElement tableElement)
         {
             // Find the row and delete it.
-            return new List<StatementSyntax>
+            var statements = new List<StatementSyntax>
             {
                 //            if (this.dictionary.TryGetValue(thingId, out var deletedRow))
                 //            {
@@ -382,6 +382,49 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.IdentifierName("deletedRow"),
                                     SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())))))),
             };
+
+            // Adjust the row version of the record and the data model.
+            if (tableElement.Document.IsMaster)
+            {
+                //            deletedRow.RowVersion = this.DataModel.IncrementRowVersion();
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("deletedRow"),
+                                SyntaxFactory.IdentifierName("RowVersion")),
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
+                                    SyntaxFactory.IdentifierName("IncrementRowVersion"))))));
+            }
+            else
+            {
+                //            this.DataModel.RowVersion = deletedRow.RowVersion;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
+                                SyntaxFactory.IdentifierName("RowVersion")),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("deletedRow"),
+                                SyntaxFactory.IdentifierName("RowVersion")))));
+            }
+
+            return statements;
         }
 
         /// <summary>
@@ -759,46 +802,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                                 SyntaxFactory.IdentifierName("deletedRow")),
                                                         }))))))))),
                 });
-
-            if (tableElement.Document.IsMaster)
-            {
-                //            deletedRow.RowVersion = this.DataModel.IncrementRowVersion();
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("deletedRow"),
-                                SyntaxFactory.IdentifierName("RowVersion")),
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
-                                    SyntaxFactory.IdentifierName("IncrementRowVersion"))))));
-            }
-            else
-            {
-                //            this.DataModel.RowVersion = deletedRow.RowVersion;
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
-                                SyntaxFactory.IdentifierName("RowVersion")),
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("deletedRow"),
-                                SyntaxFactory.IdentifierName("RowVersion")))));
-            }
 
             statements.AddRange(
                 new StatementSyntax[]
