@@ -137,6 +137,31 @@ namespace GammaFour.DataModelGenerator.Model.DataModelContextClass
                 // This will configure each of the tables and their indices.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
+                    //            modelBuilder.Entity<Account>().ToTable("Account");
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.IdentifierName("modelBuilder"),
+                                            SyntaxFactory.GenericName(
+                                                SyntaxFactory.Identifier("Entity"))
+                                            .WithTypeArgumentList(
+                                                SyntaxFactory.TypeArgumentList(
+                                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                        SyntaxFactory.IdentifierName(tableElement.Name)))))),
+                                    SyntaxFactory.IdentifierName("ToTable")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                SyntaxFactory.Literal(tableElement.Name))))))));
+
                     // Used as a variable when constructing the lambda expression.
                     string abbreviation = tableElement.Name[0].ToString(CultureInfo.InvariantCulture).ToLowerInvariant();
 
