@@ -30,7 +30,7 @@
     },
     "Market Market": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-market\\ThetaRex.Market.Data\\Market.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-market\\ThetaRex.Market.Data\\Market.Designer.cs\" -ns \"ThetaRex.Market.Data\""
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-loader\\Loader\\Market.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-loader\\Loader\\Market.Designer.cs\" -ns \"ThetaRex.Market.Data\""
     },
     "Prototype": {
       "commandName": "Project",

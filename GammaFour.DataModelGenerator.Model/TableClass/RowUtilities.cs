@@ -277,58 +277,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         /// A range of statements to add one row.
         /// </summary>
         /// <param name="tableElement">The table element.</param>
-        /// <param name="includePrimaryIndex">True to include the primary index.</param>
-        /// <returns>A collection of statements that add a row.</returns>
-        public static IEnumerable<StatementSyntax> CreateParentRowCache(TableElement tableElement, bool includePrimaryIndex = true)
-        {
-            // Find the row and delete it.
-            var statements = new List<StatementSyntax>();
-
-            //            var parentAccounts = new HashSet<Account>();
-            //            var parentAssets = new HashSet<Asset>();
-            //            var parentThings = new HashSet<Thing>();
-            var parentTables = from parentIndex in tableElement.ParentIndices
-                               where includePrimaryIndex || !parentIndex.Columns.Where(cre => cre.Column.IsPrimaryKey).Any()
-                               group parentIndex by parentIndex.UniqueIndex.Table into grouping
-                               orderby grouping.Key
-                               select grouping.Key;
-            foreach (var parentTable in parentTables)
-            {
-                //            var parentThings = new HashSet<Thing>();
-                statements.Add(
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(
-                                SyntaxFactory.Identifier(
-                                    SyntaxFactory.TriviaList(),
-                                    SyntaxKind.VarKeyword,
-                                    "var",
-                                    "var",
-                                    SyntaxFactory.TriviaList())))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier($"parent{parentTable.Name.ToPlural()}"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.GenericName(
-                                                SyntaxFactory.Identifier("HashSet"))
-                                            .WithTypeArgumentList(
-                                                SyntaxFactory.TypeArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                        SyntaxFactory.IdentifierName(parentTable.Name)))))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList())))))));
-            }
-
-            return statements;
-        }
-
-        /// <summary>
-        /// A range of statements to add one row.
-        /// </summary>
-        /// <param name="tableElement">The table element.</param>
         /// <returns>A collection of statements that add a row.</returns>
         public static IEnumerable<StatementSyntax> DeleteRow(TableElement tableElement)
         {
@@ -562,6 +510,66 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                     }
                 }
             }
+
+            statements.AddRange(
+                new StatementSyntax[]
+                {
+                    //            this.commitStack.Push(() => this.RowChanged?.Invoke(this, new RowChangedEventArgs<Thing>(DataAction.Update, updatedRow)));
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("commitStack")),
+                                SyntaxFactory.IdentifierName("Push")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.ParenthesizedLambdaExpression()
+                                        .WithExpressionBody(
+                                            SyntaxFactory.ConditionalAccessExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName("RowChanged")),
+                                                SyntaxFactory.InvocationExpression(
+                                                    SyntaxFactory.MemberBindingExpression(
+                                                        SyntaxFactory.IdentifierName("Invoke")))
+                                                .WithArgumentList(
+                                                    SyntaxFactory.ArgumentList(
+                                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                            new SyntaxNodeOrToken[]
+                                                            {
+                                                                SyntaxFactory.Argument(
+                                                                    SyntaxFactory.ThisExpression()),
+                                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                                SyntaxFactory.Argument(
+                                                                    SyntaxFactory.ObjectCreationExpression(
+                                                                        SyntaxFactory.GenericName(
+                                                                            SyntaxFactory.Identifier("RowChangedEventArgs"))
+                                                                        .WithTypeArgumentList(
+                                                                            SyntaxFactory.TypeArgumentList(
+                                                                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                                                    SyntaxFactory.IdentifierName(tableElement.Name)))))
+                                                                    .WithArgumentList(
+                                                                        SyntaxFactory.ArgumentList(
+                                                                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                                                new SyntaxNodeOrToken[]
+                                                                                {
+                                                                                    SyntaxFactory.Argument(
+                                                                                        SyntaxFactory.MemberAccessExpression(
+                                                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                                                            SyntaxFactory.IdentifierName("DataAction"),
+                                                                                            SyntaxFactory.IdentifierName("Update"))),
+                                                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                                                    SyntaxFactory.Argument(
+                                                                                        SyntaxFactory.IdentifierName("updatedRow")),
+                                                                                })))),
+                                                            })))))))))),
+                });
 
             return statements;
         }
