@@ -22,47 +22,20 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
         public Constructor()
         {
             // Initialize the object.
-            this.Name = "LockingTransaction";
+            this.Name = "AsyncTransaction";
 
             //        /// <summary>
-            //        /// Initializes a new instance of the <see cref="LockingTransaction"/> class.
+            //        /// Initializes a new instance of the <see cref="AsyncTransaction"/> class.
             //        /// </summary>
-            //        /// <param name="transactionTimeout">The TimeSpan after which the transaction scope times out and aborts the transaction.</param>
-            //        /// <param name="cancellationToken">The cancellation token.</param>
-            //        public LockingTransaction(TimeSpan transactionTimeout = default, CancellationToken cancellationToken = default)
+            //        public AsyncTransaction()
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
-                SyntaxFactory.Identifier("LockingTransaction"))
+                SyntaxFactory.Identifier("AsyncTransaction"))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithParameterList(
-                SyntaxFactory.ParameterList(
-                    SyntaxFactory.SeparatedList<ParameterSyntax>(
-                        new SyntaxNodeOrToken[]
-                        {
-                            SyntaxFactory.Parameter(
-                                SyntaxFactory.Identifier("transactionTimeout"))
-                            .WithType(
-                                SyntaxFactory.IdentifierName("TimeSpan"))
-                            .WithDefault(
-                                SyntaxFactory.EqualsValueClause(
-                                    SyntaxFactory.LiteralExpression(
-                                        SyntaxKind.DefaultLiteralExpression,
-                                        SyntaxFactory.Token(SyntaxKind.DefaultKeyword)))),
-                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                            SyntaxFactory.Parameter(
-                                SyntaxFactory.Identifier("cancellationToken"))
-                            .WithType(
-                                SyntaxFactory.IdentifierName("CancellationToken"))
-                            .WithDefault(
-                                SyntaxFactory.EqualsValueClause(
-                                    SyntaxFactory.LiteralExpression(
-                                        SyntaxKind.DefaultLiteralExpression,
-                                        SyntaxFactory.Token(SyntaxKind.DefaultKeyword)))),
-                        })))
             .WithBody(Constructor.Body)
             .WithLeadingTrivia(Constructor.LeadingTrivia);
         }
@@ -77,31 +50,20 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                 return SyntaxFactory.Block(
                     new List<StatementSyntax>
                     {
-                        //            this.cancellationToken = cancellationToken == default ? CancellationToken.None : cancellationToken;
+                        //            AsyncTransaction.asyncTransaction.Value = this;
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.AssignmentExpression(
                                 SyntaxKind.SimpleAssignmentExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("cancellationToken")),
-                                SyntaxFactory.ConditionalExpression(
-                                    SyntaxFactory.BinaryExpression(
-                                        SyntaxKind.EqualsExpression,
-                                        SyntaxFactory.IdentifierName("cancellationToken"),
-                                        SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.DefaultLiteralExpression,
-                                            SyntaxFactory.Token(SyntaxKind.DefaultKeyword))),
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("CancellationToken"),
-                                        SyntaxFactory.IdentifierName("None")),
-                                    SyntaxFactory.IdentifierName("cancellationToken")))),
+                                        SyntaxFactory.IdentifierName("AsyncTransaction"),
+                                        SyntaxFactory.IdentifierName("asyncTransaction")),
+                                    SyntaxFactory.IdentifierName("Value")),
+                                SyntaxFactory.ThisExpression())),
 
-                        //            this.transactionScope = new TransactionScope(
-                        //                TransactionScopeOption.Required,
-                        //                transactionTimeout == default ? TransactionManager.DefaultTimeout : transactionTimeout,
-                        //                TransactionScopeAsyncFlowOption.Enabled);
+                        //            this.transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.AssignmentExpression(
                                 SyntaxKind.SimpleAssignmentExpression,
@@ -113,51 +75,12 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                     SyntaxFactory.IdentifierName("TransactionScope"))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                            new SyntaxNodeOrToken[]
-                                            {
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.IdentifierName("TransactionScopeOption"),
-                                                        SyntaxFactory.IdentifierName("Required"))),
-                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.ConditionalExpression(
-                                                        SyntaxFactory.BinaryExpression(
-                                                            SyntaxKind.EqualsExpression,
-                                                            SyntaxFactory.IdentifierName("transactionTimeout"),
-                                                            SyntaxFactory.LiteralExpression(
-                                                                SyntaxKind.DefaultLiteralExpression,
-                                                                SyntaxFactory.Token(SyntaxKind.DefaultKeyword))),
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.IdentifierName("TransactionManager"),
-                                                            SyntaxFactory.IdentifierName("DefaultTimeout")),
-                                                        SyntaxFactory.IdentifierName("transactionTimeout"))),
-                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.IdentifierName("TransactionScopeAsyncFlowOption"),
-                                                        SyntaxFactory.IdentifierName("Enabled"))),
-                                            }))))),
-
-                        //             ArgumentNullException.ThrowIfNull(Transaction.Current);
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("ArgumentNullException"),
-                                    SyntaxFactory.IdentifierName("ThrowIfNull")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("Transaction"),
-                                                SyntaxFactory.IdentifierName("Current"))))))),
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName("TransactionScopeAsyncFlowOption"),
+                                                    SyntaxFactory.IdentifierName("Enabled")))))))),
 
                         //            this.transaction = Transaction.Current;
                         SyntaxFactory.ExpressionStatement(
@@ -171,6 +94,38 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.IdentifierName("Transaction"),
                                     SyntaxFactory.IdentifierName("Current")))),
+
+                        //            ArgumentNullException.ThrowIfNull(this.transaction);
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("ArgumentNullException"),
+                                    SyntaxFactory.IdentifierName("ThrowIfNull")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName("transaction"))))))),
+
+                        //            this.transaction.TransactionCompleted += this.OnTransactionCompleted;
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.AddAssignmentExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("transaction")),
+                                    SyntaxFactory.IdentifierName("TransactionCompleted")),
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("OnTransactionCompleted")))),
                     });
             }
         }
@@ -185,7 +140,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                 return new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Initializes a new instance of the <see cref="LockingTransaction"/> class.
+                    //        /// Initializes a new instance of the <see cref="AsyncTransaction"/> class.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -208,7 +163,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Initializes a new instance of the <see cref=\"LockingTransaction\"/> class.",
+                                                $" Initializes a new instance of the <see cref=\"AsyncTransaction\"/> class.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -219,50 +174,6 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                 " </summary>",
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                            SyntaxFactory.XmlTextNewLine(
-                                                SyntaxFactory.TriviaList(),
-                                                Environment.NewLine,
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                        }))))),
-
-                    //        /// <param name="transactionTimeout">The TimeSpan after which the transaction scope times out and aborts the transaction.</param>
-                    SyntaxFactory.Trivia(
-                        SyntaxFactory.DocumentationCommentTrivia(
-                            SyntaxKind.SingleLineDocumentationCommentTrivia,
-                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                SyntaxFactory.XmlText()
-                                .WithTextTokens(
-                                    SyntaxFactory.TokenList(
-                                        new[]
-                                        {
-                                            SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" <param name=\"transactionTimeout\">The TimeSpan after which the transaction scope times out and aborts the transaction.</param>",
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                            SyntaxFactory.XmlTextNewLine(
-                                                SyntaxFactory.TriviaList(),
-                                                Environment.NewLine,
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                        }))))),
-
-                    //        /// <param name="cancellationToken">The cancellation token.</param>
-                    SyntaxFactory.Trivia(
-                        SyntaxFactory.DocumentationCommentTrivia(
-                            SyntaxKind.SingleLineDocumentationCommentTrivia,
-                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                SyntaxFactory.XmlText()
-                                .WithTextTokens(
-                                    SyntaxFactory.TokenList(
-                                        new[]
-                                        {
-                                            SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" <param name=\"cancellationToken\">The cancellation token.</param>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

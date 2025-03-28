@@ -1,4 +1,4 @@
-// <copyright file="CompleteMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="CurrentProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,58 +12,66 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to acquire a reader lock.
+    /// Creates a property that navigates to the parent row.
     /// </summary>
-    public class CompleteMethod : SyntaxElement
+    public class CurrentProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CompleteMethod"/> class.
+        /// Initializes a new instance of the <see cref="CurrentProperty"/> class.
         /// </summary>
-        public CompleteMethod()
+        public CurrentProperty()
         {
             // Initialize the object.
-            this.Name = "Complete";
+            this.Name = "Current";
 
             //        /// <summary>
-            //        /// Indicates that all operations within the scope are completed successfully.
+            //        /// Gets the transaction.
             //        /// </summary>
-            //        public void Complete()
+            //        public AsyncTransaction? Current
             //        {
-            //            this.transactionScope.Complete();
+            //            get
+            //            {
+            //                <GetAccessor>;
+            //            }
+            //
+            //            set
+            //            {
+            //                <SetAccessor>
+            //            }
             //        }
-            this.Syntax = SyntaxFactory.MethodDeclaration(
-                SyntaxFactory.PredefinedType(
-                    SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
+                SyntaxFactory.NullableType(
+                    SyntaxFactory.IdentifierName("AsyncTransaction")),
                 SyntaxFactory.Identifier(this.Name))
             .WithModifiers(
                 SyntaxFactory.TokenList(
-                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithBody(
-                SyntaxFactory.Block(
-                    SyntaxFactory.SingletonList<StatementSyntax>(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("transactionScope")),
-                                    SyntaxFactory.IdentifierName("Complete")))))))
-            .WithLeadingTrivia(CompleteMethod.LeadingTrivia);
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                        SyntaxFactory.Token(SyntaxKind.StaticKeyword),
+                    }))
+            .WithAccessorList(
+                SyntaxFactory.AccessorList(
+                    SyntaxFactory.List<AccessorDeclarationSyntax>(
+                        new AccessorDeclarationSyntax[]
+                        {
+                            this.GetAccessor,
+                        })))
+            .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static IEnumerable<SyntaxTrivia> LeadingTrivia
+        private IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {
+                // The document comment trivia is collected in this list.
                 return new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Indicates that all operations within the scope are completed successfully.
+                    //        /// Gets the asynchronous transaction.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -86,7 +94,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " Indicates that all operations within the scope are completed successfully.",
+                                                $" Gets the asynchronous transaction.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -106,6 +114,39 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
                 };
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'Get' accessor.
+        /// </summary>
+        private AccessorDeclarationSyntax GetAccessor
+        {
+            get
+            {
+                // This list collects the statements.
+                var statements = new List<StatementSyntax>
+                {
+                    //                return AsyncTransaction.asyncTransaction.Value;
+                    SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("AsyncTransaction"),
+                                SyntaxFactory.IdentifierName("asyncTransaction")),
+                            SyntaxFactory.IdentifierName("Value"))),
+                };
+
+                //            get
+                //            {
+                //                <statements>
+                //            }
+                return SyntaxFactory.AccessorDeclaration(
+                    SyntaxKind.GetAccessorDeclaration,
+                    SyntaxFactory.Block(
+                        SyntaxFactory.List(statements)))
+                .WithKeyword(SyntaxFactory.Token(SyntaxKind.GetKeyword));
             }
         }
     }

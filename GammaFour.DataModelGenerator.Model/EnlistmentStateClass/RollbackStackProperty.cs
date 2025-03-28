@@ -1,8 +1,8 @@
-// <copyright file="CompleteMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="RollbackStackProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
+namespace GammaFour.DataModelGenerator.Model.EnlistmentStateClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,58 +12,68 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to acquire a reader lock.
+    /// Creates a property that navigates to the parent row.
     /// </summary>
-    public class CompleteMethod : SyntaxElement
+    public class RollbackStackProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CompleteMethod"/> class.
+        /// Initializes a new instance of the <see cref="RollbackStackProperty"/> class.
         /// </summary>
-        public CompleteMethod()
+        public RollbackStackProperty()
         {
             // Initialize the object.
-            this.Name = "Complete";
+            this.Name = "RollbackStack";
 
             //        /// <summary>
-            //        /// Indicates that all operations within the scope are completed successfully.
+            //        /// Gets the rollback stack.
             //        /// </summary>
-            //        public void Complete()
-            //        {
-            //            this.transactionScope.Complete();
-            //        }
-            this.Syntax = SyntaxFactory.MethodDeclaration(
-                SyntaxFactory.PredefinedType(
-                    SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
-                SyntaxFactory.Identifier(this.Name))
+            //        public Stack<Action> RollbackStack { get; } = new Stack<Action>();
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
+                SyntaxFactory.GenericName(
+                    SyntaxFactory.Identifier("Stack"))
+                .WithTypeArgumentList(
+                    SyntaxFactory.TypeArgumentList(
+                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                            SyntaxFactory.IdentifierName("Action")))),
+                SyntaxFactory.Identifier("RollbackStack"))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithBody(
-                SyntaxFactory.Block(
-                    SyntaxFactory.SingletonList<StatementSyntax>(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("transactionScope")),
-                                    SyntaxFactory.IdentifierName("Complete")))))))
-            .WithLeadingTrivia(CompleteMethod.LeadingTrivia);
+            .WithAccessorList(
+                SyntaxFactory.AccessorList(
+                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
+                        SyntaxFactory.AccessorDeclaration(
+                            SyntaxKind.GetAccessorDeclaration)
+                        .WithSemicolonToken(
+                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
+            .WithInitializer(
+                SyntaxFactory.EqualsValueClause(
+                    SyntaxFactory.ObjectCreationExpression(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("Stack"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                    SyntaxFactory.IdentifierName("Action")))))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList())))
+            .WithSemicolonToken(
+                SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+            .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static IEnumerable<SyntaxTrivia> LeadingTrivia
+        private IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {
+                // The document comment trivia is collected in this list.
                 return new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Indicates that all operations within the scope are completed successfully.
+                    //        /// Gets the rollback stack.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -86,7 +96,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " Indicates that all operations within the scope are completed successfully.",
+                                                " Gets the rollback stack.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

@@ -1,4 +1,4 @@
-// <copyright file="DisposeMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="EqualsMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,34 +12,45 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to prepare a resource for a transaction completion.
+    /// Creates a method to acquire a reader lock.
     /// </summary>
-    public class DisposeMethod : SyntaxElement
+    public class EqualsMethod : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DisposeMethod"/> class.
+        /// Initializes a new instance of the <see cref="EqualsMethod"/> class.
         /// </summary>
-        public DisposeMethod()
+        public EqualsMethod()
         {
             // Initialize the object.
-            this.Name = "Dispose";
+            this.Name = "Equals";
 
             //        /// <inheritdoc/>
-            //        public void Dispose()
+            //        public override bool Equals(object? obj)
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
                 SyntaxFactory.PredefinedType(
-                    SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
+                    SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
                 SyntaxFactory.Identifier(this.Name))
             .WithModifiers(
                 SyntaxFactory.TokenList(
-                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithBody(
-                SyntaxFactory.Block())
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                        SyntaxFactory.Token(SyntaxKind.OverrideKeyword),
+                    }))
+            .WithParameterList(
+                SyntaxFactory.ParameterList(
+                    SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
+                        SyntaxFactory.Parameter(
+                            SyntaxFactory.Identifier("obj"))
+                        .WithType(
+                            SyntaxFactory.NullableType(
+                                SyntaxFactory.PredefinedType(
+                                    SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))))))
             .WithBody(this.Body)
-            .WithLeadingTrivia(DisposeMethod.LeadingTrivia);
+            .WithLeadingTrivia(EqualsMethod.LeadingTrivia);
         }
 
         /// <summary>
@@ -49,8 +60,8 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
         {
             get
             {
-                // The document comment trivia is collected in this list.
-                return new List<SyntaxTrivia>
+                // This is used to collect the trivia.
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <inheritdoc/>
                     SyntaxFactory.Trivia(
@@ -74,6 +85,9 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
                 };
+
+                // This is the complete document comment.
+                return SyntaxFactory.TriviaList(comments);
             }
         }
 
@@ -84,33 +98,30 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
         {
             get
             {
+                // This is used to collect the statements.
                 return SyntaxFactory.Block(
-                    new List<StatementSyntax>
+                    new List<StatementSyntax>()
                     {
-                        //            this.transactionScope.Dispose();
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
+                        //            return obj is AsyncTransaction other && this.identifier == other.identifier;
+                        SyntaxFactory.ReturnStatement(
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.LogicalAndExpression,
+                                SyntaxFactory.IsPatternExpression(
+                                    SyntaxFactory.IdentifierName("obj"),
+                                    SyntaxFactory.DeclarationPattern(
+                                        SyntaxFactory.IdentifierName("AsyncTransaction"),
+                                        SyntaxFactory.SingleVariableDesignation(
+                                            SyntaxFactory.Identifier("other")))),
+                                SyntaxFactory.BinaryExpression(
+                                    SyntaxKind.EqualsExpression,
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("transactionScope")),
-                                    SyntaxFactory.IdentifierName("Dispose")))),
-
-                        //            AsyncTransaction.asyncTransaction.Value = null;
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName("identifier")),
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("AsyncTransaction"),
-                                        SyntaxFactory.IdentifierName("asyncTransaction")),
-                                    SyntaxFactory.IdentifierName("Value")),
-                                SyntaxFactory.LiteralExpression(
-                                    SyntaxKind.NullLiteralExpression))),
+                                        SyntaxFactory.IdentifierName("other"),
+                                        SyntaxFactory.IdentifierName("identifier"))))),
                     });
             }
         }

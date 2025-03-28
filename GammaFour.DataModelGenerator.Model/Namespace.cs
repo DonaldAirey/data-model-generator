@@ -49,6 +49,7 @@ namespace GammaFour.DataModelGenerator.Model
                 List<UsingDirectiveSyntax> systemUsingStatements = new List<UsingDirectiveSyntax>
                 {
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Concurrent")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")),
@@ -95,6 +96,7 @@ namespace GammaFour.DataModelGenerator.Model
                 new AsyncTransactionClass.Class(),
                 new ConcurrencyExceptionClass.Class(),
                 new ConstraintExceptionClass.Class(),
+                new EnlistmentStateClass.Class(),
                 new RowChangedEventArgsClass.Class(),
             };
 

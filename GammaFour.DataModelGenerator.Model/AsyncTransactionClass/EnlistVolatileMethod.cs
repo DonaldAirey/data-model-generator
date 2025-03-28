@@ -1,4 +1,4 @@
-// <copyright file="WaitReaderAsyncMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="EnlistVolatileMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,37 +12,33 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to acquire a reader lock.
+    /// Creates a method to prepare a resource for a transaction completion.
     /// </summary>
-    public class WaitReaderAsyncMethod : SyntaxElement
+    public class EnlistVolatileMethod : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="WaitReaderAsyncMethod"/> class.
+        /// Initializes a new instance of the <see cref="EnlistVolatileMethod"/> class.
         /// </summary>
-        public WaitReaderAsyncMethod()
+        public EnlistVolatileMethod()
         {
             // Initialize the object.
-            this.Name = "WaitReaderAsync";
+            this.Name = "EnlistVolatile";
 
             //        /// <summary>
-            //        /// Asynchronously waits to read a protected resource.
+            //        /// Enlists a volatile resource manager to participate in a transaction.
             //        /// </summary>
-            //        /// <param name="enlistmentNotification">An object that can be enlisted into a transaction.</param>
-            //        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-            //        public async Task WaitReaderAsync(IEnlistmentNotification enlistmentNotification)
+            //        /// <param name="enlistmentNotification">An object that implements the <see cref="IEnlistmentNotification"/> interface to receive two-phase commit notifications.</param>
+            //        /// <returns>An <see cref="Enlistment"/> object that describes the enlistment.</returns>
+            //        public Enlistment EnlistVolatile(IEnlistmentNotification enlistmentNotification)
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
-                SyntaxFactory.IdentifierName("Task"),
+                SyntaxFactory.IdentifierName("Enlistment"),
                 SyntaxFactory.Identifier(this.Name))
             .WithModifiers(
                 SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                        SyntaxFactory.Token(SyntaxKind.AsyncKeyword),
-                    }))
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
             .WithParameterList(
                 SyntaxFactory.ParameterList(
                     SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
@@ -50,8 +46,8 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                             SyntaxFactory.Identifier("enlistmentNotification"))
                         .WithType(
                             SyntaxFactory.IdentifierName("IEnlistmentNotification")))))
-            .WithLeadingTrivia(WaitReaderAsyncMethod.LeadingTrivia)
-            .WithBody(WaitReaderAsyncMethod.Body);
+            .WithBody(EnlistVolatileMethod.Body)
+            .WithLeadingTrivia(EnlistVolatileMethod.LeadingTrivia);
         }
 
         /// <summary>
@@ -61,63 +57,53 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
         {
             get
             {
-                return SyntaxFactory.Block(
-                    new List<StatementSyntax>
-                    {
-                        //            this.holders.Add(await enlistmentNotification.AcquireReadLockAsync(this.cancellationToken));
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("holders")),
-                                    SyntaxFactory.IdentifierName("Add")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.AwaitExpression(
-                                                SyntaxFactory.InvocationExpression(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.IdentifierName("enlistmentNotification"),
-                                                        SyntaxFactory.IdentifierName("AcquireReadLockAsync")))
-                                                .WithArgumentList(
-                                                    SyntaxFactory.ArgumentList(
-                                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                            SyntaxFactory.Argument(
-                                                                SyntaxFactory.MemberAccessExpression(
-                                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                                    SyntaxFactory.ThisExpression(),
-                                                                    SyntaxFactory.IdentifierName("cancellationToken")))))))))))),
+                // This is used to collect the statements.
+                var statements = new List<StatementSyntax>
+                {
+                    //            ArgumentNullException.ThrowIfNull(this.transaction);
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("ArgumentNullException"),
+                                SyntaxFactory.IdentifierName("ThrowIfNull")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName("transaction"))))))),
 
-                        //            this.transaction.EnlistVolatile(enlistmentNotification, EnlistmentOptions.None);
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
+                    //            return this.transaction.EnlistVolatile(enlistmentNotification, EnlistmentOptions.None);
+                    SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("transaction")),
-                                    SyntaxFactory.IdentifierName("EnlistVolatile")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                        new SyntaxNodeOrToken[]
-                                        {
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName("enlistmentNotification")),
-                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.IdentifierName("EnlistmentOptions"),
-                                                    SyntaxFactory.IdentifierName("None"))),
-                                        })))),
-                    });
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("transaction")),
+                                SyntaxFactory.IdentifierName("EnlistVolatile")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName("enlistmentNotification")),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("EnlistmentOptions"),
+                                                SyntaxFactory.IdentifierName("None"))),
+                                    })))),
+                };
+
+                // This is the syntax for the body of the method.
+                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
             }
         }
 
@@ -132,7 +118,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                 return new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Asynchronously waits to read a protected resource.
+                    //        /// Enlists a volatile resource manager to participate in a transaction.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -155,7 +141,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Asynchronously waits to read a protected resource.",
+                                                " Enlists a volatile resource manager to participate in a transaction.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -175,7 +161,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //        /// <param name="enlistmentNotification">An object that can be enlisted into a transaction.</param>
+                    //        /// <param name="enlistmentNotification">An object that implements the <see cref="IEnlistmentNotification"/> interface to receive two-phase commit notifications.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -187,7 +173,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                         {
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" <param name=\"enlistmentNotification\">An object that can be enlisted into a transaction.</param>",
+                                                " <param name=\"enlistmentNotification\">An object that implements the <see cref=\"IEnlistmentNotification\"/> interface to receive two-phase commit notifications.</param>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -197,7 +183,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+                    //        /// <returns>An <see cref="Enlistment"/> object that describes the enlistment.</returns>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -209,7 +195,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                         {
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $"  <returns>A <see cref=\"Task\"/> representing the asynchronous operation.</returns>",
+                                                " <returns>An <see cref=\"Enlistment\"/> object that describes the enlistment.</returns>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

@@ -1,4 +1,4 @@
-// <copyright file="CompleteMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="LocksProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,45 +12,70 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to acquire a reader lock.
+    /// Creates a field to hold the current contents of the row.
     /// </summary>
-    public class CompleteMethod : SyntaxElement
+    public class LocksProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CompleteMethod"/> class.
+        /// Initializes a new instance of the <see cref="LocksProperty"/> class.
         /// </summary>
-        public CompleteMethod()
+        public LocksProperty()
         {
             // Initialize the object.
-            this.Name = "Complete";
+            this.Name = "Locks";
 
             //        /// <summary>
-            //        /// Indicates that all operations within the scope are completed successfully.
+            //        /// Gets the locks.
             //        /// </summary>
-            //        public void Complete()
-            //        {
-            //            this.transactionScope.Complete();
-            //        }
-            this.Syntax = SyntaxFactory.MethodDeclaration(
-                SyntaxFactory.PredefinedType(
-                    SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
+            //        public ConcurrentDictionary<object, AsyncLock.Holder> Locks { get; } = new ConcurrentDictionary<object, AsyncLock.Holder>();
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
+                SyntaxFactory.GenericName(
+                    SyntaxFactory.Identifier("ConcurrentDictionary"))
+                .WithTypeArgumentList(
+                    SyntaxFactory.TypeArgumentList(
+                        SyntaxFactory.SeparatedList<TypeSyntax>(
+                            new SyntaxNodeOrToken[]
+                            {
+                                SyntaxFactory.PredefinedType(
+                                    SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
+                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                SyntaxFactory.QualifiedName(
+                                    SyntaxFactory.IdentifierName("AsyncLock"),
+                                    SyntaxFactory.IdentifierName("Holder")),
+                            }))),
                 SyntaxFactory.Identifier(this.Name))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithBody(
-                SyntaxFactory.Block(
-                    SyntaxFactory.SingletonList<StatementSyntax>(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("transactionScope")),
-                                    SyntaxFactory.IdentifierName("Complete")))))))
-            .WithLeadingTrivia(CompleteMethod.LeadingTrivia);
+            .WithAccessorList(
+                SyntaxFactory.AccessorList(
+                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
+                        SyntaxFactory.AccessorDeclaration(
+                            SyntaxKind.GetAccessorDeclaration)
+                        .WithSemicolonToken(
+                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
+            .WithInitializer(
+                SyntaxFactory.EqualsValueClause(
+                    SyntaxFactory.ObjectCreationExpression(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("ConcurrentDictionary"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SeparatedList<TypeSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.PredefinedType(
+                                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.QualifiedName(
+                                            SyntaxFactory.IdentifierName("AsyncLock"),
+                                            SyntaxFactory.IdentifierName("Holder")),
+                                    }))))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList())))
+            .WithSemicolonToken(
+                SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+            .WithLeadingTrivia(LocksProperty.LeadingTrivia);
         }
 
         /// <summary>
@@ -63,7 +88,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                 return new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Indicates that all operations within the scope are completed successfully.
+                    //        /// A collection of acquired asynchronous locks.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -86,7 +111,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " Indicates that all operations within the scope are completed successfully.",
+                                                " Gets the locks.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

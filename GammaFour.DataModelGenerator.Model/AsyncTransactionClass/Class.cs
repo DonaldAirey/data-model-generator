@@ -28,7 +28,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
             //    /// <summary>
             //    /// An asynchronous transaction.
             //    /// </summary>
-            //    public class LockingTransaction : IDisposable
+            //    public class AsyncTransaction : IDisposable
             //    {
             //        <Members>
             //    }
@@ -114,7 +114,9 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                 members = this.CreatePrivateStaticReadonlyFields(members);
                 members = this.CreatePrivateReadonlyFields(members);
                 members = this.CreateConstructors(members);
-                members = this.CreatePublicInstanceMethods(members);
+                members = this.CreateStaticProperties(members);
+                members = this.CreateProperties(members);
+                members = this.CreatePublicMethods(members);
                 return members;
             }
         }
@@ -161,12 +163,57 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The syntax for creating the internal instance properties.</returns>
+        private SyntaxList<MemberDeclarationSyntax> CreateProperties(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            // The public properties.
+            List<SyntaxElement> properties = new List<SyntaxElement>
+            {
+                new LocksProperty(),
+            };
+
+            // Alphabetize the properties.
+            foreach (var syntaxElement in properties.OrderBy(m => m.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
+            }
+
+            // Return the new collection of members.
+            return members;
+        }
+
+        /// <summary>
+        /// Create the private instance fields.
+        /// </summary>
+        /// <param name="members">The structure members.</param>
+        /// <returns>The syntax for creating the internal instance properties.</returns>
+        private SyntaxList<MemberDeclarationSyntax> CreateStaticProperties(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            // The public properties.
+            List<SyntaxElement> properties = new List<SyntaxElement>
+            {
+                new CurrentProperty(),
+            };
+
+            // Alphabetize the properties.
+            foreach (var syntaxElement in properties.OrderBy(m => m.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
+            }
+
+            // Return the new collection of members.
+            return members;
+        }
+
+        /// <summary>
+        /// Create the private instance fields.
+        /// </summary>
+        /// <param name="members">The structure members.</param>
+        /// <returns>The syntax for creating the internal instance properties.</returns>
         private SyntaxList<MemberDeclarationSyntax> CreatePrivateReadonlyFields(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>
             {
-                new HoldersField(),
                 new IdentifierField(),
                 new TransactionField(),
                 new TransactionScopeField(),
@@ -187,15 +234,17 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The structure members with the methods added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>
             {
                 new CompleteMethod(),
                 new DisposeMethod(),
-                new WaitReaderAsyncMethod(),
-                new WaitWriterAsyncMethod(),
+                new EnlistVolatileMethod(),
+                new EqualsMethod(),
+                new GetHashCodeMethod(),
+                new OnTransactionCompletedMethod(),
             };
 
             // Alphabetize and add the methods as members of the class.
