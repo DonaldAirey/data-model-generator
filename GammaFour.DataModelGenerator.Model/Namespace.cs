@@ -49,10 +49,21 @@ namespace GammaFour.DataModelGenerator.Model
                 List<UsingDirectiveSyntax> systemUsingStatements = new List<UsingDirectiveSyntax>
                 {
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")),
+                };
+
+                // Add the non-system namespace references.
+                List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>
+                {
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("DotNext.Threading")),
                 };
 
                 // This sorts and combines the two lists. The 'System' namespace comes before the rest.
-                return systemUsingStatements.OrderBy(ud => ud.Name.ToString()).ToList();
+                return systemUsingStatements
+                    .OrderBy(ud => ud.Name.ToString())
+                    .Concat(usingStatements.OrderBy(ud => ud.Name.ToString())).ToList();
             }
         }
 
@@ -81,6 +92,7 @@ namespace GammaFour.DataModelGenerator.Model
             // The common classes.
             List<SyntaxElement> syntaxElements = new List<SyntaxElement>
             {
+                new AsyncTransactionClass.Class(),
                 new ConcurrencyExceptionClass.Class(),
                 new ConstraintExceptionClass.Class(),
                 new RowChangedEventArgsClass.Class(),
