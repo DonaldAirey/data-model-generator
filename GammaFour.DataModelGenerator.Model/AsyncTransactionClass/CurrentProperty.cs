@@ -25,18 +25,13 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
             this.Name = "Current";
 
             //        /// <summary>
-            //        /// Gets the transaction.
+            //        /// Gets the current asynchronous transaction.
             //        /// </summary>
             //        public AsyncTransaction? Current
             //        {
             //            get
             //            {
             //                <GetAccessor>;
-            //            }
-            //
-            //            set
-            //            {
-            //                <SetAccessor>
             //            }
             //        }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
@@ -71,7 +66,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                 return new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Gets the asynchronous transaction.
+                    //        /// Gets the current asynchronous transaction.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -94,7 +89,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Gets the asynchronous transaction.",
+                                                " Gets the current asynchronous transaction.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

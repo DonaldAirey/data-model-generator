@@ -168,7 +168,8 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
             // The public properties.
             List<SyntaxElement> properties = new List<SyntaxElement>
             {
-                new LocksProperty(),
+                new ReadLocksProperty(),
+                new WriteLocksProperty(),
             };
 
             // Alphabetize the properties.
@@ -191,6 +192,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
             // The public properties.
             List<SyntaxElement> properties = new List<SyntaxElement>
             {
+                new CancellationTokenProperty(),
                 new CurrentProperty(),
             };
 

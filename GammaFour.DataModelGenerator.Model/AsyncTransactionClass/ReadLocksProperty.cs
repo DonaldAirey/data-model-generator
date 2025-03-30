@@ -1,8 +1,8 @@
-// <copyright file="ColumnField.cs" company="Gamma Four, Inc.">
+// <copyright file="ReadLocksProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.RowClass
+namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,70 +12,80 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field that holds the column.
+    /// Creates a field to hold the current contents of the row.
     /// </summary>
-    public class ColumnField : SyntaxElement
+    public class ReadLocksProperty : SyntaxElement
     {
         /// <summary>
-        /// The unique constraint schema.
+        /// Initializes a new instance of the <see cref="ReadLocksProperty"/> class.
         /// </summary>
-        private readonly ColumnElement columnElement;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ColumnField"/> class.
-        /// </summary>
-        /// <param name="columnElement">The column schema.</param>
-        public ColumnField(ColumnElement columnElement)
+        public ReadLocksProperty()
         {
             // Initialize the object.
-            this.columnElement = columnElement;
-
-            // This is the name of the field.
-            this.Name = this.columnElement.Name.ToCamelCase();
-
-            //        private double quantity;
-            //        private string code = string.Empty;
-            var columnType = this.columnElement.ColumnType;
-            var variableDeclarator = SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(this.Name));
-            if (!columnType.IsValueType && !columnType.IsNullable)
-            {
-                variableDeclarator = SyntaxFactory.VariableDeclarator(
-                    SyntaxFactory.Identifier(this.Name))
-                .WithInitializer(
-                    SyntaxFactory.EqualsValueClause(
-                        Defaults.FromType(columnType)));
-            }
+            this.Name = "ReadLocks";
 
             //        /// <summary>
-            //        /// The code.
+            //        /// Gets the read locks.
             //        /// </summary>
-            //        private string code = string.Empty;
-            this.Syntax = SyntaxFactory.FieldDeclaration(
-                SyntaxFactory.VariableDeclaration(
-                    columnElement.GetTypeSyntax())
-                .WithVariables(
-                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(variableDeclarator)))
+            //        public Dictionary<object, AsyncReaderWriterLock> ReadLocks { get; } = new Dictionary<object, AsyncReaderWriterLock>();
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
+                SyntaxFactory.GenericName(
+                    SyntaxFactory.Identifier("Dictionary"))
+                .WithTypeArgumentList(
+                    SyntaxFactory.TypeArgumentList(
+                        SyntaxFactory.SeparatedList<TypeSyntax>(
+                            new SyntaxNodeOrToken[]
+                            {
+                                SyntaxFactory.PredefinedType(
+                                    SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
+                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                SyntaxFactory.IdentifierName("AsyncReaderWriterLock"),
+                            }))),
+                SyntaxFactory.Identifier("ReadLocks"))
             .WithModifiers(
                 SyntaxFactory.TokenList(
-                    SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
-            .WithLeadingTrivia(this.LeadingTrivia);
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithAccessorList(
+                SyntaxFactory.AccessorList(
+                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
+                        SyntaxFactory.AccessorDeclaration(
+                            SyntaxKind.GetAccessorDeclaration)
+                        .WithSemicolonToken(
+                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
+            .WithInitializer(
+                SyntaxFactory.EqualsValueClause(
+                    SyntaxFactory.ObjectCreationExpression(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("Dictionary"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SeparatedList<TypeSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.PredefinedType(
+                                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.IdentifierName("AsyncReaderWriterLock"),
+                                    }))))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList())))
+            .WithSemicolonToken(
+                SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+            .WithLeadingTrivia(ReadLocksProperty.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private IEnumerable<SyntaxTrivia> LeadingTrivia
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {
-                // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
-
-                //        /// <summary>
-                //        /// Gets or sets Address1.
-                //        /// </summary>
-                string description = $" The {this.Name.ToCamelCase()}";
-                comments.Add(
+                return new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Gets the read locks.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -97,7 +107,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                description,
+                                                " Gets the read locks.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -115,10 +125,8 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
-
-                // This is the complete document comment.
-                return SyntaxFactory.TriviaList(comments);
+                                        }))))),
+                };
             }
         }
     }

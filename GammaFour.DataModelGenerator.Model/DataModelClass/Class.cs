@@ -110,11 +110,11 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = this.CreatePrivateInstanceFields(members);
+                members = this.CreatePrivateFields(members);
                 members = this.CreateConstructors(members);
-                members = this.CreatePublicInstanceProperties(members);
-                members = this.CreatePublicInstanceMethods(members);
-                members = this.CreatePrivateInstanceMethods(members);
+                members = this.CreatePublicProperties(members);
+                members = this.CreatePublicMethods(members);
+                members = this.CreatePrivateMethods(members);
                 return members;
             }
         }
@@ -124,7 +124,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The structure members with the methods added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>
@@ -147,7 +147,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The structure members with the fields added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
+        private SyntaxList<MemberDeclarationSyntax> CreatePrivateFields(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>
@@ -170,7 +170,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The structure members with the methods added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
+        private SyntaxList<MemberDeclarationSyntax> CreatePrivateMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
@@ -204,7 +204,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The structure members with the fields added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceProperties(SyntaxList<MemberDeclarationSyntax> members)
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicProperties(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the internal instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>

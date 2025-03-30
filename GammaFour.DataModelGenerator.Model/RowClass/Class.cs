@@ -35,50 +35,16 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             //    /// <summary>
             //    /// A row of data in the Configuration table.
             //    /// </summary>
-            //    public partial class AchEvent : IRow
+            //    public class Account
             //    {
             //        <Members>
             //    }
-            this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
-                .WithModifiers(Class.Modifiers)
-                .WithBaseList(this.BaseList)
-                .WithMembers(this.Members)
-                .WithLeadingTrivia(this.LeadingTrivia);
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                    });
-            }
-        }
-
-        /// <summary>
-        /// Gets the base class syntax.
-        /// </summary>
-        private BaseListSyntax BaseList
-        {
-            get
-            {
-                // A list of base classes or interfaces.
-                List<SyntaxNodeOrToken> baseList = new List<SyntaxNodeOrToken>
-                {
-                    // IEnlistmentNotification
-                    SyntaxFactory.SimpleBaseType(
-                        SyntaxFactory.IdentifierName("IEnlistmentNotification")),
-                };
-
-                return SyntaxFactory.BaseList(
-                      SyntaxFactory.SeparatedList<BaseTypeSyntax>(baseList.ToArray()));
-            }
+            this.Syntax = SyntaxFactory.ClassDeclaration(this.tableElement.Name)
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithMembers(this.Members)
+            .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
@@ -144,11 +110,10 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = this.CreatePrivateInstanceReadonlyFields(members);
-                members = this.CreatePrivateInstanceFields(members);
+                members = this.CreatePrivateReadonlyFields(members);
                 members = this.CreateConstructors(members);
-                members = this.CreatePublicInstanceProperties(members);
-                members = this.CreatePublicInstanceMethods(members);
+                members = this.CreatePublicProperties(members);
+                members = this.CreatePublicMethods(members);
                 return members;
             }
         }
@@ -162,7 +127,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
         {
             // Add the constructors.
             members = members.Add(new Constructor(this.tableElement).Syntax);
-            members = members.Add(new ConstructorDeepClone(this.tableElement).Syntax);
+            members = members.Add(new CopyConstructor(this.tableElement).Syntax);
 
             // Return the new collection of members.
             return members;
@@ -173,45 +138,12 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The syntax for creating the internal instance properties.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // This will create the private instance fields.
-            List<SyntaxElement> fields = new List<SyntaxElement>();
-
-            // Create a field for each column.
-            foreach (ColumnElement columnElement in this.tableElement.Columns)
-            {
-                fields.Add(new ColumnField(columnElement));
-            }
-
-            // Create a field for each parent row.
-            foreach (var foreignIndexElement in this.tableElement.ParentIndices)
-            {
-                fields.Add(new ParentRowField(foreignIndexElement));
-            }
-
-            // Alphabetize and add the fields as members of the class.
-            foreach (var syntaxElement in fields.OrderBy(m => m.Name))
-            {
-                members = members.Add(syntaxElement.Syntax);
-            }
-
-            // Return the new collection of members.
-            return members;
-        }
-
-        /// <summary>
-        /// Create the private instance fields.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The syntax for creating the internal instance properties.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceReadonlyFields(SyntaxList<MemberDeclarationSyntax> members)
+        private SyntaxList<MemberDeclarationSyntax> CreatePrivateReadonlyFields(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>
             {
                 new AsyncReaderWriterLockField(),
-                new RollbackStackField(),
             };
 
             // Alphabetize and add the fields as members of the class.
@@ -229,20 +161,16 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The syntax for creating the public instance methods.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>
             {
-                new CommitMethod(),
+                new CopyToMethod(this.tableElement),
                 new EnterReadLockAsyncMethod(this.tableElement.Document),
                 new EnterWriteLockAsyncMethod(this.tableElement.Document),
                 new EqualsMethod(this.tableElement),
                 new GetHashCodeMethod(this.tableElement),
-                new InDoubtMethod(),
-                new LoadMethod(this.tableElement),
-                new PrepareMethod(),
-                new RollbackMethod(),
             };
 
             // Alphabetize and add the methods as members of the class.
@@ -260,13 +188,10 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The syntax for creating the public instance properties.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceProperties(SyntaxList<MemberDeclarationSyntax> members)
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicProperties(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
-
-            // Add the properties.
-            properties.Add(new IsModifiedProperty());
 
             // Create a property for each column.
             foreach (ColumnElement columnElement in this.tableElement.Columns)

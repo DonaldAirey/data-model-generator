@@ -127,15 +127,15 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.Argument(SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())),
                                     })))),
 
-                    //            this.rollbackStack.Push(() => this.dictionary.Remove(thing.Code));
+                    //            enlistmentState.RollbackStack.Push(() => newAsset.Accounts.Remove(account));
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("rollbackStack")),
+                                    SyntaxFactory.IdentifierName("enlistmentState"),
+                                    SyntaxFactory.IdentifierName("RollbackStack")),
                                 SyntaxFactory.IdentifierName("Push")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -178,50 +178,49 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())))))));
 
-                //            this.rollbackStack.Push(() => this.ThingNameIndex.Remove(thing));
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
+                //            enlistmentState.RollbackStack.Push(() => this.ThingNameIndex.Remove(thing));
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("rollbackStack")),
-                                SyntaxFactory.IdentifierName("Push")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.ParenthesizedLambdaExpression()
-                                        .WithExpressionBody(
-                                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.IdentifierName("enlistmentState"),
+                                SyntaxFactory.IdentifierName("RollbackStack")),
+                            SyntaxFactory.IdentifierName("Push")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.ParenthesizedLambdaExpression()
+                                    .WithExpressionBody(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.ThisExpression(),
-                                                        SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
-                                                    SyntaxFactory.IdentifierName("Remove")))
-                                            .WithArgumentList(
-                                                SyntaxFactory.ArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                        SyntaxFactory.Argument(
-                                                            SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()))))))))))));
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
+                                                SyntaxFactory.IdentifierName("Remove")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())))))))))));
             }
 
             statements.AddRange(
                 new StatementSyntax[]
                 {
-                    //            this.commitStack.Push(() => this.RowChanged?.Invoke(this, new RowChangedEventArgs<Thing>(DataAction.Add, thing)));
+                    //            enlistmentState.CommitStack.Push(() => this.RowChanged?.Invoke(this, new RowChangedEventArgs<Thing>(DataAction.Add, thing)));
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("commitStack")),
+                                    SyntaxFactory.IdentifierName("enlistmentState"),
+                                    SyntaxFactory.IdentifierName("CommitStack")),
                                 SyntaxFactory.IdentifierName("Push")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -514,15 +513,15 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             statements.AddRange(
                 new StatementSyntax[]
                 {
-                    //            this.commitStack.Push(() => this.RowChanged?.Invoke(this, new RowChangedEventArgs<Thing>(DataAction.Update, updatedRow)));
+                    //            enlistment.CommitStack.Push(() => this.RowChanged?.Invoke(this, new RowChangedEventArgs<Thing>(DataAction.Update, updatedRow)));
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("commitStack")),
+                                    SyntaxFactory.IdentifierName("enlistmentState"),
+                                    SyntaxFactory.IdentifierName("CommitStack")),
                                 SyntaxFactory.IdentifierName("Push")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -724,36 +723,35 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())))))));
 
-                //            this.rollbackStack.Push(() => this.ThingNameIndex.Add(thing));
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
+                //            enlistmentState.RollbackStack.Push(() => this.ThingNameIndex.Add(thing));
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("rollbackStack")),
-                                SyntaxFactory.IdentifierName("Push")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.ParenthesizedLambdaExpression()
-                                        .WithExpressionBody(
-                                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.IdentifierName("enlistmentState"),
+                                SyntaxFactory.IdentifierName("RollbackStack")),
+                            SyntaxFactory.IdentifierName("Push")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.ParenthesizedLambdaExpression()
+                                    .WithExpressionBody(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.ThisExpression(),
-                                                        SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
-                                                    SyntaxFactory.IdentifierName("Add")))
-                                            .WithArgumentList(
-                                                SyntaxFactory.ArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                        SyntaxFactory.Argument(
-                                                            SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()))))))))))));
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
+                                                SyntaxFactory.IdentifierName("Add")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())))))))))));
             }
 
             // Delete the row from the table.
@@ -775,15 +773,15 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     tableElement.PrimaryIndex.GetKeyAsArguments("deletedRow"))))),
 
-                    //            this.rollbackStack.Push(() => this.dictionary.Add((order.ThingCode, order.AssetCode, order.Date), order));
+                    //            enlistmentState.RollbackStack.Push(() => this.dictionary.Add((order.ThingCode, order.AssetCode, order.Date), order));
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("rollbackStack")),
+                                    SyntaxFactory.IdentifierName("enlistmentState"),
+                                    SyntaxFactory.IdentifierName("RollbackStack")),
                                 SyntaxFactory.IdentifierName("Push")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -814,15 +812,15 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             statements.AddRange(
                 new StatementSyntax[]
                 {
-                    //                this.commitStack.Push(() => this.DeletedRows.AddFirst(allocation));
+                    //                enlistmentState.CommitStack.Push(() => this.DeletedRows.AddFirst(allocation));
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("commitStack")),
+                                    SyntaxFactory.IdentifierName("enlistmentState"),
+                                    SyntaxFactory.IdentifierName("CommitStack")),
                                 SyntaxFactory.IdentifierName("Push")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -844,15 +842,15 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                         SyntaxFactory.Argument(
                                                             SyntaxFactory.IdentifierName("deletedRow"))))))))))),
 
-                    //            this.commitStack.Push(() => this.RowChanged?.Invoke(this, new RowChangedEventArgs<Thing>(DataAction.Add, thing)));
+                    //            enlistmentState.CommitStack.Push(() => this.RowChanged?.Invoke(this, new RowChangedEventArgs<Thing>(DataAction.Add, thing)));
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("commitStack")),
+                                    SyntaxFactory.IdentifierName("enlistmentState"),
+                                    SyntaxFactory.IdentifierName("CommitStack")),
                                 SyntaxFactory.IdentifierName("Push")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -1011,15 +1009,15 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.Argument(
                                     SyntaxFactory.IdentifierName(variableName)))))),
 
-                //            this.rollbackStack.Push(() => thing.Orders.Remove(order));
+                //            enlistmentState.RollbackStack.Push(() => thing.Orders.Remove(order));
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.InvocationExpression(
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("rollbackStack")),
+                                SyntaxFactory.IdentifierName("enlistmentState"),
+                                SyntaxFactory.IdentifierName("RollbackStack")),
                             SyntaxFactory.IdentifierName("Push")))
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList(
@@ -1160,15 +1158,15 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.Argument(
                                     SyntaxFactory.IdentifierName(variableName)))))),
 
-                //            this.rollbackStack.Push(() => thing.Orders.Remove(order));
+                //            enlistmentState.RollbackStack.Push(() => thing.Orders.Remove(order));
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.InvocationExpression(
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("rollbackStack")),
+                                SyntaxFactory.IdentifierName("enlistmentState"),
+                                SyntaxFactory.IdentifierName("RollbackStack")),
                             SyntaxFactory.IdentifierName("Push")))
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList(
@@ -1314,15 +1312,15 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.Argument(
                                     SyntaxFactory.IdentifierName(variableName)))))),
 
-                //            this.rollbackStack.Push(() => thing.Orders.Add(order));
+                //            enlistmentState.RollbackStack.Push(() => thing.Orders.Add(order));
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.InvocationExpression(
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("rollbackStack")),
+                                SyntaxFactory.IdentifierName("enlistmentState"),
+                                SyntaxFactory.IdentifierName("RollbackStack")),
                             SyntaxFactory.IdentifierName("Push")))
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList(

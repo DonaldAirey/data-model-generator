@@ -27,7 +27,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
             //        /// <summary>
             //        /// Initializes a new instance of the <see cref="AsyncTransaction"/> class.
             //        /// </summary>
-            //        public AsyncTransaction()
+            //        public AsyncTransaction(CancellationToken cancellationToken)
             //        {
             //            <Body>
             //        }
@@ -36,6 +36,18 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithParameterList(
+                SyntaxFactory.ParameterList(
+                    SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
+                        SyntaxFactory.Parameter(
+                            SyntaxFactory.Identifier("cancellationToken"))
+                        .WithType(
+                            SyntaxFactory.IdentifierName("CancellationToken"))
+                        .WithDefault(
+                            SyntaxFactory.EqualsValueClause(
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.DefaultLiteralExpression,
+                                    SyntaxFactory.Token(SyntaxKind.DefaultKeyword)))))))
             .WithBody(Constructor.Body)
             .WithLeadingTrivia(Constructor.LeadingTrivia);
         }
@@ -50,6 +62,16 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                 return SyntaxFactory.Block(
                     new List<StatementSyntax>
                     {
+                        //            this.CancellationToken = cancellationToken;
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("CancellationToken")),
+                                SyntaxFactory.IdentifierName("cancellationToken"))),
+
                         //            AsyncTransaction.asyncTransaction.Value = this;
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.AssignmentExpression(

@@ -282,15 +282,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
                                 SyntaxFactory.IdentifierName("RowVersion")))));
 
-                //                thing.Load();
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                                SyntaxFactory.IdentifierName("Load")))));
-
                 //                this.RowChanged?.Invoke(this, new RowChangedEventArgs<Order>(DataAction.Add, order));
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(

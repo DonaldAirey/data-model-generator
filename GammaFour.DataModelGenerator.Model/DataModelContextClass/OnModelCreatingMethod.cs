@@ -259,30 +259,15 @@ namespace GammaFour.DataModelGenerator.Model.DataModelContextClass
                     // expression that will ignore the table that owns the rows.
                     //            modelBuilder.Entity<Buyer>().Ignore(b => b.Buyers)
                     ExpressionSyntax ignoredProperties = SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("modelBuilder"),
-                                    SyntaxFactory.GenericName(
-                                        SyntaxFactory.Identifier("Entity"))
-                                    .WithTypeArgumentList(
-                                        SyntaxFactory.TypeArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                SyntaxFactory.IdentifierName(tableElement.Name)))))),
-                            SyntaxFactory.IdentifierName("Ignore")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.SimpleLambdaExpression(
-                                            SyntaxFactory.Parameter(
-                                                SyntaxFactory.Identifier(abbreviation)),
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName(abbreviation),
-                                                SyntaxFactory.IdentifierName("IsModified")))))));
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("modelBuilder"),
+                                SyntaxFactory.GenericName(
+                                    SyntaxFactory.Identifier("Entity"))
+                                .WithTypeArgumentList(
+                                    SyntaxFactory.TypeArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                            SyntaxFactory.IdentifierName(tableElement.Name))))));
 
                     // Add an Ignore invocation for each of the owner (row set) navigation properties.
                     // .Ignore(b => b.Country)

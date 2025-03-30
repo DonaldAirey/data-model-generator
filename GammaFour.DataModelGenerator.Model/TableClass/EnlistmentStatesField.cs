@@ -1,8 +1,8 @@
-// <copyright file="Constructor.cs" company="Gamma Four, Inc.">
+// <copyright file="EnlistmentStatesField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.DataModelClass
+namespace GammaFour.DataModelGenerator.Model.TableClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,78 +12,58 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a constructor.
+    /// Creates a field that holds the column.
     /// </summary>
-    public class Constructor : SyntaxElement
+    public class EnlistmentStatesField : SyntaxElement
     {
         /// <summary>
-        /// The table schema.
+        /// Initializes a new instance of the <see cref="EnlistmentStatesField"/> class.
         /// </summary>
-        private XmlSchemaDocument xmlSchemaDocument;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Constructor"/> class.
-        /// </summary>
-        /// <param name="xmlSchemaDocument">The table schema.</param>
-        public Constructor(XmlSchemaDocument xmlSchemaDocument)
+        public EnlistmentStatesField()
         {
             // Initialize the object.
-            this.xmlSchemaDocument = xmlSchemaDocument;
-            this.Name = this.xmlSchemaDocument.Name;
+            this.Name = "enlistmentStates";
 
             //        /// <summary>
-            //        /// Initializes a new instance of the <see cref="DataModel"/> class.
+            //        /// The enlistment states for all the concurrent transactions.
             //        /// </summary>
-            //        public DataModel()
-            //        {
-            //            <Body>
-            //        }
-            this.Syntax = SyntaxFactory.ConstructorDeclaration(
-                SyntaxFactory.Identifier(this.Name))
+            //        private ConcurrentDictionary<AsyncTransaction, EnlistmentState> enlistmentStates = new ConcurrentDictionary<AsyncTransaction, EnlistmentState>();
+            this.Syntax = SyntaxFactory.FieldDeclaration(
+                SyntaxFactory.VariableDeclaration(
+                    SyntaxFactory.GenericName(
+                        SyntaxFactory.Identifier("ConcurrentDictionary"))
+                    .WithTypeArgumentList(
+                        SyntaxFactory.TypeArgumentList(
+                            SyntaxFactory.SeparatedList<TypeSyntax>(
+                                new SyntaxNodeOrToken[]
+                                {
+                                    SyntaxFactory.IdentifierName("AsyncTransaction"),
+                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                    SyntaxFactory.IdentifierName("EnlistmentState"),
+                                }))))
+                .WithVariables(
+                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                        SyntaxFactory.VariableDeclarator(
+                            SyntaxFactory.Identifier(this.Name))
+                        .WithInitializer(
+                            SyntaxFactory.EqualsValueClause(
+                                SyntaxFactory.ObjectCreationExpression(
+                                    SyntaxFactory.GenericName(
+                                        SyntaxFactory.Identifier("ConcurrentDictionary"))
+                                    .WithTypeArgumentList(
+                                        SyntaxFactory.TypeArgumentList(
+                                            SyntaxFactory.SeparatedList<TypeSyntax>(
+                                                new SyntaxNodeOrToken[]{
+                                                    SyntaxFactory.IdentifierName("AsyncTransaction"),
+                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                    SyntaxFactory.IdentifierName("EnlistmentState"),
+                                                }))))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList()))))))
             .WithModifiers(
                 SyntaxFactory.TokenList(
-                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithBody(this.Body)
+                    SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
             .WithLeadingTrivia(this.LeadingTrivia);
-        }
-
-        /// <summary>
-        /// Gets the body.
-        /// </summary>
-        private BlockSyntax Body
-        {
-            get
-            {
-                // The elements of the body are added to this collection as they are assembled.
-                var statements = new List<StatementSyntax>();
-
-                // Initialize each of the row sets.
-                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
-                {
-                    //            this.Things = new Things(this);
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural()))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                            new SyntaxNodeOrToken[]
-                                            {
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.ThisExpression()),
-                                            }))))));
-                }
-
-                // This is the syntax for the body of the constructor.
-                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
-            }
         }
 
         /// <summary>
@@ -93,12 +73,11 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         {
             get
             {
-                // The document comment trivia is collected in this list.
                 return SyntaxFactory.TriviaList(
                     new List<SyntaxTrivia>
                     {
                         //        /// <summary>
-                        //        /// Initializes a new instance of the <see cref="DataModel"/> class.
+                        //        /// The enlistment states for all the concurrent transactions.
                         //        /// </summary>
                         SyntaxFactory.Trivia(
                             SyntaxFactory.DocumentationCommentTrivia(
@@ -121,7 +100,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" Initializes a new instance of the <see cref=\"{this.xmlSchemaDocument.Name}\"/> class.",
+                                                    " The enlistment states for all the concurrent transactions.",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(

@@ -36,7 +36,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             //    /// <summary>
             //    /// A table of <see cref="Thing"/> rows.
             //    /// </summary>
-            //    /// <param name="dataModel">The data model.</param>
             //    public class Things(DataModel dataModel) : IEnlistmentNotification, IEnumerable<Thing>
             //    {
             //        <Members>
@@ -50,11 +49,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                     SyntaxFactory.SeparatedList<ParameterSyntax>(
                         new SyntaxNodeOrToken[]
                         {
-                            SyntaxFactory.Parameter(
-                                SyntaxFactory.Identifier("configuration"))
-                            .WithType(
-                                SyntaxFactory.IdentifierName("IConfiguration")),
-                            SyntaxFactory.Token(SyntaxKind.CommaToken),
                             SyntaxFactory.Parameter(
                                 SyntaxFactory.Identifier(this.tableElement.Document.Name.ToVariableName()))
                             .WithType(
@@ -137,28 +131,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //    /// <param name="configuration">The configuration.</param>
-                    SyntaxFactory.Trivia(
-                        SyntaxFactory.DocumentationCommentTrivia(
-                            SyntaxKind.SingleLineDocumentationCommentTrivia,
-                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                SyntaxFactory.XmlText()
-                                .WithTextTokens(
-                                    SyntaxFactory.TokenList(
-                                        new[]
-                                        {
-                                            SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" <param name=\"configuration\">The configuration.</param>",
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                            SyntaxFactory.XmlTextNewLine(
-                                                SyntaxFactory.TriviaList(),
-                                                Environment.NewLine,
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                        }))))),
-
                     //    /// <param name="dataModel">The data model.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -196,12 +168,12 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = this.CreatePrivateReadonlyInstanceFields(members);
-                members = this.CreatePrivateInstanceFields(members);
+                members = this.CreatePrivateReadonlyFields(members);
+                members = this.CreatePrivateFields(members);
                 members = this.CreatePublicEvents(members);
-                members = this.CreatePublicInstanceProperties(members);
-                members = this.CreatePublicInstanceMethods(members);
-                members = Class.CreatePrivateInstanceMethods(members);
+                members = this.CreatePublicProperties(members);
+                members = this.CreatePublicMethods(members);
+                members = Class.CreatePrivateMethods(members);
                 return members;
             }
         }
@@ -211,7 +183,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The structure members with the methods added.</returns>
-        private static SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
+        private static SyntaxList<MemberDeclarationSyntax> CreatePrivateMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
@@ -231,17 +203,15 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The syntax for creating the internal instance properties.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePrivateReadonlyInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
+        private SyntaxList<MemberDeclarationSyntax> CreatePrivateReadonlyFields(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>
             {
                 new AsyncReaderWriterLockField(),
-                new CommitStackField(),
                 new DataModelField(this.tableElement.Document),
                 new DictionaryField(this.tableElement),
-                new RollbackStackField(),
-                new TimeoutField(this.tableElement),
+                new EnlistmentStatesField(),
             };
 
             // Alphabetize and add the fields as members of the class.
@@ -259,7 +229,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The structure members with the fields added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePrivateInstanceFields(SyntaxList<MemberDeclarationSyntax> members)
+        private SyntaxList<MemberDeclarationSyntax> CreatePrivateFields(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the private instance fields.
             List<SyntaxElement> fields = new List<SyntaxElement>
@@ -281,11 +251,12 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The structure members with the properties added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceProperties(SyntaxList<MemberDeclarationSyntax> members)
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicProperties(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>
             {
+                new EnlistmentStateProperty(),
                 new DeletedRowsProperty(this.tableElement),
             };
 
@@ -333,7 +304,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The structure members with the methods added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceMethods(SyntaxList<MemberDeclarationSyntax> members)
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>

@@ -1,4 +1,4 @@
-// <copyright file="ParentRowProperty.cs" company="Gamma Four, Inc.">
+//  <copyright file="ParentRowProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,12 +12,12 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a property that navigates to the parent row.
+    /// Creates a field to hold the parent row.
     /// </summary>
     public class ParentRowProperty : SyntaxElement
     {
         /// <summary>
-        /// The foreign key description.
+        /// The unique constraint schema.
         /// </summary>
         private readonly ForeignIndexElement foreignIndexElement;
 
@@ -32,25 +32,13 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             this.Name = this.foreignIndexElement.UniqueParentName;
 
             //        /// <summary>
-            //        /// Gets or sets the parent <see cref="Account"/> row.
+            //        /// Gets the parent <see cref="Asset"/> row.
             //        /// </summary>
-            //        [JsonIgnore]
-            //        public Account? Account
-            //        {
-            //            get
-            //            {
-            //                <GetAccessor>;
-            //            }
-            //
-            //            set
-            //            {
-            //                <SetAccessor>
-            //            }
-            //        }
+            //        private Account? account;
             this.Syntax = SyntaxFactory.PropertyDeclaration(
                 SyntaxFactory.NullableType(
-                    SyntaxFactory.IdentifierName(this.foreignIndexElement.UniqueIndex.Table.Name)),
-                SyntaxFactory.Identifier(this.foreignIndexElement.UniqueParentName))
+                    SyntaxFactory.IdentifierName($"{this.foreignIndexElement.UniqueIndex.Table.Name}")),
+                SyntaxFactory.Identifier(this.Name))
             .WithAttributeLists(
                 SyntaxFactory.SingletonList<AttributeListSyntax>(
                     SyntaxFactory.AttributeList(
@@ -65,9 +53,18 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                     SyntaxFactory.List<AccessorDeclarationSyntax>(
                         new AccessorDeclarationSyntax[]
                         {
-                            this.GetAccessor,
-                            this.SetAccessor,
+                            SyntaxFactory.AccessorDeclaration(
+                                SyntaxKind.GetAccessorDeclaration)
+                            .WithSemicolonToken(
+                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                            SyntaxFactory.AccessorDeclaration(
+                                SyntaxKind.SetAccessorDeclaration)
+                            .WithSemicolonToken(
+                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
                         })))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
             .WithLeadingTrivia(this.LeadingTrivia);
         }
 
@@ -82,7 +79,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Gets or sets the parent <see cref="Account"/> table.
+                    //        /// Gets the parent <see cref="Asset"/> row.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -128,124 +125,6 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Get' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax GetAccessor
-        {
-            get
-            {
-                // This list collects the statements.
-                var statements = new List<StatementSyntax>
-                {
-                    //                return this.account;
-                    SyntaxFactory.ReturnStatement(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.ThisExpression(),
-                            SyntaxFactory.IdentifierName(this.foreignIndexElement.UniqueParentName.ToCamelCase()))),
-                };
-
-                //            get
-                //            {
-                //                <statements>
-                //            }
-                return SyntaxFactory.AccessorDeclaration(
-                    SyntaxKind.GetAccessorDeclaration,
-                    SyntaxFactory.Block(
-                        SyntaxFactory.List(statements)))
-                .WithKeyword(SyntaxFactory.Token(SyntaxKind.GetKeyword));
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Set' accessor.
-        /// </summary>
-        private AccessorDeclarationSyntax SetAccessor
-        {
-            get
-            {
-                // This list collects the statements.
-                var statements = new List<StatementSyntax>
-                {
-                    //                if (this.account != value)
-                    //                {
-                    //                    var account = this.Account;
-                    //                    this.rollbackStack.Push(() => this.account = account);
-                    //                    this.account = value;
-                    //                }
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.NotEqualsExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName(this.foreignIndexElement.UniqueParentName.ToCamelCase())),
-                            SyntaxFactory.IdentifierName("value")),
-                        SyntaxFactory.Block(
-                            SyntaxFactory.LocalDeclarationStatement(
-                                SyntaxFactory.VariableDeclaration(
-                                    SyntaxFactory.IdentifierName(
-                                        SyntaxFactory.Identifier(
-                                            SyntaxFactory.TriviaList(),
-                                            SyntaxKind.VarKeyword,
-                                            "var",
-                                            "var",
-                                            SyntaxFactory.TriviaList())))
-                                .WithVariables(
-                                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                        SyntaxFactory.VariableDeclarator(
-                                            SyntaxFactory.Identifier(this.foreignIndexElement.UniqueParentName.ToCamelCase()))
-                                        .WithInitializer(
-                                            SyntaxFactory.EqualsValueClause(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(this.foreignIndexElement.UniqueParentName.ToCamelCase()))))))),
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("rollbackStack")),
-                                        SyntaxFactory.IdentifierName("Push")))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.ParenthesizedLambdaExpression()
-                                                .WithExpressionBody(
-                                                    SyntaxFactory.AssignmentExpression(
-                                                        SyntaxKind.SimpleAssignmentExpression,
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName(this.foreignIndexElement.UniqueParentName.ToCamelCase())),
-                                                        SyntaxFactory.IdentifierName(this.foreignIndexElement.UniqueParentName.ToVariableName())))))))),
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.AssignmentExpression(
-                                    SyntaxKind.SimpleAssignmentExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(this.foreignIndexElement.UniqueParentName.ToCamelCase())),
-                                    SyntaxFactory.IdentifierName("value"))))),
-                };
-
-                //            set
-                //            {
-                //                <statements>
-                //            }
-                return SyntaxFactory.AccessorDeclaration(
-                    SyntaxKind.SetAccessorDeclaration,
-                    SyntaxFactory.Block(
-                        SyntaxFactory.List(statements)))
-                .WithKeyword(SyntaxFactory.Token(SyntaxKind.SetKeyword));
             }
         }
     }

@@ -1,8 +1,8 @@
-// <copyright file="CommitStackField.cs" company="Gamma Four, Inc.">
+// <copyright file="CancellationTokenProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.TableClass
+namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,67 +12,50 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field to hold the current contents of the row.
+    /// Creates a property that navigates to the parent row.
     /// </summary>
-    public class CommitStackField : SyntaxElement
+    public class CancellationTokenProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommitStackField"/> class.
+        /// Initializes a new instance of the <see cref="CancellationTokenProperty"/> class.
         /// </summary>
-        public CommitStackField()
+        public CancellationTokenProperty()
         {
             // Initialize the object.
-            this.Name = "commitStack";
+            this.Name = "CancellationToken";
 
             //        /// <summary>
-            //        ///  The commit stack.
+            //        /// Gets the cancellation token.
             //        /// </summary>
-            //        private readonly Stack<Action> commitStack = new Stack<Action>();
-            this.Syntax = SyntaxFactory.FieldDeclaration(
-                SyntaxFactory.VariableDeclaration(
-                    SyntaxFactory.GenericName(
-                        SyntaxFactory.Identifier("Stack"))
-                    .WithTypeArgumentList(
-                        SyntaxFactory.TypeArgumentList(
-                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                SyntaxFactory.IdentifierName("Action")))))
-                .WithVariables(
-                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                        SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier(this.Name))
-                        .WithInitializer(
-                            SyntaxFactory.EqualsValueClause(
-                                SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.GenericName(
-                                        SyntaxFactory.Identifier("Stack"))
-                                    .WithTypeArgumentList(
-                                        SyntaxFactory.TypeArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                SyntaxFactory.IdentifierName("Action")))))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList()))))))
+            //        public CancellationToken CancellationToken { get; }
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
+                SyntaxFactory.IdentifierName("CancellationToken"),
+                SyntaxFactory.Identifier("CancellationToken"))
             .WithModifiers(
                 SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
-                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
-                    }))
-            .WithLeadingTrivia(CommitStackField.LeadingTrivia);
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithAccessorList(
+                SyntaxFactory.AccessorList(
+                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
+                        SyntaxFactory.AccessorDeclaration(
+                            SyntaxKind.GetAccessorDeclaration)
+                        .WithSemicolonToken(
+                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
+            .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static IEnumerable<SyntaxTrivia> LeadingTrivia
+        private IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                return new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// The commit stack.
+                    //        /// Gets the cancellation token.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -95,7 +78,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " The commit stack.",
+                                                " Gets the cancellation token.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -115,9 +98,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
                 };
-
-                // This is the complete document comment.
-                return SyntaxFactory.TriviaList(comments);
             }
         }
     }

@@ -1,8 +1,8 @@
-// <copyright file="LoadMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="WriteLocksProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.RowClass
+namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,75 +12,79 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to acquire a reader lock.
+    /// Creates a field to hold the current contents of the row.
     /// </summary>
-    public class LoadMethod : SyntaxElement
+    public class WriteLocksProperty : SyntaxElement
     {
         /// <summary>
-        /// The table element.
+        /// Initializes a new instance of the <see cref="WriteLocksProperty"/> class.
         /// </summary>
-        private TableElement tableElement;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LoadMethod"/> class.
-        /// </summary>
-        /// <param name="tableElement">The table element.</param>
-        public LoadMethod(TableElement tableElement)
+        public WriteLocksProperty()
         {
             // Initialize the object.
-            this.tableElement = tableElement;
-            this.Name = "Load";
+            this.Name = "WriteLocks";
 
             //        /// <summary>
-            //        /// Loads a <see cref="Order"/> row.
+            //        /// Gets the read locks.
             //        /// </summary>
-            //        public void Load()
-            //        {
-            //            this.IsModified = false;
-            //            this.rollbackStack.Clear();
-            //        }
-            this.Syntax = SyntaxFactory.MethodDeclaration(
-                SyntaxFactory.PredefinedType(
-                    SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
-                SyntaxFactory.Identifier(this.Name))
+            //        public Dictionary<object, AsyncReaderWriterLock> WriteLocks { get; } = new Dictionary<object, AsyncReaderWriterLock>();
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
+                SyntaxFactory.GenericName(
+                    SyntaxFactory.Identifier("Dictionary"))
+                .WithTypeArgumentList(
+                    SyntaxFactory.TypeArgumentList(
+                        SyntaxFactory.SeparatedList<TypeSyntax>(
+                            new SyntaxNodeOrToken[]
+                            {
+                                SyntaxFactory.PredefinedType(
+                                    SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
+                                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                SyntaxFactory.IdentifierName("AsyncReaderWriterLock"),
+                            }))),
+                SyntaxFactory.Identifier("WriteLocks"))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithBody(
-                SyntaxFactory.Block(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("IsModified")),
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.FalseLiteralExpression))),
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("rollbackStack")),
-                                SyntaxFactory.IdentifierName("Clear"))))))
-            .WithLeadingTrivia(this.LeadingTrivia);
+            .WithAccessorList(
+                SyntaxFactory.AccessorList(
+                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
+                        SyntaxFactory.AccessorDeclaration(
+                            SyntaxKind.GetAccessorDeclaration)
+                        .WithSemicolonToken(
+                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
+            .WithInitializer(
+                SyntaxFactory.EqualsValueClause(
+                    SyntaxFactory.ObjectCreationExpression(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("Dictionary"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SeparatedList<TypeSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.PredefinedType(
+                                            SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.IdentifierName("AsyncReaderWriterLock"),
+                                    }))))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList())))
+            .WithSemicolonToken(
+                SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+            .WithLeadingTrivia(WriteLocksProperty.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private IEnumerable<SyntaxTrivia> LeadingTrivia
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {
-                // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                return new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Loads a <see cref="Order"/> row.
+                    //        /// Gets the read locks.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -103,7 +107,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Loads a <see cref=\"{this.tableElement.Name}\"/> row.",
+                                                " Gets the write locks.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -123,9 +127,6 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
                 };
-
-                // This is the complete document comment.
-                return SyntaxFactory.TriviaList(comments);
             }
         }
     }

@@ -128,7 +128,7 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = this.CreatePublicInstanceProperties(members);
+                members = this.CreatePublicProperties(members);
                 return members;
             }
         }
@@ -138,7 +138,7 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The syntax for creating the public instance properties.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicInstanceProperties(SyntaxList<MemberDeclarationSyntax> members)
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicProperties(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>

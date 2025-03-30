@@ -1,4 +1,4 @@
-// <copyright file="ConstructorDeepClone.cs" company="Gamma Four, Inc.">
+// <copyright file="CopyConstructor.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,7 +14,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
     /// <summary>
     /// Creates a constructor.
     /// </summary>
-    public class ConstructorDeepClone : SyntaxElement
+    public class CopyConstructor : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -22,10 +22,10 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConstructorDeepClone"/> class.
+        /// Initializes a new instance of the <see cref="CopyConstructor"/> class.
         /// </summary>
         /// <param name="tableElement">The table schema.</param>
-        public ConstructorDeepClone(TableElement tableElement)
+        public CopyConstructor(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;

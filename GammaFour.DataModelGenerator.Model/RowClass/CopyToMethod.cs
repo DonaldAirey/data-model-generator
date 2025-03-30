@@ -1,8 +1,8 @@
-// <copyright file="Constructor.cs" company="Gamma Four, Inc.">
+// <copyright file="CopyToMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.DataModelClass
+namespace GammaFour.DataModelGenerator.Model.RowClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,38 +12,49 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a constructor.
+    /// Creates a method that performs a shallow copy to the destination row.
     /// </summary>
-    public class Constructor : SyntaxElement
+    public class CopyToMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
         /// </summary>
-        private XmlSchemaDocument xmlSchemaDocument;
+        private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Constructor"/> class.
+        /// Initializes a new instance of the <see cref="CopyToMethod"/> class.
         /// </summary>
-        /// <param name="xmlSchemaDocument">The table schema.</param>
-        public Constructor(XmlSchemaDocument xmlSchemaDocument)
+        /// <param name="tableElement">The table schema.</param>
+        public CopyToMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.xmlSchemaDocument = xmlSchemaDocument;
-            this.Name = this.xmlSchemaDocument.Name;
+            this.tableElement = tableElement;
+            this.Name = "CopyTo";
 
             //        /// <summary>
-            //        /// Initializes a new instance of the <see cref="DataModel"/> class.
+            //        /// Shallow copy of a <see cref="Account"/> row.
             //        /// </summary>
-            //        public DataModel()
+            //        /// <param name="account">The destination <see cref="Account"/> row.</param>
+            //        public void CopyTo(Account account)
             //        {
             //            <Body>
             //        }
-            this.Syntax = SyntaxFactory.ConstructorDeclaration(
-                SyntaxFactory.Identifier(this.Name))
+            this.Syntax = SyntaxFactory.MethodDeclaration(
+                SyntaxFactory.PredefinedType(
+                    SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
+                SyntaxFactory.Identifier("CopyTo"))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithBody(this.Body)
+            .WithParameterList(
+                SyntaxFactory.ParameterList(
+                    SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
+                        SyntaxFactory.Parameter(
+                            SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()))
+                        .WithType(
+                            SyntaxFactory.IdentifierName(this.tableElement.Name)))))
+            .WithBody(
+                this.Body)
             .WithLeadingTrivia(this.LeadingTrivia);
         }
 
@@ -57,28 +68,25 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                 // The elements of the body are added to this collection as they are assembled.
                 var statements = new List<StatementSyntax>();
 
-                // Initialize each of the row sets.
-                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
+                //            account.AccountId = this.AccountId;
+                //            account.AccountType = this.AccountType;
+                //            account.BaseAssetId = this.BaseAssetId;
+                //            account.BrokerAccountId = this.BrokerAccountId;
+                //            account.BrokerFeedId = this.BrokerFeedId;
+                foreach (var columnElement in this.tableElement.Columns)
                 {
-                    //            this.Things = new Things(this);
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.AssignmentExpression(
                                 SyntaxKind.SimpleAssignmentExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                    SyntaxFactory.IdentifierName(columnElement.Name)),
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural()))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                            new SyntaxNodeOrToken[]
-                                            {
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.ThisExpression()),
-                                            }))))));
+                                    SyntaxFactory.IdentifierName(columnElement.Name)))));
                 }
 
                 // This is the syntax for the body of the constructor.
@@ -98,7 +106,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                     new List<SyntaxTrivia>
                     {
                         //        /// <summary>
-                        //        /// Initializes a new instance of the <see cref="DataModel"/> class.
+                        //        /// Shallow copy of a <see cref="Account"/> row.
                         //        /// </summary>
                         SyntaxFactory.Trivia(
                             SyntaxFactory.DocumentationCommentTrivia(
@@ -121,7 +129,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" Initializes a new instance of the <see cref=\"{this.xmlSchemaDocument.Name}\"/> class.",
+                                                    $" Shallow copy of a <see cref=\"{this.tableElement.Name}\"/> row.",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -140,6 +148,28 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                             }))))),
+
+                        //        /// <param name="account">The destination <see cref="Account"/> row.</param>
+                        SyntaxFactory.Trivia(
+                            SyntaxFactory.DocumentationCommentTrivia(
+                                SyntaxKind.SingleLineDocumentationCommentTrivia,
+                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                        SyntaxFactory.XmlText()
+                                        .WithTextTokens(
+                                            SyntaxFactory.TokenList(
+                                                new[]
+                                                {
+                                                    SyntaxFactory.XmlTextLiteral(
+                                                        SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                        $" <param name=\"{this.tableElement.Name.ToCamelCase()}\">The destination <see cref=\"{this.tableElement.Name}\"/> row.</param>",
+                                                        string.Empty,
+                                                        SyntaxFactory.TriviaList()),
+                                                    SyntaxFactory.XmlTextNewLine(
+                                                        SyntaxFactory.TriviaList(),
+                                                        Environment.NewLine,
+                                                        string.Empty,
+                                                        SyntaxFactory.TriviaList()),
+                                                }))))),
                     });
             }
         }
