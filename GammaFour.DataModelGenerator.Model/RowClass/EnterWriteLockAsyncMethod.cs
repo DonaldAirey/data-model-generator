@@ -236,31 +236,6 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                     .WithElse(
                         SyntaxFactory.ElseClause(
                             SyntaxFactory.Block(this.EnterWriteLock))),
-
-                    //                asyncTransaction.WriteLocks.Add(this, this.asyncReaderWriterLock);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("asyncTransaction"),
-                                    SyntaxFactory.IdentifierName("WriteLocks")),
-                                SyntaxFactory.IdentifierName("Add")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]
-                                    {
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.ThisExpression()),
-                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName("asyncReaderWriterLock"))),
-                                    })))),
                 };
             }
         }
@@ -319,6 +294,31 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.LiteralExpression(
                                                 SyntaxKind.FalseLiteralExpression))))))),
+
+                    //                asyncTransaction.WriteLocks.Add(this, this.asyncReaderWriterLock);
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("asyncTransaction"),
+                                    SyntaxFactory.IdentifierName("WriteLocks")),
+                                SyntaxFactory.IdentifierName("Add")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.ThisExpression()),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName("asyncReaderWriterLock"))),
+                                    })))),
                 };
             }
         }
@@ -353,6 +353,31 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.LiteralExpression(
                                                 SyntaxKind.FalseLiteralExpression))))))),
+
+                    //                asyncTransaction.WriteLocks.Add(this, this.asyncReaderWriterLock);
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("asyncTransaction"),
+                                    SyntaxFactory.IdentifierName("WriteLocks")),
+                                SyntaxFactory.IdentifierName("Add")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.ThisExpression()),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName("asyncReaderWriterLock"))),
+                                    })))),
                 };
             }
         }
