@@ -790,7 +790,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                     SyntaxFactory.LiteralExpression(
                                                         SyntaxKind.StringLiteralExpression,
                                                         SyntaxFactory.Literal(
-                                                            $"The delete action conflicted with the constraint {foreignIndexElement.Name}")))))))))));
+                                                            $"The remove action conflicted with the constraint {foreignIndexElement.Name}")))))))))));
             }
 
             // Delete this row from each of the parent rows.
