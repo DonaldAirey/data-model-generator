@@ -159,8 +159,8 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
             // Add a set of REST operations for each table.
             foreach (var tableElement in this.xmlSchemaDocument.Tables)
             {
-                methods.Add(new DeleteManyAsyncMethod(tableElement));
-                methods.Add(new DeleteOneAsyncMethod(tableElement));
+                methods.Add(new RemoveManyAsyncMethod(tableElement));
+                methods.Add(new RemoveOneAsyncMethod(tableElement));
                 methods.Add(new GetManyAsyncMethod(tableElement));
                 methods.Add(new GetOneAsyncMethod(tableElement));
                 methods.Add(new PatchManyAsyncMethod(tableElement));

@@ -1,4 +1,4 @@
-// <copyright file="DeleteManyAsyncMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="RemoveManyAsyncMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,7 +14,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
     /// <summary>
     /// Creates a method to add a row to the set.
     /// </summary>
-    public class DeleteManyAsyncMethod : SyntaxElement
+    public class RemoveManyAsyncMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -22,21 +22,21 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DeleteManyAsyncMethod"/> class.
+        /// Initializes a new instance of the <see cref="RemoveManyAsyncMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public DeleteManyAsyncMethod(TableElement tableElement)
+        public RemoveManyAsyncMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = "DeleteAsync";
+            this.Name = "RemoveAsync";
 
             //        /// <summary>
             //        /// Deletes a set of <see cref="Account"/> rows.
             //        /// </summary>
             //        /// <param name="accounts">The set of <see cref="Account"/> rows.</param>
             //        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-            //        public async Task<IEnumerable<Account>> DeleteAsync(IEnumerable<Account> accounts, CancellationToken cancellationToken = default))
+            //        public async Task<IEnumerable<Account>> RemoveAsync(IEnumerable<Account> accounts, CancellationToken cancellationToken = default))
             //        {
             //            <Body>
             //        }
@@ -52,7 +52,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
                                 SyntaxFactory.TypeArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                                         SyntaxFactory.IdentifierName(this.tableElement.Name))))))),
-                SyntaxFactory.Identifier("DeleteAsync"))
+                SyntaxFactory.Identifier(this.Name))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     new[]
@@ -155,7 +155,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Deletes a set of <see cref=\"{this.tableElement.Name}\"/> rows.",
+                                                $" Removes a set of <see cref=\"{this.tableElement.Name}\"/> rows.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
