@@ -1,4 +1,4 @@
-// <copyright file="DeleteManyMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="RemoveManyMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,7 +14,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     /// <summary>
     /// Creates a method to delete a row from the set.
     /// </summary>
-    public class DeleteManyMethod : SyntaxElement
+    public class RemoveManyMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -22,14 +22,14 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DeleteManyMethod"/> class.
+        /// Initializes a new instance of the <see cref="RemoveManyMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public DeleteManyMethod(TableElement tableElement)
+        public RemoveManyMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = "DeleteAsync";
+            this.Name = "RemoveAsync";
 
             //        /// <summary>
             //        /// Deletes a collecdtion of <see cref="Thing"/> rows.
@@ -164,7 +164,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.TriviaList())),
                             SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()),
                             SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToVariableName()),
-                            SyntaxFactory.Block(RowUtilities.DeleteRow(this.tableElement))),
+                            SyntaxFactory.Block(this.FindRow)),
 
                         //            return deletedRows;
                         SyntaxFactory.ReturnStatement(
@@ -173,6 +173,36 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
+            }
+        }
+
+        /// <summary>
+        /// Gets a set of statements to find the row.
+        /// </summary>
+        private IEnumerable<StatementSyntax> FindRow
+        {
+            get
+            {
+                // The elements of the body are added to this collection as they are assembled.
+                var statements = new List<StatementSyntax>();
+                statements.AddRange(RowUtilities.DeleteRow(this.tableElement));
+
+                //                deletedRows.Add(deletedRow);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("deletedRows"),
+                                SyntaxFactory.IdentifierName("Add")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("deletedRow")))))));
+
+                // This is the syntax for the body of the method.
+                return SyntaxFactory.List<StatementSyntax>(statements);
             }
         }
 

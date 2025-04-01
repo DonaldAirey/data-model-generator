@@ -108,7 +108,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                 // This is used to collect the statements.
                 var statements = new List<StatementSyntax>
                 {
-                    //                  account = await this.dataModel.Accounts.DeleteAsync(account).ConfigureAwait(false);
+                    //                  account = await this.dataModel.Accounts.RemoveAsync(account).ConfigureAwait(false);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -127,7 +127,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                                                         SyntaxFactory.ThisExpression(),
                                                         SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToCamelCase())),
                                                     SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                                SyntaxFactory.IdentifierName("DeleteAsync")))
+                                                SyntaxFactory.IdentifierName("RemoveAsync")))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
                                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
@@ -174,12 +174,12 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                                             $"{this.tableElement.Document.Name.ToVariableName()}Context")),
                                     SyntaxFactory.IdentifierName("SaveChangesAsync"))))),
 
-                    //                transactionScope.Complete();
+                    //                asyncTransaction.Complete();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("transactionScope"),
+                                SyntaxFactory.IdentifierName("asyncTransaction"),
                                 SyntaxFactory.IdentifierName("Complete")))),
                 };
 
@@ -363,7 +363,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                 // This is used to collect the statements.
                 var statements = new List<StatementSyntax>
                 {
-                    //                using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                    //                using var asyncTransaction = new AsyncTransaction();
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(
@@ -376,19 +376,13 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("transactionScope"))
+                                    SyntaxFactory.Identifier("asyncTransaction"))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
                                         SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName("TransactionScope"))
+                                            SyntaxFactory.IdentifierName("AsyncTransaction"))
                                         .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.IdentifierName("TransactionScopeAsyncFlowOption"),
-                                                            SyntaxFactory.IdentifierName("Enabled")))))))))))
+                                            SyntaxFactory.ArgumentList()))))))
                     .WithUsingKeyword(
                         SyntaxFactory.Token(SyntaxKind.UsingKeyword)),
 

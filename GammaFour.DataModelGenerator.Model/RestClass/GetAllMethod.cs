@@ -245,7 +245,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                 // This is used to collect the statements.
                 var statements = new List<StatementSyntax>
                 {
-                    //                using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                    //                using var asyncTransaction = new AsyncTransaction();
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(
@@ -258,19 +258,13 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("transactionScope"))
+                                    SyntaxFactory.Identifier("asyncTransaction"))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
                                         SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName("TransactionScope"))
+                                            SyntaxFactory.IdentifierName("AsyncTransaction"))
                                         .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.IdentifierName("TransactionScopeAsyncFlowOption"),
-                                                            SyntaxFactory.IdentifierName("Enabled")))))))))))
+                                            SyntaxFactory.ArgumentList()))))))
                     .WithUsingKeyword(
                         SyntaxFactory.Token(SyntaxKind.UsingKeyword)),
 

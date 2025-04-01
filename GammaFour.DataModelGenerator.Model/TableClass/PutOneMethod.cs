@@ -91,39 +91,39 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 // The elements of the body are added to this collection as they are assembled.
                 var statements = new List<StatementSyntax>
                 {
-                //            var enlistmentState = this.EnlistmentState;
-                SyntaxFactory.LocalDeclarationStatement(
-                    SyntaxFactory.VariableDeclaration(
-                        SyntaxFactory.IdentifierName(
-                            SyntaxFactory.Identifier(
-                                SyntaxFactory.TriviaList(),
-                                SyntaxKind.VarKeyword,
-                                "var",
-                                "var",
-                                SyntaxFactory.TriviaList())))
-                    .WithVariables(
-                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                            SyntaxFactory.VariableDeclarator(
-                                SyntaxFactory.Identifier("enlistmentState"))
-                            .WithInitializer(
-                                SyntaxFactory.EqualsValueClause(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("EnlistmentState"))))))),
+                    //            var enlistmentState = this.EnlistmentState;
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(
+                                SyntaxFactory.Identifier(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.VarKeyword,
+                                    "var",
+                                    "var",
+                                    SyntaxFactory.TriviaList())))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("enlistmentState"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName("EnlistmentState"))))))),
 
-                //            ArgumentNullException.ThrowIfNull(enlistmentState);
-                SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName("ArgumentNullException"),
-                            SyntaxFactory.IdentifierName("ThrowIfNull")))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList(
-                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                SyntaxFactory.Argument(
-                                    SyntaxFactory.IdentifierName("enlistmentState")))))),
+                    //            ArgumentNullException.ThrowIfNull(enlistmentState);
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("ArgumentNullException"),
+                                SyntaxFactory.IdentifierName("ThrowIfNull")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("enlistmentState")))))),
 
                     //            Account? addedRow = null;
                     SyntaxFactory.LocalDeclarationStatement(
@@ -221,7 +221,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         .WithRefOrOutKeyword(
                                             SyntaxFactory.Token(SyntaxKind.OutKeyword)),
                                     }))),
-                        SyntaxFactory.Block(RowUtilities.UpdateRow(this.tableElement)))
+                        SyntaxFactory.Block(this.UpdateRow))
                     .WithElse(
                         SyntaxFactory.ElseClause(
                             SyntaxFactory.Block(this.AddRow))),
@@ -349,6 +349,28 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxKind.SimpleAssignmentExpression,
                             SyntaxFactory.IdentifierName("addedRow"),
                             SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))));
+
+                return statements;
+            }
+        }
+
+        /// <summary>
+        /// Gets the statements to update a row.
+        /// </summary>
+        private IEnumerable<StatementSyntax> UpdateRow
+        {
+            get
+            {
+                var statements = new List<StatementSyntax>();
+                statements.AddRange(RowUtilities.UpdateRow(this.tableElement));
+
+                //                updatedRow = clone;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.IdentifierName("updatedRow"),
+                            SyntaxFactory.IdentifierName("clone"))));
 
                 return statements;
             }

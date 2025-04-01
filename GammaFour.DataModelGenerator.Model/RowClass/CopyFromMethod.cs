@@ -1,4 +1,4 @@
-// <copyright file="CopyToMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="CopyFromMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,7 +14,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
     /// <summary>
     /// Creates a method that performs a shallow copy to the destination row.
     /// </summary>
-    public class CopyToMethod : SyntaxElement
+    public class CopyFromMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -22,27 +22,27 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CopyToMethod"/> class.
+        /// Initializes a new instance of the <see cref="CopyFromMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The table schema.</param>
-        public CopyToMethod(TableElement tableElement)
+        public CopyFromMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = "CopyTo";
+            this.Name = "CopyFrom";
 
             //        /// <summary>
             //        /// Shallow copy of a <see cref="Account"/> row.
             //        /// </summary>
             //        /// <param name="account">The destination <see cref="Account"/> row.</param>
-            //        public void CopyTo(Account account)
+            //        public void CopyFrom(Account account)
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
                 SyntaxFactory.PredefinedType(
                     SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
-                SyntaxFactory.Identifier("CopyTo"))
+                SyntaxFactory.Identifier(this.Name))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
@@ -68,11 +68,11 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                 // The elements of the body are added to this collection as they are assembled.
                 var statements = new List<StatementSyntax>();
 
-                //            account.AccountId = this.AccountId;
-                //            account.AccountType = this.AccountType;
-                //            account.BaseAssetId = this.BaseAssetId;
-                //            account.BrokerAccountId = this.BrokerAccountId;
-                //            account.BrokerFeedId = this.BrokerFeedId;
+                //            this.AccountId = account.AccountId;
+                //            this.AccountType = account.AccountType;
+                //            this.BaseAssetId = account.BaseAssetId;
+                //            this.BrokerAccountId = account.BrokerAccountId;
+                //            this.BrokerFeedId = account.BrokerFeedId;
                 foreach (var columnElement in this.tableElement.Columns)
                 {
                     statements.Add(
@@ -81,11 +81,11 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                 SyntaxKind.SimpleAssignmentExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                    SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName(columnElement.Name)),
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
                                     SyntaxFactory.IdentifierName(columnElement.Name)))));
                 }
 

@@ -1,4 +1,4 @@
-// <copyright file="DeleteOneMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="RemoveOneMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -15,7 +15,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     /// <summary>
     /// Creates a method to delete a row from the set.
     /// </summary>
-    public class DeleteOneMethod : SyntaxElement
+    public class RemoveOneMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -23,14 +23,14 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DeleteOneMethod"/> class.
+        /// Initializes a new instance of the <see cref="RemoveOneMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
-        public DeleteOneMethod(TableElement tableElement)
+        public RemoveOneMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = "DeleteAsync";
+            this.Name = "RemoveAsync";
 
             //        /// <summary>
             //        /// Deletes a <see cref="Order"/> row.
@@ -119,16 +119,9 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 statements.AddRange(
                     new StatementSyntax[]
                     {
-                        //                    return (new Thing(deletedThing));
+                        //            return deletedRow;
                         SyntaxFactory.ReturnStatement(
-                            SyntaxFactory.ParenthesizedExpression(
-                                SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.IdentifierName("deletedRow"))))))),
+                            SyntaxFactory.IdentifierName("deletedRow")),
                     });
 
                 // This is the syntax for the body of the method.

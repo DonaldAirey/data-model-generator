@@ -118,15 +118,9 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 statements.AddRange(
                     new StatementSyntax[]
                     {
-                        //            return new Thing(thing);
+                        //            return clone;
                         SyntaxFactory.ReturnStatement(
-                            SyntaxFactory.ObjectCreationExpression(
-                                SyntaxFactory.IdentifierName(this.tableElement.Name))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))),
+                            SyntaxFactory.IdentifierName("clone")),
                     });
 
                 // This is the syntax for the body of the method.

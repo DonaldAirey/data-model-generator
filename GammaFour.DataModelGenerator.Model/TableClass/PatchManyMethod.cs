@@ -406,7 +406,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 var statements = new List<StatementSyntax>();
                 statements.AddRange(RowUtilities.AddRow(this.tableElement));
 
-                //                addedRows.Add(new Thing(thing));
+                //                addedRows.Add(clone);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -418,13 +418,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))))))));
+                                        SyntaxFactory.IdentifierName("clone")))))));
 
                 return statements;
             }
@@ -440,7 +434,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 var statements = new List<StatementSyntax>();
                 statements.AddRange(RowUtilities.UpdateRow(this.tableElement));
 
-                //                updatedRows.Add(new Thing(thing));
+                //                updatedRows.Add(clone);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -452,13 +446,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.IdentifierName("updatedRow")))))))))));
+                                        SyntaxFactory.IdentifierName("clone")))))));
 
                 return statements;
             }

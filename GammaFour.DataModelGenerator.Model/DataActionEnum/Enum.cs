@@ -140,8 +140,8 @@ namespace GammaFour.DataModelGenerator.Model.DataActionEnum
                                                                         SyntaxFactory.XmlTextLiteral(
                                                                             SyntaxFactory.TriviaList(
                                                                                 SyntaxFactory.DocumentationCommentExterior("        ///")),
-                                                                            " Delete an item.",
-                                                                            " Delete an item.",
+                                                                            " Remove an item.",
+                                                                            " Remove an item.",
                                                                             SyntaxFactory.TriviaList()),
                                                                         SyntaxFactory.XmlTextNewLine(
                                                                             SyntaxFactory.TriviaList(),
@@ -172,7 +172,7 @@ namespace GammaFour.DataModelGenerator.Model.DataActionEnum
                                                                 Environment.NewLine,
                                                                 SyntaxFactory.TriviaList()))),
                                                 })))),
-                                "Delete",
+                                "Remove",
                                 SyntaxFactory.TriviaList())),
                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                         SyntaxFactory.EnumMemberDeclaration(

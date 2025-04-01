@@ -192,8 +192,9 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                     //            {
                     //                <UpdateRow>
                     //            }
+                    //            else
                     //            {
-                    //                foundRow = thing;
+                    //                throw new KeyNotFoundException();
                     //            }
                     SyntaxFactory.IfStatement(
                         SyntaxFactory.InvocationExpression(
@@ -235,7 +236,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     .WithArgumentList(
                                         SyntaxFactory.ArgumentList()))))),
 
-                    //                updatedRows.Add(foundRow);
+                    //                updatedRows.Add(updatedRow);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(

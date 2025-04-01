@@ -53,7 +53,8 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     .WithTypeArgumentList(
                                         SyntaxFactory.TypeArgumentList(
                                             SyntaxFactory.SeparatedList<TypeSyntax>(
-                                                new SyntaxNodeOrToken[]{
+                                                new SyntaxNodeOrToken[]
+                                                {
                                                     SyntaxFactory.IdentifierName("AsyncTransaction"),
                                                     SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                     SyntaxFactory.IdentifierName("EnlistmentState"),

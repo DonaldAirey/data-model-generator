@@ -136,7 +136,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             SyntaxFactory.IdentifierName("AsyncTransaction"),
                                             SyntaxFactory.IdentifierName("Current"))))))),
 
-                    //                ArgumentNullException.ThrowIfNull(asyncTransaction);
+                    //            ArgumentNullException.ThrowIfNull(asyncTransaction);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -148,6 +148,22 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.IdentifierName("asyncTransaction")))))),
+
+                    //                if (asyncTransaction == null)
+                    //                {
+                    //                    return null;
+                    //                }
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.EqualsExpression,
+                            SyntaxFactory.IdentifierName("asyncTransaction"),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NullLiteralExpression)),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ReturnStatement(
+                                    SyntaxFactory.LiteralExpression(
+                                        SyntaxKind.NullLiteralExpression))))),
 
                     //                this.enlistmentStates.TryGetValue(asyncTransaction, out var enlistmentState);
                     SyntaxFactory.ExpressionStatement(

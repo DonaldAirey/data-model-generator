@@ -166,7 +166,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>
             {
-                new CopyToMethod(this.tableElement),
+                new CopyFromMethod(this.tableElement),
                 new EnterReadLockAsyncMethod(this.tableElement.Document),
                 new EnterWriteLockAsyncMethod(this.tableElement.Document),
                 new EqualsMethod(this.tableElement),

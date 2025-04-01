@@ -332,7 +332,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             {
                 return new List<StatementSyntax>
                 {
-                    //                    await this.asyncReaderWriterLock.EnterWriteLockAsync().ConfigureAwait(false);
+                    //                    await this.asyncReaderWriterLock.EnterWriteLockAsync(asyncTransaction.CancellationToken).ConfigureAwait(false);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AwaitExpression(
                             SyntaxFactory.InvocationExpression(
@@ -345,7 +345,15 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.ThisExpression(),
                                                 SyntaxFactory.IdentifierName("asyncReaderWriterLock")),
-                                            SyntaxFactory.IdentifierName("EnterWriteLockAsync"))),
+                                            SyntaxFactory.IdentifierName("EnterWriteLockAsync")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.IdentifierName("asyncTransaction"),
+                                                        SyntaxFactory.IdentifierName("CancellationToken")))))),
                                     SyntaxFactory.IdentifierName("ConfigureAwait")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(

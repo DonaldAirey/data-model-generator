@@ -103,12 +103,12 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                                         SyntaxFactory.IdentifierName($"{this.tableElement.Document.Name.ToCamelCase()}Context")),
                                     SyntaxFactory.IdentifierName("SaveChangesAsync"))))),
 
-                    //                transactionScope.Complete();
+                    //                asyncTransaction.Complete();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("transactionScope"),
+                                SyntaxFactory.IdentifierName("asyncTransaction"),
                                 SyntaxFactory.IdentifierName("Complete")))),
 
                     //                    return this.Ok(addedRow);
@@ -338,7 +338,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                 // This is used to collect the statements.
                 var statements = new List<StatementSyntax>()
                 {
-                    //                using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                    //                using var asyncTransaction = new AsyncTransaction();
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(
@@ -351,19 +351,13 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("transactionScope"))
+                                    SyntaxFactory.Identifier("asyncTransaction"))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
                                         SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName("TransactionScope"))
+                                            SyntaxFactory.IdentifierName("AsyncTransaction"))
                                         .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.MemberAccessExpression(
-                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.IdentifierName("TransactionScopeAsyncFlowOption"),
-                                                            SyntaxFactory.IdentifierName("Enabled")))))))))))
+                                            SyntaxFactory.ArgumentList()))))))
                     .WithUsingKeyword(
                         SyntaxFactory.Token(SyntaxKind.UsingKeyword)),
 
@@ -568,12 +562,12 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                                         SyntaxFactory.IdentifierName($"{this.tableElement.Document.Name.ToCamelCase()}Context")),
                                     SyntaxFactory.IdentifierName("SaveChangesAsync"))))),
 
-                    //                transactionScope.Complete();
+                    //                asyncTransaction.Complete();
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("transactionScope"),
+                                SyntaxFactory.IdentifierName("asyncTransaction"),
                                 SyntaxFactory.IdentifierName("Complete")))),
 
                     //                    return this.Ok(updatedRow);

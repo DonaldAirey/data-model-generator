@@ -45,6 +45,57 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                  tableElement.Document.IsMaster ?
                                                  SyntaxKind.FalseLiteralExpression :
                                                  SyntaxKind.TrueLiteralExpression))))))),
+
+                //            var originalRow = new Account(account);
+                SyntaxFactory.LocalDeclarationStatement(
+                    SyntaxFactory.VariableDeclaration(
+                        SyntaxFactory.IdentifierName(
+                            SyntaxFactory.Identifier(
+                                SyntaxFactory.TriviaList(),
+                                SyntaxKind.VarKeyword,
+                                "var",
+                                "var",
+                                SyntaxFactory.TriviaList())))
+                    .WithVariables(
+                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                            SyntaxFactory.VariableDeclarator(
+                                SyntaxFactory.Identifier("originalRow"))
+                            .WithInitializer(
+                                SyntaxFactory.EqualsValueClause(
+                                    SyntaxFactory.ObjectCreationExpression(
+                                        SyntaxFactory.IdentifierName(tableElement.Name))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())))))))))),
+
+                //            enlistmentState.RollbackStack.Push(() => account.CopyFrom(originalRow));
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("enlistmentState"),
+                                SyntaxFactory.IdentifierName("RollbackStack")),
+                            SyntaxFactory.IdentifierName("Push")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.ParenthesizedLambdaExpression()
+                                    .WithExpressionBody(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                                SyntaxFactory.IdentifierName("CopyFrom")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName("originalRow"))))))))))),
             };
 
             // Check the constraints and update foreign keys.
@@ -212,7 +263,31 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             statements.AddRange(
                 new StatementSyntax[]
                 {
-                    //            enlistmentState.CommitStack.Push(() => this.RowChanged?.Invoke(this, new RowChangedEventArgs<Thing>(DataAction.Add, thing)));
+                    //            var clone = new Account(account);
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(
+                                SyntaxFactory.Identifier(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.VarKeyword,
+                                    "var",
+                                    "var",
+                                    SyntaxFactory.TriviaList())))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("clone"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.IdentifierName(tableElement.Name))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())))))))))),
+
+                    //            enlistmentState.CommitStack.Push(() => this.OnRowChanged(DataAction.Add, clone));
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -228,45 +303,25 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.ParenthesizedLambdaExpression()
                                         .WithExpressionBody(
-                                            SyntaxFactory.ConditionalAccessExpression(
+                                            SyntaxFactory.InvocationExpression(
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName("RowChanged")),
-                                                SyntaxFactory.InvocationExpression(
-                                                    SyntaxFactory.MemberBindingExpression(
-                                                        SyntaxFactory.IdentifierName("Invoke")))
-                                                .WithArgumentList(
-                                                    SyntaxFactory.ArgumentList(
-                                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                            new SyntaxNodeOrToken[]
-                                                            {
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.ThisExpression()),
-                                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.ObjectCreationExpression(
-                                                                        SyntaxFactory.GenericName(
-                                                                            SyntaxFactory.Identifier("RowChangedEventArgs"))
-                                                                        .WithTypeArgumentList(
-                                                                            SyntaxFactory.TypeArgumentList(
-                                                                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                                                    SyntaxFactory.IdentifierName(tableElement.Name)))))
-                                                                    .WithArgumentList(
-                                                                        SyntaxFactory.ArgumentList(
-                                                                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                                                new SyntaxNodeOrToken[]
-                                                                                {
-                                                                                    SyntaxFactory.Argument(
-                                                                                        SyntaxFactory.MemberAccessExpression(
-                                                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                                                            SyntaxFactory.IdentifierName("DataAction"),
-                                                                                            SyntaxFactory.IdentifierName("Add"))),
-                                                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                                                    SyntaxFactory.Argument(
-                                                                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())),
-                                                                                })))),
-                                                            })))))))))),
+                                                    SyntaxFactory.IdentifierName("OnRowChanged")))
+                                            .WithArgumentList(
+                                                SyntaxFactory.ArgumentList(
+                                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                        new SyntaxNodeOrToken[]
+                                                        {
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxFactory.IdentifierName("DataAction"),
+                                                                    SyntaxFactory.IdentifierName("Add"))),
+                                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.IdentifierName("clone")),
+                                                        }))))))))),
                 });
 
             return statements;
@@ -286,6 +341,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 //            {
                 //                <DeleteRow>
                 //            }
+                //            else
                 //            {
                 //                deletedRow = thing;
                 //            }
@@ -330,47 +386,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())))))),
             };
 
-            // Adjust the row version of the record and the data model.
-            if (tableElement.Document.IsMaster)
-            {
-                //            deletedRow.RowVersion = this.DataModel.IncrementRowVersion();
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("deletedRow"),
-                                SyntaxFactory.IdentifierName("RowVersion")),
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
-                                    SyntaxFactory.IdentifierName("IncrementRowVersion"))))));
-            }
-            else
-            {
-                //            this.DataModel.RowVersion = deletedRow.RowVersion;
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
-                                SyntaxFactory.IdentifierName("RowVersion")),
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("deletedRow"),
-                                SyntaxFactory.IdentifierName("RowVersion")))));
-            }
-
             return statements;
         }
 
@@ -404,6 +419,57 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                  tableElement.Document.IsMaster ?
                                                  SyntaxKind.FalseLiteralExpression :
                                                  SyntaxKind.TrueLiteralExpression))))))),
+
+                //                    var originalRow = new Account(updatedRow);
+                SyntaxFactory.LocalDeclarationStatement(
+                    SyntaxFactory.VariableDeclaration(
+                        SyntaxFactory.IdentifierName(
+                            SyntaxFactory.Identifier(
+                                SyntaxFactory.TriviaList(),
+                                SyntaxKind.VarKeyword,
+                                "var",
+                                "var",
+                                SyntaxFactory.TriviaList())))
+                    .WithVariables(
+                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                            SyntaxFactory.VariableDeclarator(
+                                SyntaxFactory.Identifier("originalRow"))
+                            .WithInitializer(
+                                SyntaxFactory.EqualsValueClause(
+                                    SyntaxFactory.ObjectCreationExpression(
+                                        SyntaxFactory.IdentifierName(tableElement.Name))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.IdentifierName("updatedRow")))))))))),
+
+                //                    enlistmentState.RollbackStack.Push(() => updatedRow.CopyFrom(originalRow));
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("enlistmentState"),
+                                SyntaxFactory.IdentifierName("RollbackStack")),
+                            SyntaxFactory.IdentifierName("Push")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.ParenthesizedLambdaExpression()
+                                    .WithExpressionBody(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("updatedRow"),
+                                                SyntaxFactory.IdentifierName("CopyFrom")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName("originalRow"))))))))))),
             };
 
             // Only the master needs to check for concurrency.
@@ -444,76 +510,89 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 }
             }
 
-            // Update each of the columns.
-            foreach (var columnElement in tableElement.Columns)
+            //                    updatedRow.CopyFrom(account);
+            statements.Add(
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName("updatedRow"),
+                            SyntaxFactory.IdentifierName("CopyFrom")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())))))));
+
+            // The RowVersion is updated differently between Master and Slave.
+            if (tableElement.Document.IsMaster)
             {
-                if (columnElement.IsRowVersion)
-                {
-                    if (tableElement.Document.IsMaster)
-                    {
-                        //            thing.RowVersion = this.DataModel.IncrementRowVersion();
-                        statements.Add(
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.AssignmentExpression(
-                                    SyntaxKind.SimpleAssignmentExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("updatedRow"),
-                                        SyntaxFactory.IdentifierName("RowVersion")),
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
-                                            SyntaxFactory.IdentifierName("IncrementRowVersion"))))));
-                    }
-                    else
-                    {
-                        //            this.dataModel.RowVersion = account.RowVersion;
-                        statements.Add(
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.AssignmentExpression(
-                                    SyntaxKind.SimpleAssignmentExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
-                                        SyntaxFactory.IdentifierName("RowVersion")),
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
-                                        SyntaxFactory.IdentifierName("RowVersion")))));
-                    }
-                }
-                else
-                {
-                    // Disallow changes to the primary key.
-                    if (!columnElement.IsPrimaryKey)
-                    {
-                        //                    updatedRow.ModelId = account.ModelId;
-                        statements.Add(SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
+                //            thing.RowVersion = this.DataModel.IncrementRowVersion();
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("updatedRow"),
+                                SyntaxFactory.IdentifierName("RowVersion")),
+                            SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("updatedRow"),
-                                    SyntaxFactory.IdentifierName(columnElement.Name)),
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
+                                    SyntaxFactory.IdentifierName("IncrementRowVersion"))))));
+            }
+            else
+            {
+                //            this.dataModel.RowVersion = account.RowVersion;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
-                                    SyntaxFactory.IdentifierName(columnElement.Name)))));
-                    }
-                }
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
+                                SyntaxFactory.IdentifierName("RowVersion")),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                SyntaxFactory.IdentifierName("RowVersion")))));
             }
 
             statements.AddRange(
                 new StatementSyntax[]
                 {
-                    //            enlistment.CommitStack.Push(() => this.RowChanged?.Invoke(this, new RowChangedEventArgs<Thing>(DataAction.Update, updatedRow)));
+                    //                    var clone = new Account(updatedRow);
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(
+                                SyntaxFactory.Identifier(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.VarKeyword,
+                                    "var",
+                                    "var",
+                                    SyntaxFactory.TriviaList())))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("clone"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.IdentifierName(tableElement.Name))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName("updatedRow")))))))))),
+
+                    //            enlistmentState.CommitStack.Push(() => this.OnRowChanged(DataAction.Update, clone));
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -529,45 +608,25 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.ParenthesizedLambdaExpression()
                                         .WithExpressionBody(
-                                            SyntaxFactory.ConditionalAccessExpression(
+                                            SyntaxFactory.InvocationExpression(
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName("RowChanged")),
-                                                SyntaxFactory.InvocationExpression(
-                                                    SyntaxFactory.MemberBindingExpression(
-                                                        SyntaxFactory.IdentifierName("Invoke")))
-                                                .WithArgumentList(
-                                                    SyntaxFactory.ArgumentList(
-                                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                            new SyntaxNodeOrToken[]
-                                                            {
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.ThisExpression()),
-                                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.ObjectCreationExpression(
-                                                                        SyntaxFactory.GenericName(
-                                                                            SyntaxFactory.Identifier("RowChangedEventArgs"))
-                                                                        .WithTypeArgumentList(
-                                                                            SyntaxFactory.TypeArgumentList(
-                                                                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                                                    SyntaxFactory.IdentifierName(tableElement.Name)))))
-                                                                    .WithArgumentList(
-                                                                        SyntaxFactory.ArgumentList(
-                                                                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                                                new SyntaxNodeOrToken[]
-                                                                                {
-                                                                                    SyntaxFactory.Argument(
-                                                                                        SyntaxFactory.MemberAccessExpression(
-                                                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                                                            SyntaxFactory.IdentifierName("DataAction"),
-                                                                                            SyntaxFactory.IdentifierName("Update"))),
-                                                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                                                    SyntaxFactory.Argument(
-                                                                                        SyntaxFactory.IdentifierName("updatedRow")),
-                                                                                })))),
-                                                            })))))))))),
+                                                    SyntaxFactory.IdentifierName("OnRowChanged")))
+                                            .WithArgumentList(
+                                                SyntaxFactory.ArgumentList(
+                                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                        new SyntaxNodeOrToken[]
+                                                        {
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxFactory.IdentifierName("DataAction"),
+                                                                    SyntaxFactory.IdentifierName("Update"))),
+                                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.IdentifierName("clone")),
+                                                        }))))))))),
                 });
 
             return statements;
@@ -625,6 +684,57 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                  tableElement.Document.IsMaster ?
                                                  SyntaxKind.FalseLiteralExpression :
                                                  SyntaxKind.TrueLiteralExpression))))))),
+
+                //                    var originalRow = new Account(deletedRow);
+                SyntaxFactory.LocalDeclarationStatement(
+                    SyntaxFactory.VariableDeclaration(
+                        SyntaxFactory.IdentifierName(
+                            SyntaxFactory.Identifier(
+                                SyntaxFactory.TriviaList(),
+                                SyntaxKind.VarKeyword,
+                                "var",
+                                "var",
+                                SyntaxFactory.TriviaList())))
+                    .WithVariables(
+                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                            SyntaxFactory.VariableDeclarator(
+                                SyntaxFactory.Identifier("originalRow"))
+                            .WithInitializer(
+                                SyntaxFactory.EqualsValueClause(
+                                    SyntaxFactory.ObjectCreationExpression(
+                                        SyntaxFactory.IdentifierName(tableElement.Name))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.IdentifierName("deletedRow")))))))))),
+
+                //                    enlistmentState.RollbackStack.Push(() => deletedRow.CopyFrom(originalRow));
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("enlistmentState"),
+                                SyntaxFactory.IdentifierName("RollbackStack")),
+                            SyntaxFactory.IdentifierName("Push")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.ParenthesizedLambdaExpression()
+                                    .WithExpressionBody(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("deletedRow"),
+                                                SyntaxFactory.IdentifierName("CopyFrom")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName("originalRow"))))))))))),
             };
 
             // Only the master needs to check for concurrency.
@@ -754,11 +864,52 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                         SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())))))))))));
             }
 
+            // Adjust the row version of the record and the data model.
+            if (tableElement.Document.IsMaster)
+            {
+                //            deletedRow.RowVersion = this.DataModel.IncrementRowVersion();
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("deletedRow"),
+                                SyntaxFactory.IdentifierName("RowVersion")),
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
+                                    SyntaxFactory.IdentifierName("IncrementRowVersion"))))));
+            }
+            else
+            {
+                //            this.DataModel.RowVersion = deletedRow.RowVersion;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
+                                SyntaxFactory.IdentifierName("RowVersion")),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("deletedRow"),
+                                SyntaxFactory.IdentifierName("RowVersion")))));
+            }
+
             // Delete the row from the table.
             statements.AddRange(
                 new StatementSyntax[]
                 {
-                    //            this.dictionary.Remove((order.ThingCode, order.AssetCode, order.Date));
+                    //                    this.dictionary.Remove(deletedRow.AccountId);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -773,7 +924,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     tableElement.PrimaryIndex.GetKeyAsArguments("deletedRow"))))),
 
-                    //            enlistmentState.RollbackStack.Push(() => this.dictionary.Add((order.ThingCode, order.AssetCode, order.Date), order));
+                    //                    enlistmentState.RollbackStack.Push(() => this.dictionary.Add(deletedRow.AccountId, deletedRow));
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -812,7 +963,31 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             statements.AddRange(
                 new StatementSyntax[]
                 {
-                    //                enlistmentState.CommitStack.Push(() => this.DeletedRows.AddFirst(allocation));
+                    //                    var clone = new Account(deletedRow);
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(
+                                SyntaxFactory.Identifier(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.VarKeyword,
+                                    "var",
+                                    "var",
+                                    SyntaxFactory.TriviaList())))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("clone"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.IdentifierName(tableElement.Name))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName("deletedRow")))))))))),
+
+                    //                    enlistmentState.CommitStack.Push(() => this.OnRowChanged(DataAction.Delete, clone));
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -831,72 +1006,29 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             SyntaxFactory.InvocationExpression(
                                                 SyntaxFactory.MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.ThisExpression(),
-                                                        SyntaxFactory.IdentifierName("DeletedRows")),
-                                                    SyntaxFactory.IdentifierName("AddFirst")))
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName("OnRowChanged")))
                                             .WithArgumentList(
                                                 SyntaxFactory.ArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                        SyntaxFactory.Argument(
-                                                            SyntaxFactory.IdentifierName("deletedRow"))))))))))),
+                                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                        new SyntaxNodeOrToken[]
+                                                        {
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxFactory.IdentifierName("DataAction"),
+                                                                    SyntaxFactory.IdentifierName("Remove"))),
+                                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.IdentifierName("clone")),
+                                                        }))))))))),
 
-                    //            enlistmentState.CommitStack.Push(() => this.RowChanged?.Invoke(this, new RowChangedEventArgs<Thing>(DataAction.Add, thing)));
+                    //                    deletedRow = clone;
                     SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("enlistmentState"),
-                                    SyntaxFactory.IdentifierName("CommitStack")),
-                                SyntaxFactory.IdentifierName("Push")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.ParenthesizedLambdaExpression()
-                                        .WithExpressionBody(
-                                            SyntaxFactory.ConditionalAccessExpression(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName("RowChanged")),
-                                                SyntaxFactory.InvocationExpression(
-                                                    SyntaxFactory.MemberBindingExpression(
-                                                        SyntaxFactory.IdentifierName("Invoke")))
-                                                .WithArgumentList(
-                                                    SyntaxFactory.ArgumentList(
-                                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                            new SyntaxNodeOrToken[]
-                                                            {
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.ThisExpression()),
-                                                                SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.ObjectCreationExpression(
-                                                                        SyntaxFactory.GenericName(
-                                                                            SyntaxFactory.Identifier("RowChangedEventArgs"))
-                                                                        .WithTypeArgumentList(
-                                                                            SyntaxFactory.TypeArgumentList(
-                                                                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                                                    SyntaxFactory.IdentifierName(tableElement.Name)))))
-                                                                    .WithArgumentList(
-                                                                        SyntaxFactory.ArgumentList(
-                                                                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                                                new SyntaxNodeOrToken[]
-                                                                                {
-                                                                                    SyntaxFactory.Argument(
-                                                                                        SyntaxFactory.MemberAccessExpression(
-                                                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                                                            SyntaxFactory.IdentifierName("DataAction"),
-                                                                                            SyntaxFactory.IdentifierName("Delete"))),
-                                                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                                                    SyntaxFactory.Argument(
-                                                                                        SyntaxFactory.IdentifierName("deletedRow")),
-                                                                                })))),
-                                                            })))))))))),
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.IdentifierName("deletedRow"),
+                            SyntaxFactory.IdentifierName("clone"))),
                 });
 
             return statements;

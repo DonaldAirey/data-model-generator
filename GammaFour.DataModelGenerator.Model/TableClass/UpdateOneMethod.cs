@@ -6,7 +6,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -152,7 +151,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             .WithRefOrOutKeyword(
                                                 SyntaxFactory.Token(SyntaxKind.OutKeyword)),
                                         }))),
-                            SyntaxFactory.Block(RowUtilities.UpdateRow(this.tableElement)))
+                            SyntaxFactory.Block(this.UpdateRow))
                         .WithElse(
                             SyntaxFactory.ElseClause(
                                 SyntaxFactory.Block(
@@ -251,6 +250,28 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
+            }
+        }
+
+        /// <summary>
+        /// Gets the statements to update a row.
+        /// </summary>
+        private IEnumerable<StatementSyntax> UpdateRow
+        {
+            get
+            {
+                var statements = new List<StatementSyntax>();
+                statements.AddRange(RowUtilities.UpdateRow(this.tableElement));
+
+                //                updatedRow = clone;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.IdentifierName("updatedRow"),
+                            SyntaxFactory.IdentifierName("clone"))));
+
+                return statements;
             }
         }
     }
