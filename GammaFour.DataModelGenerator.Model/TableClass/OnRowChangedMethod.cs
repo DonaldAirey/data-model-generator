@@ -238,7 +238,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 {
                     //              try
                     //              {
-                    //                  this.RowChanged.Invoke(this, new RowChangedEventArgs<Account>(dataAction, account));
+                    //                    this.RowChanged.Invoke(this, new RowChangedEventArgs(dataAction, weightedAccount));
                     //              }
                     //              finally
                     //              {
@@ -266,22 +266,16 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                     SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                     SyntaxFactory.Argument(
                                                         SyntaxFactory.ObjectCreationExpression(
-                                                            SyntaxFactory.GenericName(
-                                                                SyntaxFactory.Identifier("RowChangedEventArgs"))
-                                                            .WithTypeArgumentList(
-                                                                SyntaxFactory.TypeArgumentList(
-                                                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                                        SyntaxFactory.IdentifierName(this.tableElement.Name)))))
+                                                            SyntaxFactory.IdentifierName("RowChangedEventArgs"))
                                                         .WithArgumentList(
                                                             SyntaxFactory.ArgumentList(
                                                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                                    new SyntaxNodeOrToken[]
-                                                                    {
+                                                                    new SyntaxNodeOrToken[]{
                                                                         SyntaxFactory.Argument(
                                                                             SyntaxFactory.IdentifierName("dataAction")),
                                                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                                         SyntaxFactory.Argument(
-                                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
+                                                                            SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())),
                                                                     })))),
                                                 })))))))
                     .WithFinally(

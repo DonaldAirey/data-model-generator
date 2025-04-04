@@ -110,7 +110,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $"  Gets the child <see cref=\"{this.foreignIndexElement.Table.Name}\"/> rows.",
+                                                $" Gets the child <see cref=\"{this.foreignIndexElement.Table.Name}\"/> rows.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

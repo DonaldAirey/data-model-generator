@@ -34,7 +34,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             //        /// <summary>
             //        /// Occurs when a row has changed.
             //        /// </summary>
-            //        public event EventHandler<RowChangedEventArgs<Asset>>? RecordChanged;
+            //        public event EventHandler<RowChangedEventArgs>? RecordChanged;
             this.Syntax = SyntaxFactory.EventFieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
                     SyntaxFactory.NullableType(
@@ -43,12 +43,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                         .WithTypeArgumentList(
                             SyntaxFactory.TypeArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.GenericName(
-                                        SyntaxFactory.Identifier("RowChangedEventArgs"))
-                                    .WithTypeArgumentList(
-                                        SyntaxFactory.TypeArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name)))))))))
+                                    SyntaxFactory.IdentifierName("RowChangedEventArgs"))))))
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                         SyntaxFactory.VariableDeclarator(

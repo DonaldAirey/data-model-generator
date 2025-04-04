@@ -26,21 +26,16 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
             this.Name = "RowChangedEventArgs";
 
             //    /// <summary>
-            //    /// A row of data in the Configuration table.
+            //    /// Arguments describing an event that changed a row.
             //    /// </summary>
-            //    public partial class AchEvent : IRow
+            //    public class RowChangedEventArgs(DataAction dataAction, object row) : EventArgs
             //    {
             //        <Members>
             //    }
-            this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
+            this.Syntax = SyntaxFactory.ClassDeclaration("RowChangedEventArgs")
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithTypeParameterList(
-                SyntaxFactory.TypeParameterList(
-                    SyntaxFactory.SingletonSeparatedList<TypeParameterSyntax>(
-                        SyntaxFactory.TypeParameter(
-                            SyntaxFactory.Identifier("T")))))
             .WithParameterList(
                 SyntaxFactory.ParameterList(
                     SyntaxFactory.SeparatedList<ParameterSyntax>(
@@ -54,7 +49,8 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
                             SyntaxFactory.Parameter(
                                 SyntaxFactory.Identifier("row"))
                             .WithType(
-                                SyntaxFactory.IdentifierName("T")),
+                                SyntaxFactory.PredefinedType(
+                                    SyntaxFactory.Token(SyntaxKind.ObjectKeyword))),
                         })))
             .WithBaseList(
                 SyntaxFactory.BaseList(
@@ -143,7 +139,7 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>
             {
-                new DataProperty(),
+                new RowProperty(),
                 new DataActionProperty(),
             };
 

@@ -1,4 +1,4 @@
-// <copyright file="DataProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="DataActionProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,23 +14,23 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
     /// <summary>
     /// Creates a property that navigates to the parent row.
     /// </summary>
-    public class DataProperty : SyntaxElement
+    public class DataActionProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DataProperty"/> class.
+        /// Initializes a new instance of the <see cref="DataActionProperty"/> class.
         /// </summary>
-        public DataProperty()
+        public DataActionProperty()
         {
             // Initialize the object.
-            this.Name = "Data";
+            this.Name = "DataAction";
 
             //        /// <summary>
-            //        /// Gets the data.
+            //        /// Gets the action that caused the change.
             //        /// </summary>
-            //        public T Data { get; } = row;
+            //        public DataAction DataAction { get; } = dataAction;
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.IdentifierName("T"),
-                SyntaxFactory.Identifier("Data"))
+                SyntaxFactory.IdentifierName("DataAction"),
+                SyntaxFactory.Identifier(this.Name))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
@@ -43,7 +43,7 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
                             SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
             .WithInitializer(
                 SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.IdentifierName("row")))
+                    SyntaxFactory.IdentifierName("dataAction")))
             .WithSemicolonToken(
                 SyntaxFactory.Token(SyntaxKind.SemicolonToken))
             .WithLeadingTrivia(this.LeadingTrivia);
@@ -60,7 +60,7 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Gets or sets the parent <see cref="Account"/> table.
+                    //        /// Gets the action that caused the change.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -83,7 +83,7 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                "  Gets the data.",
+                                                " Gets the action that caused the change.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

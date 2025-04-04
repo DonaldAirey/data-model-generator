@@ -127,7 +127,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                         {
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                "  <param name=\"sender\">The object that originated the event.</param>",
+                                                " <param name=\"sender\">The object that originated the event.</param>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -149,7 +149,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                         {
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                "  <param name=\"transactionEventArgs\">The event data.</param>",
+                                                " <param name=\"transactionEventArgs\">The event data.</param>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
