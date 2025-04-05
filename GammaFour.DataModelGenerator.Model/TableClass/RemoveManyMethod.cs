@@ -12,7 +12,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to delete a row from the set.
+    /// Creates a method to remove a row from the set.
     /// </summary>
     public class RemoveManyMethod : SyntaxElement
     {
@@ -32,11 +32,11 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             this.Name = "RemoveAsync";
 
             //        /// <summary>
-            //        /// Deletes a collecdtion of <see cref="Thing"/> rows.
+            //        /// Removes a collecdtion of <see cref="Thing"/> rows.
             //        /// </summary>
             //        /// <param name="things">A collection of <see cref="Thing"/> rows.</param>
-            //        /// <returns>The deleted The <see cref="Thing"/> rows.</returns>
-            //        public async Task<IEnumerable<Thing>> Delete(IEnumerable<Thing> things)
+            //        /// <returns>The removed The <see cref="Thing"/> rows.</returns>
+            //        public async Task<IEnumerable<Thing>> Remove(IEnumerable<Thing> things)
             //        {
             //            <Body>
             //        }
@@ -120,7 +120,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.IdentifierName("enlistmentState")))))),
 
-                    //            var deletedRows = new List<Thing>();
+                    //            var removedRows = new List<Thing>();
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(
@@ -133,7 +133,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("deletedRows"))
+                                    SyntaxFactory.Identifier("removedRows"))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
                                         SyntaxFactory.ObjectCreationExpression(
@@ -166,9 +166,9 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural().ToVariableName()),
                             SyntaxFactory.Block(this.FindRow)),
 
-                        //            return deletedRows;
+                        //            return removedRows;
                         SyntaxFactory.ReturnStatement(
-                            SyntaxFactory.IdentifierName("deletedRows")),
+                            SyntaxFactory.IdentifierName("removedRows")),
                     });
 
                 // This is the syntax for the body of the method.
@@ -185,21 +185,35 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             {
                 // The elements of the body are added to this collection as they are assembled.
                 var statements = new List<StatementSyntax>();
-                statements.AddRange(RowUtilities.DeleteRow(this.tableElement));
+                statements.AddRange(RowUtilities.RemoveRow(this.tableElement));
 
-                //                deletedRows.Add(deletedRow);
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("deletedRows"),
-                                SyntaxFactory.IdentifierName("Add")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("deletedRow")))))));
+                statements.AddRange(
+                    new StatementSyntax[]
+                    {
+                        //                if (removedRow != null)
+                        //                {
+                        //                    removedRows.Add(removedRow);
+                        //                }
+                        SyntaxFactory.IfStatement(
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.NotEqualsExpression,
+                                SyntaxFactory.IdentifierName("removedRow"),
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.NullLiteralExpression)),
+                            SyntaxFactory.Block(
+                                SyntaxFactory.SingletonList<StatementSyntax>(
+                                    SyntaxFactory.ExpressionStatement(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("removedRows"),
+                                                SyntaxFactory.IdentifierName("Add")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName("removedRow"))))))))),
+                    });
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.List<StatementSyntax>(statements);
@@ -217,7 +231,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Deletes a collecdtion of <see cref="Thing"/> rows.
+                    //        /// Removes a collecdtion of <see cref="Thing"/> rows.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -282,7 +296,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //        /// <returns>The deleted The <see cref="Thing"/> rows.</returns>
+                    //        /// <returns>The removed The <see cref="Thing"/> rows.</returns>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -294,7 +308,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         {
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" <returns>The deleted <see cref=\"{this.tableElement.Name}\"/> rows.</returns>",
+                                                $" <returns>The removed <see cref=\"{this.tableElement.Name}\"/> rows.</returns>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

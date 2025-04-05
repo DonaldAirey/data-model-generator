@@ -332,18 +332,18 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         /// </summary>
         /// <param name="tableElement">The table element.</param>
         /// <returns>A collection of statements that add a row.</returns>
-        public static IEnumerable<StatementSyntax> DeleteRow(TableElement tableElement)
+        public static IEnumerable<StatementSyntax> RemoveRow(TableElement tableElement)
         {
-            // Find the row and delete it.
+            // Find the row and remove it.
             var statements = new List<StatementSyntax>
             {
-                //            if (this.dictionary.TryGetValue(thingId, out var deletedRow))
+                //            if (this.dictionary.TryGetValue(thingId, out var removedRow))
                 //            {
-                //                <DeleteRow>
+                //                <RemoveRow>
                 //            }
                 //            else
                 //            {
-                //                deletedRow = thing;
+                //                removedRow = null;
                 //            }
                 SyntaxFactory.IfStatement(
                     SyntaxFactory.InvocationExpression(
@@ -371,19 +371,20 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                     "var",
                                                     SyntaxFactory.TriviaList())),
                                             SyntaxFactory.SingleVariableDesignation(
-                                                SyntaxFactory.Identifier("deletedRow"))))
+                                                SyntaxFactory.Identifier("removedRow"))))
                                     .WithRefOrOutKeyword(
                                         SyntaxFactory.Token(SyntaxKind.OutKeyword)),
                                 }))),
-                    SyntaxFactory.Block(RowUtilities.DeleteRowCore(tableElement)))
+                    SyntaxFactory.Block(RowUtilities.RemoveRowCore(tableElement)))
                 .WithElse(
                     SyntaxFactory.ElseClause(
                         SyntaxFactory.Block(
                             SyntaxFactory.ExpressionStatement(
                                 SyntaxFactory.AssignmentExpression(
                                     SyntaxKind.SimpleAssignmentExpression,
-                                    SyntaxFactory.IdentifierName("deletedRow"),
-                                    SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())))))),
+                                    SyntaxFactory.IdentifierName("removedRow"),
+                                    SyntaxFactory.LiteralExpression(
+                                        SyntaxKind.NullLiteralExpression)))))),
             };
 
             return statements;
@@ -656,15 +657,15 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         }
 
         /// <summary>
-        /// Gets the statements that deletes a row.
+        /// Gets the statements that removes a row.
         /// </summary>
-        /// <returns>The statements to delete a row.</returns>
-        private static IEnumerable<StatementSyntax> DeleteRowCore(TableElement tableElement)
+        /// <returns>The statements to remove a row.</returns>
+        private static IEnumerable<StatementSyntax> RemoveRowCore(TableElement tableElement)
         {
             // Lock the row.
             var statements = new List<StatementSyntax>
             {
-                //            await deletedRow.EnterWriteLockAsync().ConfigureAwait(false);
+                //            await removedRow.EnterWriteLockAsync().ConfigureAwait(false);
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AwaitExpression(
                         SyntaxFactory.InvocationExpression(
@@ -673,7 +674,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.InvocationExpression(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("deletedRow"),
+                                        SyntaxFactory.IdentifierName("removedRow"),
                                         SyntaxFactory.IdentifierName("EnterWriteLockAsync"))),
                                 SyntaxFactory.IdentifierName("ConfigureAwait")))
                         .WithArgumentList(
@@ -685,7 +686,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                  SyntaxKind.FalseLiteralExpression :
                                                  SyntaxKind.TrueLiteralExpression))))))),
 
-                //                    var originalRow = new Account(deletedRow);
+                //                    var originalRow = new Account(removedRow);
                 SyntaxFactory.LocalDeclarationStatement(
                     SyntaxFactory.VariableDeclaration(
                         SyntaxFactory.IdentifierName(
@@ -707,9 +708,9 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.ArgumentList(
                                             SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                 SyntaxFactory.Argument(
-                                                    SyntaxFactory.IdentifierName("deletedRow")))))))))),
+                                                    SyntaxFactory.IdentifierName("removedRow")))))))))),
 
-                //                    enlistmentState.RollbackStack.Push(() => deletedRow.CopyFrom(originalRow));
+                //                    enlistmentState.RollbackStack.Push(() => removedRow.CopyFrom(originalRow));
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.InvocationExpression(
                         SyntaxFactory.MemberAccessExpression(
@@ -728,7 +729,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.InvocationExpression(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("deletedRow"),
+                                                SyntaxFactory.IdentifierName("removedRow"),
                                                 SyntaxFactory.IdentifierName("CopyFrom")))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
@@ -740,7 +741,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             // Only the master needs to check for concurrency.
             if (tableElement.Document.IsMaster)
             {
-                //                if (deletedRow.RowVersion != thing.RowVersion)
+                //                if (removedRow.RowVersion != thing.RowVersion)
                 //                {
                 //                    throw new ConcurrencyException();
                 //                }
@@ -750,7 +751,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxKind.NotEqualsExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("deletedRow"),
+                                SyntaxFactory.IdentifierName("removedRow"),
                                 SyntaxFactory.IdentifierName("RowVersion")),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -775,7 +776,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("deletedRow"),
+                                    SyntaxFactory.IdentifierName("removedRow"),
                                     SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
                                 SyntaxFactory.IdentifierName("Any"))),
                         SyntaxFactory.Block(
@@ -793,7 +794,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                             $"The remove action conflicted with the constraint {foreignIndexElement.Name}")))))))))));
             }
 
-            // Delete this row from each of the parent rows.
+            // Remove this row from each of the parent rows.
             foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentIndices)
             {
                 // If any of the index elements are nullable, we'll want a test to see if values are provided for all elements of the key.
@@ -813,7 +814,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 }
             }
 
-            // Delete the row from each of the unique key indices.
+            // Remove the row from each of the unique key indices.
             foreach (var uniqueKeyElement in tableElement.UniqueIndexes.Where(ui => !ui.IsPrimaryIndex))
             {
                 //            this.ThingNameIndex.Remove(thing);
@@ -867,14 +868,14 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             // Adjust the row version of the record and the data model.
             if (tableElement.Document.IsMaster)
             {
-                //            deletedRow.RowVersion = this.DataModel.IncrementRowVersion();
+                //            removedRow.RowVersion = this.DataModel.IncrementRowVersion();
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("deletedRow"),
+                                SyntaxFactory.IdentifierName("removedRow"),
                                 SyntaxFactory.IdentifierName("RowVersion")),
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
@@ -887,7 +888,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             }
             else
             {
-                //            this.DataModel.RowVersion = deletedRow.RowVersion;
+                //            this.DataModel.RowVersion = removedRow.RowVersion;
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
@@ -901,15 +902,15 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.IdentifierName("RowVersion")),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("deletedRow"),
+                                SyntaxFactory.IdentifierName("removedRow"),
                                 SyntaxFactory.IdentifierName("RowVersion")))));
             }
 
-            // Delete the row from the table.
+            // Remove the row from the table.
             statements.AddRange(
                 new StatementSyntax[]
                 {
-                    //                    this.dictionary.Remove(deletedRow.AccountId);
+                    //                    this.dictionary.Remove(removedRow.AccountId);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -922,9 +923,9 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    tableElement.PrimaryIndex.GetKeyAsArguments("deletedRow"))))),
+                                    tableElement.PrimaryIndex.GetKeyAsArguments("removedRow"))))),
 
-                    //                    enlistmentState.RollbackStack.Push(() => this.dictionary.Add(deletedRow.AccountId, deletedRow));
+                    //                    enlistmentState.RollbackStack.Push(() => this.dictionary.Add(removedRow.AccountId, removedRow));
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -953,17 +954,17 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                     SyntaxFactory.SeparatedList<ArgumentSyntax>(
                                                         new SyntaxNodeOrToken[]
                                                         {
-                                                            tableElement.PrimaryIndex.GetKeyAsArguments("deletedRow"),
+                                                            tableElement.PrimaryIndex.GetKeyAsArguments("removedRow"),
                                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                             SyntaxFactory.Argument(
-                                                                SyntaxFactory.IdentifierName("deletedRow")),
+                                                                SyntaxFactory.IdentifierName("removedRow")),
                                                         }))))))))),
                 });
 
             statements.AddRange(
                 new StatementSyntax[]
                 {
-                    //                    var clone = new Account(deletedRow);
+                    //                    var clone = new Account(removedRow);
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
                             SyntaxFactory.IdentifierName(
@@ -985,9 +986,9 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             SyntaxFactory.ArgumentList(
                                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                     SyntaxFactory.Argument(
-                                                        SyntaxFactory.IdentifierName("deletedRow")))))))))),
+                                                        SyntaxFactory.IdentifierName("removedRow")))))))))),
 
-                    //                    enlistmentState.CommitStack.Push(() => this.OnRowChanged(DataAction.Delete, clone));
+                    //                    enlistmentState.CommitStack.Push(() => this.OnRowChanged(DataAction.Remove, clone));
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -1023,11 +1024,11 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                                 SyntaxFactory.IdentifierName("clone")),
                                                         }))))))))),
 
-                    //                    deletedRow = clone;
+                    //                    removedRow = clone;
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.IdentifierName("deletedRow"),
+                            SyntaxFactory.IdentifierName("removedRow"),
                             SyntaxFactory.IdentifierName("clone"))),
                 });
 
@@ -1351,11 +1352,11 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         }
 
         /// <summary>
-        /// Deletes the row from the parent row.
+        /// Removes the row from the parent row.
         /// </summary>
         /// <param name="variableName">The variable name.</param>
         /// <param name="foreignIndexElement">The foreign index element.</param>
-        /// <returns>The statements to delete a row from the parent row.</returns>
+        /// <returns>The statements to remove a row from the parent row.</returns>
         private static IEnumerable<StatementSyntax> RemoveFromParent(string variableName, ForeignIndexElement foreignIndexElement)
         {
             var uniqueIndexElement = foreignIndexElement.UniqueIndex;

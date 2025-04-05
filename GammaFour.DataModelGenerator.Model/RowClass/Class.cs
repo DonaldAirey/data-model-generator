@@ -206,9 +206,9 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             }
 
             // Create a property for each foriegn index.
-            foreach (var foreignIndexElementConstraint in this.tableElement.ForeignIndices)
+            foreach (var foreignIndexElement in this.tableElement.ForeignIndices)
             {
-                properties.Add(new ForeignKeyProperty(foreignIndexElementConstraint));
+                properties.Add(new ForeignKeyProperty(foreignIndexElement));
             }
 
             // Alphabetize and add the properties as members of the class.

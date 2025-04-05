@@ -6,6 +6,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -65,32 +66,107 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
         {
             get
             {
-                // The elements of the body are added to this collection as they are assembled.
-                var statements = new List<StatementSyntax>();
+                // The expressions and their property names are collected here.
+                var statementList = new List<(string, IEnumerable<StatementSyntax>)>();
 
                 //            this.AccountId = account.AccountId;
                 //            this.AccountType = account.AccountType;
-                //            this.BaseAssetId = account.BaseAssetId;
-                //            this.BrokerAccountId = account.BrokerAccountId;
-                //            this.BrokerFeedId = account.BrokerFeedId;
-                foreach (var columnElement in this.tableElement.Columns)
+                foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(columnElement.Name)),
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                                    SyntaxFactory.IdentifierName(columnElement.Name)))));
+                    statementList.Add((
+                        columnElement.Name,
+                        new ExpressionStatementSyntax[]
+                        {
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.AssignmentExpression(
+                                    SyntaxKind.SimpleAssignmentExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(columnElement.Name)),
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                        SyntaxFactory.IdentifierName(columnElement.Name)))),
+                        }));
+                }
+
+                //            this.Alerts.Clear();
+                //            this.Alerts.UnionWith(account.Alerts);
+                //            this.Allocations.Clear();
+                //            this.Allocations.UnionWith(account.Allocations);
+                foreach (var foreignIndexElement in this.tableElement.ForeignIndices)
+                {
+                    statementList.Add((
+                        foreignIndexElement.Table.Name,
+                        new ExpressionStatementSyntax[]
+                        {
+                            //            this.Alerts.Clear();
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
+                                        SyntaxFactory.IdentifierName("Clear")))),
+
+                            //            this.Alerts.UnionWith(account.Alerts);
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
+                                        SyntaxFactory.IdentifierName("UnionWith")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName))))))),
+                        }));
+                }
+
+                //            this.Asset = account.Asset;
+                //            this.Model = account.Model;
+                foreach (var foreignIndexElement in this.tableElement.ParentIndices)
+                {
+                    statementList.Add((
+                        foreignIndexElement.UniqueParentName,
+                        new ExpressionStatementSyntax[]
+                        {
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.AssignmentExpression(
+                                    SyntaxKind.SimpleAssignmentExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName)),
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                        SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName)))),
+                        }));
+                }
+
+                //            this.AccountCode = position.AccountCode;
+                //            this.AssetCode = position.AssetCode;
+                //            this.Date = position.Date;
+                //            this.Quantity = position.Quantity;
+                var statements = new List<StatementSyntax>();
+                foreach ((var key, var expressionStatements) in statementList.OrderBy(tuple => tuple.Item1))
+                {
+                    statements.AddRange(expressionStatements);
                 }
 
                 // This is the syntax for the body of the constructor.
-                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
+                return SyntaxFactory.Block(statements);
             }
         }
 

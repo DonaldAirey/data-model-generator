@@ -6,14 +6,13 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to delete a row from the set.
+    /// Creates a method to remove a row from the set.
     /// </summary>
     public class RemoveOneMethod : SyntaxElement
     {
@@ -33,11 +32,11 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             this.Name = "RemoveAsync";
 
             //        /// <summary>
-            //        /// Deletes a <see cref="Order"/> row.
+            //        /// Removes a <see cref="Allocation"/> row.
             //        /// </summary>
-            //        /// <param name="order">The <see cref="Order"/> row.</param>
-            //        /// <returns>The deleted The <see cref="Thing"/> row.</returns>
-            //        public async Task<Thing> Delete(System.Guid thingId, Thing thing)
+            //        /// <param name="allocation">The <see cref="Allocation"/> row.</param>
+            //        /// <returns>The removed <see cref="Allocation"/> row.</returns>
+            //        public async Task<Allocation?> RemoveAsync(Allocation allocation)
             //        {
             //            <Body>
             //        }
@@ -47,8 +46,9 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 .WithTypeArgumentList(
                     SyntaxFactory.TypeArgumentList(
                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                            SyntaxFactory.IdentifierName(this.tableElement.Name)))),
-                SyntaxFactory.Identifier(this.Name))
+                            SyntaxFactory.NullableType(
+                                SyntaxFactory.IdentifierName(this.tableElement.Name))))),
+                SyntaxFactory.Identifier("RemoveAsync"))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     new[]
@@ -113,15 +113,15 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 };
 
                 // Remove the row from the data model.
-                statements.AddRange(RowUtilities.DeleteRow(this.tableElement));
+                statements.AddRange(RowUtilities.RemoveRow(this.tableElement));
 
                 // Complete the transaction.
                 statements.AddRange(
                     new StatementSyntax[]
                     {
-                        //            return deletedRow;
+                        //            return removedRow;
                         SyntaxFactory.ReturnStatement(
-                            SyntaxFactory.IdentifierName("deletedRow")),
+                            SyntaxFactory.IdentifierName("removedRow")),
                     });
 
                 // This is the syntax for the body of the method.
@@ -204,7 +204,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //        /// <returns>The deleted The <see cref="Thing"/> row.</returns>
+                    //        /// <returns>The removed The <see cref="Thing"/> row.</returns>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -216,7 +216,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         {
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" <returns>The deleted <see cref=\"{this.tableElement.Name}\"/> row.</returns>",
+                                                $" <returns>The removed <see cref=\"{this.tableElement.Name}\"/> row.</returns>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
