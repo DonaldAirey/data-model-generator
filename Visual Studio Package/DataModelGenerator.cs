@@ -1,4 +1,4 @@
-﻿// <copyright file="RestApiGenerator.cs" company="Gamma Four, Inc.">
+﻿// <copyright file="DataModelGenerator.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -9,7 +9,7 @@ namespace GammaFour.VisualStudioPackage
     using System.Runtime.InteropServices;
     using System.Text;
     using GammaFour.DataModelGenerator.Common;
-    using GammaFour.DataModelGenerator.RestService;
+    using GammaFour.DataModelGenerator.Model;
     using GammaFour.VisualStudio;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Formatting;
@@ -20,16 +20,16 @@ namespace GammaFour.VisualStudioPackage
     /// </summary>
     [ClassInterface(ClassInterfaceType.None)]
     [Guid(PackageGuid)]
-    [CodeGeneratorRegistration(typeof(RestApiGenerator), nameof(RestApiGenerator), "{FAE04EC1-301F-11D3-BF4B-00C04F79EFBC}", GeneratesDesignTimeSource = true)]
-    [CodeGeneratorRegistration(typeof(RestApiGenerator), nameof(RestApiGenerator), "{9A19103F-16F7-4668-BE54-9A1E7A4F7556}", GeneratesDesignTimeSource = true)]
-    [CodeGeneratorRegistration(typeof(RestApiGenerator), nameof(RestApiGenerator), "{694DD9B6-B865-4C5B-AD85-86356E9C88DC}", GeneratesDesignTimeSource = true)]
-    [ProvideObject(typeof(RestApiGenerator))]
-    public sealed class RestApiGenerator : BaseCodeGeneratorWithSite
+    [CodeGeneratorRegistration(typeof(DataModelGenerator), nameof(DataModelGenerator), "{FAE04EC1-301F-11D3-BF4B-00C04F79EFBC}", GeneratesDesignTimeSource = true)]
+    [CodeGeneratorRegistration(typeof(DataModelGenerator), nameof(DataModelGenerator), "{9A19103F-16F7-4668-BE54-9A1E7A4F7556}", GeneratesDesignTimeSource = true)]
+    [CodeGeneratorRegistration(typeof(DataModelGenerator), nameof(DataModelGenerator), "{694DD9B6-B865-4C5B-AD85-86356E9C88DC}", GeneratesDesignTimeSource = true)]
+    [ProvideObject(typeof(DataModelGenerator))]
+    public sealed class DataModelGenerator : BaseCodeGeneratorWithSite
     {
         /// <summary>
         /// The package identifier.
         /// </summary>
-        private const string PackageGuid = "524C6084-295E-476B-BA16-C124D48912E5";
+        private const string PackageGuid = "4E010E1F-FFAF-4A68-9015-C01FF3A68EBA";
 
         /// <summary>
         /// The method that does the actual work of generating code given the input file.
@@ -67,11 +67,9 @@ namespace GammaFour.VisualStudioPackage
             }
             catch (Exception exception)
             {
-                // This will catch any generic errors and dump them to the console.
                 this.ErrorMessage(exception.Message);
             }
 
-            // If successful, buffer holds the text of the output file.
             return buffer;
         }
     }

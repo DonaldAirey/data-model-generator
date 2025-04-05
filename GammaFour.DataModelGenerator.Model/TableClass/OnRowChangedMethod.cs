@@ -270,12 +270,13 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                         .WithArgumentList(
                                                             SyntaxFactory.ArgumentList(
                                                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                                    new SyntaxNodeOrToken[]{
+                                                                    new SyntaxNodeOrToken[]
+                                                                    {
                                                                         SyntaxFactory.Argument(
                                                                             SyntaxFactory.IdentifierName("dataAction")),
                                                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                                         SyntaxFactory.Argument(
-                                                                            SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())),
+                                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
                                                                     })))),
                                                 })))))))
                     .WithFinally(
