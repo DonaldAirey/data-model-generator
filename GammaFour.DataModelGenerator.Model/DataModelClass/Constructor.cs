@@ -32,9 +32,10 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
             this.Name = this.xmlSchemaDocument.Name;
 
             //        /// <summary>
-            //        /// Initializes a new instance of the <see cref="DataModel"/> class.
+            //        /// Initializes a new instance of the <see cref="Ledger"/> class.
             //        /// </summary>
-            //        public DataModel()
+            //        /// <param name="logger">The log device.</param>
+            //        public Ledger(ILogger<Ledger> logger)
             //        {
             //            <Body>
             //        }
@@ -43,6 +44,18 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithParameterList(
+                SyntaxFactory.ParameterList(
+                    SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
+                        SyntaxFactory.Parameter(
+                            SyntaxFactory.Identifier("logger"))
+                        .WithType(
+                            SyntaxFactory.GenericName(
+                                SyntaxFactory.Identifier("ILogger"))
+                            .WithTypeArgumentList(
+                                SyntaxFactory.TypeArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                        SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name))))))))
             .WithBody(this.Body)
             .WithLeadingTrivia(this.LeadingTrivia);
         }
@@ -54,8 +67,19 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         {
             get
             {
-                // The elements of the body are added to this collection as they are assembled.
-                var statements = new List<StatementSyntax>();
+                // Collect the statements here.
+                var statements = new List<StatementSyntax>
+                {
+                    //            this.Logger = logger;
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("Logger")),
+                            SyntaxFactory.IdentifierName("logger"))),
+                };
 
                 // Initialize each of the row sets.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
@@ -98,7 +122,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                     new List<SyntaxTrivia>
                     {
                         //        /// <summary>
-                        //        /// Initializes a new instance of the <see cref="DataModel"/> class.
+                        //        /// Initializes a new instance of the <see cref="Ledger"/> class.
                         //        /// </summary>
                         SyntaxFactory.Trivia(
                             SyntaxFactory.DocumentationCommentTrivia(
@@ -132,6 +156,28 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
                                                     " </summary>",
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                                SyntaxFactory.XmlTextNewLine(
+                                                    SyntaxFactory.TriviaList(),
+                                                    Environment.NewLine,
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                            }))))),
+
+                        //        /// <param name="logger">The log device.</param>
+                        SyntaxFactory.Trivia(
+                            SyntaxFactory.DocumentationCommentTrivia(
+                                SyntaxKind.SingleLineDocumentationCommentTrivia,
+                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                    SyntaxFactory.XmlText()
+                                    .WithTextTokens(
+                                        SyntaxFactory.TokenList(
+                                            new[]
+                                            {
+                                                SyntaxFactory.XmlTextLiteral(
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                    " <param name=\"logger\">The log device.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(

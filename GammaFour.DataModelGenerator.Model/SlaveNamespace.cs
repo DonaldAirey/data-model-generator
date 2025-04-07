@@ -84,6 +84,7 @@ namespace GammaFour.DataModelGenerator.Model
                 List<UsingDirectiveSyntax> usingStatements = new List<UsingDirectiveSyntax>
                 {
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Configuration")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("Microsoft.Extensions.Logging")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("DotNext.Threading")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName(this.customToolNamespace)),
                 };

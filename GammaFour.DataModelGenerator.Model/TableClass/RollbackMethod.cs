@@ -17,12 +17,19 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     public class RollbackMethod : SyntaxElement
     {
         /// <summary>
+        /// The table element.
+        /// </summary>
+        private TableElement tableElement;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="RollbackMethod"/> class.
         /// </summary>
-        public RollbackMethod()
+        /// <param name="tableElement">The table element.</param>
+        public RollbackMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.Name = "Rollback";
+            this.tableElement = tableElement;
 
             //        /// <inheritdoc/>
             //        public void Rollback(Enlistment enlistment)
@@ -43,100 +50,57 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxFactory.Identifier("enlistment"))
                         .WithType(
                             SyntaxFactory.IdentifierName("Enlistment")))))
-            .WithBody(RollbackMethod.Body)
+            .WithBody(this.Body)
             .WithLeadingTrivia(RollbackMethod.LeadingTrivia);
         }
 
         /// <summary>
-        /// Gets the body.
+        /// Gets the documentation comment.
         /// </summary>
-        private static BlockSyntax Body
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {
-                // This is used to collect the statements.
-                var statements = new List<StatementSyntax>
+                // This is used to collect the trivia.
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
-                    //                var asyncTransaction = AsyncTransaction.Current;
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(
-                                SyntaxFactory.Identifier(
-                                    SyntaxFactory.TriviaList(),
-                                    SyntaxKind.VarKeyword,
-                                    "var",
-                                    "var",
-                                    SyntaxFactory.TriviaList())))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("asyncTransaction"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName("AsyncTransaction"),
-                                            SyntaxFactory.IdentifierName("Current"))))))),
+                    //        /// <inheritdoc/>
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                SyntaxFactory.XmlText()
+                                .WithTextTokens(
+                                    SyntaxFactory.TokenList(
+                                        new[]
+                                        {
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                " <inheritdoc/>",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                        }))))),
+                };
 
-                    //            ArgumentNullException.ThrowIfNull(asyncTransaction);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("ArgumentNullException"),
-                                SyntaxFactory.IdentifierName("ThrowIfNull")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("asyncTransaction")))))),
+                // This is the complete document comment.
+                return SyntaxFactory.TriviaList(comments);
+            }
+        }
 
-                    //                this.enlistmentStates.TryGetValue(asyncTransaction, out var enlistmentState);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("enlistmentStates")),
-                                SyntaxFactory.IdentifierName("TryGetValue")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]
-                                    {
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName("asyncTransaction")),
-                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.DeclarationExpression(
-                                                SyntaxFactory.IdentifierName(
-                                                    SyntaxFactory.Identifier(
-                                                        SyntaxFactory.TriviaList(),
-                                                        SyntaxKind.VarKeyword,
-                                                        "var",
-                                                        "var",
-                                                        SyntaxFactory.TriviaList())),
-                                                SyntaxFactory.SingleVariableDesignation(
-                                                    SyntaxFactory.Identifier("enlistmentState"))))
-                                        .WithRefOrOutKeyword(
-                                            SyntaxFactory.Token(SyntaxKind.OutKeyword)),
-                                    })))),
-
-                    //            ArgumentNullException.ThrowIfNull(enlistmentState);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("ArgumentNullException"),
-                                SyntaxFactory.IdentifierName("ThrowIfNull")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("enlistmentState")))))),
-
+        /// <summary>
+        /// Gets the code to remove the enlistment state.
+        /// </summary>
+        private static IEnumerable<StatementSyntax> Rollback
+        {
+            get
+            {
+                return new StatementSyntax[]
+                {
                     //            var stack = enlistmentState.RollbackStack;
                     SyntaxFactory.LocalDeclarationStatement(
                         SyntaxFactory.VariableDeclaration(
@@ -211,6 +175,97 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         .WithRefOrOutKeyword(
                                             SyntaxFactory.Token(SyntaxKind.OutKeyword)),
                                     })))),
+                };
+            }
+        }
+
+        /// <summary>
+        /// Gets the body.
+        /// </summary>
+        private BlockSyntax Body
+        {
+            get
+            {
+                // This is used to collect the statements.
+                var statements = new List<StatementSyntax>
+                {
+                    //                var asyncTransaction = AsyncTransaction.Current;
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(
+                                SyntaxFactory.Identifier(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.VarKeyword,
+                                    "var",
+                                    "var",
+                                    SyntaxFactory.TriviaList())))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("asyncTransaction"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.IdentifierName("AsyncTransaction"),
+                                            SyntaxFactory.IdentifierName("Current"))))))),
+
+                    //            ArgumentNullException.ThrowIfNull(asyncTransaction);
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("ArgumentNullException"),
+                                SyntaxFactory.IdentifierName("ThrowIfNull")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("asyncTransaction")))))),
+
+                    //            if (this.enlistmentStates.TryGetValue(asyncTransaction, out var enlistmentState))
+                    //            {
+                    //                <Rollback>
+                    //            }
+                    //            else
+                    //            {
+                    //                <LogWarning>
+                    //            }
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("enlistmentStates")),
+                                SyntaxFactory.IdentifierName("TryGetValue")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName("asyncTransaction")),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.DeclarationExpression(
+                                                SyntaxFactory.IdentifierName(
+                                                    SyntaxFactory.Identifier(
+                                                        SyntaxFactory.TriviaList(),
+                                                        SyntaxKind.VarKeyword,
+                                                        "var",
+                                                        "var",
+                                                        SyntaxFactory.TriviaList())),
+                                                SyntaxFactory.SingleVariableDesignation(
+                                                    SyntaxFactory.Identifier("enlistmentState"))))
+                                        .WithRefOrOutKeyword(
+                                            SyntaxFactory.Token(SyntaxKind.OutKeyword)),
+                                    }))),
+                        SyntaxFactory.Block(RollbackMethod.Rollback))
+                    .WithElse(
+                        SyntaxFactory.ElseClause(
+                            SyntaxFactory.Block(this.LogWarning))),
 
                     //            enlistment.Done();
                     SyntaxFactory.ExpressionStatement(
@@ -227,40 +282,43 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         }
 
         /// <summary>
-        /// Gets the documentation comment.
+        /// Gets the code to remove the enlistment state.
         /// </summary>
-        private static IEnumerable<SyntaxTrivia> LeadingTrivia
+        private IEnumerable<StatementSyntax> LogWarning
         {
             get
             {
-                // This is used to collect the trivia.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                return new StatementSyntax[]
                 {
-                    //        /// <inheritdoc/>
-                    SyntaxFactory.Trivia(
-                        SyntaxFactory.DocumentationCommentTrivia(
-                            SyntaxKind.SingleLineDocumentationCommentTrivia,
-                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                SyntaxFactory.XmlText()
-                                .WithTextTokens(
-                                    SyntaxFactory.TokenList(
-                                        new[]
-                                        {
-                                            SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " <inheritdoc/>",
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                            SyntaxFactory.XmlTextNewLine(
-                                                SyntaxFactory.TriviaList(),
-                                                Environment.NewLine,
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                        }))))),
+                    //                this.ledger.Logger.LogWarning("{message}", "No Enlistment State could be found for Accounts");
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("ledger")),
+                                    SyntaxFactory.IdentifierName("Logger")),
+                                SyntaxFactory.IdentifierName("LogWarning")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                SyntaxFactory.Literal("{message}"))),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                SyntaxFactory.Literal($"No Enlistment State could be found for {this.tableElement.Name}"))),
+                                    })))),
                 };
-
-                // This is the complete document comment.
-                return SyntaxFactory.TriviaList(comments);
             }
         }
     }

@@ -325,7 +325,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 new PutOneMethod(this.tableElement),
                 new RemoveManyMethod(this.tableElement),
                 new RemoveOneMethod(this.tableElement),
-                new RollbackMethod(),
+                new RollbackMethod(this.tableElement),
                 new UpdateManyMethod(this.tableElement),
                 new UpdateOneMethod(this.tableElement),
             };

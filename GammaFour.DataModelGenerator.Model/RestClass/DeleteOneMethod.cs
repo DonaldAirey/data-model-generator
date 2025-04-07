@@ -136,7 +136,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                                                                 SyntaxFactory.MemberAccessExpression(
                                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                                     SyntaxFactory.ThisExpression(),
-                                                                    SyntaxFactory.IdentifierName("ledger")),
+                                                                    SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToCamelCase())),
                                                                 SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
                                                             SyntaxFactory.IdentifierName("RemoveAsync")))
                                                     .WithArgumentList(

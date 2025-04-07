@@ -209,7 +209,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
             // This will create the internal instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>
             {
-                new InstanceProperty(),
+                new LoggerProperty(),
                 new RowVersionProperty(),
             };
 

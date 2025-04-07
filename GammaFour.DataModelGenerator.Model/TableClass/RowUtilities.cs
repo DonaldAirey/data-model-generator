@@ -511,60 +511,10 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 }
             }
 
-            //                    updatedRow.CopyFrom(account);
-            statements.Add(
-                SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.IdentifierName("updatedRow"),
-                            SyntaxFactory.IdentifierName("CopyFrom")))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList(
-                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                SyntaxFactory.Argument(
-                                    SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())))))));
-
-            // The RowVersion is updated differently between Master and Slave.
-            if (tableElement.Document.IsMaster)
-            {
-                //            thing.RowVersion = this.DataModel.IncrementRowVersion();
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("updatedRow"),
-                                SyntaxFactory.IdentifierName("RowVersion")),
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
-                                    SyntaxFactory.IdentifierName("IncrementRowVersion"))))));
-            }
-            else
-            {
-                //            this.dataModel.RowVersion = account.RowVersion;
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
-                                SyntaxFactory.IdentifierName("RowVersion")),
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
-                                SyntaxFactory.IdentifierName("RowVersion")))));
-            }
+            //            this.AccountId = account.AccountId;
+            //            this.AccountType = account.AccountType;
+            //            this.RowVersion = this.DataModel.IncrementRowVersion();
+            statements.AddRange(RowUtilities.CopyProperties(tableElement));
 
             statements.AddRange(
                 new StatementSyntax[]
@@ -653,6 +603,112 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 statements.AddRange(RowUtilities.GetNonNullableConstraintCheck(foreignIndexElement, "updatedRow"));
             }
 
+            return statements;
+        }
+
+        /// <summary>
+        /// Copies the properties from the source row.
+        /// </summary>
+        /// <param name="tableElement">The table element.</param>
+        /// <returns>A collection of expressions.</returns>
+        private static IEnumerable<StatementSyntax> CopyProperties(TableElement tableElement)
+        {
+            // The expressions and their property names are collected here.
+            var statementList = new List<(string, IEnumerable<StatementSyntax>)>();
+
+            //                    updatedRow.AccountId = account.AccountId;
+            //                    updatedRow.AccountType = account.AccountType;
+            //                    updatedRow.BaseAssetId = account.BaseAssetId;
+            //                    updatedRow.BrokerAccountId = account.BrokerAccountId;
+            //                    updatedRow.InceptionDate = account.InceptionDate;
+            //                    updatedRow.ModelId = account.ModelId;
+            //                    updatedRow.NetAssetValue = account.NetAssetValue;
+            //                    updatedRow.RowVersion = this.ledger.IncrementRowVersion();
+            //                    updatedRow.SiloId = account.SiloId;
+            foreach (ColumnElement columnElement in tableElement.Columns)
+            {
+                // Copy everything but the row version.
+                if (!columnElement.IsRowVersion)
+                {
+                    statementList.Add((
+                        columnElement.Name,
+                        new ExpressionStatementSyntax[]
+                        {
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.AssignmentExpression(
+                                    SyntaxKind.SimpleAssignmentExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName("updatedRow"),
+                                        SyntaxFactory.IdentifierName(columnElement.Name)),
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                        SyntaxFactory.IdentifierName(columnElement.Name)))),
+                        }));
+                }
+            }
+
+            // The RowVersion is updated differently between Master and Slave.
+            if (tableElement.Document.IsMaster)
+            {
+                //            thing.RowVersion = this.DataModel.IncrementRowVersion();
+                statementList.Add((
+                    "RowVersion",
+                    new ExpressionStatementSyntax[]
+                    {
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("updatedRow"),
+                                    SyntaxFactory.IdentifierName("RowVersion")),
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
+                                        SyntaxFactory.IdentifierName("IncrementRowVersion"))))),
+                    }));
+            }
+            else
+            {
+                //            this.dataModel.RowVersion = account.RowVersion;
+                statementList.Add((
+                    "RowVersion",
+                    new ExpressionStatementSyntax[]
+                    {
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
+                                    SyntaxFactory.IdentifierName("RowVersion")),
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                    SyntaxFactory.IdentifierName("RowVersion")))),
+                    }));
+            }
+
+            //            this.AccountCode = position.AccountCode;
+            //            this.AssetCode = position.AssetCode;
+            //            this.Date = position.Date;
+            //            this.Quantity = position.Quantity;
+            var statements = new List<StatementSyntax>();
+            foreach ((var key, var expressionStatements) in statementList.OrderBy(tuple => tuple.Item1))
+            {
+                statements.AddRange(expressionStatements);
+            }
+
+            // This is the syntax for the body of the constructor.
             return statements;
         }
 

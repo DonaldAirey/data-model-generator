@@ -1,4 +1,4 @@
-// <copyright file="InstanceProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="LoggerProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,52 +14,34 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
     /// <summary>
     /// Creates a collection of readers (transactions) waiting for a read lock.
     /// </summary>
-    public class InstanceProperty : SyntaxElement
+    public class LoggerProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="InstanceProperty"/> class.
+        /// Initializes a new instance of the <see cref="LoggerProperty"/> class.
         /// </summary>
-        public InstanceProperty()
+        public LoggerProperty()
         {
             // Initialize the object.
-            this.Name = "Instance";
+            this.Name = "Logger";
 
             //        /// <summary>
-            //        /// Gets the unique instance of this data model.
+            //        /// Gets the log device.
             //        /// </summary>
-            //        public Guid Instance = Guid.NewGuid();
-            this.Syntax = SyntaxFactory.FieldDeclaration(
-                SyntaxFactory.VariableDeclaration(
-                    SyntaxFactory.IdentifierName("Guid"))
-                .WithVariables(
-                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                        SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier(this.Name))
-                        .WithInitializer(
-                            SyntaxFactory.EqualsValueClause(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("Guid"),
-                                        SyntaxFactory.IdentifierName("NewGuid"))))))))
-            .WithModifiers(InstanceProperty.Modifiers)
-            .WithLeadingTrivia(InstanceProperty.LeadingTrivia);
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // internal
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                    });
-            }
+            //        internal ILogger Logger { get; }
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
+                SyntaxFactory.IdentifierName("ILogger"),
+                SyntaxFactory.Identifier("Logger"))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.InternalKeyword)))
+            .WithAccessorList(
+                SyntaxFactory.AccessorList(
+                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
+                        SyntaxFactory.AccessorDeclaration(
+                            SyntaxKind.GetAccessorDeclaration)
+                        .WithSemicolonToken(
+                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
+            .WithLeadingTrivia(LoggerProperty.LeadingTrivia);
         }
 
         /// <summary>
@@ -73,7 +55,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Gets the unique instance of this data model.
+                    //        /// Gets the log device.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -96,7 +78,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " Gets the unique instance of this data model.",
+                                                " Gets the log device.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
