@@ -300,7 +300,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("ledger")),
+                                        SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToCamelCase())),
                                     SyntaxFactory.IdentifierName("Logger")),
                                 SyntaxFactory.IdentifierName("LogWarning")))
                         .WithArgumentList(

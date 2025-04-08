@@ -172,6 +172,31 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                 return SyntaxFactory.Block(
                     new List<StatementSyntax>
                     {
+                        //            if (this.cancellationTokenSource != null)
+                        //            {
+                        //                this.cancellationTokenSource.Cancel();
+                        //            }
+                        SyntaxFactory.IfStatement(
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.NotEqualsExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("cancellationTokenSource")),
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.NullLiteralExpression)),
+                            SyntaxFactory.Block(
+                                SyntaxFactory.SingletonList<StatementSyntax>(
+                                    SyntaxFactory.ExpressionStatement(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName("cancellationTokenSource")),
+                                                SyntaxFactory.IdentifierName("Cancel"))))))),
+
                         //            foreach (var asyncReaderWriterLock in this.ReadLocks.Values)
                         //            {
                         //                asyncReaderWriterLock.Release();

@@ -32,9 +32,9 @@
       "commandName": "Project",
       "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-market\\ThetaRex.Market.Data\\Market.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-market\\ThetaRex.Market.Data\\Market.Designer.cs\" -ns \"ThetaRex.Market.Data\""
     },
-    "Prototype": {
+    "Test": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\LedgerPrototype\\LedgerPrototype\\Generated\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\LedgerPrototype\\LedgerPrototype\\Generated\\Ledger.Designer.cs\" -ns \"LedgerPrototype.Generated\""
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Donald-Airey\\data-model-test\\Unit Test\\Fixture.xsd\" -out \"..\\..\\..\\..\\..\\..\\Donald-Airey\\data-model-test\\Unit Test\\Fixture.Designer.cs\" -ns \"UnitTest\""
     }
   }
 }

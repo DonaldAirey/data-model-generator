@@ -146,6 +146,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
             List<SyntaxElement> fields = new List<SyntaxElement>
             {
                 new AsyncTransactionField(),
+                new CancellationTokenSourceField(),
             };
 
             // Alphabetize and add the fields as members of the class.

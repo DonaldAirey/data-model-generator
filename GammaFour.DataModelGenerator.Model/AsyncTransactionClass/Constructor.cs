@@ -62,6 +62,19 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                 return SyntaxFactory.Block(
                     new List<StatementSyntax>
                     {
+                        //            if (cancellationToken == default)
+                        //            {
+                        //                 <CreateCancellationTokenSource>
+                        //            }
+                        SyntaxFactory.IfStatement(
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.EqualsExpression,
+                                SyntaxFactory.IdentifierName("cancellationToken"),
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.DefaultLiteralExpression,
+                                    SyntaxFactory.Token(SyntaxKind.DefaultKeyword))),
+                            SyntaxFactory.Block(Constructor.CreateCancellationTokenSource)),
+
                         //            this.CancellationToken = cancellationToken;
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.AssignmentExpression(
@@ -204,6 +217,41 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
+                };
+            }
+        }
+
+        /// <summary>
+        /// Gets a collection of statements that create a cancellation token source.
+        /// </summary>
+        private static IEnumerable<StatementSyntax> CreateCancellationTokenSource
+        {
+            get
+            {
+                return new StatementSyntax[]
+                {
+                    //                this.cancellationTokenSource = new CancellationTokenSource();
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("cancellationTokenSource")),
+                            SyntaxFactory.ObjectCreationExpression(
+                                SyntaxFactory.IdentifierName("CancellationTokenSource"))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList()))),
+
+                    //                cancellationToken = cancellationTokenSource.Token;
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.IdentifierName("cancellationToken"),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("cancellationTokenSource"),
+                                SyntaxFactory.IdentifierName("Token")))),
                 };
             }
         }
