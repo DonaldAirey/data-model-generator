@@ -76,7 +76,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                             SyntaxFactory.ThisExpression(),
                                             SyntaxFactory.IdentifierName("transaction"))))))),
 
-                    //            return this.transaction.EnlistVolatile(enlistmentNotification, EnlistmentOptions.None);
+                    //            return this.transaction.EnlistVolatile(new EnlistmentNotification(enlistmentNotification), EnlistmentOptions.None);
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -92,7 +92,13 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                     new SyntaxNodeOrToken[]
                                     {
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName("enlistmentNotification")),
+                                            SyntaxFactory.ObjectCreationExpression(
+                                                SyntaxFactory.IdentifierName("EnlistmentNotification"))
+                                            .WithArgumentList(
+                                                SyntaxFactory.ArgumentList(
+                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.IdentifierName("enlistmentNotification")))))),
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.MemberAccessExpression(

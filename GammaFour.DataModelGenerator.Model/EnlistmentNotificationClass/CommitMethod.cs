@@ -1,8 +1,8 @@
-// <copyright file="InDoubtMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="CommitMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.TableClass
+namespace GammaFour.DataModelGenerator.Model.EnlistmentNotificationClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,20 +12,20 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to acquire a reader lock.
+    /// Creates a method to prepare a resource for a transaction completion.
     /// </summary>
-    public class InDoubtMethod : SyntaxElement
+    public class CommitMethod : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="InDoubtMethod"/> class.
+        /// Initializes a new instance of the <see cref="CommitMethod"/> class.
         /// </summary>
-        public InDoubtMethod()
+        public CommitMethod()
         {
             // Initialize the object.
-            this.Name = "InDoubt";
+            this.Name = "Commit";
 
             //        /// <inheritdoc/>
-            //        public void InDoubt(Enlistment enlistment)
+            //        public void Commit(Enlistment enlistment)
             //        {
             //            <Body>
             //        }
@@ -43,8 +43,8 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxFactory.Identifier("enlistment"))
                         .WithType(
                             SyntaxFactory.IdentifierName("Enlistment")))))
-            .WithBody(InDoubtMethod.Body)
-            .WithLeadingTrivia(InDoubtMethod.LeadingTrivia);
+            .WithBody(CommitMethod.Body)
+            .WithLeadingTrivia(CommitMethod.LeadingTrivia);
         }
 
         /// <summary>
@@ -57,12 +57,34 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 // This is used to collect the statements.
                 var statements = new List<StatementSyntax>
                 {
-                    //            throw new NotImplementedException();
-                    SyntaxFactory.ThrowStatement(
-                        SyntaxFactory.ObjectCreationExpression(
-                            SyntaxFactory.IdentifierName("NotImplementedException"))
+                    //            AsyncTransaction.Current = this.asyncTransaction;
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("AsyncTransaction"),
+                                SyntaxFactory.IdentifierName("Current")),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("asyncTransaction")))),
+
+                    //            this.enlistmentNotification.Commit(enlistment);
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("enlistmentNotification")),
+                                SyntaxFactory.IdentifierName("Commit")))
                         .WithArgumentList(
-                            SyntaxFactory.ArgumentList())),
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("enlistment")))))),
                 };
 
                 // This is the syntax for the body of the method.

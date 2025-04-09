@@ -51,6 +51,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                         new AccessorDeclarationSyntax[]
                         {
                             this.GetAccessor,
+                            this.SetAccessor,
                         })))
             .WithLeadingTrivia(this.LeadingTrivia);
         }
@@ -142,6 +143,42 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                     SyntaxFactory.Block(
                         SyntaxFactory.List(statements)))
                 .WithKeyword(SyntaxFactory.Token(SyntaxKind.GetKeyword));
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'Get' accessor.
+        /// </summary>
+        private AccessorDeclarationSyntax SetAccessor
+        {
+            get
+            {
+                // This list collects the statements.
+                var statements = new List<StatementSyntax>
+                {
+                    //                return AsyncTransaction.asyncTransaction.Value;
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("AsyncTransaction"),
+                                    SyntaxFactory.IdentifierName("asyncTransaction")),
+                                SyntaxFactory.IdentifierName("Value")),
+                            SyntaxFactory.IdentifierName("value"))),
+                };
+
+                //            set
+                //            {
+                //                <statements>
+                //            }
+                return SyntaxFactory.AccessorDeclaration(
+                    SyntaxKind.SetAccessorDeclaration,
+                    SyntaxFactory.Block(
+                        SyntaxFactory.List(statements)))
+                .WithKeyword(SyntaxFactory.Token(SyntaxKind.SetKeyword));
             }
         }
     }

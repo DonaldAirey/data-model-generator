@@ -1,8 +1,8 @@
-// <copyright file="InDoubtMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="PrepareMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.TableClass
+namespace GammaFour.DataModelGenerator.Model.EnlistmentNotificationClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,20 +12,20 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to acquire a reader lock.
+    /// Creates a method to prepare a resource for a transaction completion.
     /// </summary>
-    public class InDoubtMethod : SyntaxElement
+    public class PrepareMethod : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="InDoubtMethod"/> class.
+        /// Initializes a new instance of the <see cref="PrepareMethod"/> class.
         /// </summary>
-        public InDoubtMethod()
+        public PrepareMethod()
         {
             // Initialize the object.
-            this.Name = "InDoubt";
+            this.Name = "Prepare";
 
             //        /// <inheritdoc/>
-            //        public void InDoubt(Enlistment enlistment)
+            //        public void Prepare(Enlistment enlistment)
             //        {
             //            <Body>
             //        }
@@ -40,11 +40,11 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 SyntaxFactory.ParameterList(
                     SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
                         SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier("enlistment"))
+                            SyntaxFactory.Identifier("preparingEnlistment"))
                         .WithType(
-                            SyntaxFactory.IdentifierName("Enlistment")))))
-            .WithBody(InDoubtMethod.Body)
-            .WithLeadingTrivia(InDoubtMethod.LeadingTrivia);
+                            SyntaxFactory.IdentifierName("PreparingEnlistment")))))
+            .WithBody(PrepareMethod.Body)
+            .WithLeadingTrivia(PrepareMethod.LeadingTrivia);
         }
 
         /// <summary>
@@ -57,12 +57,34 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 // This is used to collect the statements.
                 var statements = new List<StatementSyntax>
                 {
-                    //            throw new NotImplementedException();
-                    SyntaxFactory.ThrowStatement(
-                        SyntaxFactory.ObjectCreationExpression(
-                            SyntaxFactory.IdentifierName("NotImplementedException"))
+                    //            AsyncTransaction.Current = this.asyncTransaction;
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("AsyncTransaction"),
+                                SyntaxFactory.IdentifierName("Current")),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("asyncTransaction")))),
+
+                    //            this.enlistmentNotification.Prepare(enlistment);
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("enlistmentNotification")),
+                                SyntaxFactory.IdentifierName("Prepare")))
                         .WithArgumentList(
-                            SyntaxFactory.ArgumentList())),
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("preparingEnlistment")))))),
                 };
 
                 // This is the syntax for the body of the method.
@@ -78,7 +100,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             get
             {
                 // This is used to collect the trivia.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                return new List<SyntaxTrivia>
                 {
                     //        /// <inheritdoc/>
                     SyntaxFactory.Trivia(
@@ -102,9 +124,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
                 };
-
-                // This is the complete document comment.
-                return SyntaxFactory.TriviaList(comments);
             }
         }
     }
