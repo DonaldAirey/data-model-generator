@@ -196,64 +196,6 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                                     SyntaxFactory.ThisExpression(),
                                                     SyntaxFactory.IdentifierName("cancellationTokenSource")),
                                                 SyntaxFactory.IdentifierName("Cancel"))))))),
-
-                        //            foreach (var asyncReaderWriterLock in this.ReadLocks.Values)
-                        //            {
-                        //                asyncReaderWriterLock.Release();
-                        //            }
-                        SyntaxFactory.ForEachStatement(
-                            SyntaxFactory.IdentifierName(
-                                SyntaxFactory.Identifier(
-                                    SyntaxFactory.TriviaList(),
-                                    SyntaxKind.VarKeyword,
-                                    "var",
-                                    "var",
-                                    SyntaxFactory.TriviaList())),
-                            SyntaxFactory.Identifier("asyncReaderWriterLock"),
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("ReadLocks")),
-                                SyntaxFactory.IdentifierName("Values")),
-                            SyntaxFactory.Block(
-                                SyntaxFactory.SingletonList<StatementSyntax>(
-                                    SyntaxFactory.ExpressionStatement(
-                                        SyntaxFactory.InvocationExpression(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("asyncReaderWriterLock"),
-                                                SyntaxFactory.IdentifierName("Release"))))))),
-
-                        //            foreach (var asyncReaderWriterLock in this.WriteLocks.Values)
-                        //            {
-                        //                asyncReaderWriterLock.Release();
-                        //            }
-                        SyntaxFactory.ForEachStatement(
-                            SyntaxFactory.IdentifierName(
-                                SyntaxFactory.Identifier(
-                                    SyntaxFactory.TriviaList(),
-                                    SyntaxKind.VarKeyword,
-                                    "var",
-                                    "var",
-                                    SyntaxFactory.TriviaList())),
-                            SyntaxFactory.Identifier("asyncReaderWriterLock"),
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("WriteLocks")),
-                                SyntaxFactory.IdentifierName("Values")),
-                            SyntaxFactory.Block(
-                                SyntaxFactory.SingletonList<StatementSyntax>(
-                                    SyntaxFactory.ExpressionStatement(
-                                        SyntaxFactory.InvocationExpression(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("asyncReaderWriterLock"),
-                                                SyntaxFactory.IdentifierName("Release"))))))),
                     });
             }
         }

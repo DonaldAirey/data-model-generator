@@ -112,16 +112,54 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.IdentifierName("enlistmentState")))))),
                 };
 
-                // Remove the row from the data model.
-                statements.AddRange(RowUtilities.RemoveRow(this.tableElement));
-
-                // Complete the transaction.
                 statements.AddRange(
                     new StatementSyntax[]
                     {
-                        //            return removedRow;
-                        SyntaxFactory.ReturnStatement(
-                            SyntaxFactory.IdentifierName("removedRow")),
+                        //            if (this.dictionary.TryGetValue(thingId, out var removedRow))
+                        //            {
+                        //                <RemoveRow>
+                        //            }
+                        //            else
+                        //            {
+                        //                return null;
+                        //            }
+                        SyntaxFactory.IfStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("dictionary")),
+                                    SyntaxFactory.IdentifierName("TryGetValue")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                        new SyntaxNodeOrToken[]
+                                        {
+                                            this.tableElement.PrimaryIndex.GetKeyAsArguments(this.tableElement.Name.ToVariableName()),
+                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.DeclarationExpression(
+                                                    SyntaxFactory.IdentifierName(
+                                                        SyntaxFactory.Identifier(
+                                                            SyntaxFactory.TriviaList(),
+                                                            SyntaxKind.VarKeyword,
+                                                            "var",
+                                                            "var",
+                                                            SyntaxFactory.TriviaList())),
+                                                    SyntaxFactory.SingleVariableDesignation(
+                                                        SyntaxFactory.Identifier("foundRow"))))
+                                            .WithRefOrOutKeyword(
+                                                SyntaxFactory.Token(SyntaxKind.OutKeyword)),
+                                        }))),
+                            SyntaxFactory.Block(this.RemoveRow))
+                        .WithElse(
+                            SyntaxFactory.ElseClause(
+                                SyntaxFactory.Block(
+                                    SyntaxFactory.ReturnStatement(
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.NullLiteralExpression))))),
                     });
 
                 // This is the syntax for the body of the method.
@@ -226,6 +264,25 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
                 };
+            }
+        }
+
+        /// <summary>
+        /// Gets the statements to update a row.
+        /// </summary>
+        private IEnumerable<StatementSyntax> RemoveRow
+        {
+            get
+            {
+                var statements = new List<StatementSyntax>();
+                statements.AddRange(RowUtilities.RemoveRow(this.tableElement));
+
+                //                return clonedRow;
+                statements.Add(
+                    SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.IdentifierName("clonedRow")));
+
+                return statements;
             }
         }
     }

@@ -165,6 +165,26 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.LiteralExpression(
                                         SyntaxKind.NullLiteralExpression))))),
 
+                    //                if (asyncTransaction.CancellationToken.IsCancellationRequested)
+                    //                {
+                    //                    throw new OperationCanceledException();
+                    //                }
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("asyncTransaction"),
+                                SyntaxFactory.IdentifierName("CancellationToken")),
+                            SyntaxFactory.IdentifierName("IsCancellationRequested")),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ThrowStatement(
+                                    SyntaxFactory.ObjectCreationExpression(
+                                        SyntaxFactory.IdentifierName("OperationCanceledException"))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList()))))),
+
                     //                this.enlistmentStates.TryGetValue(asyncTransaction, out var enlistmentState);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(

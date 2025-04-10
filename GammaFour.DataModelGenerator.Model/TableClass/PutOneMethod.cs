@@ -82,6 +82,41 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         }
 
         /// <summary>
+        /// Gets the statements to add a row.
+        /// </summary>
+        private IEnumerable<StatementSyntax> AddRow
+        {
+            get
+            {
+                var statements = new List<StatementSyntax>();
+                statements.AddRange(RowUtilities.AddRow(this.tableElement));
+
+                //                return (AddedRow: clonedRow, UpdatedRow: null);
+                statements.Add(
+                    SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.TupleExpression(
+                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                new SyntaxNodeOrToken[]
+                                {
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("clonedRow"))
+                                    .WithNameColon(
+                                        SyntaxFactory.NameColon(
+                                            SyntaxFactory.IdentifierName("AddedRow"))),
+                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.NullLiteralExpression))
+                                    .WithNameColon(
+                                        SyntaxFactory.NameColon(
+                                            SyntaxFactory.IdentifierName("UpdatedRow"))),
+                                }))));
+
+                return statements;
+            }
+        }
+
+        /// <summary>
         /// Gets the body.
         /// </summary>
         private BlockSyntax Body
@@ -124,48 +159,10 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.IdentifierName("enlistmentState")))))),
-
-                    //            Account? addedRow = null;
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.NullableType(
-                                SyntaxFactory.IdentifierName(this.tableElement.Name)))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("addedRow"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.NullLiteralExpression)))))),
                 };
 
                 // Find the row and either update it if it exists, or add it if it doesn't.
                 statements.AddRange(this.FindRow);
-
-                // Process each element in the collection.
-                statements.AddRange(
-                    new StatementSyntax[]
-                    {
-                        //            return (AddedRow: addedRow, UpdatedRow: updatedRow);
-                        SyntaxFactory.ReturnStatement(
-                            SyntaxFactory.TupleExpression(
-                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]
-                                    {
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName("addedRow"))
-                                        .WithNameColon(
-                                            SyntaxFactory.NameColon(
-                                                SyntaxFactory.IdentifierName("AddedRow"))),
-                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName("updatedRow"))
-                                        .WithNameColon(
-                                            SyntaxFactory.NameColon(
-                                                SyntaxFactory.IdentifierName("UpdatedRow"))),
-                                    }))),
-                    });
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -217,7 +214,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                         "var",
                                                         SyntaxFactory.TriviaList())),
                                                 SyntaxFactory.SingleVariableDesignation(
-                                                    SyntaxFactory.Identifier("updatedRow"))))
+                                                    SyntaxFactory.Identifier("foundRow"))))
                                         .WithRefOrOutKeyword(
                                             SyntaxFactory.Token(SyntaxKind.OutKeyword)),
                                     }))),
@@ -333,28 +330,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         }
 
         /// <summary>
-        /// Gets the statements to add a row.
-        /// </summary>
-        private IEnumerable<StatementSyntax> AddRow
-        {
-            get
-            {
-                var statements = new List<StatementSyntax>();
-                statements.AddRange(RowUtilities.AddRow(this.tableElement));
-
-                //                addedRow = account;
-                statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.IdentifierName("addedRow"),
-                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))));
-
-                return statements;
-            }
-        }
-
-        /// <summary>
         /// Gets the statements to update a row.
         /// </summary>
         private IEnumerable<StatementSyntax> UpdateRow
@@ -364,13 +339,26 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 var statements = new List<StatementSyntax>();
                 statements.AddRange(RowUtilities.UpdateRow(this.tableElement));
 
-                //                updatedRow = clone;
+                //            return (AddedRow: null, UpdatedRow: clonedRow);
                 statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.IdentifierName("updatedRow"),
-                            SyntaxFactory.IdentifierName("clone"))));
+                    SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.TupleExpression(
+                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                new SyntaxNodeOrToken[]
+                                {
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.NullLiteralExpression))
+                                    .WithNameColon(
+                                        SyntaxFactory.NameColon(
+                                            SyntaxFactory.IdentifierName("AddedRow"))),
+                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("clonedRow"))
+                                    .WithNameColon(
+                                        SyntaxFactory.NameColon(
+                                            SyntaxFactory.IdentifierName("UpdatedRow"))),
+                                }))));
 
                 return statements;
             }

@@ -222,11 +222,11 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                         "var",
                                                         SyntaxFactory.TriviaList())),
                                                 SyntaxFactory.SingleVariableDesignation(
-                                                    SyntaxFactory.Identifier("updatedRow"))))
+                                                    SyntaxFactory.Identifier("foundRow"))))
                                         .WithRefOrOutKeyword(
                                             SyntaxFactory.Token(SyntaxKind.OutKeyword)),
                                     }))),
-                        SyntaxFactory.Block(RowUtilities.UpdateRow(this.tableElement)))
+                        SyntaxFactory.Block(this.UpdateRow))
                     .WithElse(
                         SyntaxFactory.ElseClause(
                             SyntaxFactory.Block(
@@ -235,19 +235,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.IdentifierName("KeyNotFoundException"))
                                     .WithArgumentList(
                                         SyntaxFactory.ArgumentList()))))),
-
-                    //                updatedRows.Add(updatedRow);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("updatedRows"),
-                                SyntaxFactory.IdentifierName("Add")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("updatedRow")))))),
                 };
 
                 // This is the syntax for the body of the method.
@@ -334,6 +321,34 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
+            }
+        }
+
+        /// <summary>
+        /// Gets the statements to update a row.
+        /// </summary>
+        private IEnumerable<StatementSyntax> UpdateRow
+        {
+            get
+            {
+                var statements = new List<StatementSyntax>();
+                statements.AddRange(RowUtilities.UpdateRow(this.tableElement));
+
+                //                    removedRows.Add(clone);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("updatedRows"),
+                                SyntaxFactory.IdentifierName("Add")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("clonedRow")))))));
+
+                return statements;
             }
         }
     }

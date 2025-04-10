@@ -281,7 +281,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                         "var",
                                                         SyntaxFactory.TriviaList())),
                                                 SyntaxFactory.SingleVariableDesignation(
-                                                    SyntaxFactory.Identifier("updatedRow"))))
+                                                    SyntaxFactory.Identifier("foundRow"))))
                                         .WithRefOrOutKeyword(
                                             SyntaxFactory.Token(SyntaxKind.OutKeyword)),
                                     }))),
@@ -418,7 +418,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("clone")))))));
+                                        SyntaxFactory.IdentifierName("clonedRow")))))));
 
                 return statements;
             }
@@ -446,7 +446,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("clone")))))));
+                                        SyntaxFactory.IdentifierName("clonedRow")))))));
 
                 return statements;
             }

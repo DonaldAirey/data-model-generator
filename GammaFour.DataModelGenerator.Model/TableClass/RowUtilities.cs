@@ -276,7 +276,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("clone"))
+                                    SyntaxFactory.Identifier("clonedRow"))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
                                         SyntaxFactory.ObjectCreationExpression(
@@ -320,403 +320,19 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                                     SyntaxFactory.IdentifierName("Add"))),
                                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                             SyntaxFactory.Argument(
-                                                                SyntaxFactory.IdentifierName("clone")),
+                                                                SyntaxFactory.IdentifierName("clonedRow")),
                                                         }))))))))),
                 });
 
-            return statements;
-        }
-
-        /// <summary>
-        /// A range of statements to add one row.
-        /// </summary>
-        /// <param name="tableElement">The table element.</param>
-        /// <returns>A collection of statements that add a row.</returns>
-        public static IEnumerable<StatementSyntax> RemoveRow(TableElement tableElement)
-        {
-            // Find the row and remove it.
-            var statements = new List<StatementSyntax>
-            {
-                //            if (this.dictionary.TryGetValue(thingId, out var removedRow))
-                //            {
-                //                <RemoveRow>
-                //            }
-                //            else
-                //            {
-                //                removedRow = null;
-                //            }
-                SyntaxFactory.IfStatement(
-                    SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("dictionary")),
-                            SyntaxFactory.IdentifierName("TryGetValue")))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList(
-                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                new SyntaxNodeOrToken[]
-                                {
-                                    tableElement.PrimaryIndex.GetKeyAsArguments(tableElement.Name.ToVariableName()),
-                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.DeclarationExpression(
-                                            SyntaxFactory.IdentifierName(
-                                                SyntaxFactory.Identifier(
-                                                    SyntaxFactory.TriviaList(),
-                                                    SyntaxKind.VarKeyword,
-                                                    "var",
-                                                    "var",
-                                                    SyntaxFactory.TriviaList())),
-                                            SyntaxFactory.SingleVariableDesignation(
-                                                SyntaxFactory.Identifier("removedRow"))))
-                                    .WithRefOrOutKeyword(
-                                        SyntaxFactory.Token(SyntaxKind.OutKeyword)),
-                                }))),
-                    SyntaxFactory.Block(RowUtilities.RemoveRowCore(tableElement)))
-                .WithElse(
-                    SyntaxFactory.ElseClause(
-                        SyntaxFactory.Block(
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.AssignmentExpression(
-                                    SyntaxKind.SimpleAssignmentExpression,
-                                    SyntaxFactory.IdentifierName("removedRow"),
-                                    SyntaxFactory.LiteralExpression(
-                                        SyntaxKind.NullLiteralExpression)))))),
-            };
-
-            return statements;
-        }
-
-        /// <summary>
-        /// Gets the statements that updates a row.
-        /// </summary>
-        /// <param name="tableElement">The table element.</param>
-        /// <returns>The statements to update a row.</returns>
-        public static IEnumerable<StatementSyntax> UpdateRow(TableElement tableElement)
-        {
-            // Lock the row and perform optimistic concurrency check.
-            var statements = new List<StatementSyntax>
-            {
-                //            await updatedRow.EnterWriteLockAsync().ConfigureAwait(false);
-                SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.AwaitExpression(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("updatedRow"),
-                                        SyntaxFactory.IdentifierName("EnterWriteLockAsync"))),
-                                SyntaxFactory.IdentifierName("ConfigureAwait")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.LiteralExpression(
-                                                 tableElement.Document.IsMaster ?
-                                                 SyntaxKind.FalseLiteralExpression :
-                                                 SyntaxKind.TrueLiteralExpression))))))),
-
-                //                    var originalRow = new Account(updatedRow);
-                SyntaxFactory.LocalDeclarationStatement(
-                    SyntaxFactory.VariableDeclaration(
-                        SyntaxFactory.IdentifierName(
-                            SyntaxFactory.Identifier(
-                                SyntaxFactory.TriviaList(),
-                                SyntaxKind.VarKeyword,
-                                "var",
-                                "var",
-                                SyntaxFactory.TriviaList())))
-                    .WithVariables(
-                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                            SyntaxFactory.VariableDeclarator(
-                                SyntaxFactory.Identifier("originalRow"))
-                            .WithInitializer(
-                                SyntaxFactory.EqualsValueClause(
-                                    SyntaxFactory.ObjectCreationExpression(
-                                        SyntaxFactory.IdentifierName(tableElement.Name))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.IdentifierName("updatedRow")))))))))),
-
-                //                    enlistmentState.RollbackStack.Push(() => updatedRow.CopyFrom(originalRow));
-                SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("enlistmentState"),
-                                SyntaxFactory.IdentifierName("RollbackStack")),
-                            SyntaxFactory.IdentifierName("Push")))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList(
-                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                SyntaxFactory.Argument(
-                                    SyntaxFactory.ParenthesizedLambdaExpression()
-                                    .WithExpressionBody(
-                                        SyntaxFactory.InvocationExpression(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("updatedRow"),
-                                                SyntaxFactory.IdentifierName("CopyFrom")))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.IdentifierName("originalRow"))))))))))),
-            };
-
-            // Only the master needs to check for concurrency.
-            if (tableElement.Document.IsMaster)
-            {
-                //                if (updatedRow.RowVersion != thing.RowVersion)
-                //                {
-                //                    throw new ConcurrencyException();
-                //                }
-                statements.Add(
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.NotEqualsExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
-                                SyntaxFactory.IdentifierName("RowVersion")),
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("updatedRow"),
-                                SyntaxFactory.IdentifierName("RowVersion"))),
-                        SyntaxFactory.Block(
-                            SyntaxFactory.SingletonList<StatementSyntax>(
-                                SyntaxFactory.ThrowStatement(
-                                    SyntaxFactory.ObjectCreationExpression(
-                                        SyntaxFactory.IdentifierName("ConcurrencyException"))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList()))))));
-            }
-
-            // Detach ourselves from the old parent row, and attach ourselves to the new parent row.
-            foreach (var foreignIndexElement in tableElement.ParentIndices)
-            {
-                // Disallow changes to the primary key.
-                if (!foreignIndexElement.Columns.Where(cre => cre.Column.IsPrimaryKey).Any())
-                {
-                    statements.AddRange(RowUtilities.UpdateParentRow(tableElement, foreignIndexElement));
-                }
-            }
-
-            //            this.AccountId = account.AccountId;
-            //            this.AccountType = account.AccountType;
-            //            this.RowVersion = this.DataModel.IncrementRowVersion();
-            statements.AddRange(RowUtilities.CopyProperties(tableElement));
-
-            statements.AddRange(
-                new StatementSyntax[]
-                {
-                    //                    var clone = new Account(updatedRow);
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(
-                                SyntaxFactory.Identifier(
-                                    SyntaxFactory.TriviaList(),
-                                    SyntaxKind.VarKeyword,
-                                    "var",
-                                    "var",
-                                    SyntaxFactory.TriviaList())))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("clone"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName(tableElement.Name))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.IdentifierName("updatedRow")))))))))),
-
-                    //            enlistmentState.CommitStack.Push(() => this.OnRowChanged(DataAction.Update, clone));
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("enlistmentState"),
-                                    SyntaxFactory.IdentifierName("CommitStack")),
-                                SyntaxFactory.IdentifierName("Push")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.ParenthesizedLambdaExpression()
-                                        .WithExpressionBody(
-                                            SyntaxFactory.InvocationExpression(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName("OnRowChanged")))
-                                            .WithArgumentList(
-                                                SyntaxFactory.ArgumentList(
-                                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                        new SyntaxNodeOrToken[]
-                                                        {
-                                                            SyntaxFactory.Argument(
-                                                                SyntaxFactory.MemberAccessExpression(
-                                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                                    SyntaxFactory.IdentifierName("DataAction"),
-                                                                    SyntaxFactory.IdentifierName("Update"))),
-                                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                            SyntaxFactory.Argument(
-                                                                SyntaxFactory.IdentifierName("clone")),
-                                                        }))))))))),
-                });
-
-            return statements;
-        }
-
-        /// <summary>
-        /// Adds a parent row to the child row.
-        /// </summary>
-        /// <param name="foreignIndexElement">The foreign index element.</param>
-        /// <returns>The statements that add a parent row to a child row.</returns>
-        private static IEnumerable<StatementSyntax> AddToParent(ForeignIndexElement foreignIndexElement)
-        {
-            var statements = new List<StatementSyntax>();
-
-            //            var thing = this.DataModel.Things.Find(order.ThingCode);
-            var uniqueIndexElement = foreignIndexElement.UniqueIndex;
-            if (foreignIndexElement.Columns.Where(ce => ce.Column.ColumnType.IsNullable).Any())
-            {
-                statements.AddRange(RowUtilities.GetNullableConstraintCheck(foreignIndexElement, "updatedRow"));
-            }
-            else
-            {
-                statements.AddRange(RowUtilities.GetNonNullableConstraintCheck(foreignIndexElement, "updatedRow"));
-            }
-
-            return statements;
-        }
-
-        /// <summary>
-        /// Copies the properties from the source row.
-        /// </summary>
-        /// <param name="tableElement">The table element.</param>
-        /// <returns>A collection of expressions.</returns>
-        private static IEnumerable<StatementSyntax> CopyProperties(TableElement tableElement)
-        {
-            // The expressions and their property names are collected here.
-            var statementList = new List<(string, IEnumerable<StatementSyntax>)>();
-
-            //                    updatedRow.AccountId = account.AccountId;
-            //                    updatedRow.AccountType = account.AccountType;
-            //                    updatedRow.BaseAssetId = account.BaseAssetId;
-            //                    updatedRow.BrokerAccountId = account.BrokerAccountId;
-            //                    updatedRow.InceptionDate = account.InceptionDate;
-            //                    updatedRow.ModelId = account.ModelId;
-            //                    updatedRow.NetAssetValue = account.NetAssetValue;
-            //                    updatedRow.RowVersion = this.ledger.IncrementRowVersion();
-            //                    updatedRow.SiloId = account.SiloId;
-            foreach (ColumnElement columnElement in tableElement.Columns)
-            {
-                // Copy everything but the row version.
-                if (!columnElement.IsRowVersion)
-                {
-                    statementList.Add((
-                        columnElement.Name,
-                        new ExpressionStatementSyntax[]
-                        {
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.AssignmentExpression(
-                                    SyntaxKind.SimpleAssignmentExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("updatedRow"),
-                                        SyntaxFactory.IdentifierName(columnElement.Name)),
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
-                                        SyntaxFactory.IdentifierName(columnElement.Name)))),
-                        }));
-                }
-            }
-
-            // The RowVersion is updated differently between Master and Slave.
-            if (tableElement.Document.IsMaster)
-            {
-                //            thing.RowVersion = this.DataModel.IncrementRowVersion();
-                statementList.Add((
-                    "RowVersion",
-                    new ExpressionStatementSyntax[]
-                    {
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("updatedRow"),
-                                    SyntaxFactory.IdentifierName("RowVersion")),
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
-                                        SyntaxFactory.IdentifierName("IncrementRowVersion"))))),
-                    }));
-            }
-            else
-            {
-                //            this.dataModel.RowVersion = account.RowVersion;
-                statementList.Add((
-                    "RowVersion",
-                    new ExpressionStatementSyntax[]
-                    {
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
-                                    SyntaxFactory.IdentifierName("RowVersion")),
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
-                                    SyntaxFactory.IdentifierName("RowVersion")))),
-                    }));
-            }
-
-            //            this.AccountCode = position.AccountCode;
-            //            this.AssetCode = position.AssetCode;
-            //            this.Date = position.Date;
-            //            this.Quantity = position.Quantity;
-            var statements = new List<StatementSyntax>();
-            foreach ((var key, var expressionStatements) in statementList.OrderBy(tuple => tuple.Item1))
-            {
-                statements.AddRange(expressionStatements);
-            }
-
-            // This is the syntax for the body of the constructor.
             return statements;
         }
 
         /// <summary>
         /// Gets the statements that removes a row.
         /// </summary>
+        /// <param name="tableElement">The table element.</param>
         /// <returns>The statements to remove a row.</returns>
-        private static IEnumerable<StatementSyntax> RemoveRowCore(TableElement tableElement)
+        public static IEnumerable<StatementSyntax> RemoveRow(TableElement tableElement)
         {
             // Lock the row.
             var statements = new List<StatementSyntax>
@@ -730,7 +346,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.InvocationExpression(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.IdentifierName("removedRow"),
+                                        SyntaxFactory.IdentifierName("foundRow"),
                                         SyntaxFactory.IdentifierName("EnterWriteLockAsync"))),
                                 SyntaxFactory.IdentifierName("ConfigureAwait")))
                         .WithArgumentList(
@@ -764,7 +380,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.ArgumentList(
                                             SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                 SyntaxFactory.Argument(
-                                                    SyntaxFactory.IdentifierName("removedRow")))))))))),
+                                                    SyntaxFactory.IdentifierName("foundRow")))))))))),
 
                 //                    enlistmentState.RollbackStack.Push(() => removedRow.CopyFrom(originalRow));
                 SyntaxFactory.ExpressionStatement(
@@ -785,7 +401,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.InvocationExpression(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("removedRow"),
+                                                SyntaxFactory.IdentifierName("foundRow"),
                                                 SyntaxFactory.IdentifierName("CopyFrom")))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList(
@@ -807,7 +423,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxKind.NotEqualsExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("removedRow"),
+                                SyntaxFactory.IdentifierName("foundRow"),
                                 SyntaxFactory.IdentifierName("RowVersion")),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -832,7 +448,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("removedRow"),
+                                    SyntaxFactory.IdentifierName("foundRow"),
                                     SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
                                 SyntaxFactory.IdentifierName("Any"))),
                         SyntaxFactory.Block(
@@ -931,7 +547,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxKind.SimpleAssignmentExpression,
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("removedRow"),
+                                SyntaxFactory.IdentifierName("foundRow"),
                                 SyntaxFactory.IdentifierName("RowVersion")),
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
@@ -958,7 +574,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.IdentifierName("RowVersion")),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("removedRow"),
+                                SyntaxFactory.IdentifierName("foundRow"),
                                 SyntaxFactory.IdentifierName("RowVersion")))));
             }
 
@@ -979,7 +595,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    tableElement.PrimaryIndex.GetKeyAsArguments("removedRow"))))),
+                                    tableElement.PrimaryIndex.GetKeyAsArguments("foundRow"))))),
 
                     //                    enlistmentState.RollbackStack.Push(() => this.dictionary.Add(removedRow.AccountId, removedRow));
                     SyntaxFactory.ExpressionStatement(
@@ -1010,10 +626,10 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                     SyntaxFactory.SeparatedList<ArgumentSyntax>(
                                                         new SyntaxNodeOrToken[]
                                                         {
-                                                            tableElement.PrimaryIndex.GetKeyAsArguments("removedRow"),
+                                                            tableElement.PrimaryIndex.GetKeyAsArguments("foundRow"),
                                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                             SyntaxFactory.Argument(
-                                                                SyntaxFactory.IdentifierName("removedRow")),
+                                                                SyntaxFactory.IdentifierName("foundRow")),
                                                         }))))))))),
                 });
 
@@ -1033,7 +649,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                         .WithVariables(
                             SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("clone"))
+                                    SyntaxFactory.Identifier("clonedRow"))
                                 .WithInitializer(
                                     SyntaxFactory.EqualsValueClause(
                                         SyntaxFactory.ObjectCreationExpression(
@@ -1042,7 +658,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             SyntaxFactory.ArgumentList(
                                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                     SyntaxFactory.Argument(
-                                                        SyntaxFactory.IdentifierName("removedRow")))))))))),
+                                                        SyntaxFactory.IdentifierName("foundRow")))))))))),
 
                     //                    enlistmentState.CommitStack.Push(() => this.OnRowChanged(DataAction.Remove, clone));
                     SyntaxFactory.ExpressionStatement(
@@ -1077,17 +693,332 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                                     SyntaxFactory.IdentifierName("Remove"))),
                                                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                             SyntaxFactory.Argument(
-                                                                SyntaxFactory.IdentifierName("clone")),
+                                                                SyntaxFactory.IdentifierName("clonedRow")),
                                                         }))))))))),
-
-                    //                    removedRow = clone;
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.IdentifierName("removedRow"),
-                            SyntaxFactory.IdentifierName("clone"))),
                 });
 
+            return statements;
+        }
+
+        /// <summary>
+        /// Gets the statements that updates a row.
+        /// </summary>
+        /// <param name="tableElement">The table element.</param>
+        /// <returns>The statements to update a row.</returns>
+        public static IEnumerable<StatementSyntax> UpdateRow(TableElement tableElement)
+        {
+            // Lock the row and perform optimistic concurrency check.
+            var statements = new List<StatementSyntax>
+            {
+                //            await updatedRow.EnterWriteLockAsync().ConfigureAwait(false);
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.AwaitExpression(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName("foundRow"),
+                                        SyntaxFactory.IdentifierName("EnterWriteLockAsync"))),
+                                SyntaxFactory.IdentifierName("ConfigureAwait")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.LiteralExpression(
+                                                 tableElement.Document.IsMaster ?
+                                                 SyntaxKind.FalseLiteralExpression :
+                                                 SyntaxKind.TrueLiteralExpression))))))),
+
+                //                    var originalRow = new Account(updatedRow);
+                SyntaxFactory.LocalDeclarationStatement(
+                    SyntaxFactory.VariableDeclaration(
+                        SyntaxFactory.IdentifierName(
+                            SyntaxFactory.Identifier(
+                                SyntaxFactory.TriviaList(),
+                                SyntaxKind.VarKeyword,
+                                "var",
+                                "var",
+                                SyntaxFactory.TriviaList())))
+                    .WithVariables(
+                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                            SyntaxFactory.VariableDeclarator(
+                                SyntaxFactory.Identifier("originalRow"))
+                            .WithInitializer(
+                                SyntaxFactory.EqualsValueClause(
+                                    SyntaxFactory.ObjectCreationExpression(
+                                        SyntaxFactory.IdentifierName(tableElement.Name))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.IdentifierName("foundRow")))))))))),
+
+                //                    enlistmentState.RollbackStack.Push(() => updatedRow.CopyFrom(originalRow));
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("enlistmentState"),
+                                SyntaxFactory.IdentifierName("RollbackStack")),
+                            SyntaxFactory.IdentifierName("Push")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.ParenthesizedLambdaExpression()
+                                    .WithExpressionBody(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("foundRow"),
+                                                SyntaxFactory.IdentifierName("CopyFrom")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName("originalRow"))))))))))),
+            };
+
+            // Only the master needs to check for concurrency.
+            if (tableElement.Document.IsMaster)
+            {
+                //                if (updatedRow.RowVersion != thing.RowVersion)
+                //                {
+                //                    throw new ConcurrencyException();
+                //                }
+                statements.Add(
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                SyntaxFactory.IdentifierName("RowVersion")),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("foundRow"),
+                                SyntaxFactory.IdentifierName("RowVersion"))),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ThrowStatement(
+                                    SyntaxFactory.ObjectCreationExpression(
+                                        SyntaxFactory.IdentifierName("ConcurrencyException"))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList()))))));
+            }
+
+            // Detach ourselves from the old parent row, and attach ourselves to the new parent row.
+            foreach (var foreignIndexElement in tableElement.ParentIndices)
+            {
+                // Disallow changes to the primary key.
+                if (!foreignIndexElement.Columns.Where(cre => cre.Column.IsPrimaryKey).Any())
+                {
+                    statements.AddRange(RowUtilities.UpdateParentRow(tableElement, foreignIndexElement));
+                }
+            }
+
+            //            this.AccountId = account.AccountId;
+            //            this.AccountType = account.AccountType;
+            //            this.RowVersion = this.DataModel.IncrementRowVersion();
+            statements.AddRange(RowUtilities.CopyProperties(tableElement));
+
+            statements.AddRange(
+                new StatementSyntax[]
+                {
+                    //                    var clone = new Account(updatedRow);
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(
+                                SyntaxFactory.Identifier(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.VarKeyword,
+                                    "var",
+                                    "var",
+                                    SyntaxFactory.TriviaList())))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("clonedRow"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.IdentifierName(tableElement.Name))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName("foundRow")))))))))),
+
+                    //            enlistmentState.CommitStack.Push(() => this.OnRowChanged(DataAction.Update, clone));
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("enlistmentState"),
+                                    SyntaxFactory.IdentifierName("CommitStack")),
+                                SyntaxFactory.IdentifierName("Push")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.ParenthesizedLambdaExpression()
+                                        .WithExpressionBody(
+                                            SyntaxFactory.InvocationExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName("OnRowChanged")))
+                                            .WithArgumentList(
+                                                SyntaxFactory.ArgumentList(
+                                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                        new SyntaxNodeOrToken[]
+                                                        {
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxFactory.IdentifierName("DataAction"),
+                                                                    SyntaxFactory.IdentifierName("Update"))),
+                                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.IdentifierName("clonedRow")),
+                                                        }))))))))),
+                });
+
+            return statements;
+        }
+
+        /// <summary>
+        /// Adds a parent row to the child row.
+        /// </summary>
+        /// <param name="foreignIndexElement">The foreign index element.</param>
+        /// <returns>The statements that add a parent row to a child row.</returns>
+        private static IEnumerable<StatementSyntax> AddToParent(ForeignIndexElement foreignIndexElement)
+        {
+            var statements = new List<StatementSyntax>();
+
+            //            var thing = this.DataModel.Things.Find(order.ThingCode);
+            var uniqueIndexElement = foreignIndexElement.UniqueIndex;
+            if (foreignIndexElement.Columns.Where(ce => ce.Column.ColumnType.IsNullable).Any())
+            {
+                statements.AddRange(RowUtilities.GetNullableConstraintCheck(foreignIndexElement, "foundRow"));
+            }
+            else
+            {
+                statements.AddRange(RowUtilities.GetNonNullableConstraintCheck(foreignIndexElement, "foundRow"));
+            }
+
+            return statements;
+        }
+
+        /// <summary>
+        /// Copies the properties from the source row.
+        /// </summary>
+        /// <param name="tableElement">The table element.</param>
+        /// <returns>A collection of expressions.</returns>
+        private static IEnumerable<StatementSyntax> CopyProperties(TableElement tableElement)
+        {
+            // The expressions and their property names are collected here.
+            var statementList = new List<(string, IEnumerable<StatementSyntax>)>();
+
+            //                    updatedRow.AccountId = account.AccountId;
+            //                    updatedRow.AccountType = account.AccountType;
+            //                    updatedRow.BaseAssetId = account.BaseAssetId;
+            //                    updatedRow.BrokerAccountId = account.BrokerAccountId;
+            //                    updatedRow.InceptionDate = account.InceptionDate;
+            //                    updatedRow.ModelId = account.ModelId;
+            //                    updatedRow.NetAssetValue = account.NetAssetValue;
+            //                    updatedRow.RowVersion = this.ledger.IncrementRowVersion();
+            //                    updatedRow.SiloId = account.SiloId;
+            foreach (ColumnElement columnElement in tableElement.Columns)
+            {
+                // Copy everything but the row version.
+                if (!columnElement.IsRowVersion)
+                {
+                    statementList.Add((
+                        columnElement.Name,
+                        new ExpressionStatementSyntax[]
+                        {
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.AssignmentExpression(
+                                    SyntaxKind.SimpleAssignmentExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName("foundRow"),
+                                        SyntaxFactory.IdentifierName(columnElement.Name)),
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                        SyntaxFactory.IdentifierName(columnElement.Name)))),
+                        }));
+                }
+            }
+
+            // The RowVersion is updated differently between Master and Slave.
+            if (tableElement.Document.IsMaster)
+            {
+                //            thing.RowVersion = this.DataModel.IncrementRowVersion();
+                statementList.Add((
+                    "RowVersion",
+                    new ExpressionStatementSyntax[]
+                    {
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("foundRow"),
+                                    SyntaxFactory.IdentifierName("RowVersion")),
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
+                                        SyntaxFactory.IdentifierName("IncrementRowVersion"))))),
+                    }));
+            }
+            else
+            {
+                //            this.dataModel.RowVersion = account.RowVersion;
+                statementList.Add((
+                    "RowVersion",
+                    new ExpressionStatementSyntax[]
+                    {
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
+                                    SyntaxFactory.IdentifierName("RowVersion")),
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                    SyntaxFactory.IdentifierName("RowVersion")))),
+                    }));
+            }
+
+            //            this.AccountCode = position.AccountCode;
+            //            this.AssetCode = position.AssetCode;
+            //            this.Date = position.Date;
+            //            this.Quantity = position.Quantity;
+            var statements = new List<StatementSyntax>();
+            foreach ((var key, var expressionStatements) in statementList.OrderBy(tuple => tuple.Item1))
+            {
+                statements.AddRange(expressionStatements);
+            }
+
+            // This is the syntax for the body of the constructor.
             return statements;
         }
 
@@ -1564,12 +1495,12 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 //                    }
                 changeParentStatements.Add(
                     SyntaxFactory.IfStatement(
-                        foreignIndexElement.GetKeyAsInequalityConditional("updatedRow", null),
-                        SyntaxFactory.Block(RowUtilities.RemoveFromParent("updatedRow", foreignIndexElement))));
+                        foreignIndexElement.GetKeyAsInequalityConditional("foundRow", null),
+                        SyntaxFactory.Block(RowUtilities.RemoveFromParent("foundRow", foreignIndexElement))));
             }
             else
             {
-                changeParentStatements.AddRange(RowUtilities.RemoveFromParent("updatedRow", foreignIndexElement));
+                changeParentStatements.AddRange(RowUtilities.RemoveFromParent("foundRow", foreignIndexElement));
             }
 
             changeParentStatements.AddRange(RowUtilities.AddToParent(foreignIndexElement));
@@ -1580,7 +1511,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 //                {
                 //                }
                 SyntaxFactory.IfStatement(
-                    foreignIndexElement.GetKeyAsInequalityConditional(tableElement.Name.ToVariableName(), "updatedRow"),
+                    foreignIndexElement.GetKeyAsInequalityConditional(tableElement.Name.ToVariableName(), "foundRow"),
                     SyntaxFactory.Block(changeParentStatements)),
             };
         }

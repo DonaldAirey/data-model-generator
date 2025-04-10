@@ -184,39 +184,48 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                var statements = new List<StatementSyntax>();
-                statements.AddRange(RowUtilities.RemoveRow(this.tableElement));
-
-                statements.AddRange(
-                    new StatementSyntax[]
-                    {
-                        //                if (removedRow != null)
-                        //                {
-                        //                    removedRows.Add(removedRow);
-                        //                }
-                        SyntaxFactory.IfStatement(
-                            SyntaxFactory.BinaryExpression(
-                                SyntaxKind.NotEqualsExpression,
-                                SyntaxFactory.IdentifierName("removedRow"),
-                                SyntaxFactory.LiteralExpression(
-                                    SyntaxKind.NullLiteralExpression)),
-                            SyntaxFactory.Block(
-                                SyntaxFactory.SingletonList<StatementSyntax>(
-                                    SyntaxFactory.ExpressionStatement(
-                                        SyntaxFactory.InvocationExpression(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("removedRows"),
-                                                SyntaxFactory.IdentifierName("Add")))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.IdentifierName("removedRow"))))))))),
-                    });
-
-                // This is the syntax for the body of the method.
-                return SyntaxFactory.List<StatementSyntax>(statements);
+                return new List<StatementSyntax>
+                {
+                    //            if (this.dictionary.TryGetValue(thingId, out var removedRow))
+                    //            {
+                    //                <RemoveRow>
+                    //            }
+                    //            else
+                    //            {
+                    //                removedRow = null;
+                    //            }
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("dictionary")),
+                                SyntaxFactory.IdentifierName("TryGetValue")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        this.tableElement.PrimaryIndex.GetKeyAsArguments(this.tableElement.Name.ToVariableName()),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.DeclarationExpression(
+                                                SyntaxFactory.IdentifierName(
+                                                    SyntaxFactory.Identifier(
+                                                        SyntaxFactory.TriviaList(),
+                                                        SyntaxKind.VarKeyword,
+                                                        "var",
+                                                        "var",
+                                                        SyntaxFactory.TriviaList())),
+                                                SyntaxFactory.SingleVariableDesignation(
+                                                    SyntaxFactory.Identifier("foundRow"))))
+                                        .WithRefOrOutKeyword(
+                                            SyntaxFactory.Token(SyntaxKind.OutKeyword)),
+                                    }))),
+                        SyntaxFactory.Block(this.RemoveRow)),
+                };
             }
         }
 
@@ -321,6 +330,34 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
+            }
+        }
+
+        /// <summary>
+        /// Gets the statements to update a row.
+        /// </summary>
+        private IEnumerable<StatementSyntax> RemoveRow
+        {
+            get
+            {
+                var statements = new List<StatementSyntax>();
+                statements.AddRange(RowUtilities.RemoveRow(this.tableElement));
+
+                //                    removedRows.Add(clonedRow);
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("removedRows"),
+                                SyntaxFactory.IdentifierName("Add")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("clonedRow")))))));
+
+                return statements;
             }
         }
     }

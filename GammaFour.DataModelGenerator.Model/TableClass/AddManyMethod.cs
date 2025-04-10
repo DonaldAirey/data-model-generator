@@ -86,7 +86,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 var statements = new List<StatementSyntax>();
                 statements.AddRange(RowUtilities.AddRow(this.tableElement));
 
-                //                addedRows.Add(clone);
+                //                addedRows.Add(clonedRow);
                 statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -98,7 +98,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("clone")))))));
+                                        SyntaxFactory.IdentifierName("clonedRow")))))));
 
                 return statements;
             }

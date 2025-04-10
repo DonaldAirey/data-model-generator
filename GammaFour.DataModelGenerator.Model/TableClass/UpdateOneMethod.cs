@@ -147,7 +147,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                             "var",
                                                             SyntaxFactory.TriviaList())),
                                                     SyntaxFactory.SingleVariableDesignation(
-                                                        SyntaxFactory.Identifier("updatedRow"))))
+                                                        SyntaxFactory.Identifier("foundRow"))))
                                             .WithRefOrOutKeyword(
                                                 SyntaxFactory.Token(SyntaxKind.OutKeyword)),
                                         }))),
@@ -160,10 +160,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             SyntaxFactory.IdentifierName("KeyNotFoundException"))
                                         .WithArgumentList(
                                             SyntaxFactory.ArgumentList()))))),
-
-                        //            return foundRow;
-                        SyntaxFactory.ReturnStatement(
-                            SyntaxFactory.IdentifierName("updatedRow")),
                     });
 
                 // This is the syntax for the body of the method.
@@ -263,13 +259,10 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 var statements = new List<StatementSyntax>();
                 statements.AddRange(RowUtilities.UpdateRow(this.tableElement));
 
-                //                updatedRow = clone;
+                //                return clone;
                 statements.Add(
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.IdentifierName("updatedRow"),
-                            SyntaxFactory.IdentifierName("clone"))));
+                    SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.IdentifierName("clonedRow")));
 
                 return statements;
             }
