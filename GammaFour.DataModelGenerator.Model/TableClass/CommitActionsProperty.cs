@@ -1,4 +1,4 @@
-// <copyright file="EnlistmentStateProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="CommitActionsProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,27 +14,31 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     /// <summary>
     /// Creates a field that holds the column.
     /// </summary>
-    public class EnlistmentStateProperty : SyntaxElement
+    public class CommitActionsProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="EnlistmentStateProperty"/> class.
+        /// Initializes a new instance of the <see cref="CommitActionsProperty"/> class.
         /// </summary>
-        public EnlistmentStateProperty()
+        public CommitActionsProperty()
         {
             // Initialize the object.
-            this.Name = "EnlistmentState";
+            this.Name = "CommitActions";
 
             //        /// <summary>
-            //        /// Gets the enlistment state for the current task.
+            //        /// Gets the commit actions for the current task.
             //        /// </summary>
-            //        private EnlistmentState? EnlistmentState
+            //        private List<Action> CommitList
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.NullableType(
-                    SyntaxFactory.IdentifierName("EnlistmentState")),
-                SyntaxFactory.Identifier("EnlistmentState"))
+                SyntaxFactory.GenericName(
+                    SyntaxFactory.Identifier("List"))
+                .WithTypeArgumentList(
+                    SyntaxFactory.TypeArgumentList(
+                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                            SyntaxFactory.IdentifierName("Action")))),
+                SyntaxFactory.Identifier(this.Name))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
@@ -59,7 +63,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                     new List<SyntaxTrivia>
                     {
                         //        /// <summary>
-                        //        /// Gets the enlistment state for the current task.
+                        //        /// Gets the commit actions for the current task.
                         //        /// </summary>
                         SyntaxFactory.Trivia(
                             SyntaxFactory.DocumentationCommentTrivia(
@@ -82,7 +86,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    " Gets the enlistment state for the current task.",
+                                                    " Gets the commit actions for the current task.",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -149,22 +153,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.IdentifierName("asyncTransaction")))))),
 
-                    //                if (asyncTransaction == null)
-                    //                {
-                    //                    return null;
-                    //                }
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.EqualsExpression,
-                            SyntaxFactory.IdentifierName("asyncTransaction"),
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.NullLiteralExpression)),
-                        SyntaxFactory.Block(
-                            SyntaxFactory.SingletonList<StatementSyntax>(
-                                SyntaxFactory.ReturnStatement(
-                                    SyntaxFactory.LiteralExpression(
-                                        SyntaxKind.NullLiteralExpression))))),
-
                     //                if (asyncTransaction.CancellationToken.IsCancellationRequested)
                     //                {
                     //                    throw new OperationCanceledException();
@@ -185,7 +173,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     .WithArgumentList(
                                         SyntaxFactory.ArgumentList()))))),
 
-                    //                this.enlistmentStates.TryGetValue(asyncTransaction, out var enlistmentState);
+                    //                this.commitDictionary.TryGetValue(asyncTransaction, out var commitActions);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -193,7 +181,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("enlistmentStates")),
+                                    SyntaxFactory.IdentifierName("commitDictionary")),
                                 SyntaxFactory.IdentifierName("TryGetValue")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -213,14 +201,27 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                         "var",
                                                         SyntaxFactory.TriviaList())),
                                                 SyntaxFactory.SingleVariableDesignation(
-                                                    SyntaxFactory.Identifier("enlistmentState"))))
+                                                    SyntaxFactory.Identifier("commitActions"))))
                                         .WithRefOrOutKeyword(
                                             SyntaxFactory.Token(SyntaxKind.OutKeyword)),
                                     })))),
 
-                    //                return enlistmentState;
+                    //                ArgumentNullException.ThrowIfNull(commitActions);
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("ArgumentNullException"),
+                                SyntaxFactory.IdentifierName("ThrowIfNull")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("commitActions")))))),
+
+                    //                return commitActions;
                     SyntaxFactory.ReturnStatement(
-                        SyntaxFactory.IdentifierName("enlistmentState")),
+                        SyntaxFactory.IdentifierName("commitActions")),
                 };
             }
         }

@@ -1,8 +1,8 @@
-// <copyright file="OnRowChangedMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="ThrowIfNotEqualMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.TableClass
+namespace GammaFour.DataModelGenerator.Model.ConcurrencyExceptionClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,64 +12,96 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to load a row.
+    /// Creates a method to acquire a reader lock.
     /// </summary>
-    public class OnRowChangedMethod : SyntaxElement
+    public class ThrowIfNotEqualMethod : SyntaxElement
     {
         /// <summary>
-        /// The table schema.
+        /// Initializes a new instance of the <see cref="ThrowIfNotEqualMethod"/> class.
         /// </summary>
-        private readonly TableElement tableElement;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="OnRowChangedMethod"/> class.
-        /// </summary>
-        /// <param name="tableElement">The unique constraint schema.</param>
-        public OnRowChangedMethod(TableElement tableElement)
+        public ThrowIfNotEqualMethod()
         {
             // Initialize the object.
-            this.tableElement = tableElement;
-            this.Name = "OnRowChanged";
+            this.Name = "ThrowIfNotEqual";
 
             //        /// <summary>
-            //        /// Handles the <see cref="Account"/> row changed event.
+            //        /// Throw a concurrency exception if the values are not equal.
             //        /// </summary>
-            //        /// <param name="dataAction">The data action.</param>
-            //        /// <param name="account">The <see cref="Account"/> row that changed.</param>
-            //        private void OnRowChanged(DataAction dataAction, Account account)
+            //        /// <param name="rowVersion1">The first row version.</param>
+            //        /// <param name="rowVersion2">The second row version.</param>
+            //        public static void ThrowIfNotEqual(long rowVersion1, long rowVersion2)
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
                 SyntaxFactory.PredefinedType(
                     SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
-                SyntaxFactory.Identifier("OnRowChanged"))
+                SyntaxFactory.Identifier("ThrowIfNotEqual"))
             .WithModifiers(
                 SyntaxFactory.TokenList(
-                    SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                        SyntaxFactory.Token(SyntaxKind.StaticKeyword),
+                    }))
             .WithParameterList(
                 SyntaxFactory.ParameterList(
                     SyntaxFactory.SeparatedList<ParameterSyntax>(
                         new SyntaxNodeOrToken[]
                         {
                             SyntaxFactory.Parameter(
-                                SyntaxFactory.Identifier("dataAction"))
+                                SyntaxFactory.Identifier("rowVersion1"))
                             .WithType(
-                                SyntaxFactory.IdentifierName("DataAction")),
+                                SyntaxFactory.PredefinedType(
+                                    SyntaxFactory.Token(SyntaxKind.LongKeyword))),
                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                             SyntaxFactory.Parameter(
-                                SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()))
+                                SyntaxFactory.Identifier("rowVersion2"))
                             .WithType(
-                                SyntaxFactory.IdentifierName(this.tableElement.Name)),
+                                SyntaxFactory.PredefinedType(
+                                    SyntaxFactory.Token(SyntaxKind.LongKeyword))),
                         })))
-            .WithBody(this.Body)
-            .WithLeadingTrivia(this.LeadingTrivia);
+            .WithBody(ThrowIfNotEqualMethod.Body)
+            .WithLeadingTrivia(ThrowIfNotEqualMethod.LeadingTrivia);
+        }
+
+        /// <summary>
+        /// Gets the body.
+        /// </summary>
+        private static BlockSyntax Body
+        {
+            get
+            {
+                // This is used to collect the statements.
+                var statements = new List<StatementSyntax>
+                {
+                    //            if (rowVersion1 != rowVersion2)
+                    //            {
+                    //                throw new ConcurrencyException();
+                    //            }
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
+                            SyntaxFactory.IdentifierName("rowVersion1"),
+                            SyntaxFactory.IdentifierName("rowVersion2")),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ThrowStatement(
+                                    SyntaxFactory.ObjectCreationExpression(
+                                        SyntaxFactory.IdentifierName("ConcurrencyException"))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList()))))),
+                };
+
+                // This is the syntax for the body of the method.
+                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
+            }
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private IEnumerable<SyntaxTrivia> LeadingTrivia
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {
@@ -77,7 +109,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Handles the <see cref="Account"/> row changed event.
+                    //        /// Throw a concurrency exception if the values are not equal.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -100,7 +132,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Handles the <see cref=\"{this.tableElement.Name}\"/> row changed event.",
+                                                " Throw a concurrency exception if the values are not equal.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -120,7 +152,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //        /// <param name="dataAction">The data action.</param>
+                    //        /// <param name="rowVersion1">The first row version.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -132,7 +164,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         {
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" <param name=\"dataAction\">The data action.</param>",
+                                                " <param name=\"rowVersion1\">The first row version.</param>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -142,7 +174,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //        /// <param name="account">The <see cref="Account"/> row that changed.</param>
+                    //        /// <param name="rowVersion2">The second row version.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -154,7 +186,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         {
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" <param name=\"{this.tableElement.Name.ToCamelCase()}\">The <see cref=\"{this.tableElement.Name}\"/> row that changed.</param>",
+                                                " <param name=\"rowVersion2\">The second row version.</param>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -167,93 +199,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
-            }
-        }
-
-        /// <summary>
-        /// Gets the body.
-        /// </summary>
-        private BlockSyntax Body
-        {
-            get
-            {
-                return SyntaxFactory.Block(
-                    new List<StatementSyntax>
-                    {
-                        //            if (this.RowChanged != null)
-                        //            {
-                        //                <TryInvoke>
-                        //            }
-                        SyntaxFactory.IfStatement(
-                            SyntaxFactory.BinaryExpression(
-                                SyntaxKind.NotEqualsExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("RowChanged")),
-                                SyntaxFactory.LiteralExpression(
-                                    SyntaxKind.NullLiteralExpression)),
-                            SyntaxFactory.Block(this.TryInvoke)),
-                    });
-            }
-        }
-
-        /// <summary>
-        /// Gets the statements checks to see if the parent row exists.
-        /// </summary>
-        private List<StatementSyntax> TryInvoke
-        {
-            get
-            {
-                return new List<StatementSyntax>
-                {
-                    //              try
-                    //              {
-                    //                    this.RowChanged.Invoke(this, new RowChangedEventArgs(dataAction, weightedAccount));
-                    //              }
-                    //              finally
-                    //              {
-                    //              }
-                    SyntaxFactory.TryStatement()
-                    .WithBlock(
-                        SyntaxFactory.Block(
-                            SyntaxFactory.SingletonList<StatementSyntax>(
-                                SyntaxFactory.ExpressionStatement(
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName("RowChanged")),
-                                            SyntaxFactory.IdentifierName("Invoke")))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                new SyntaxNodeOrToken[]
-                                                {
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.ThisExpression()),
-                                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.ObjectCreationExpression(
-                                                            SyntaxFactory.IdentifierName("RowChangedEventArgs"))
-                                                        .WithArgumentList(
-                                                            SyntaxFactory.ArgumentList(
-                                                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                                    new SyntaxNodeOrToken[]
-                                                                    {
-                                                                        SyntaxFactory.Argument(
-                                                                            SyntaxFactory.IdentifierName("dataAction")),
-                                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                                        SyntaxFactory.Argument(
-                                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
-                                                                    })))),
-                                                })))))))
-                    .WithFinally(
-                        SyntaxFactory.FinallyClause(
-                            SyntaxFactory.Block())),
-                };
             }
         }
     }

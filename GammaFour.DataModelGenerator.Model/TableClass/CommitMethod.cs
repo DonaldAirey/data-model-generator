@@ -91,7 +91,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.IdentifierName("asyncTransaction")))))),
 
-                    //                this.enlistmentStates.TryGetValue(asyncTransaction, out var enlistmentState);
+                    //            this.commitDictionary.TryGetValue(asyncTransaction, out var commitActions);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -99,7 +99,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("enlistmentStates")),
+                                    SyntaxFactory.IdentifierName("commitDictionary")),
                                 SyntaxFactory.IdentifierName("TryGetValue")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -119,12 +119,12 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                         "var",
                                                         SyntaxFactory.TriviaList())),
                                                 SyntaxFactory.SingleVariableDesignation(
-                                                    SyntaxFactory.Identifier("enlistmentState"))))
+                                                    SyntaxFactory.Identifier("commitActions"))))
                                         .WithRefOrOutKeyword(
                                             SyntaxFactory.Token(SyntaxKind.OutKeyword)),
                                     })))),
 
-                    //            ArgumentNullException.ThrowIfNull(enlistmentState);
+                    //            ArgumentNullException.ThrowIfNull(commitActions);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -135,54 +135,29 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("enlistmentState")))))),
+                                        SyntaxFactory.IdentifierName("commitActions")))))),
 
-                    //            var stack = enlistmentState.CommitStack;
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(
-                                SyntaxFactory.Identifier(
-                                    SyntaxFactory.TriviaList(),
-                                    SyntaxKind.VarKeyword,
-                                    "var",
-                                    "var",
-                                    SyntaxFactory.TriviaList())))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("stack"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName("enlistmentState"),
-                                            SyntaxFactory.IdentifierName("CommitStack"))))))),
-
-                    //            while (stack.Count != 0)
+                    //            foreach (var commitAction in commitDictionary)
                     //            {
-                    //                stack.Pop()();
+                    //                commitAction();
                     //            }
-                    SyntaxFactory.WhileStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.NotEqualsExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("stack"),
-                                SyntaxFactory.IdentifierName("Count")),
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.NumericLiteralExpression,
-                                SyntaxFactory.Literal(0))),
+                    SyntaxFactory.ForEachStatement(
+                        SyntaxFactory.IdentifierName(
+                            SyntaxFactory.Identifier(
+                                SyntaxFactory.TriviaList(),
+                                SyntaxKind.VarKeyword,
+                                "var",
+                                "var",
+                                SyntaxFactory.TriviaList())),
+                        SyntaxFactory.Identifier("commitAction"),
+                        SyntaxFactory.IdentifierName("commitActions"),
                         SyntaxFactory.Block(
                             SyntaxFactory.SingletonList<StatementSyntax>(
                                 SyntaxFactory.ExpressionStatement(
                                     SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.InvocationExpression(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("stack"),
-                                                SyntaxFactory.IdentifierName("Pop")))))))),
+                                        SyntaxFactory.IdentifierName("commitAction")))))),
 
-                    //            this.enlistmentStates.TryRemove(asyncTransaction, out _);
+                    //            this.commitDictionary.TryRemove(asyncTransaction, out _);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -190,7 +165,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("enlistmentStates")),
+                                    SyntaxFactory.IdentifierName("commitDictionary")),
                                 SyntaxFactory.IdentifierName("TryRemove")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(

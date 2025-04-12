@@ -73,42 +73,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         {
             get
             {
-                var statements = new List<StatementSyntax>
-                {
-                    //            var enlistmentState = this.EnlistmentState;
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(
-                                SyntaxFactory.Identifier(
-                                    SyntaxFactory.TriviaList(),
-                                    SyntaxKind.VarKeyword,
-                                    "var",
-                                    "var",
-                                    SyntaxFactory.TriviaList())))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("enlistmentState"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("EnlistmentState"))))))),
-
-                    //            ArgumentNullException.ThrowIfNull(enlistmentState);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("ArgumentNullException"),
-                                SyntaxFactory.IdentifierName("ThrowIfNull")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("enlistmentState")))))),
-                };
+                var statements = new List<StatementSyntax>();
 
                 // Find the row and update it.
                 statements.AddRange(
@@ -262,7 +227,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 //                return clone;
                 statements.Add(
                     SyntaxFactory.ReturnStatement(
-                        SyntaxFactory.IdentifierName("clonedRow")));
+                        SyntaxFactory.IdentifierName("foundRow")));
 
                 return statements;
             }

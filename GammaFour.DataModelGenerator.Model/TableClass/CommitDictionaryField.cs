@@ -1,4 +1,4 @@
-// <copyright file="EnlistmentStatesField.cs" company="Gamma Four, Inc.">
+// <copyright file="CommitDictionaryField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,20 +14,20 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     /// <summary>
     /// Creates a field that holds the column.
     /// </summary>
-    public class EnlistmentStatesField : SyntaxElement
+    public class CommitDictionaryField : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="EnlistmentStatesField"/> class.
+        /// Initializes a new instance of the <see cref="CommitDictionaryField"/> class.
         /// </summary>
-        public EnlistmentStatesField()
+        public CommitDictionaryField()
         {
             // Initialize the object.
-            this.Name = "enlistmentStates";
+            this.Name = "commitDictionary";
 
             //        /// <summary>
-            //        /// The enlistment states for all the concurrent transactions.
+            //        /// The commit actions for all the concurrent transactions.
             //        /// </summary>
-            //        private ConcurrentDictionary<AsyncTransaction, EnlistmentState> enlistmentStates = new ConcurrentDictionary<AsyncTransaction, EnlistmentState>();
+            //        private ConcurrentDictionary<AsyncTransaction, List<Action>> commitDictionary = new ConcurrentDictionary<AsyncTransaction, List<Action>>();
             this.Syntax = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
                     SyntaxFactory.GenericName(
@@ -39,7 +39,12 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 {
                                     SyntaxFactory.IdentifierName("AsyncTransaction"),
                                     SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                    SyntaxFactory.IdentifierName("EnlistmentState"),
+                                    SyntaxFactory.GenericName(
+                                        SyntaxFactory.Identifier("List"))
+                                    .WithTypeArgumentList(
+                                        SyntaxFactory.TypeArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                SyntaxFactory.IdentifierName("Action")))),
                                 }))))
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
@@ -57,7 +62,12 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 {
                                                     SyntaxFactory.IdentifierName("AsyncTransaction"),
                                                     SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                    SyntaxFactory.IdentifierName("EnlistmentState"),
+                                                    SyntaxFactory.GenericName(
+                                                        SyntaxFactory.Identifier("List"))
+                                                    .WithTypeArgumentList(
+                                                        SyntaxFactory.TypeArgumentList(
+                                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                                SyntaxFactory.IdentifierName("Action")))),
                                                 }))))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList()))))))
@@ -78,7 +88,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                     new List<SyntaxTrivia>
                     {
                         //        /// <summary>
-                        //        /// The enlistment states for all the concurrent transactions.
+                        //        /// The commit actions for all the concurrent transactions.
                         //        /// </summary>
                         SyntaxFactory.Trivia(
                             SyntaxFactory.DocumentationCommentTrivia(
@@ -101,7 +111,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    " The enlistment states for all the concurrent transactions.",
+                                                    " The commit actions for all the concurrent transactions.",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(

@@ -91,7 +91,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 var statements = new List<StatementSyntax>();
                 statements.AddRange(RowUtilities.AddRow(this.tableElement));
 
-                //                return (AddedRow: clonedRow, UpdatedRow: null);
+                //                return (AddedRow: account, UpdatedRow: null);
                 statements.Add(
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.TupleExpression(
@@ -99,7 +99,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 new SyntaxNodeOrToken[]
                                 {
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("clonedRow"))
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()))
                                     .WithNameColon(
                                         SyntaxFactory.NameColon(
                                             SyntaxFactory.IdentifierName("AddedRow"))),
@@ -123,109 +123,53 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         {
             get
             {
-                // The elements of the body are added to this collection as they are assembled.
-                var statements = new List<StatementSyntax>
-                {
-                    //            var enlistmentState = this.EnlistmentState;
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(
-                                SyntaxFactory.Identifier(
-                                    SyntaxFactory.TriviaList(),
-                                    SyntaxKind.VarKeyword,
-                                    "var",
-                                    "var",
-                                    SyntaxFactory.TriviaList())))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("enlistmentState"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("EnlistmentState"))))))),
-
-                    //            ArgumentNullException.ThrowIfNull(enlistmentState);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("ArgumentNullException"),
-                                SyntaxFactory.IdentifierName("ThrowIfNull")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("enlistmentState")))))),
-                };
-
-                // Find the row and either update it if it exists, or add it if it doesn't.
-                statements.AddRange(this.FindRow);
-
-                // This is the syntax for the body of the method.
-                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
-            }
-        }
-
-        /// <summary>
-        /// Gets a set of statements to delete a row.
-        /// </summary>
-        private IEnumerable<StatementSyntax> FindRow
-        {
-            get
-            {
-                // The elements of the body are added to this collection as they are assembled.
-                var statements = new List<StatementSyntax>
-                {
-                    //            if (this.dictionary.TryGetValue(Thing.ThingId, out var updatedRow))
-                    //            {
-                    //                <UpdateRow>
-                    //            }
-                    //            else
-                    //            {
-                    //                <AddRow>
-                    //            }
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
+                return SyntaxFactory.Block(
+                    new List<StatementSyntax>
+                    {
+                        //            if (this.dictionary.TryGetValue(Thing.ThingId, out var updatedRow))
+                        //            {
+                        //                <UpdateRow>
+                        //            }
+                        //            else
+                        //            {
+                        //                <AddRow>
+                        //            }
+                        SyntaxFactory.IfStatement(
+                            SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("dictionary")),
-                                SyntaxFactory.IdentifierName("TryGetValue")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]
-                                    {
-                                        this.tableElement.PrimaryIndex.GetKeyAsArguments(
-                                            this.tableElement.Name.ToVariableName()),
-                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.DeclarationExpression(
-                                                SyntaxFactory.IdentifierName(
-                                                    SyntaxFactory.Identifier(
-                                                        SyntaxFactory.TriviaList(),
-                                                        SyntaxKind.VarKeyword,
-                                                        "var",
-                                                        "var",
-                                                        SyntaxFactory.TriviaList())),
-                                                SyntaxFactory.SingleVariableDesignation(
-                                                    SyntaxFactory.Identifier("foundRow"))))
-                                        .WithRefOrOutKeyword(
-                                            SyntaxFactory.Token(SyntaxKind.OutKeyword)),
-                                    }))),
-                        SyntaxFactory.Block(this.UpdateRow))
-                    .WithElse(
-                        SyntaxFactory.ElseClause(
-                            SyntaxFactory.Block(this.AddRow))),
-                };
-
-                // This is the syntax for the body of the method.
-                return SyntaxFactory.List<StatementSyntax>(statements);
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("dictionary")),
+                                    SyntaxFactory.IdentifierName("TryGetValue")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                        new SyntaxNodeOrToken[]
+                                        {
+                                            this.tableElement.PrimaryIndex.GetKeyAsArguments(
+                                                this.tableElement.Name.ToVariableName()),
+                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.DeclarationExpression(
+                                                    SyntaxFactory.IdentifierName(
+                                                        SyntaxFactory.Identifier(
+                                                            SyntaxFactory.TriviaList(),
+                                                            SyntaxKind.VarKeyword,
+                                                            "var",
+                                                            "var",
+                                                            SyntaxFactory.TriviaList())),
+                                                    SyntaxFactory.SingleVariableDesignation(
+                                                        SyntaxFactory.Identifier("foundRow"))))
+                                            .WithRefOrOutKeyword(
+                                                SyntaxFactory.Token(SyntaxKind.OutKeyword)),
+                                        }))),
+                            SyntaxFactory.Block(this.UpdateRow))
+                        .WithElse(
+                            SyntaxFactory.ElseClause(
+                                SyntaxFactory.Block(this.AddRow))),
+                    });
             }
         }
 
@@ -339,7 +283,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 var statements = new List<StatementSyntax>();
                 statements.AddRange(RowUtilities.UpdateRow(this.tableElement));
 
-                //            return (AddedRow: null, UpdatedRow: clonedRow);
+                //                return (AddedRow: null, UpdatedRow: foundRow);
                 statements.Add(
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.TupleExpression(
@@ -354,7 +298,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             SyntaxFactory.IdentifierName("AddedRow"))),
                                     SyntaxFactory.Token(SyntaxKind.CommaToken),
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("clonedRow"))
+                                        SyntaxFactory.IdentifierName("foundRow"))
                                     .WithNameColon(
                                         SyntaxFactory.NameColon(
                                             SyntaxFactory.IdentifierName("UpdatedRow"))),

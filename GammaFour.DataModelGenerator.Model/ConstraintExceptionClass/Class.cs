@@ -6,6 +6,7 @@ namespace GammaFour.DataModelGenerator.Model.ConstraintExceptionClass
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -114,6 +115,7 @@ namespace GammaFour.DataModelGenerator.Model.ConstraintExceptionClass
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default;
                 members = Class.CreateConstructors(members);
+                members = Class.CreatePublicMethods(members);
                 return members;
             }
         }
@@ -128,6 +130,29 @@ namespace GammaFour.DataModelGenerator.Model.ConstraintExceptionClass
             // Add the constructors.
             members = members.Add(new Constructor().Syntax);
             members = members.Add(new ConstructorString().Syntax);
+
+            // Return the new collection of members.
+            return members;
+        }
+
+        /// <summary>
+        /// Create the public instance methods.
+        /// </summary>
+        /// <param name="members">The structure members.</param>
+        /// <returns>The structure members with the methods added.</returns>
+        private static SyntaxList<MemberDeclarationSyntax> CreatePublicMethods(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            // This will create the public instance properties.
+            List<SyntaxElement> methods = new List<SyntaxElement>
+            {
+                new ThrowIfNullMethod(),
+            };
+
+            // Alphabetize and add the methods as members of the class.
+            foreach (var syntaxElement in methods.OrderBy(m => m.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
+            }
 
             // Return the new collection of members.
             return members;

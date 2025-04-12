@@ -400,7 +400,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.ThisExpression()))))),
 
-                    //                    this.enlistmentStates.TryAdd(asyncTransaction, new EnlistmentState());
+                    //                this.commitDictionary.TryAdd(asyncTransaction, new List<Action>());
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -408,7 +408,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("enlistmentStates")),
+                                    SyntaxFactory.IdentifierName("commitDictionary")),
                                 SyntaxFactory.IdentifierName("TryAdd")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -420,7 +420,12 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.ObjectCreationExpression(
-                                                SyntaxFactory.IdentifierName("EnlistmentState"))
+                                                SyntaxFactory.GenericName(
+                                                    SyntaxFactory.Identifier("List"))
+                                                .WithTypeArgumentList(
+                                                    SyntaxFactory.TypeArgumentList(
+                                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                            SyntaxFactory.IdentifierName("Action")))))
                                             .WithArgumentList(
                                                 SyntaxFactory.ArgumentList())),
                                     })))),

@@ -6,6 +6,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -22,12 +23,18 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         private readonly TableElement tableElement;
 
         /// <summary>
+        /// Indicates whether the method has any await operations.
+        /// </summary>
+        private readonly bool isAsync;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="AddOneMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The unique constraint schema.</param>
         public AddOneMethod(TableElement tableElement)
         {
             // Initialize the object.
+            this.isAsync = tableElement.ParentIndices.Any();
             this.tableElement = tableElement;
             this.Name = "AddAsync";
 
@@ -48,13 +55,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                         SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
                             SyntaxFactory.IdentifierName(this.tableElement.Name)))),
                 SyntaxFactory.Identifier(this.Name))
-            .WithModifiers(
-                SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                        SyntaxFactory.Token(SyntaxKind.AsyncKeyword),
-                    }))
+            .WithModifiers(this.Modifiers)
             .WithParameterList(
                 SyntaxFactory.ParameterList(
                     SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
@@ -74,54 +75,33 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                var statements = new List<StatementSyntax>
-                {
-                    //            var enlistmentState = this.EnlistmentState;
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(
-                                SyntaxFactory.Identifier(
-                                    SyntaxFactory.TriviaList(),
-                                    SyntaxKind.VarKeyword,
-                                    "var",
-                                    "var",
-                                    SyntaxFactory.TriviaList())))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("enlistmentState"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("EnlistmentState"))))))),
-
-                    //            ArgumentNullException.ThrowIfNull(enlistmentState);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("ArgumentNullException"),
-                                SyntaxFactory.IdentifierName("ThrowIfNull")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("enlistmentState")))))),
-                };
-
-                // Add the row to the data model.
+                var statements = new List<StatementSyntax>();
                 statements.AddRange(RowUtilities.AddRow(this.tableElement));
 
-                // Complete the transaction.
-                statements.AddRange(
-                    new StatementSyntax[]
-                    {
-                        //            return clonedRow;
+                // Different returns for different async models.
+                if (this.isAsync)
+                {
+                    //            return account;
+                    statements.Add(
                         SyntaxFactory.ReturnStatement(
-                            SyntaxFactory.IdentifierName("clonedRow")),
-                    });
+                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())));
+                }
+                else
+                {
+                    //            return Task.FromResult(account);
+                    statements.Add(
+                        SyntaxFactory.ReturnStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("Task"),
+                                    SyntaxFactory.IdentifierName("FromResult")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())))))));
+                }
 
                 // This is the syntax for the body of the method.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
@@ -226,6 +206,27 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
                 };
+            }
+        }
+
+        /// <summary>
+        /// Gets the modifiers.
+        /// </summary>
+        private SyntaxTokenList Modifiers
+        {
+            get
+            {
+                var modifierList = new List<SyntaxToken>()
+                {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                };
+
+                if (this.isAsync)
+                {
+                    modifierList.Add(SyntaxFactory.Token(SyntaxKind.AsyncKeyword));
+                }
+
+                return SyntaxFactory.TokenList(modifierList);
             }
         }
     }
