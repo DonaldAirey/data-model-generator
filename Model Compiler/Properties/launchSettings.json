@@ -32,6 +32,10 @@
       "commandName": "Project",
       "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-market\\ThetaRex.Market.Data\\Market.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-market\\ThetaRex.Market.Data\\Market.Designer.cs\" -ns \"ThetaRex.Market.Data\""
     },
+    "OpenBook": {
+      "commandName": "Project",
+      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\ThetaRex.OpenBook\\ThetaRex.OpenBook\\Ledger\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\ThetaRex.OpenBook\\ThetaRex.OpenBook\\Ledger\\Ledger.Designer.cs\" -ns \"ThetaRex.OpenBook.Ledger\""
+    },
     "Test": {
       "commandName": "Project",
       "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Donald-Airey\\data-model-test\\Unit Test\\Fixture.xsd\" -out \"..\\..\\..\\..\\..\\..\\Donald-Airey\\data-model-test\\Unit Test\\Fixture.Designer.cs\" -ns \"UnitTest\""
