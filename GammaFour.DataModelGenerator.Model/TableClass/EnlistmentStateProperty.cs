@@ -136,19 +136,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             SyntaxFactory.IdentifierName("AsyncTransaction"),
                                             SyntaxFactory.IdentifierName("Current"))))))),
 
-                    //            ArgumentNullException.ThrowIfNull(asyncTransaction);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("ArgumentNullException"),
-                                SyntaxFactory.IdentifierName("ThrowIfNull")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("asyncTransaction")))))),
-
                     //                if (asyncTransaction == null)
                     //                {
                     //                    return null;
@@ -164,26 +151,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.ReturnStatement(
                                     SyntaxFactory.LiteralExpression(
                                         SyntaxKind.NullLiteralExpression))))),
-
-                    //                if (asyncTransaction.CancellationToken.IsCancellationRequested)
-                    //                {
-                    //                    throw new OperationCanceledException();
-                    //                }
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName("asyncTransaction"),
-                                SyntaxFactory.IdentifierName("CancellationToken")),
-                            SyntaxFactory.IdentifierName("IsCancellationRequested")),
-                        SyntaxFactory.Block(
-                            SyntaxFactory.SingletonList<StatementSyntax>(
-                                SyntaxFactory.ThrowStatement(
-                                    SyntaxFactory.ObjectCreationExpression(
-                                        SyntaxFactory.IdentifierName("OperationCanceledException"))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList()))))),
 
                     //                this.enlistmentStates.TryGetValue(asyncTransaction, out var enlistmentState);
                     SyntaxFactory.ExpressionStatement(

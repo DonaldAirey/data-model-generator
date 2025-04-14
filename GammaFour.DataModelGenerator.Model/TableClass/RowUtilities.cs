@@ -1057,7 +1057,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             statements.AddRange(
                 new List<StatementSyntax>
                 {
-                    //                    this.dictionary.Remove(foundRow.AccountId);
+                    //            this.dictionary.Add(thing.Code, thing);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -1066,11 +1066,16 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName("dictionary")),
-                                SyntaxFactory.IdentifierName("Remove")))
+                                SyntaxFactory.IdentifierName("Add")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    tableElement.PrimaryIndex.GetKeyAsArguments("foundRow"))))),
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        tableElement.PrimaryIndex.GetKeyAsArguments("foundRow"),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(SyntaxFactory.IdentifierName("foundRow")),
+                                    })))),
                 });
 
             return statements;

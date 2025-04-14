@@ -13,7 +13,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method that performs a shallow copy to the destination row.
+    /// Creates a method that performs a deep copy to the destination row.
     /// </summary>
     public class CopyFromMethod : SyntaxElement
     {
@@ -33,7 +33,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             this.Name = "CopyFrom";
 
             //        /// <summary>
-            //        /// Shallow copy of a <see cref="Account"/> row.
+            //        /// Deep copy of a <see cref="Account"/> row.
             //        /// </summary>
             //        /// <param name="account">The destination <see cref="Account"/> row.</param>
             //        public void CopyFrom(Account account)
@@ -182,7 +182,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                     new List<SyntaxTrivia>
                     {
                         //        /// <summary>
-                        //        /// Shallow copy of a <see cref="Account"/> row.
+                        //        /// Deep copy of a <see cref="Account"/> row.
                         //        /// </summary>
                         SyntaxFactory.Trivia(
                             SyntaxFactory.DocumentationCommentTrivia(
@@ -205,7 +205,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" Shallow copy of a <see cref=\"{this.tableElement.Name}\"/> row.",
+                                                    $" Deep copy of a <see cref=\"{this.tableElement.Name}\"/> row.",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
