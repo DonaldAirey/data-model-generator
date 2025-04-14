@@ -170,7 +170,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("asyncTransaction"),
-                                SyntaxFactory.IdentifierName("Complete")))),
+                                SyntaxFactory.IdentifierName("Commit")))),
                 };
 
                 // This is the complete block.
@@ -185,7 +185,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
         {
             get
             {
-                return new StatementSyntax[]
+                return new List<StatementSyntax>
                 {
                     //                this.dataModelContext.Accounts.Remove(account);
                     SyntaxFactory.ExpressionStatement(
@@ -485,7 +485,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                 }
 
                 statements.AddRange(
-                    new StatementSyntax[]
+                    new List<StatementSyntax>
                     {
                         //                if (this.dataModel.Accounts.Find(accountId) != null)
                         //                {

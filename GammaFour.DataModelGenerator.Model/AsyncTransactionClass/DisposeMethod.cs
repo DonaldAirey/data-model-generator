@@ -145,7 +145,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                                 SyntaxFactory.IdentifierName("asyncReaderWriterLock"),
                                                 SyntaxFactory.IdentifierName("Release"))))))),
 
-                        //            this.transactionScope.Dispose();
+                        //            this.committableTransaction.Dispose();
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
@@ -153,7 +153,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("transactionScope")),
+                                        SyntaxFactory.IdentifierName("committableTransaction")),
                                     SyntaxFactory.IdentifierName("Dispose")))),
 
                         //            AsyncTransaction.asyncTransaction.Value = null;

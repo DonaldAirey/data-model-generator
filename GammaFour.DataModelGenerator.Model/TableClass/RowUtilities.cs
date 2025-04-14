@@ -49,9 +49,37 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             }
 
             statements.AddRange(
-                new StatementSyntax[]
+                new List<StatementSyntax>
                 {
-                    //            this.CommitList.Add(() =>
+                    //            var originalRow = new Account(account);
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(
+                                SyntaxFactory.Identifier(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.VarKeyword,
+                                    "var",
+                                    "var",
+                                    SyntaxFactory.TriviaList())))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("originalRow"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.IdentifierName(tableElement.Name))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())))))))))),
+                });
+            statements.AddRange(RowUtilities.AddCommitBody(tableElement));
+            statements.AddRange(
+                new List<StatementSyntax>
+                {
+                    //            enlistment.RollbackActions.Add(() =>
                     //            {
                     //                account.RowVersion = this.fixture.IncrementRowVersion();
                     //            });
@@ -61,7 +89,29 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("enlistmentState"),
+                                    SyntaxFactory.IdentifierName("RollbackActions")),
+                                SyntaxFactory.IdentifierName("Add")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.ParenthesizedLambdaExpression()
+                                        .WithBlock(
+                                            SyntaxFactory.Block(RowUtilities.AddRollbackBody(tableElement))
+                                            .NormalizeWhitespace())))))),
+
+                    //            enlistmentState.CommitActions.Add(() =>
+                    //            {
+                    //                this.OnRowChanged(DataAction.Add, account);
+                    //            });
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("enlistmentState"),
                                     SyntaxFactory.IdentifierName("CommitActions")),
                                 SyntaxFactory.IdentifierName("Add")))
                         .WithArgumentList(
@@ -70,7 +120,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.ParenthesizedLambdaExpression()
                                         .WithBlock(
-                                            SyntaxFactory.Block(RowUtilities.AddCommitBody(tableElement))
+                                            SyntaxFactory.Block(RowUtilities.AddFinalizeBody(tableElement))
                                             .NormalizeWhitespace())))))),
                 });
 
@@ -139,7 +189,44 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     })))));
             }
 
-            // Remove this row from each of the parent rows.
+            // Make sure there are no children.
+            foreach (ForeignIndexElement foreignIndexElement in tableElement.ChildIndices)
+            {
+                //                ConstraintException.ThrowIfTrue(foundRow.Positions, "AssetPositionIndex");
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("ConstraintException"),
+                                SyntaxFactory.IdentifierName("ThrowIfTrue")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.BinaryExpression(
+                                                SyntaxKind.NotEqualsExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.IdentifierName("foundRow"),
+                                                        SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
+                                                    SyntaxFactory.IdentifierName("Count")),
+                                                SyntaxFactory.LiteralExpression(
+                                                    SyntaxKind.NumericLiteralExpression,
+                                                    SyntaxFactory.Literal(0)))),
+                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                SyntaxFactory.Literal(foreignIndexElement.Name))),
+                                    })))));
+            }
+
+            // Lock each of the parent rows.
             foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentIndices)
             {
                 // If any of the index elements are nullable, we'll want a test to see if values are provided for all elements of the key.
@@ -148,7 +235,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                     //                    if (updatedRow.ModelId != null)
                     //                    {
                     //                        var removedAccount = this.fixture.Accounts.Find(foundRow.AccountId);
-                    //                        ConstraintException.ThrowIfNull(removedAccount, "The action conflicted with the AccountPositionIndex constraint.");
+                    //                        ConstraintException.ThrowIfNull(removedAccount, "AccountPositionIndex");
                     //                        await removedAccount.EnterWriteLockAsync().ConfigureAwait(false);
                     //                    }
                     statements.AddRange(
@@ -160,7 +247,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 else
                 {
                     //                    var removedAccount = this.fixture.Accounts.Find(foundRow.AccountId);
-                    //                    ConstraintException.ThrowIfNull(removedAccount, "The action conflicted with the AccountPositionIndex constraint.");
+                    //                    ConstraintException.ThrowIfNull(removedAccount, "AccountPositionIndex");
                     //                    await removedAccount.EnterWriteLockAsync().ConfigureAwait(false);
                     statements.AddRange(
                         RowUtilities.RemoveFromParent(
@@ -171,9 +258,37 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             }
 
             statements.AddRange(
-                new StatementSyntax[]
+                new List<StatementSyntax>
                 {
-                    //            this.CommitList.Add(() =>
+                    //            var originalRow = new Account(foundRow);
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(
+                                SyntaxFactory.Identifier(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.VarKeyword,
+                                    "var",
+                                    "var",
+                                    SyntaxFactory.TriviaList())))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("originalRow"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.IdentifierName(tableElement.Name))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName("foundRow")))))))))),
+                });
+            statements.AddRange(RowUtilities.RemoveCommitBody(tableElement));
+            statements.AddRange(
+                new List<StatementSyntax>
+                {
+                    //            this.RollbackActions.Add(() =>
                     //            {
                     //                account.RowVersion = this.fixture.IncrementRowVersion();
                     //            });
@@ -183,7 +298,32 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("enlistmentState"),
+                                    SyntaxFactory.IdentifierName("RollbackActions")),
+                                SyntaxFactory.IdentifierName("Add")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.ParenthesizedLambdaExpression()
+                                        .WithBlock(
+                                            SyntaxFactory.Block(RowUtilities.RemoveRollbackBody(tableElement))
+                                            .NormalizeWhitespace())))))),
+                });
+            statements.AddRange(
+                new List<StatementSyntax>
+                {
+                    //            this.CommitActions.Add(() =>
+                    //            {
+                    //                account.RowVersion = this.fixture.IncrementRowVersion();
+                    //            });
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("enlistmentState"),
                                     SyntaxFactory.IdentifierName("CommitActions")),
                                 SyntaxFactory.IdentifierName("Add")))
                         .WithArgumentList(
@@ -192,7 +332,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.ParenthesizedLambdaExpression()
                                         .WithBlock(
-                                            SyntaxFactory.Block(RowUtilities.RemoveCommitBody(tableElement))
+                                            SyntaxFactory.Block(RowUtilities.RemoveFinalizeBody(tableElement))
                                             .NormalizeWhitespace())))))),
                 });
 
@@ -308,9 +448,37 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             }
 
             statements.AddRange(
-                new StatementSyntax[]
+                new List<StatementSyntax>
                 {
-                    //            this.CommitList.Add(() =>
+                    //            var originalRow = new Account(foundRow);
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(
+                                SyntaxFactory.Identifier(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.VarKeyword,
+                                    "var",
+                                    "var",
+                                    SyntaxFactory.TriviaList())))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("originalRow"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.IdentifierName(tableElement.Name))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName("foundRow")))))))))),
+                });
+            statements.AddRange(RowUtilities.UpdateCommitBody(tableElement));
+            statements.AddRange(
+                new List<StatementSyntax>
+                {
+                    //            enlistment.RollbackActions.Add(() =>
                     //            {
                     //                account.RowVersion = this.fixture.IncrementRowVersion();
                     //            });
@@ -320,7 +488,29 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("enlistmentState"),
+                                    SyntaxFactory.IdentifierName("RollbackActions")),
+                                SyntaxFactory.IdentifierName("Add")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.ParenthesizedLambdaExpression()
+                                        .WithBlock(
+                                            SyntaxFactory.Block(RowUtilities.UpdateRollbackBody(tableElement))
+                                            .NormalizeWhitespace())))))),
+
+                    //            enlistmentState.CommitActions.Add(() =>
+                    //            {
+                    //                this.OnRowChanged(DataAction.Add, account);
+                    //            });
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName("enlistmentState"),
                                     SyntaxFactory.IdentifierName("CommitActions")),
                                 SyntaxFactory.IdentifierName("Add")))
                         .WithArgumentList(
@@ -329,7 +519,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.ParenthesizedLambdaExpression()
                                         .WithBlock(
-                                            SyntaxFactory.Block(RowUtilities.UpdateCommitBody(tableElement))
+                                            SyntaxFactory.Block(RowUtilities.UpdateFinalizeBody(tableElement))
                                             .NormalizeWhitespace())))))),
                 });
 
@@ -470,7 +660,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             }
 
             statements.AddRange(
-                new StatementSyntax[]
+                new List<StatementSyntax>
                 {
                     //            this.dictionary.Add(thing.Code, thing);
                     SyntaxFactory.ExpressionStatement(
@@ -491,31 +681,145 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.Token(SyntaxKind.CommaToken),
                                         SyntaxFactory.Argument(SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())),
                                     })))),
+                });
 
-                    //                this.OnRowChanged(DataAction.Add, account);
+            return statements;
+        }
+
+        /// <summary>
+        /// Adds a parent row to the child row.
+        /// </summary>
+        /// <param name="tableElement">The table element.</param>
+        /// <returns>The statements that add a parent row to a child row.</returns>
+        private static IEnumerable<StatementSyntax> AddRollbackBody(TableElement tableElement)
+        {
+            var statements = new List<StatementSyntax>
+            {
+                //                account.CopyFrom(originalRow);
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                            SyntaxFactory.IdentifierName("CopyFrom")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.IdentifierName("originalRow")))))),
+            };
+
+            // Add this row to each of the parent rows.
+            foreach (var foreignIndexElement in tableElement.ParentIndices)
+            {
+                // We need to check for a null parent before updating nullable parents.
+                if (foreignIndexElement.Columns.Where(ce => ce.Column.ColumnType.IsNullable).Any())
+                {
+                    //                if (addedModel != null)
+                    //                {
+                    //                    addedModel.Accounts.Remove(account);
+                    //                }
+                    statements.Add(
+                        SyntaxFactory.IfStatement(
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.NotEqualsExpression,
+                                SyntaxFactory.IdentifierName($"added{foreignIndexElement.UniqueParentName}"),
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.NullLiteralExpression)),
+                            SyntaxFactory.Block(
+                                SyntaxFactory.SingletonList<StatementSyntax>(
+                                    SyntaxFactory.ExpressionStatement(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName($"added{foreignIndexElement.UniqueParentName}"),
+                                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
+                                                SyntaxFactory.IdentifierName("Remove")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()))))))))));
+                }
+                else
+                {
+                    //                addedAccount.Positions.Remove(position);
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName($"added{foreignIndexElement.UniqueParentName}"),
+                                        SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
+                                    SyntaxFactory.IdentifierName("Remove")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())))))));
+                }
+            }
+
+            statements.AddRange(
+                new List<StatementSyntax>
+                {
+                    //            this.dictionary.Remove(thing.Code);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("OnRowChanged")))
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("dictionary")),
+                                SyntaxFactory.IdentifierName("Remove")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SeparatedList<ArgumentSyntax>(
                                     new SyntaxNodeOrToken[]
                                     {
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("DataAction"),
-                                                SyntaxFactory.IdentifierName("Add"))),
-                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())),
+                                        tableElement.PrimaryIndex.GetKeyAsArguments(tableElement.Name.ToVariableName()),
                                     })))),
                 });
 
             return statements;
+        }
+
+        /// <summary>
+        /// Adds a parent row to the child row.
+        /// </summary>
+        /// <param name="tableElement">The table element.</param>
+        /// <returns>The statements that add a parent row to a child row.</returns>
+        private static IEnumerable<StatementSyntax> AddFinalizeBody(TableElement tableElement)
+        {
+            return new List<StatementSyntax>
+            {
+                //                this.OnRowChanged(DataAction.Add, account);
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.ThisExpression(),
+                            SyntaxFactory.IdentifierName("OnRowChanged")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                new SyntaxNodeOrToken[]
+                                {
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.IdentifierName("DataAction"),
+                                            SyntaxFactory.IdentifierName("Add"))),
+                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())),
+                                })))),
+            };
         }
 
         /// <summary>
@@ -603,7 +907,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 {
                     //                if (removedModel != null)
                     //                {
-                    //                    removedModel.Accounts.Remove(account);
+                    //                    removedModel.Accounts.Remove(foundRow);
                     //                }
                     statements.Add(
                         SyntaxFactory.IfStatement(
@@ -627,11 +931,11 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             SyntaxFactory.ArgumentList(
                                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                     SyntaxFactory.Argument(
-                                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()))))))))));
+                                                        SyntaxFactory.IdentifierName("foundRow"))))))))));
                 }
                 else
                 {
-                    //                removedAccount.Positions.Remove(position);
+                    //                removedAccount.Positions.Remove(foundRow);
                     statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -646,14 +950,14 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())))))));
+                                        SyntaxFactory.IdentifierName("foundRow")))))));
                 }
             }
 
             statements.AddRange(
-                new StatementSyntax[]
+                new List<StatementSyntax>
                 {
-                    //                    this.dictionary.Remove(removedRow.AccountId);
+                    //                    this.dictionary.Remove(foundRow.AccountId);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -667,8 +971,93 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     tableElement.PrimaryIndex.GetKeyAsArguments("foundRow"))))),
+                });
 
-                    //                this.DeletedRows.AddFirst(account);
+            return statements;
+        }
+
+        /// <summary>
+        /// Adds a parent row to the child row.
+        /// </summary>
+        /// <param name="tableElement">The table element.</param>
+        /// <returns>The statements that add a parent row to a child row.</returns>
+        private static IEnumerable<StatementSyntax> RemoveRollbackBody(TableElement tableElement)
+        {
+            var statements = new List<StatementSyntax>
+            {
+                //                        foundRow.CopyFrom(originalRow);
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName("foundRow"),
+                            SyntaxFactory.IdentifierName("CopyFrom")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.IdentifierName("originalRow")))))),
+            };
+
+            // Add this row back to each of the parent rows.
+            foreach (var foreignIndexElement in tableElement.ParentIndices)
+            {
+                // We need to check for a null parent before updating nullable parents.
+                if (foreignIndexElement.Columns.Where(ce => ce.Column.ColumnType.IsNullable).Any())
+                {
+                    //                if (removedModel != null)
+                    //                {
+                    //                    removedModel.Accounts.Add(foundRow);
+                    //                }
+                    statements.Add(
+                        SyntaxFactory.IfStatement(
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.NotEqualsExpression,
+                                SyntaxFactory.IdentifierName($"removed{foreignIndexElement.UniqueParentName}"),
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.NullLiteralExpression)),
+                            SyntaxFactory.Block(
+                                SyntaxFactory.SingletonList<StatementSyntax>(
+                                    SyntaxFactory.ExpressionStatement(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName($"removed{foreignIndexElement.UniqueParentName}"),
+                                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
+                                                SyntaxFactory.IdentifierName("Add")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName("foundRow"))))))))));
+                }
+                else
+                {
+                    //                removedAccount.Positions.Add(foundRow);
+                    statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName($"removed{foreignIndexElement.UniqueParentName}"),
+                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
+                                SyntaxFactory.IdentifierName("Add")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("foundRow")))))));
+                }
+            }
+
+            statements.AddRange(
+                new List<StatementSyntax>
+                {
+                    //                    this.dictionary.Remove(foundRow.AccountId);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -676,38 +1065,64 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("DeletedRows")),
-                                SyntaxFactory.IdentifierName("AddFirst")))
+                                    SyntaxFactory.IdentifierName("dictionary")),
+                                SyntaxFactory.IdentifierName("Remove")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName("foundRow")))))),
-
-                    //                this.OnRowChanged(DataAction.Update, account);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("OnRowChanged")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]
-                                    {
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("DataAction"),
-                                                SyntaxFactory.IdentifierName("Remove"))),
-                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName("foundRow")),
-                                    })))),
+                                    tableElement.PrimaryIndex.GetKeyAsArguments("foundRow"))))),
                 });
 
             return statements;
+        }
+
+        /// <summary>
+        /// Adds a parent row to the child row.
+        /// </summary>
+        /// <param name="tableElement">The table element.</param>
+        /// <returns>The statements that add a parent row to a child row.</returns>
+        private static IEnumerable<StatementSyntax> RemoveFinalizeBody(TableElement tableElement)
+        {
+            return new List<StatementSyntax>
+            {
+                //                this.DeletedRows.AddFirst(foundRow);
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("DeletedRows")),
+                            SyntaxFactory.IdentifierName("AddFirst")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.IdentifierName("foundRow")))))),
+
+                //                this.OnRowChanged(DataAction.Remove, foundRow);
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.ThisExpression(),
+                            SyntaxFactory.IdentifierName("OnRowChanged")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                new SyntaxNodeOrToken[]
+                                {
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.IdentifierName("DataAction"),
+                                            SyntaxFactory.IdentifierName("Remove"))),
+                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("foundRow")),
+                                })))),
+            };
         }
 
         /// <summary>
@@ -813,7 +1228,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 {
                     //                if (removedModel != null)
                     //                {
-                    //                    removedModel.Accounts.Remove(account);
+                    //                    removedModel.Accounts.Remove(foundRow);
                     //                }
                     statements.Add(
                         SyntaxFactory.IfStatement(
@@ -837,11 +1252,11 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             SyntaxFactory.ArgumentList(
                                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                     SyntaxFactory.Argument(
-                                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()))))))))));
+                                                        SyntaxFactory.IdentifierName("foundRow"))))))))));
                 }
                 else
                 {
-                    //                removedAccount.Positions.Remove(position);
+                    //                removedAccount.Positions.Remove(foundRow);
                     statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
@@ -856,7 +1271,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())))))));
+                                        SyntaxFactory.IdentifierName("foundRow")))))));
                 }
             }
 
@@ -868,7 +1283,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 {
                     //                if (addedModel != null)
                     //                {
-                    //                    addedModel.Accounts.Add(account);
+                    //                    addedModel.Accounts.Add(foundRow);
                     //                }
                     statements.Add(
                         SyntaxFactory.IfStatement(
@@ -892,11 +1307,11 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             SyntaxFactory.ArgumentList(
                                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                                     SyntaxFactory.Argument(
-                                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()))))))))));
+                                                        SyntaxFactory.IdentifierName("foundRow"))))))))));
                 }
                 else
                 {
-                    //                addedAccount.Positions.Add(position);
+                    //                addedAccount.Positions.Add(foundRow);
                     statements.Add(
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.InvocationExpression(
@@ -911,37 +1326,180 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName())))))));
+                                            SyntaxFactory.IdentifierName("foundRow")))))));
                 }
             }
 
-            statements.AddRange(
-                new StatementSyntax[]
+            return statements;
+        }
+
+        /// <summary>
+        /// Adds a parent row to the child row.
+        /// </summary>
+        /// <param name="tableElement">The table element.</param>
+        /// <returns>The statements that add a parent row to a child row.</returns>
+        private static IEnumerable<StatementSyntax> UpdateRollbackBody(TableElement tableElement)
+        {
+            var statements = new List<StatementSyntax>
+            {
+                //                        foundRow.CopyFrom(originalRow);
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName("foundRow"),
+                            SyntaxFactory.IdentifierName("CopyFrom")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.IdentifierName("originalRow")))))),
+            };
+
+            // Add this row back to each of the parent rows.
+            foreach (var foreignIndexElement in tableElement.ParentIndices)
+            {
+                // We need to check for a null parent before updating nullable parents.
+                if (foreignIndexElement.Columns.Where(ce => ce.Column.ColumnType.IsNullable).Any())
                 {
-                    //                this.OnRowChanged(DataAction.Update, account);
+                    //                if (removedModel != null)
+                    //                {
+                    //                    removedModel.Accounts.Add(foundROw);
+                    //                }
+                    statements.Add(
+                        SyntaxFactory.IfStatement(
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.NotEqualsExpression,
+                                SyntaxFactory.IdentifierName($"removed{foreignIndexElement.UniqueParentName}"),
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.NullLiteralExpression)),
+                            SyntaxFactory.Block(
+                                SyntaxFactory.SingletonList<StatementSyntax>(
+                                    SyntaxFactory.ExpressionStatement(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName($"removed{foreignIndexElement.UniqueParentName}"),
+                                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
+                                                SyntaxFactory.IdentifierName("Add")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName("foundRow"))))))))));
+                }
+                else
+                {
+                    //                removedAccount.Positions.Add(position);
+                    statements.Add(
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("OnRowChanged")))
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName($"removed{foreignIndexElement.UniqueParentName}"),
+                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
+                                SyntaxFactory.IdentifierName("Add")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]
-                                    {
-                                        SyntaxFactory.Argument(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("foundRow")))))));
+                }
+            }
+
+            // Remove this row from each of the parent rows.
+            foreach (var foreignIndexElement in tableElement.ParentIndices)
+            {
+                // We need to check for a null parent before updating nullable parents.
+                if (foreignIndexElement.Columns.Where(ce => ce.Column.ColumnType.IsNullable).Any())
+                {
+                    //                if (addedModel != null)
+                    //                {
+                    //                    addedModel.Accounts.Remove(account);
+                    //                }
+                    statements.Add(
+                        SyntaxFactory.IfStatement(
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.NotEqualsExpression,
+                                SyntaxFactory.IdentifierName($"added{foreignIndexElement.UniqueParentName}"),
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.NullLiteralExpression)),
+                            SyntaxFactory.Block(
+                                SyntaxFactory.SingletonList<StatementSyntax>(
+                                    SyntaxFactory.ExpressionStatement(
+                                        SyntaxFactory.InvocationExpression(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("DataAction"),
-                                                SyntaxFactory.IdentifierName("Update"))),
-                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName($"added{foreignIndexElement.UniqueParentName}"),
+                                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
+                                                SyntaxFactory.IdentifierName("Remove")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
+                                                        SyntaxFactory.IdentifierName("foundRow"))))))))));
+                }
+                else
+                {
+                    //                addedAccount.Positions.Remove(position);
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName($"added{foreignIndexElement.UniqueParentName}"),
+                                        SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
+                                    SyntaxFactory.IdentifierName("Remove")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName("foundRow")),
-                                    })))),
-                });
+                                            SyntaxFactory.IdentifierName("foundRow")))))));
+                }
+            }
 
             return statements;
+        }
+
+        /// <summary>
+        /// Adds a parent row to the child row.
+        /// </summary>
+        /// <param name="tableElement">The table element.</param>
+        /// <returns>The statements that add a parent row to a child row.</returns>
+        private static IEnumerable<StatementSyntax> UpdateFinalizeBody(TableElement tableElement)
+        {
+            return new List<StatementSyntax>
+            {
+                //                this.OnRowChanged(DataAction.Update, account);
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.ThisExpression(),
+                            SyntaxFactory.IdentifierName("OnRowChanged")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                new SyntaxNodeOrToken[]
+                                {
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.IdentifierName("DataAction"),
+                                            SyntaxFactory.IdentifierName("Update"))),
+                                    SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("foundRow")),
+                                })))),
+            };
         }
 
         /// <summary>
@@ -993,7 +1551,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 foreignIndexElement.GetKeyAsArguments(
                                                     rowName))))))))),
 
-                //                ConstraintException.ThrowIfNull(newAccount, "The action conflicted with the AccountPositionIndex constraint.");
+                //                ConstraintException.ThrowIfNull(newAccount, "AccountPositionIndex");
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.InvocationExpression(
                         SyntaxFactory.MemberAccessExpression(
@@ -1011,7 +1569,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.LiteralExpression(
                                             SyntaxKind.StringLiteralExpression,
-                                            SyntaxFactory.Literal($"The action conflicted with the {foreignIndexElement.Name} constraint."))),
+                                            SyntaxFactory.Literal(foreignIndexElement.Name))),
                                 })))),
 
                 //            await account.EnterWriteLockAsync().ConfigureAwait(false);
@@ -1074,7 +1632,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     foreignIndexElement.GetKeyAsArguments(rowName)))))),
 
-                //                ConstraintException.ThrowIfNull(newAccount, "The action conflicted with the AccountPositionIndex constraint.");
+                //                ConstraintException.ThrowIfNull(newAccount, "AccountPositionIndex");
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.InvocationExpression(
                         SyntaxFactory.MemberAccessExpression(
@@ -1092,7 +1650,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.Argument(
                                         SyntaxFactory.LiteralExpression(
                                             SyntaxKind.StringLiteralExpression,
-                                            SyntaxFactory.Literal($"The action conflicted with the {foreignIndexElement.Name} constraint."))),
+                                            SyntaxFactory.Literal(foreignIndexElement.Name))),
                                 })))),
 
                 //            await account.EnterWriteLockAsync().ConfigureAwait(false);
@@ -1117,7 +1675,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             SyntaxKind.TrueLiteralExpression))))))),
             };
 
-            return new StatementSyntax[]
+            return new List<StatementSyntax>
             {
                 //            Model? addedModel = null;
                 SyntaxFactory.LocalDeclarationStatement(
@@ -1214,7 +1772,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                             SyntaxKind.TrueLiteralExpression))))))),
             };
 
-            return new StatementSyntax[]
+            return new List<StatementSyntax>
             {
                 //            Model? addedModel = null;
                 SyntaxFactory.LocalDeclarationStatement(

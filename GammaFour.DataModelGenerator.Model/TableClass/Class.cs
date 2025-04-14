@@ -211,7 +211,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 new AsyncReaderWriterLockField(),
                 new DataModelField(this.tableElement.Document),
                 new DictionaryField(this.tableElement),
-                new CommitDictionaryField(),
+                new EnlistmentStatesField(),
             };
 
             // Alphabetize and add the fields as members of the class.
@@ -256,8 +256,8 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>
             {
-                new CommitActionsProperty(),
                 new DeletedRowsProperty(this.tableElement),
+                new EnlistmentStateProperty(),
             };
 
             // Add a property for each of the non-primary unique indices.
@@ -325,7 +325,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 new PutOneMethod(this.tableElement),
                 new RemoveManyMethod(this.tableElement),
                 new RemoveOneMethod(this.tableElement),
-                new RollbackMethod(this.tableElement),
+                new RollbackMethod(),
                 new UpdateManyMethod(this.tableElement),
                 new UpdateOneMethod(this.tableElement),
             };

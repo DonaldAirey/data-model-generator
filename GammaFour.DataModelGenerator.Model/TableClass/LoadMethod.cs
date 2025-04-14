@@ -374,8 +374,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.LiteralExpression(
                                                 SyntaxKind.StringLiteralExpression,
-                                                SyntaxFactory.Literal(
-                                                    $"The insert action conflicted with the constraint {foreignIndexElement.Name}"))))))))));
+                                                SyntaxFactory.Literal(foreignIndexElement.Name))))))))));
 
             //                account.Orders.Add(order);
             statements.Add(

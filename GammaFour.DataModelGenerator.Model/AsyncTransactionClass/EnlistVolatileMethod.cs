@@ -60,7 +60,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                 // This is used to collect the statements.
                 var statements = new List<StatementSyntax>
                 {
-                    //            ArgumentNullException.ThrowIfNull(this.transaction);
+                    //            ArgumentNullException.ThrowIfNull(this.committableTransaction);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -74,9 +74,9 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("transaction"))))))),
+                                            SyntaxFactory.IdentifierName("committableTransaction"))))))),
 
-                    //            return this.transaction.EnlistVolatile(new EnlistmentNotification(enlistmentNotification), EnlistmentOptions.None);
+                    //            return this.committableTransaction.EnlistVolatile(new EnlistmentNotification(enlistmentNotification), EnlistmentOptions.None);
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -84,7 +84,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("transaction")),
+                                    SyntaxFactory.IdentifierName("committableTransaction")),
                                 SyntaxFactory.IdentifierName("EnlistVolatile")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(

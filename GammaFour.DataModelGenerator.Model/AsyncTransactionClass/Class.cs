@@ -218,8 +218,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
             List<SyntaxElement> fields = new List<SyntaxElement>
             {
                 new IdentifierField(),
-                new TransactionField(),
-                new TransactionScopeField(),
+                new CommittableTransactionField(),
             };
 
             // Alphabetize and add the fields as members of the class.
@@ -242,12 +241,12 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>
             {
-                new CompleteMethod(),
+                new CommitMethod(),
                 new DisposeMethod(),
                 new EnlistVolatileMethod(),
                 new EqualsMethod(),
                 new GetHashCodeMethod(),
-                new OnTransactionCompletedMethod(),
+                new RollbackMethod(),
             };
 
             // Alphabetize and add the methods as members of the class.

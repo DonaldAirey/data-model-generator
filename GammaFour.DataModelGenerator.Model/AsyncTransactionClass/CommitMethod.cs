@@ -1,4 +1,4 @@
-// <copyright file="TransactionScopeField.cs" company="Gamma Four, Inc.">
+// <copyright file="CommitMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -12,37 +12,45 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a field to hold the current contents of the row.
+    /// Creates a method to acquire a reader lock.
     /// </summary>
-    public class TransactionScopeField : SyntaxElement
+    public class CommitMethod : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TransactionScopeField"/> class.
+        /// Initializes a new instance of the <see cref="CommitMethod"/> class.
         /// </summary>
-        public TransactionScopeField()
+        public CommitMethod()
         {
             // Initialize the object.
-            this.Name = "transactionScope";
+            this.Name = "Commit";
 
             //        /// <summary>
-            //        /// The transaction scope.
+            //        /// Indicates that all operations are to be committed.
             //        /// </summary>
-            //        private readonly TransactionScope transactionScope;
-            this.Syntax = SyntaxFactory.FieldDeclaration(
-                SyntaxFactory.VariableDeclaration(
-                    SyntaxFactory.IdentifierName("TransactionScope"))
-                .WithVariables(
-                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                        SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier("transactionScope")))))
+            //        public void Complete()
+            //        {
+            //            this.committableTransaction.Complete();
+            //        }
+            this.Syntax = SyntaxFactory.MethodDeclaration(
+                SyntaxFactory.PredefinedType(
+                    SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
+                SyntaxFactory.Identifier(this.Name))
             .WithModifiers(
                 SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
-                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
-                    }))
-            .WithLeadingTrivia(TransactionScopeField.LeadingTrivia);
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithBody(
+                SyntaxFactory.Block(
+                    SyntaxFactory.SingletonList<StatementSyntax>(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("committableTransaction")),
+                                    SyntaxFactory.IdentifierName("Commit")))))))
+            .WithLeadingTrivia(CommitMethod.LeadingTrivia);
         }
 
         /// <summary>
@@ -55,7 +63,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                 return new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// The commit stack.
+                    //        /// Indicates that all operations are to be committed.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -78,7 +86,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " The transaction scope.",
+                                                " Indicates that all operations are to be committed.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

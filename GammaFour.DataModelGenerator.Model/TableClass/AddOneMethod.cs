@@ -75,7 +75,43 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             get
             {
                 // The elements of the body are added to this collection as they are assembled.
-                var statements = new List<StatementSyntax>();
+                var statements = new List<StatementSyntax>
+                {
+                    //            var enlistmentState = this.EnlistmentState;
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(
+                                SyntaxFactory.Identifier(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.VarKeyword,
+                                    "var",
+                                    "var",
+                                    SyntaxFactory.TriviaList())))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("enlistmentState"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName("EnlistmentState"))))))),
+
+                    //            ArgumentNullException.ThrowIfNull(enlistmentState);
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("ArgumentNullException"),
+                                SyntaxFactory.IdentifierName("ThrowIfNull")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.IdentifierName("enlistmentState")))))),
+                };
+
                 statements.AddRange(RowUtilities.AddRow(this.tableElement));
 
                 // Different returns for different async models.

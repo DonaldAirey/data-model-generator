@@ -512,7 +512,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                 }
 
                 statements.AddRange(
-                    new StatementSyntax[]
+                    new List<StatementSyntax>
                     {
                         //                var deletedRows = await this.dataModel.Accounts.RemoveAsync(accounts).ConfigureAwait(false);
                         SyntaxFactory.LocalDeclarationStatement(
@@ -595,7 +595,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.IdentifierName("asyncTransaction"),
-                                    SyntaxFactory.IdentifierName("Complete")))),
+                                    SyntaxFactory.IdentifierName("Commit")))),
 
                         //                    return this.Ok(deletedRows);
                         SyntaxFactory.ReturnStatement(

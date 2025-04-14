@@ -2,7 +2,7 @@
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.ConstraintExceptionClass
+namespace GammaFour.DataModelGenerator.Model.EnlistmentStateClass
 {
     using System;
     using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace GammaFour.DataModelGenerator.Model.ConstraintExceptionClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a constraint exception.
+    /// Creates a row.
     /// </summary>
     public class Class : SyntaxElement
     {
@@ -23,25 +23,20 @@ namespace GammaFour.DataModelGenerator.Model.ConstraintExceptionClass
         public Class()
         {
             // Initialize the object.
-            this.Name = "ConstraintException";
+            this.Name = "EnlistmentState";
 
             //    /// <summary>
-            //    /// Represents errors that occurs when trying to establish a relationship in a data model.
+            //    /// The state of an <see cref="Enlistment"/>.
             //    /// </summary>
-            //    public class ConstraintException : Exception
+            //    public class EnlistmentState
             //    {
             //        <Members>
             //    }
-            this.Syntax = SyntaxFactory.ClassDeclaration("ConstraintException")
+            this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithBaseList(
-                SyntaxFactory.BaseList(
-                    SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(
-                        SyntaxFactory.SimpleBaseType(
-                            SyntaxFactory.IdentifierName("Exception")))))
-            .WithMembers(Class.Members)
+            .WithMembers(this.Members)
             .WithLeadingTrivia(Class.LeadingTrivia);
         }
 
@@ -53,10 +48,10 @@ namespace GammaFour.DataModelGenerator.Model.ConstraintExceptionClass
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                return new List<SyntaxTrivia>
                 {
                     //    /// <summary>
-                    //    /// Represents errors that occurs when trying to establish a relationship in a data model.
+                    //    /// The state of an <see cref="Enlistment"/>.
                     //    /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -79,7 +74,7 @@ namespace GammaFour.DataModelGenerator.Model.ConstraintExceptionClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " Represents errors that occurs when trying to establish a relationship in a data model.",
+                                                " The state of an <see cref=\"Enlistment\"/>.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -99,23 +94,19 @@ namespace GammaFour.DataModelGenerator.Model.ConstraintExceptionClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
                 };
-
-                // This is the complete document comment.
-                return SyntaxFactory.TriviaList(comments);
             }
         }
 
         /// <summary>
         /// Gets the members syntax.
         /// </summary>
-        private static SyntaxList<MemberDeclarationSyntax> Members
+        private SyntaxList<MemberDeclarationSyntax> Members
         {
             get
             {
                 // Create the members.
-                SyntaxList<MemberDeclarationSyntax> members = default;
-                members = Class.CreateConstructors(members);
-                members = Class.CreatePublicMethods(members);
+                SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
+                members = this.CreateProperties(members);
                 return members;
             }
         }
@@ -124,33 +115,18 @@ namespace GammaFour.DataModelGenerator.Model.ConstraintExceptionClass
         /// Create the private instance fields.
         /// </summary>
         /// <param name="members">The structure members.</param>
-        /// <returns>The structure members with the fields added.</returns>
-        private static SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
+        /// <returns>The syntax for creating the internal instance properties.</returns>
+        private SyntaxList<MemberDeclarationSyntax> CreateProperties(SyntaxList<MemberDeclarationSyntax> members)
         {
-            // Add the constructors.
-            members = members.Add(new Constructor().Syntax);
-            members = members.Add(new ConstructorString().Syntax);
-
-            // Return the new collection of members.
-            return members;
-        }
-
-        /// <summary>
-        /// Create the public instance methods.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The structure members with the methods added.</returns>
-        private static SyntaxList<MemberDeclarationSyntax> CreatePublicMethods(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // This will create the public instance properties.
-            List<SyntaxElement> methods = new List<SyntaxElement>
+            // The public properties.
+            List<SyntaxElement> properties = new List<SyntaxElement>
             {
-                new ThrowIfNullMethod(),
-                new ThrowIfTrueMethod(),
+                new CommitActionsProperty(),
+                new RollbackActionsProperty(),
             };
 
-            // Alphabetize and add the methods as members of the class.
-            foreach (var syntaxElement in methods.OrderBy(m => m.Name))
+            // Alphabetize the properties.
+            foreach (var syntaxElement in properties.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
             }

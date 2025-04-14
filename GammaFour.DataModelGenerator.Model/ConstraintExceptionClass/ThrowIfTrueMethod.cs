@@ -1,8 +1,8 @@
-// <copyright file="OnTransactionCompletedMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="ThrowIfTrueMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
+namespace GammaFour.DataModelGenerator.Model.ConstraintExceptionClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,53 +12,90 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to prepare a resource for a transaction completion.
+    /// Creates a method to acquire a reader lock.
     /// </summary>
-    public class OnTransactionCompletedMethod : SyntaxElement
+    public class ThrowIfTrueMethod : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="OnTransactionCompletedMethod"/> class.
+        /// Initializes a new instance of the <see cref="ThrowIfTrueMethod"/> class.
         /// </summary>
-        public OnTransactionCompletedMethod()
+        public ThrowIfTrueMethod()
         {
             // Initialize the object.
-            this.Name = "OnTransactionComplete";
+            this.Name = "ThrowIfTrue";
 
             //        /// <summary>
-            //        /// Handles the completion of the transaction.
+            //        /// Throw a constraint exception if the value is true.
             //        /// </summary>
-            //        /// <param name="sender">The object that originated the event.</param>
-            //        /// <param name="transactionEventArgs">The event data.</param>
-            //        private void OnTransactionCompleted(object? sender, TransactionEventArgs transactionEventArgs)
+            //        /// <param name="value">The value.</param>
+            //        /// <param name="message">The message.</param>
+            //        public static void ThrowIfTrue(bool value, string message)
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
                 SyntaxFactory.PredefinedType(
                     SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
-                SyntaxFactory.Identifier("OnTransactionCompleted"))
+                SyntaxFactory.Identifier("ThrowIfTrue"))
             .WithModifiers(
                 SyntaxFactory.TokenList(
-                    SyntaxFactory.Token(SyntaxKind.PrivateKeyword)))
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                        SyntaxFactory.Token(SyntaxKind.StaticKeyword),
+                    }))
             .WithParameterList(
                 SyntaxFactory.ParameterList(
                     SyntaxFactory.SeparatedList<ParameterSyntax>(
                         new SyntaxNodeOrToken[]
                         {
                             SyntaxFactory.Parameter(
-                                SyntaxFactory.Identifier("sender"))
+                                SyntaxFactory.Identifier("value"))
                             .WithType(
-                                SyntaxFactory.NullableType(
-                                    SyntaxFactory.PredefinedType(
-                                        SyntaxFactory.Token(SyntaxKind.ObjectKeyword)))),
+                                SyntaxFactory.PredefinedType(
+                                    SyntaxFactory.Token(SyntaxKind.BoolKeyword))),
                             SyntaxFactory.Token(SyntaxKind.CommaToken),
                             SyntaxFactory.Parameter(
-                                SyntaxFactory.Identifier("transactionEventArgs"))
+                                SyntaxFactory.Identifier("message"))
                             .WithType(
-                                SyntaxFactory.IdentifierName("TransactionEventArgs")),
+                                SyntaxFactory.PredefinedType(
+                                    SyntaxFactory.Token(SyntaxKind.StringKeyword))),
                         })))
-            .WithBody(this.Body)
-            .WithLeadingTrivia(OnTransactionCompletedMethod.LeadingTrivia);
+            .WithBody(ThrowIfTrueMethod.Body)
+            .WithLeadingTrivia(ThrowIfTrueMethod.LeadingTrivia);
+        }
+
+        /// <summary>
+        /// Gets the body.
+        /// </summary>
+        private static BlockSyntax Body
+        {
+            get
+            {
+                // This is used to collect the statements.
+                var statements = new List<StatementSyntax>
+                {
+                    //            if (value)
+                    //            {
+                    //                throw new ConstraintException(message);
+                    //            }
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.IdentifierName("value"),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ThrowStatement(
+                                    SyntaxFactory.ObjectCreationExpression(
+                                        SyntaxFactory.IdentifierName("ConstraintException"))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.IdentifierName("message"))))))))),
+                };
+
+                // This is the syntax for the body of the method.
+                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
+            }
         }
 
         /// <summary>
@@ -69,10 +106,10 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
             get
             {
                 // The document comment trivia is collected in this list.
-                return new List<SyntaxTrivia>
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Handles the completion of the transaction.
+                    //        /// Throw a constraint exception if the value is true.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -95,7 +132,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " Handles the completion of the transaction.",
+                                                " Throw a constraint exception if the value is true.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -115,7 +152,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //        /// <param name="sender">The object that originated the event.</param>
+                    //        /// <param name="value">The value.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -127,7 +164,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                         {
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " <param name=\"sender\">The object that originated the event.</param>",
+                                                " <param name=\"value\">The value.</param>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -137,7 +174,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //        /// <param name="transactionEventArgs">The event data.</param>
+                    //        /// <param name="message">The message.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -149,7 +186,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                         {
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " <param name=\"transactionEventArgs\">The event data.</param>",
+                                                " <param name=\"message\">The message.</param>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -159,44 +196,9 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
                 };
-            }
-        }
 
-        /// <summary>
-        /// Gets the body.
-        /// </summary>
-        private BlockSyntax Body
-        {
-            get
-            {
-                return SyntaxFactory.Block(
-                    new List<StatementSyntax>
-                    {
-                        //            if (this.cancellationTokenSource != null)
-                        //            {
-                        //                this.cancellationTokenSource.Cancel();
-                        //            }
-                        SyntaxFactory.IfStatement(
-                            SyntaxFactory.BinaryExpression(
-                                SyntaxKind.NotEqualsExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("cancellationTokenSource")),
-                                SyntaxFactory.LiteralExpression(
-                                    SyntaxKind.NullLiteralExpression)),
-                            SyntaxFactory.Block(
-                                SyntaxFactory.SingletonList<StatementSyntax>(
-                                    SyntaxFactory.ExpressionStatement(
-                                        SyntaxFactory.InvocationExpression(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName("cancellationTokenSource")),
-                                                SyntaxFactory.IdentifierName("Cancel"))))))),
-                    });
+                // This is the complete document comment.
+                return SyntaxFactory.TriviaList(comments);
             }
         }
     }

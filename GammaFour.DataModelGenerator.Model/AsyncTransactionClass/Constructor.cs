@@ -98,69 +98,33 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                     SyntaxFactory.IdentifierName("Value")),
                                 SyntaxFactory.ThisExpression())),
 
-                        //            this.transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                        //            this.committableTransaction = new CommittableTransaction(new TransactionOptions { Timeout = TimeSpan.MaxValue });
                         SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.AssignmentExpression(
                                 SyntaxKind.SimpleAssignmentExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("transactionScope")),
+                                    SyntaxFactory.IdentifierName("committableTransaction")),
                                 SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.IdentifierName("TransactionScope"))
+                                    SyntaxFactory.IdentifierName("CommittableTransaction"))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
                                         SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                             SyntaxFactory.Argument(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.IdentifierName("TransactionScopeAsyncFlowOption"),
-                                                    SyntaxFactory.IdentifierName("Enabled")))))))),
-
-                        //            this.transaction = Transaction.Current;
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("transaction")),
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("Transaction"),
-                                    SyntaxFactory.IdentifierName("Current")))),
-
-                        //            ArgumentNullException.ThrowIfNull(this.transaction);
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("ArgumentNullException"),
-                                    SyntaxFactory.IdentifierName("ThrowIfNull")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName("transaction"))))))),
-
-                        //            this.transaction.TransactionCompleted += this.OnTransactionCompleted;
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.AddAssignmentExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("transaction")),
-                                    SyntaxFactory.IdentifierName("TransactionCompleted")),
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("OnTransactionCompleted")))),
+                                                SyntaxFactory.ObjectCreationExpression(
+                                                    SyntaxFactory.IdentifierName("TransactionOptions"))
+                                                .WithInitializer(
+                                                    SyntaxFactory.InitializerExpression(
+                                                        SyntaxKind.ObjectInitializerExpression,
+                                                        SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
+                                                            SyntaxFactory.AssignmentExpression(
+                                                                SyntaxKind.SimpleAssignmentExpression,
+                                                                SyntaxFactory.IdentifierName("Timeout"),
+                                                                SyntaxFactory.MemberAccessExpression(
+                                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                                    SyntaxFactory.IdentifierName("TimeSpan"),
+                                                                    SyntaxFactory.IdentifierName("MaxValue")))))))))))),
                     });
             }
         }
@@ -228,9 +192,9 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
         {
             get
             {
-                return new StatementSyntax[]
+                return new List<StatementSyntax>
                 {
-                    //                this.cancellationTokenSource = new CancellationTokenSource();
+                    //                this.cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(30));
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
@@ -241,7 +205,21 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                             SyntaxFactory.ObjectCreationExpression(
                                 SyntaxFactory.IdentifierName("CancellationTokenSource"))
                             .WithArgumentList(
-                                SyntaxFactory.ArgumentList()))),
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.InvocationExpression(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.IdentifierName("TimeSpan"),
+                                                    SyntaxFactory.IdentifierName("FromSeconds")))
+                                            .WithArgumentList(
+                                                SyntaxFactory.ArgumentList(
+                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.LiteralExpression(
+                                                                SyntaxKind.NumericLiteralExpression,
+                                                                SyntaxFactory.Literal(30)))))))))))),
 
                     //                cancellationToken = cancellationTokenSource.Token;
                     SyntaxFactory.ExpressionStatement(

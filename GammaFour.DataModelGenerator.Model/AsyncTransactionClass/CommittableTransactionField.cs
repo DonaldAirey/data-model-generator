@@ -1,4 +1,4 @@
-// <copyright file="TransactionField.cs" company="Gamma Four, Inc.">
+// <copyright file="CommittableTransactionField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,24 +14,23 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
     /// <summary>
     /// Creates a field to hold the current contents of the row.
     /// </summary>
-    public class TransactionField : SyntaxElement
+    public class CommittableTransactionField : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TransactionField"/> class.
+        /// Initializes a new instance of the <see cref="CommittableTransactionField"/> class.
         /// </summary>
-        public TransactionField()
+        public CommittableTransactionField()
         {
             // Initialize the object.
-            this.Name = "transaction";
+            this.Name = "committableTransaction";
 
             //        /// <summary>
-            //        /// The transaction.
+            //        /// The committable transaction.
             //        /// </summary>
-            //        private readonly Transaction? transaction;
+            //        private readonly committableTransaction committableTransaction;
             this.Syntax = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
-                    SyntaxFactory.NullableType(
-                        SyntaxFactory.IdentifierName("Transaction")))
+                    SyntaxFactory.IdentifierName("CommittableTransaction"))
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                         SyntaxFactory.VariableDeclarator(
@@ -43,7 +42,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                         SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
                         SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
                     }))
-            .WithLeadingTrivia(TransactionField.LeadingTrivia);
+            .WithLeadingTrivia(CommittableTransactionField.LeadingTrivia);
         }
 
         /// <summary>
@@ -53,11 +52,10 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
         {
             get
             {
-                // The document comment trivia is collected in this list.
                 return new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// The transaction.
+                    //        /// The committable transaction.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -80,7 +78,7 @@ namespace GammaFour.DataModelGenerator.Model.AsyncTransactionClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " The transaction.",
+                                                " The committable transaction.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

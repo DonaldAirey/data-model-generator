@@ -109,7 +109,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("asyncTransaction"),
-                                SyntaxFactory.IdentifierName("Complete")))),
+                                SyntaxFactory.IdentifierName("Commit")))),
 
                     //                    return this.Ok(addedRow);
                     SyntaxFactory.ReturnStatement(
@@ -425,7 +425,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                 }
 
                 statements.AddRange(
-                    new StatementSyntax[]
+                    new List<StatementSyntax>
                     {
                         //                (var addedRow, var updatedRow) = await this.dataModel.Accounts.PutAsync(account).ConfigureAwait(false);
                         SyntaxFactory.ExpressionStatement(
@@ -568,7 +568,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.IdentifierName("asyncTransaction"),
-                                SyntaxFactory.IdentifierName("Complete")))),
+                                SyntaxFactory.IdentifierName("Commit")))),
 
                     //                    return this.Ok(updatedRow);
                     SyntaxFactory.ReturnStatement(
