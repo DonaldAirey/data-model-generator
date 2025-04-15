@@ -377,6 +377,56 @@ namespace GammaFour.DataModelGenerator.Common
         }
 
         /// <summary>
+        /// Creates a conditional statement for a unique key using the members of a value.
+        /// </summary>
+        /// <param name="uniqueIndexElement">The unique key element.</param>
+        /// <param name="variableName1">The first variable name.</param>
+        /// <param name="variableName2">The second variable name.</param>
+        /// <returns>An argument that extracts a key from an object.</returns>
+        public static ExpressionSyntax GetKeyAsInequalityConditional(
+            this UniqueIndexElement uniqueIndexElement,
+            string variableName1,
+            string variableName2)
+        {
+            ExpressionSyntax expressionSyntax = null;
+            foreach (var columnReferenceElement in uniqueIndexElement.Columns)
+            {
+                var columnElement = columnReferenceElement.Column;
+                if (expressionSyntax == null)
+                {
+                    expressionSyntax = SyntaxFactory.BinaryExpression(
+                        SyntaxKind.NotEqualsExpression,
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName(variableName1),
+                            SyntaxFactory.IdentifierName(columnElement.Name)),
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName(variableName2),
+                            SyntaxFactory.IdentifierName(columnElement.Name)));
+                }
+                else
+                {
+                    expressionSyntax = SyntaxFactory.BinaryExpression(
+                        SyntaxKind.LogicalAndExpression,
+                        SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(variableName1),
+                                SyntaxFactory.IdentifierName(columnElement.Name)),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName(variableName2),
+                                SyntaxFactory.IdentifierName(columnElement.Name))),
+                        expressionSyntax);
+                }
+            }
+
+            return expressionSyntax;
+        }
+
+        /// <summary>
         /// Creates a parameter list for a unique key.
         /// </summary>
         /// <param name="uniqueIndexElement">The unique key element.</param>
