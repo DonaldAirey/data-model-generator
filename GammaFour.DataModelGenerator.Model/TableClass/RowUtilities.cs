@@ -1433,7 +1433,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("AssetSymbolIndex")),
+                                            SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
                                         SyntaxFactory.IdentifierName("Remove")))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
@@ -1447,7 +1447,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("AssetSymbolIndex")),
+                                            SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
                                         SyntaxFactory.IdentifierName("Add")))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
@@ -1606,7 +1606,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("AssetSymbolIndex")),
+                                            SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
                                         SyntaxFactory.IdentifierName("Add")))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
@@ -1620,7 +1620,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("AssetSymbolIndex")),
+                                            SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
                                         SyntaxFactory.IdentifierName("Remove")))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
