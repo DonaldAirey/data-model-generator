@@ -1,4 +1,4 @@
-// <copyright file="EnterReadLockAsyncMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="TryEnterReadLockMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,36 +14,33 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
     /// <summary>
     /// Creates a method to prepare a resource for a transaction completion.
     /// </summary>
-    public class EnterReadLockAsyncMethod : SyntaxElement
+    public class TryEnterReadLockMethod : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="EnterReadLockAsyncMethod"/> class.
+        /// Initializes a new instance of the <see cref="TryEnterReadLockMethod"/> class.
         /// </summary>
-        public EnterReadLockAsyncMethod()
+        public TryEnterReadLockMethod()
         {
             // Initialize the object.
-            this.Name = "EnterReadLockAsync";
+            this.Name = "TryEnterReadLock";
 
             //        /// <summary>
-            //        /// Enters the lock in read mode asynchronously.
+            //        /// Try to enter the lock in read mode synchronously.
             //        /// </summary>
-            //        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-            //        public async Task EnterReadLockAsync()
+            //        /// <returns>true of the lock was obtained synchronously, false otherwise.</returns>
+            //        public bool TryEnterReadLock()
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
-                SyntaxFactory.IdentifierName("Task"),
+                SyntaxFactory.PredefinedType(
+                    SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
                 SyntaxFactory.Identifier(this.Name))
             .WithModifiers(
                 SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                        SyntaxFactory.Token(SyntaxKind.AsyncKeyword),
-                    }))
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
             .WithBody(this.Body)
-            .WithLeadingTrivia(EnterReadLockAsyncMethod.LeadingTrivia);
+            .WithLeadingTrivia(TryEnterReadLockMethod.LeadingTrivia);
         }
 
         /// <summary>
@@ -56,7 +53,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                 return new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Enters the lock in read mode asynchronously.
+                    //        /// Try to enter the lock in read mode synchronously.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -79,7 +76,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " Enters the lock in read mode asynchronously.",
+                                                " Try to enter the lock in read mode synchronously.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -99,7 +96,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+                    //        /// <returns>true of the lock was obtained synchronously, false otherwise.</returns>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -111,7 +108,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                         {
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " <returns>A <see cref=\"Task\"/> representing the asynchronous operation.</returns>",
+                                                " <returns>true of the lock was obtained synchronously, false otherwise.</returns>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -206,6 +203,11 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                                 SyntaxFactory.Argument(
                                                     SyntaxFactory.ThisExpression())))))),
                             SyntaxFactory.Block(this.LockRow)),
+
+                        //            return true;
+                        SyntaxFactory.ReturnStatement(
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.TrueLiteralExpression)),
                     });
             }
         }
@@ -219,35 +221,26 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             {
                 return new List<StatementSyntax>
                 {
-                    //                await this.asyncReaderWriterLock.EnterReadLockAsync(asyncTransaction.CancellationToken).ConfigureAwait(false);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AwaitExpression(
+                    //                if (!this.asyncReaderWriterLock.TryEnterReadLock())
+                    //                {
+                    //                    return false;
+                    //                }
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.PrefixUnaryExpression(
+                            SyntaxKind.LogicalNotExpression,
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName("asyncReaderWriterLock")),
-                                            SyntaxFactory.IdentifierName("EnterReadLockAsync")))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.IdentifierName("asyncTransaction"),
-                                                        SyntaxFactory.IdentifierName("CancellationToken")))))),
-                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.FalseLiteralExpression))))))),
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("asyncReaderWriterLock")),
+                                    SyntaxFactory.IdentifierName("TryEnterReadLock")))),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ReturnStatement(
+                                    SyntaxFactory.LiteralExpression(
+                                        SyntaxKind.FalseLiteralExpression))))),
 
                     //                asyncTransaction.ReadLocks.Add(this, this.asyncReaderWriterLock);
                     SyntaxFactory.ExpressionStatement(

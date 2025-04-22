@@ -312,8 +312,8 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 new AddOneMethod(this.tableElement),
                 new AddManyMethod(this.tableElement),
                 new CommitMethod(),
-                new EnterReadLockAsyncMethod(this.tableElement.Document),
-                new EnterWriteLockAsyncMethod(this.tableElement.Document),
+                new EnterReadLockAsyncMethod(),
+                new EnterWriteLockAsyncMethod(),
                 new FindMethod(this.tableElement),
                 new GetEnumeratorMethod(this.tableElement),
                 new GenericGetEnumeratorMethod(this.tableElement),
@@ -326,6 +326,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 new RemoveManyMethod(this.tableElement),
                 new RemoveOneMethod(this.tableElement),
                 new RollbackMethod(),
+                new TryEnterReadLockMethod(),
                 new UpdateManyMethod(this.tableElement),
                 new UpdateOneMethod(this.tableElement),
             };

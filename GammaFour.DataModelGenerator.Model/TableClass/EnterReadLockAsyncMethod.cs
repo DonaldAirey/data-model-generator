@@ -17,18 +17,11 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     public class EnterReadLockAsyncMethod : SyntaxElement
     {
         /// <summary>
-        /// The XML schema document.
-        /// </summary>
-        private readonly XmlSchemaDocument xmlSchemaDocument;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="EnterReadLockAsyncMethod"/> class.
         /// </summary>
-        /// <param name="xmlSchemaDocument">The XML schema document.</param>
-        public EnterReadLockAsyncMethod(XmlSchemaDocument xmlSchemaDocument)
+        public EnterReadLockAsyncMethod()
         {
             // Initialize the object.
-            this.xmlSchemaDocument = xmlSchemaDocument;
             this.Name = "EnterReadLockAsync";
 
             //        /// <summary>

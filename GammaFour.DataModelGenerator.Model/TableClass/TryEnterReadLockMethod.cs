@@ -1,4 +1,4 @@
-// <copyright file="EnterWriteLockAsyncMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="TryEnterReadLockMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,36 +14,33 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     /// <summary>
     /// Creates a method to prepare a resource for a transaction completion.
     /// </summary>
-    public class EnterWriteLockAsyncMethod : SyntaxElement
+    public class TryEnterReadLockMethod : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="EnterWriteLockAsyncMethod"/> class.
+        /// Initializes a new instance of the <see cref="TryEnterReadLockMethod"/> class.
         /// </summary>
-        public EnterWriteLockAsyncMethod()
+        public TryEnterReadLockMethod()
         {
             // Initialize the object.
-            this.Name = "EnterWriteLockAsync";
+            this.Name = "TryEnterReadLock";
 
             //        /// <summary>
-            //        /// Enters the lock in write mode asynchronously.
+            //        /// Try to enter the lock in read mode synchronously.
             //        /// </summary>
-            //        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-            //        public async Task EnterWriteLockAsync()
+            //        /// <returns>true of the lock was obtained synchronously, false otherwise.</returns>
+            //        public bool TryEnterReadLock()
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
-                SyntaxFactory.IdentifierName("Task"),
+                SyntaxFactory.PredefinedType(
+                    SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
                 SyntaxFactory.Identifier(this.Name))
             .WithModifiers(
                 SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                        SyntaxFactory.Token(SyntaxKind.AsyncKeyword),
-                    }))
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
             .WithBody(this.Body)
-            .WithLeadingTrivia(EnterWriteLockAsyncMethod.LeadingTrivia);
+            .WithLeadingTrivia(TryEnterReadLockMethod.LeadingTrivia);
         }
 
         /// <summary>
@@ -53,11 +50,10 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         {
             get
             {
-                // The document comment trivia is collected in this list.
                 return new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Enters the lock in write mode asynchronously.
+                    //        /// Enters the lock in read mode asynchronously.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -80,7 +76,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " Enters the lock in write mode asynchronously.",
+                                                " Try to enter the lock in read mode synchronously.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -169,27 +165,49 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.IdentifierName("asyncTransaction")))))),
 
-                        //            if (!asyncTransaction.WriteLocks.ContainsKey(this))
+                        //            if (!asyncTransaction.WriteLocks.ContainsKey(this) && !asyncTransaction.ReadLocks.ContainsKey(this))
                         //            {
                         //                <LockRow>
                         //            }
                         SyntaxFactory.IfStatement(
-                            SyntaxFactory.PrefixUnaryExpression(
-                                SyntaxKind.LogicalNotExpression,
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.BinaryExpression(
+                                SyntaxKind.LogicalAndExpression,
+                                SyntaxFactory.PrefixUnaryExpression(
+                                    SyntaxKind.LogicalNotExpression,
+                                    SyntaxFactory.InvocationExpression(
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName("asyncTransaction"),
-                                            SyntaxFactory.IdentifierName("WriteLocks")),
-                                        SyntaxFactory.IdentifierName("ContainsKey")))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                            SyntaxFactory.Argument(
-                                                SyntaxFactory.ThisExpression()))))),
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("asyncTransaction"),
+                                                SyntaxFactory.IdentifierName("WriteLocks")),
+                                            SyntaxFactory.IdentifierName("ContainsKey")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.ThisExpression()))))),
+                                SyntaxFactory.PrefixUnaryExpression(
+                                    SyntaxKind.LogicalNotExpression,
+                                    SyntaxFactory.InvocationExpression(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("asyncTransaction"),
+                                                SyntaxFactory.IdentifierName("ReadLocks")),
+                                            SyntaxFactory.IdentifierName("ContainsKey")))
+                                    .WithArgumentList(
+                                        SyntaxFactory.ArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                SyntaxFactory.Argument(
+                                                    SyntaxFactory.ThisExpression())))))),
                             SyntaxFactory.Block(this.LockRow)),
+
+                        //            return true;
+                        SyntaxFactory.ReturnStatement(
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.TrueLiteralExpression)),
                     });
             }
         }
@@ -203,76 +221,28 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             {
                 return new List<StatementSyntax>
                 {
-                    //                if (asyncTransaction.ReadLocks.ContainsKey(this))
+                    //                if (!this.asyncReaderWriterLock.TryEnterReadLock())
                     //                {
-                    //                     <UpgradeWriteLock>
-                    //                }
-                    //                else
-                    //                {
-                    //                     <EnterWriteLock>
+                    //                    return false;
                     //                }
                     SyntaxFactory.IfStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("asyncTransaction"),
-                                    SyntaxFactory.IdentifierName("ReadLocks")),
-                                SyntaxFactory.IdentifierName("ContainsKey")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.ThisExpression())))),
-                        SyntaxFactory.Block(this.UpgradeWriteLock))
-                    .WithElse(
-                        SyntaxFactory.ElseClause(
-                            SyntaxFactory.Block(this.EnterWriteLock))),
-                };
-            }
-        }
-
-        /// <summary>
-        /// Gets the statements to lock the row.
-        /// </summary>
-        private IEnumerable<StatementSyntax> UpgradeWriteLock
-        {
-            get
-            {
-                return new List<StatementSyntax>
-                {
-                    //                    await this.asyncReaderWriterLock.UpgradeToWriteLockAsync(asyncTransaction.CancellationToken).ConfigureAwait(false);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AwaitExpression(
+                        SyntaxFactory.PrefixUnaryExpression(
+                            SyntaxKind.LogicalNotExpression,
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName("asyncReaderWriterLock")),
-                                            SyntaxFactory.IdentifierName("UpgradeToWriteLockAsync")))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.IdentifierName("asyncTransaction"),
-                                                        SyntaxFactory.IdentifierName("CancellationToken")))))),
-                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.FalseLiteralExpression))))))),
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("asyncReaderWriterLock")),
+                                    SyntaxFactory.IdentifierName("TryEnterReadLock")))),
+                        SyntaxFactory.Block(
+                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.ReturnStatement(
+                                    SyntaxFactory.LiteralExpression(
+                                        SyntaxKind.FalseLiteralExpression))))),
 
-                    //                    asyncTransaction.ReadLocks.Remove(this);
+                    //                asyncTransaction.ReadLocks.Add(this, this.asyncReaderWriterLock);
                     SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -281,89 +251,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.IdentifierName("asyncTransaction"),
                                     SyntaxFactory.IdentifierName("ReadLocks")),
-                                SyntaxFactory.IdentifierName("Remove")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.ThisExpression()))))),
-
-                    //                    asyncTransaction.WriteLocks.Add(this, this.asyncReaderWriterLock);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("asyncTransaction"),
-                                    SyntaxFactory.IdentifierName("WriteLocks")),
-                                SyntaxFactory.IdentifierName("Add")))
-                        .WithArgumentList(
-                            SyntaxFactory.ArgumentList(
-                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]
-                                    {
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.ThisExpression()),
-                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName("asyncReaderWriterLock"))),
-                                    })))),
-                };
-            }
-        }
-
-        /// <summary>
-        /// Gets the statements to lock the row.
-        /// </summary>
-        private IEnumerable<StatementSyntax> EnterWriteLock
-        {
-            get
-            {
-                return new List<StatementSyntax>
-                {
-                    //                    await this.asyncReaderWriterLock.EnterWriteLockAsync(asyncTransaction.CancellationToken).ConfigureAwait(false);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AwaitExpression(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.ThisExpression(),
-                                                SyntaxFactory.IdentifierName("asyncReaderWriterLock")),
-                                            SyntaxFactory.IdentifierName("EnterWriteLockAsync")))
-                                    .WithArgumentList(
-                                        SyntaxFactory.ArgumentList(
-                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        SyntaxFactory.IdentifierName("asyncTransaction"),
-                                                        SyntaxFactory.IdentifierName("CancellationToken")))))),
-                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.FalseLiteralExpression))))))),
-
-                    //                asyncTransaction.WriteLocks.Add(this, this.asyncReaderWriterLock);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName("asyncTransaction"),
-                                    SyntaxFactory.IdentifierName("WriteLocks")),
                                 SyntaxFactory.IdentifierName("Add")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
