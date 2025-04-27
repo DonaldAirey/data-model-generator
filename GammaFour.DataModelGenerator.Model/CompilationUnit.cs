@@ -43,6 +43,7 @@ namespace GammaFour.DataModelGenerator.Model
                     new MemberDeclarationSyntax[]
                     {
                         new Namespace(this.customToolNamespace).Syntax,
+                        new DtoNamespace(this.xmlSchemaDocument, this.customToolNamespace).Syntax,
                         new MasterNamespace(this.xmlSchemaDocument, this.customToolNamespace).Syntax,
                         new SlaveNamespace(this.xmlSchemaDocument, this.customToolNamespace).Syntax,
                     }))

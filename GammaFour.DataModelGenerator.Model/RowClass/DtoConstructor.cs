@@ -1,4 +1,4 @@
-// <copyright file="CopyConstructor.cs" company="Gamma Four, Inc.">
+// <copyright file="DtoConstructor.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -15,7 +15,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
     /// <summary>
     /// Creates a constructor.
     /// </summary>
-    public class CopyConstructor : SyntaxElement
+    public class DtoConstructor : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -23,10 +23,10 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CopyConstructor"/> class.
+        /// Initializes a new instance of the <see cref="DtoConstructor"/> class.
         /// </summary>
         /// <param name="tableElement">The table schema.</param>
-        public CopyConstructor(TableElement tableElement)
+        public DtoConstructor(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
@@ -40,7 +40,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             //            this.Quantity = position.Quantity;
             //        }
             this.Syntax = SyntaxFactory.ConstructorDeclaration(
-                SyntaxFactory.Identifier(this.Name))
+                SyntaxFactory.Identifier(this.tableElement.Name))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
@@ -48,9 +48,11 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                 SyntaxFactory.ParameterList(
                     SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
                         SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier(this.Name.ToVariableName()))
+                            SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()))
                         .WithType(
-                            SyntaxFactory.IdentifierName(this.tableElement.Name)))))
+                            SyntaxFactory.QualifiedName(
+                                SyntaxFactory.IdentifierName("DataTransferObjects"),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name))))))
             .WithBody(
                 this.Body)
             .WithLeadingTrivia(this.LeadingTrivia);
@@ -84,51 +86,8 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                     SyntaxFactory.IdentifierName(columnElement.Name))))));
                 }
 
-                // Perform a deep copy of the child rows.
-                foreach (var foreignIndexElement in this.tableElement.ForeignIndices)
-                {
-                    expressionList.Add((
-                        foreignIndexElement.Table.Name,
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
-                                    SyntaxFactory.IdentifierName("UnionWith")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                                                SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)))))))));
-                }
-
-                // Copy each of the parent values.
-                foreach (var foreignIndexElement in this.tableElement.ParentIndices)
-                {
-                    expressionList.Add((
-                        foreignIndexElement.UniqueParentName,
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName)),
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName))))));
-                }
-
                 //            this.AccountCode = position.AccountCode;
                 //            this.AssetCode = position.AssetCode;
-                //            this.Date = position.Date;
                 //            this.Quantity = position.Quantity;
                 var statements = new List<StatementSyntax>();
                 foreach ((var key, var expressionStatement) in expressionList.OrderBy(tuple => tuple.Item1))

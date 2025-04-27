@@ -256,9 +256,14 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>
             {
-                new DeletedRowsProperty(this.tableElement),
                 new EnlistmentStateProperty(),
             };
+
+            // Add a history property for the master. The slave doesn't need history.
+            if (this.tableElement.Document.IsMaster)
+            {
+                properties.Add(new HistoryProperty(this.tableElement));
+            }
 
             // Add a property for each of the non-primary unique indices.
             foreach (UniqueIndexElement uniqueKeyElement in this.tableElement.UniqueIndexes.Where(uq => !uq.IsPrimaryIndex))

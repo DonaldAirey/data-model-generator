@@ -1174,22 +1174,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         {
             return new List<StatementSyntax>
             {
-                //                this.DeletedRows.AddFirst(foundRow);
-                SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.InvocationExpression(
-                        SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("DeletedRows")),
-                            SyntaxFactory.IdentifierName("AddFirst")))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList(
-                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                SyntaxFactory.Argument(
-                                    SyntaxFactory.IdentifierName("foundRow")))))),
-
                 //                this.OnRowChanged(DataAction.Remove, foundRow);
                 SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.InvocationExpression(

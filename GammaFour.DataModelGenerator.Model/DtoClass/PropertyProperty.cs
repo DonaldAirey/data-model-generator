@@ -1,8 +1,8 @@
-// <copyright file="DeletedRowsProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="PropertyProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.TableClass
+namespace GammaFour.DataModelGenerator.Model.DtoClass
 {
     using System;
     using System.Collections.Generic;
@@ -14,77 +14,91 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     /// <summary>
     /// Creates a field that holds the column.
     /// </summary>
-    public class DeletedRowsProperty : SyntaxElement
+    public class PropertyProperty : SyntaxElement
     {
         /// <summary>
-        /// The description of the table.
+        /// The unique constraint schema.
         /// </summary>
-        private readonly TableElement tableElement;
+        private readonly ColumnElement columnElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DeletedRowsProperty"/> class.
+        /// Initializes a new instance of the <see cref="PropertyProperty"/> class.
         /// </summary>
-        /// <param name="tableElement">The table element.</param>
-        public DeletedRowsProperty(TableElement tableElement)
+        /// <param name="columnElement">The column schema.</param>
+        public PropertyProperty(ColumnElement columnElement)
         {
             // Initialize the object.
-            this.tableElement = tableElement;
-            this.Name = "DeletedRows";
+            this.columnElement = columnElement;
+            this.Name = this.columnElement.Name;
+
+            //        public decimal Quantity { get; set; }
+            //        public string Name { get; set; } = string.Empty;
+            var columnType = this.columnElement.ColumnType;
+            var propertyDeclaration = SyntaxFactory.PropertyDeclaration(
+                columnElement.GetTypeSyntax(),
+                SyntaxFactory.Identifier(this.Name));
+            if (!columnType.IsValueType && !columnType.IsNullable)
+            {
+                propertyDeclaration = propertyDeclaration
+                .WithInitializer(
+                    SyntaxFactory.EqualsValueClause(
+                        Defaults.FromType(columnType)))
+                .WithSemicolonToken(
+                    SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            }
 
             //        /// <summary>
-            //        /// Gets the list of deleted rows.
+            //        /// Gets or sets the Name.
             //        /// </summary>
-            //        public LinkedList<Account> DeletedRows = new LinkedList<Account>();
-            this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.GenericName(
-                    SyntaxFactory.Identifier("LinkedList"))
-                .WithTypeArgumentList(
-                    SyntaxFactory.TypeArgumentList(
-                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                            SyntaxFactory.IdentifierName(this.tableElement.Name)))),
-                SyntaxFactory.Identifier(this.Name))
+            //        public string Name { get; set; } = string.Empty;
+            this.Syntax = propertyDeclaration
+            .WithAttributeLists(
+                SyntaxFactory.SingletonList<AttributeListSyntax>(
+                    SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                SyntaxFactory.IdentifierName("JsonPropertyName"))
+                            .WithArgumentList(
+                                SyntaxFactory.AttributeArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
+                                        SyntaxFactory.AttributeArgument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                SyntaxFactory.Literal(this.columnElement.Name.ToCamelCase()))))))))))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
             .WithAccessorList(
                 SyntaxFactory.AccessorList(
-                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
-                        SyntaxFactory.AccessorDeclaration(
-                            SyntaxKind.GetAccessorDeclaration)
-                        .WithSemicolonToken(
-                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
-            .WithInitializer(
-                SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.ObjectCreationExpression(
-                        SyntaxFactory.GenericName(
-                            SyntaxFactory.Identifier("LinkedList"))
-                        .WithTypeArgumentList(
-                            SyntaxFactory.TypeArgumentList(
-                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name)))))
-                    .WithArgumentList(
-                        SyntaxFactory.ArgumentList())))
-            .WithSemicolonToken(
-                SyntaxFactory.Token(SyntaxKind.SemicolonToken))
-            .WithModifiers(
-                SyntaxFactory.TokenList(
-                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithLeadingTrivia(DeletedRowsProperty.LeadingTrivia);
+                    SyntaxFactory.List<AccessorDeclarationSyntax>(
+                        new AccessorDeclarationSyntax[]
+                        {
+                            SyntaxFactory.AccessorDeclaration(
+                                SyntaxKind.GetAccessorDeclaration)
+                            .WithSemicolonToken(
+                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                            SyntaxFactory.AccessorDeclaration(
+                                SyntaxKind.SetAccessorDeclaration)
+                            .WithSemicolonToken(
+                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                        })))
+            .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private static IEnumerable<SyntaxTrivia> LeadingTrivia
+        private IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {
                 // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
-                {
-                    //        /// <summary>
-                    //        /// Gets the list of deleted rows.
-                    //        /// </summary>
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>();
+
+                //        /// <summary>
+                //        /// Gets or sets the Name.
+                //        /// </summary>
+                comments.Add(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -106,7 +120,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Gets the list of deleted rows.",
+                                                $" Gets or sets the {this.columnElement.Name}.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -124,8 +138,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))),
-                };
+                                        }))))));
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);

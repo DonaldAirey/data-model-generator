@@ -1,8 +1,8 @@
-// <copyright file="CopyConstructor.cs" company="Gamma Four, Inc.">
+// <copyright file="ConstructorMaster.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.RowClass
+namespace GammaFour.DataModelGenerator.Model.DtoClass
 {
     using System;
     using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
     /// <summary>
     /// Creates a constructor.
     /// </summary>
-    public class CopyConstructor : SyntaxElement
+    public class ConstructorMaster : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -23,16 +23,21 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CopyConstructor"/> class.
+        /// Initializes a new instance of the <see cref="ConstructorMaster"/> class.
         /// </summary>
         /// <param name="tableElement">The table schema.</param>
-        public CopyConstructor(TableElement tableElement)
+        public ConstructorMaster(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
             this.Name = this.tableElement.Name;
 
-            //        public Position(Position position)
+            //        /// <summary>
+            //        /// Initializes a new instance of the <see cref="Account"/> class.
+            //        /// </summary>
+            //        /// <param name="dataAction">The data action.</param>
+            //        /// <param name="account">The account.</param>
+            //        public Account(DataAction dataAction, Account account)
             //        {
             //            this.AccountCode = position.AccountCode;
             //            this.AssetCode = position.AssetCode;
@@ -46,11 +51,21 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
             .WithParameterList(
                 SyntaxFactory.ParameterList(
-                    SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
-                        SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier(this.Name.ToVariableName()))
-                        .WithType(
-                            SyntaxFactory.IdentifierName(this.tableElement.Name)))))
+                    SyntaxFactory.SeparatedList<ParameterSyntax>(
+                        new SyntaxNodeOrToken[]
+                        {
+                            SyntaxFactory.Parameter(
+                                SyntaxFactory.Identifier("dataAction"))
+                            .WithType(
+                                SyntaxFactory.IdentifierName("DataAction")),
+                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                            SyntaxFactory.Parameter(
+                                SyntaxFactory.Identifier(this.tableElement.Name.ToVariableName()))
+                            .WithType(
+                                SyntaxFactory.QualifiedName(
+                                    SyntaxFactory.IdentifierName("Master"),
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name))),
+                        })))
             .WithBody(
                 this.Body)
             .WithLeadingTrivia(this.LeadingTrivia);
@@ -66,9 +81,23 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                 // The expressions and their property names are collected here.
                 var expressionList = new List<(string, ExpressionStatementSyntax)>();
 
+                //            this.DataAction = dataAction;
+                expressionList.Add((
+                    "DataAction",
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("DataAction")),
+                            SyntaxFactory.IdentifierName("dataAction")))));
+
                 // Copy each of the value properties.
                 foreach (ColumnElement columnElement in this.tableElement.Columns)
                 {
+                    //            this.AccountId = account.AccountId;
+                    //            this.AccountType = account.AccountType;
                     expressionList.Add((
                         columnElement.Name,
                         SyntaxFactory.ExpressionStatement(
@@ -84,50 +113,9 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                     SyntaxFactory.IdentifierName(columnElement.Name))))));
                 }
 
-                // Perform a deep copy of the child rows.
-                foreach (var foreignIndexElement in this.tableElement.ForeignIndices)
-                {
-                    expressionList.Add((
-                        foreignIndexElement.Table.Name,
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)),
-                                    SyntaxFactory.IdentifierName("UnionWith")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                                                SyntaxFactory.IdentifierName(foreignIndexElement.UniqueChildName)))))))));
-                }
-
-                // Copy each of the parent values.
-                foreach (var foreignIndexElement in this.tableElement.ParentIndices)
-                {
-                    expressionList.Add((
-                        foreignIndexElement.UniqueParentName,
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName)),
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
-                                    SyntaxFactory.IdentifierName(foreignIndexElement.UniqueParentName))))));
-                }
-
                 //            this.AccountCode = position.AccountCode;
                 //            this.AssetCode = position.AssetCode;
+                //            this.DataAction = dataAction;
                 //            this.Date = position.Date;
                 //            this.Quantity = position.Quantity;
                 var statements = new List<StatementSyntax>();
@@ -195,7 +183,29 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
 
-                    //        /// <param name="data">The data behind the properties.</param>
+                    //        /// <param name="dataAction">The data action.</param>
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                    SyntaxFactory.XmlText()
+                                    .WithTextTokens(
+                                        SyntaxFactory.TokenList(
+                                            new[]
+                                            {
+                                                SyntaxFactory.XmlTextLiteral(
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                    " <param name=\"dataAction\">The data action.</param>",
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                                SyntaxFactory.XmlTextNewLine(
+                                                    SyntaxFactory.TriviaList(),
+                                                    Environment.NewLine,
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                            }))))),
+
+                    //        /// <param name="data">The AccountId.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,

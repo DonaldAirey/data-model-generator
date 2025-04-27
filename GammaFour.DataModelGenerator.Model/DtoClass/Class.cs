@@ -2,7 +2,7 @@
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.RowClass
+namespace GammaFour.DataModelGenerator.Model.DtoClass
 {
     using System;
     using System.Collections.Generic;
@@ -110,7 +110,6 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = this.CreatePrivateReadonlyFields(members);
                 members = this.CreateConstructors(members);
                 members = this.CreatePublicProperties(members);
                 members = this.CreatePublicMethods(members);
@@ -126,32 +125,8 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // Add the constructors.
-            members = members.Add(new Constructor(this.tableElement).Syntax);
-            members = members.Add(new CopyConstructor(this.tableElement).Syntax);
-            members = members.Add(new DtoConstructor(this.tableElement).Syntax);
-
-            // Return the new collection of members.
-            return members;
-        }
-
-        /// <summary>
-        /// Create the private instance fields.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The syntax for creating the internal instance properties.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePrivateReadonlyFields(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // This will create the private instance fields.
-            List<SyntaxElement> fields = new List<SyntaxElement>
-            {
-                new AsyncReaderWriterLockField(),
-            };
-
-            // Alphabetize and add the fields as members of the class.
-            foreach (var syntaxElement in fields.OrderBy(m => m.Name))
-            {
-                members = members.Add(syntaxElement.Syntax);
-            }
+            members = members.Add(new ConstructorMaster(this.tableElement).Syntax);
+            members = members.Add(new ConstructorSlave(this.tableElement).Syntax);
 
             // Return the new collection of members.
             return members;
@@ -167,12 +142,8 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>
             {
-                new CopyFromMethod(this.tableElement),
-                new EnterReadLockAsyncMethod(),
-                new EnterWriteLockAsyncMethod(),
                 new EqualsMethod(this.tableElement),
                 new GetHashCodeMethod(this.tableElement),
-                new TryEnterReadLockMethod(),
             };
 
             // Alphabetize and add the methods as members of the class.
@@ -194,23 +165,12 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> properties = new List<SyntaxElement>();
+            properties.Add(new DataActionProperty());
 
             // Create a property for each column.
             foreach (ColumnElement columnElement in this.tableElement.Columns)
             {
-                properties.Add(new ColumnProperty(columnElement));
-            }
-
-            // Create a property for each parent row.
-            foreach (var foreignIndexElement in this.tableElement.ParentIndices)
-            {
-                properties.Add(new ParentRowProperty(foreignIndexElement));
-            }
-
-            // Create a property for each foriegn index.
-            foreach (var foreignIndexElement in this.tableElement.ForeignIndices)
-            {
-                properties.Add(new ForeignKeyProperty(foreignIndexElement));
+                properties.Add(new PropertyProperty(columnElement));
             }
 
             // Alphabetize and add the properties as members of the class.

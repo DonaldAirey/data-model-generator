@@ -43,11 +43,18 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                         .WithTypeArgumentList(
                             SyntaxFactory.TypeArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                    SyntaxFactory.IdentifierName("RowChangedEventArgs"))))))
+                                    SyntaxFactory.GenericName(
+                                        SyntaxFactory.Identifier("RowChangedEventArgs"))
+                                    .WithTypeArgumentList(
+                                        SyntaxFactory.TypeArgumentList(
+                                            SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                SyntaxFactory.QualifiedName(
+                                                    SyntaxFactory.IdentifierName("DataTransferObjects"),
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Name))))))))))
                 .WithVariables(
                     SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                         SyntaxFactory.VariableDeclarator(
-                            SyntaxFactory.Identifier(this.Name)))))
+                            SyntaxFactory.Identifier("RowChanged")))))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))

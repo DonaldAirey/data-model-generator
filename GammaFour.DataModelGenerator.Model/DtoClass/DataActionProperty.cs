@@ -1,73 +1,84 @@
-// <copyright file="Class.cs" company="Gamma Four, Inc.">
+// <copyright file="DataActionProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
+namespace GammaFour.DataModelGenerator.Model.DtoClass
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a row.
+    /// Creates a field that holds the name.
     /// </summary>
-    public class Class : SyntaxElement
+    public class DataActionProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Class"/> class.
+        /// Initializes a new instance of the <see cref="DataActionProperty"/> class.
         /// </summary>
-        public Class()
+        public DataActionProperty()
         {
             // Initialize the object.
-            this.Name = "RowChangedEventArgs";
+            this.Name = "DataAction";
 
-            //    /// <summary>
-            //    /// Arguments describing an event that changed a row.
-            //    /// </summary>
-            //    public class RowChangedEventArgs<T>(T row) : EventArgs
-            //    {
-            //        <Members>
-            //    }
-            this.Syntax = SyntaxFactory.ClassDeclaration("RowChangedEventArgs")
-            .WithModifiers(
-                SyntaxFactory.TokenList(
-                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithTypeParameterList(
-                SyntaxFactory.TypeParameterList(
-                    SyntaxFactory.SingletonSeparatedList<TypeParameterSyntax>(
-                        SyntaxFactory.TypeParameter(
-                            SyntaxFactory.Identifier("T")))))
-            .WithParameterList(
-                SyntaxFactory.ParameterList(
-                    SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
-                        SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier("row"))
-                        .WithType(
-                            SyntaxFactory.IdentifierName("T")))))
-            .WithBaseList(
-                SyntaxFactory.BaseList(
-                    SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(
-                        SyntaxFactory.SimpleBaseType(
-                            SyntaxFactory.IdentifierName("EventArgs")))))
-            .WithMembers(this.Members)
-            .WithLeadingTrivia(this.LeadingTrivia);
+            //        /// <summary>
+            //        /// Gets the data action.
+            //        /// </summary>
+            //        public DataAction DataAction { get; }
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
+                SyntaxFactory.IdentifierName("DataAction"),
+                SyntaxFactory.Identifier("DataAction"))
+            .WithModifiers(DataActionProperty.Modifiers)
+            .WithAccessorList(DataActionProperty.AccessorList)
+            .WithLeadingTrivia(DataActionProperty.LeadingTrivia);
+        }
+
+        /// <summary>
+        /// Gets the list of accessors.
+        /// </summary>
+        private static AccessorListSyntax AccessorList
+        {
+            get
+            {
+                return SyntaxFactory.AccessorList(
+                    SyntaxFactory.List(
+                        new AccessorDeclarationSyntax[]
+                        {
+                            DataActionProperty.GetAccessor,
+                        }));
+            }
+        }
+
+        /// <summary>
+        /// Gets the 'Get' accessor.
+        /// </summary>
+        private static AccessorDeclarationSyntax GetAccessor
+        {
+            get
+            {
+                // get;
+                return SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                    .WithSemicolonToken(
+                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            }
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private IEnumerable<SyntaxTrivia> LeadingTrivia
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {
-                //    /// <summary>
-                //    /// A key for finding objects in the Configuration table.
-                //    /// </summary>
-                return SyntaxFactory.TriviaList(
+                // The document comment trivia is collected in this list.
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Gets the Name.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -89,7 +100,7 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Arguments describing an event that changed a row.",
+                                                " Gets the Name.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -107,45 +118,45 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
+
+                // This is the complete document comment.
+                return SyntaxFactory.TriviaList(comments);
             }
         }
 
         /// <summary>
-        /// Gets the members syntax.
+        /// Gets the modifiers.
         /// </summary>
-        private SyntaxList<MemberDeclarationSyntax> Members
+        private static SyntaxTokenList Modifiers
         {
             get
             {
-                // Create the members.
-                SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = this.CreatePublicProperties(members);
-                return members;
+                // internal
+                return SyntaxFactory.TokenList(
+                    new[]
+                    {
+                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                    });
             }
         }
 
         /// <summary>
-        /// Create the public instance properties.
+        /// Gets the 'Set' accessor.
         /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The syntax for creating the public instance properties.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicProperties(SyntaxList<MemberDeclarationSyntax> members)
+        private static AccessorDeclarationSyntax SetAccessor
         {
-            // This will create the public instance properties.
-            List<SyntaxElement> properties = new List<SyntaxElement>
+            get
             {
-                new RowProperty(),
-            };
-
-            // Alphabetize and add the properties as members of the class.
-            foreach (var syntaxElement in properties.OrderBy(m => m.Name))
-            {
-                members = members.Add(syntaxElement.Syntax);
+                //            private set;
+                return SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                    .WithSemicolonToken(
+                        SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+                    .WithModifiers(
+                        SyntaxFactory.TokenList(
+                            SyntaxFactory.Token(SyntaxKind.PrivateKeyword)));
             }
-
-            // Return the new collection of members.
-            return members;
         }
     }
 }

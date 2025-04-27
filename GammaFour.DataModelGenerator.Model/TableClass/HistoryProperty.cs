@@ -1,8 +1,8 @@
-// <copyright file="DataActionProperty.cs" company="Gamma Four, Inc.">
+// <copyright file="HistoryProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
+namespace GammaFour.DataModelGenerator.Model.TableClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,25 +12,39 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a property that navigates to the parent row.
+    /// Creates a field that holds the column.
     /// </summary>
-    public class DataActionProperty : SyntaxElement
+    public class HistoryProperty : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DataActionProperty"/> class.
+        /// The description of the table.
         /// </summary>
-        public DataActionProperty()
+        private readonly TableElement tableElement;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HistoryProperty"/> class.
+        /// </summary>
+        /// <param name="tableElement">The table element.</param>
+        public HistoryProperty(TableElement tableElement)
         {
             // Initialize the object.
-            this.Name = "DataAction";
+            this.tableElement = tableElement;
+            this.Name = "History";
 
             //        /// <summary>
-            //        /// Gets the action that caused the change.
+            //        /// Gets the history.
             //        /// </summary>
-            //        public DataAction DataAction { get; } = dataAction;
+            //        public LinkedList<DataTransferObjects.Account> History { get; } = new LinkedList<DataTransferObjects.Account>();
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.IdentifierName("DataAction"),
-                SyntaxFactory.Identifier(this.Name))
+                SyntaxFactory.GenericName(
+                    SyntaxFactory.Identifier("LinkedList"))
+                .WithTypeArgumentList(
+                    SyntaxFactory.TypeArgumentList(
+                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                            SyntaxFactory.QualifiedName(
+                                SyntaxFactory.IdentifierName("DataTransferObjects"),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name))))),
+                SyntaxFactory.Identifier("History"))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
@@ -43,16 +57,26 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
                             SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
             .WithInitializer(
                 SyntaxFactory.EqualsValueClause(
-                    SyntaxFactory.IdentifierName("dataAction")))
+                    SyntaxFactory.ObjectCreationExpression(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("LinkedList"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                    SyntaxFactory.QualifiedName(
+                                        SyntaxFactory.IdentifierName("DataTransferObjects"),
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name))))))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList())))
             .WithSemicolonToken(
                 SyntaxFactory.Token(SyntaxKind.SemicolonToken))
-            .WithLeadingTrivia(this.LeadingTrivia);
+            .WithLeadingTrivia(HistoryProperty.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private IEnumerable<SyntaxTrivia> LeadingTrivia
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {
@@ -60,7 +84,7 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Gets the action that caused the change.
+                    //        /// Gets the history.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -83,7 +107,7 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " Gets the action that caused the change.",
+                                                $" Gets the history.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

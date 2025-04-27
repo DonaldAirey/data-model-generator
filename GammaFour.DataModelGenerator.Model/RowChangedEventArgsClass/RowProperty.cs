@@ -29,8 +29,7 @@ namespace GammaFour.DataModelGenerator.Model.RowChangedEventArgsClass
             //        /// </summary>
             //        public object Row { get; } = row;
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                SyntaxFactory.PredefinedType(
-                    SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
+                SyntaxFactory.IdentifierName("T"),
                 SyntaxFactory.Identifier("Row"))
             .WithModifiers(
                 SyntaxFactory.TokenList(

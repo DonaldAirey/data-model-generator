@@ -177,8 +177,63 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         {
             get
             {
-                return SyntaxFactory.Block(
-                    new List<StatementSyntax>
+                var statements = new List<StatementSyntax>
+                {
+                    //            var dataTransferObject = new DataTransferObjects.Account(dataAction, account);
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(
+                                SyntaxFactory.Identifier(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.VarKeyword,
+                                    "var",
+                                    "var",
+                                    SyntaxFactory.TriviaList())))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("dataTransferObject"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.ObjectCreationExpression(
+                                            SyntaxFactory.QualifiedName(
+                                                SyntaxFactory.IdentifierName("DataTransferObjects"),
+                                                SyntaxFactory.IdentifierName(this.tableElement.Name)))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                    new SyntaxNodeOrToken[]
+                                                    {
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.IdentifierName("dataAction")),
+                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                        SyntaxFactory.Argument(
+                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
+                                                    })))))))),
+                };
+
+                if (this.tableElement.Document.IsMaster)
+                {
+                    //            this.History.AddLast(dataTransferObject);
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("History")),
+                                    SyntaxFactory.IdentifierName("AddLast")))
+                            .WithArgumentList(
+                                SyntaxFactory.ArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                        SyntaxFactory.Argument(
+                                            SyntaxFactory.IdentifierName("dataTransferObject")))))));
+                }
+
+                statements.AddRange(
+                    new StatementSyntax[]
                     {
                         //            if (this.RowChanged != null)
                         //            {
@@ -195,6 +250,8 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxKind.NullLiteralExpression)),
                             SyntaxFactory.Block(this.TryInvoke)),
                     });
+
+                return SyntaxFactory.Block(statements);
             }
         }
 
@@ -237,18 +294,19 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                     SyntaxFactory.Token(SyntaxKind.CommaToken),
                                                     SyntaxFactory.Argument(
                                                         SyntaxFactory.ObjectCreationExpression(
-                                                            SyntaxFactory.IdentifierName("RowChangedEventArgs"))
+                                                            SyntaxFactory.GenericName(
+                                                                SyntaxFactory.Identifier("RowChangedEventArgs"))
+                                                            .WithTypeArgumentList(
+                                                                SyntaxFactory.TypeArgumentList(
+                                                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                                        SyntaxFactory.QualifiedName(
+                                                                            SyntaxFactory.IdentifierName("DataTransferObjects"),
+                                                                            SyntaxFactory.IdentifierName(this.tableElement.Name))))))
                                                         .WithArgumentList(
                                                             SyntaxFactory.ArgumentList(
-                                                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                                    new SyntaxNodeOrToken[]
-                                                                    {
-                                                                        SyntaxFactory.Argument(
-                                                                            SyntaxFactory.IdentifierName("dataAction")),
-                                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                                        SyntaxFactory.Argument(
-                                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
-                                                                    })))),
+                                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                                    SyntaxFactory.Argument(
+                                                                        SyntaxFactory.IdentifierName("dataTransferObject")))))),
                                                 })))))))
                     .WithFinally(
                         SyntaxFactory.FinallyClause(
