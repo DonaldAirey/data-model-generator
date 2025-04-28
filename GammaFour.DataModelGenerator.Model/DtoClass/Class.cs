@@ -125,6 +125,7 @@ namespace GammaFour.DataModelGenerator.Model.DtoClass
         private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
             // Add the constructors.
+            members = members.Add(new Constructor(this.tableElement).Syntax);
             members = members.Add(new ConstructorMaster(this.tableElement).Syntax);
             members = members.Add(new ConstructorSlave(this.tableElement).Syntax);
 

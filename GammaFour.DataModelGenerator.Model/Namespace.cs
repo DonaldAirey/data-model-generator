@@ -52,6 +52,7 @@ namespace GammaFour.DataModelGenerator.Model
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Concurrent")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Diagnostics.CodeAnalysis")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json.Serialization")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")),
                 };

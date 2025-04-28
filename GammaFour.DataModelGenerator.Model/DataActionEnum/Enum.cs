@@ -25,20 +25,47 @@ namespace GammaFour.DataModelGenerator.Model.DataActionEnum
             this.Name = "DataAction";
 
             //    /// <summary>
-            //    /// The Configuration table.
+            //    /// An action on a row.
             //    /// </summary>
-            //    public partial class AchEvents : ITable, IEnumerable<AchEvent>
+            //    [JsonConverter(typeof(JsonStringEnumConverter))]
+            //    public enum DataAction
             //    {
             //        <Members>
             //    }
             this.Syntax = SyntaxFactory.EnumDeclaration(this.Name)
+            .WithAttributeLists(
+                SyntaxFactory.SingletonList<AttributeListSyntax>(
+                    SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                SyntaxFactory.IdentifierName("JsonConverter"))
+                            .WithArgumentList(
+                                SyntaxFactory.AttributeArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
+                                        SyntaxFactory.AttributeArgument(
+                                            SyntaxFactory.TypeOfExpression(
+                                                SyntaxFactory.IdentifierName("JsonStringEnumConverter"))))))))))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithMembers(
-                SyntaxFactory.SeparatedList<EnumMemberDeclarationSyntax>(
+            .WithLeadingTrivia(this.LeadingTrivia)
+            .WithMembers(Enum.Members);
+        }
+
+        /// <summary>
+        /// Gets the members.
+        /// </summary>
+        private static SeparatedSyntaxList<EnumMemberDeclarationSyntax> Members
+        {
+            get
+            {
+                return SyntaxFactory.SeparatedList<EnumMemberDeclarationSyntax>(
                     new SyntaxNodeOrToken[]
                     {
+                        //        /// <summary>
+                        //        /// Add an item.
+                        //        /// </summary>
+                        //        Add,
                         SyntaxFactory.EnumMemberDeclaration(
                             SyntaxFactory.Identifier(
                                 SyntaxFactory.TriviaList(
@@ -62,7 +89,7 @@ namespace GammaFour.DataModelGenerator.Model.DataActionEnum
                                                             SyntaxFactory.XmlText()
                                                             .WithTextTokens(
                                                                 SyntaxFactory.TokenList(
-                                                                    new[]
+                                                                    new []
                                                                     {
                                                                         SyntaxFactory.XmlTextNewLine(
                                                                             SyntaxFactory.TriviaList(),
@@ -107,6 +134,11 @@ namespace GammaFour.DataModelGenerator.Model.DataActionEnum
                                 "Add",
                                 SyntaxFactory.TriviaList())),
                         SyntaxFactory.Token(SyntaxKind.CommaToken),
+
+                        //        /// <summary>
+                        //        /// Remove an item.
+                        //        /// </summary>
+                        //        Remove,
                         SyntaxFactory.EnumMemberDeclaration(
                             SyntaxFactory.Identifier(
                                 SyntaxFactory.TriviaList(
@@ -130,8 +162,7 @@ namespace GammaFour.DataModelGenerator.Model.DataActionEnum
                                                             SyntaxFactory.XmlText()
                                                             .WithTextTokens(
                                                                 SyntaxFactory.TokenList(
-                                                                    new[]
-                                                                    {
+                                                                    new []{
                                                                         SyntaxFactory.XmlTextNewLine(
                                                                             SyntaxFactory.TriviaList(),
                                                                             Environment.NewLine,
@@ -174,7 +205,13 @@ namespace GammaFour.DataModelGenerator.Model.DataActionEnum
                                                 })))),
                                 "Remove",
                                 SyntaxFactory.TriviaList())),
+
                         SyntaxFactory.Token(SyntaxKind.CommaToken),
+
+                        //        /// <summary>
+                        //        /// Update an item.
+                        //        /// </summary>
+                        //        Update,
                         SyntaxFactory.EnumMemberDeclaration(
                             SyntaxFactory.Identifier(
                                 SyntaxFactory.TriviaList(
@@ -198,7 +235,7 @@ namespace GammaFour.DataModelGenerator.Model.DataActionEnum
                                                             SyntaxFactory.XmlText()
                                                             .WithTextTokens(
                                                                 SyntaxFactory.TokenList(
-                                                                    new[]
+                                                                    new []
                                                                     {
                                                                         SyntaxFactory.XmlTextNewLine(
                                                                             SyntaxFactory.TriviaList(),
@@ -243,8 +280,8 @@ namespace GammaFour.DataModelGenerator.Model.DataActionEnum
                                 "Update",
                                 SyntaxFactory.TriviaList())),
                         SyntaxFactory.Token(SyntaxKind.CommaToken),
-                    }))
-                .WithLeadingTrivia(this.LeadingTrivia);
+                    });
+            }
         }
 
         /// <summary>
