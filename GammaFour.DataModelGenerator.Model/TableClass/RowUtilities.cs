@@ -574,26 +574,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
                                     SyntaxFactory.IdentifierName("IncrementRowVersion")))))));
             }
-            else
-            {
-                //            this.dataModel.RowVersion = account.RowVersion;
-                expressionList.Add((
-                    "RowVersion",
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
-                                SyntaxFactory.IdentifierName("RowVersion")),
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
-                                SyntaxFactory.IdentifierName("RowVersion"))))));
-            }
 
             //            this.AccountCode = position.AccountCode;
             //            this.AssetCode = position.AssetCode;
@@ -916,7 +896,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             }
             else
             {
-                //            this.dataModel.RowVersion = account.RowVersion;
+                //            foundRow.RowVersion = account.RowVersion;
                 expressionList.Add((
                     "RowVersion",
                     SyntaxFactory.ExpressionStatement(
@@ -1268,7 +1248,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             }
             else
             {
-                //            this.dataModel.RowVersion = account.RowVersion;
+                //            foundRow.RowVersion = account.RowVersion;
                 expressionList.Add((
                     "RowVersion",
                     SyntaxFactory.ExpressionStatement(

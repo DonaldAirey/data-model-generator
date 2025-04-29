@@ -177,40 +177,64 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         {
             get
             {
-                var statements = new List<StatementSyntax>
+                var statements = new List<StatementSyntax>();
+
+                // On the slave, updating a row also updates the row version.
+                if (!this.tableElement.Document.IsMaster)
                 {
-                    //            var dataTransferObject = new DataTransferObjects.Account(dataAction, account);
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(
-                                SyntaxFactory.Identifier(
-                                    SyntaxFactory.TriviaList(),
-                                    SyntaxKind.VarKeyword,
-                                    "var",
-                                    "var",
-                                    SyntaxFactory.TriviaList())))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("dataTransferObject"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
-                                        SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.QualifiedName(
-                                                SyntaxFactory.IdentifierName("DataTransferObjects"),
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name)))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                                    new SyntaxNodeOrToken[]
-                                                    {
-                                                        SyntaxFactory.Argument(
-                                                            SyntaxFactory.IdentifierName("dataAction")),
-                                                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                                                        SyntaxFactory.Argument(
-                                                            SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
-                                                    })))))))),
-                };
+                    //            this.dataModel.RowVersion = account.RowVersion;
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToCamelCase())),
+                                    SyntaxFactory.IdentifierName("RowVersion")),
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName()),
+                                    SyntaxFactory.IdentifierName("RowVersion")))));
+                }
+
+                statements.AddRange(
+                    new StatementSyntax[]
+                    {
+                        //            var dataTransferObject = new DataTransferObjects.Account(dataAction, account);
+                        SyntaxFactory.LocalDeclarationStatement(
+                            SyntaxFactory.VariableDeclaration(
+                                SyntaxFactory.IdentifierName(
+                                    SyntaxFactory.Identifier(
+                                        SyntaxFactory.TriviaList(),
+                                        SyntaxKind.VarKeyword,
+                                        "var",
+                                        "var",
+                                        SyntaxFactory.TriviaList())))
+                            .WithVariables(
+                                SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                    SyntaxFactory.VariableDeclarator(
+                                        SyntaxFactory.Identifier("dataTransferObject"))
+                                    .WithInitializer(
+                                        SyntaxFactory.EqualsValueClause(
+                                            SyntaxFactory.ObjectCreationExpression(
+                                                SyntaxFactory.QualifiedName(
+                                                    SyntaxFactory.IdentifierName("DataTransferObjects"),
+                                                    SyntaxFactory.IdentifierName(this.tableElement.Name)))
+                                            .WithArgumentList(
+                                                SyntaxFactory.ArgumentList(
+                                                    SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                                        new SyntaxNodeOrToken[]
+                                                        {
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.IdentifierName("dataAction")),
+                                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
+                                                        })))))))),
+                    });
 
                 if (this.tableElement.Document.IsMaster)
                 {
