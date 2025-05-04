@@ -89,7 +89,7 @@ namespace GammaFour.DataModelGenerator.Model.DataActionEnum
                                                             SyntaxFactory.XmlText()
                                                             .WithTextTokens(
                                                                 SyntaxFactory.TokenList(
-                                                                    new []
+                                                                    new SyntaxToken[]
                                                                     {
                                                                         SyntaxFactory.XmlTextNewLine(
                                                                             SyntaxFactory.TriviaList(),
@@ -162,7 +162,8 @@ namespace GammaFour.DataModelGenerator.Model.DataActionEnum
                                                             SyntaxFactory.XmlText()
                                                             .WithTextTokens(
                                                                 SyntaxFactory.TokenList(
-                                                                    new []{
+                                                                    new SyntaxToken[]
+                                                                    {
                                                                         SyntaxFactory.XmlTextNewLine(
                                                                             SyntaxFactory.TriviaList(),
                                                                             Environment.NewLine,
@@ -235,7 +236,7 @@ namespace GammaFour.DataModelGenerator.Model.DataActionEnum
                                                             SyntaxFactory.XmlText()
                                                             .WithTextTokens(
                                                                 SyntaxFactory.TokenList(
-                                                                    new []
+                                                                    new SyntaxToken[]
                                                                     {
                                                                         SyntaxFactory.XmlTextNewLine(
                                                                             SyntaxFactory.TriviaList(),
