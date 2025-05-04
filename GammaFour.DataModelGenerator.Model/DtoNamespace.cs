@@ -92,9 +92,32 @@ namespace GammaFour.DataModelGenerator.Model
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
+                members = this.CreatePublicInterfaces(members);
                 members = this.CreatePublicClasses(members);
                 return members;
             }
+        }
+
+        /// <summary>
+        /// Creates the classes.
+        /// </summary>
+        /// <param name="members">The collection of members.</param>
+        /// <returns>The collection of members augmented with the classes.</returns>
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicInterfaces(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            List<SyntaxElement> syntaxElements = new List<SyntaxElement>();
+
+            // Add the members.
+            syntaxElements.Add(new IRowVersionedInterface.Interface());
+
+            // Alphabetize the list of classes and add them to the structure.
+            foreach (var syntaxElement in syntaxElements.OrderBy(se => se.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
+            }
+
+            // This is the collection of alphabetized fields.
+            return members;
         }
 
         /// <summary>

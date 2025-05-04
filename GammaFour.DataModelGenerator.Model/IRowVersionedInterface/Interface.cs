@@ -1,8 +1,8 @@
-// <copyright file="Class.cs" company="Gamma Four, Inc.">
+// <copyright file="Interface.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.DtoClass
+namespace GammaFour.DataModelGenerator.Model.IRowVersionedInterface
 {
     using System;
     using System.Collections.Generic;
@@ -13,56 +13,49 @@ namespace GammaFour.DataModelGenerator.Model.DtoClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a row.
+    /// The RowVersioned interface.
     /// </summary>
-    public class Class : SyntaxElement
+    public class Interface : SyntaxElement
     {
         /// <summary>
-        /// The unique constraint schema.
+        /// Initializes a new instance of the <see cref="Interface"/> class.
         /// </summary>
-        private readonly TableElement tableElement;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Class"/> class.
-        /// </summary>
-        /// <param name="tableElement">A description of a unique constraint.</param>
-        public Class(TableElement tableElement)
+        public Interface()
         {
             // Initialize the object.
-            this.tableElement = tableElement;
-            this.Name = tableElement.Name;
+            this.Name = "RowVersioned";
 
             //    /// <summary>
-            //    /// A row of data in the Configuration table.
+            //    /// An object with a row version.
             //    /// </summary>
-            //    public class Account
+            //    public interface IRowVersioned
             //    {
-            //        <Members>
+            //        /// <summary>
+            //        /// Gets the row version.
+            //        /// </summary>
+            //        long RowVersion { get; }
             //    }
-            this.Syntax = SyntaxFactory.ClassDeclaration(this.tableElement.Name)
+            this.Syntax = SyntaxFactory.InterfaceDeclaration("IRowVersioned")
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithBaseList(
-                SyntaxFactory.BaseList(
-                    SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(
-                        SyntaxFactory.SimpleBaseType(
-                            SyntaxFactory.IdentifierName("IRowVersioned")))))
-            .WithMembers(this.Members)
-            .WithLeadingTrivia(this.LeadingTrivia);
+            .WithMembers(Interface.Members)
+            .WithLeadingTrivia(Interface.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private IEnumerable<SyntaxTrivia> LeadingTrivia
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {
-                //    /// <summary>
-                //    /// A key for finding objects in the Configuration table.
-                //    /// </summary>
-                return SyntaxFactory.TriviaList(
+                // The document comment trivia is collected in this list.
+                return new List<SyntaxTrivia>
+                {
+                    //    /// <summary>
+                    //    /// An object with a row version.
+                    //    /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -84,7 +77,7 @@ namespace GammaFour.DataModelGenerator.Model.DtoClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" A {this.tableElement.Name} row.",
+                                                " An object with a row version..",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -102,84 +95,39 @@ namespace GammaFour.DataModelGenerator.Model.DtoClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
             }
         }
 
         /// <summary>
         /// Gets the members syntax.
         /// </summary>
-        private SyntaxList<MemberDeclarationSyntax> Members
+        private static SyntaxList<MemberDeclarationSyntax> Members
         {
             get
             {
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = this.CreateConstructors(members);
-                members = this.CreatePublicProperties(members);
-                members = this.CreatePublicMethods(members);
+                members = Interface.CreateProperties(members);
                 return members;
             }
         }
 
         /// <summary>
-        /// Create the constructors.
+        /// Create the private instance fields.
         /// </summary>
         /// <param name="members">The structure members.</param>
-        /// <returns>The syntax for creating the constructors.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
+        /// <returns>The syntax for creating the internal instance properties.</returns>
+        private static SyntaxList<MemberDeclarationSyntax> CreateProperties(SyntaxList<MemberDeclarationSyntax> members)
         {
-            // Add the constructors.
-            members = members.Add(new Constructor(this.tableElement).Syntax);
-            members = members.Add(new ConstructorMaster(this.tableElement).Syntax);
-            members = members.Add(new ConstructorSlave(this.tableElement).Syntax);
-
-            // Return the new collection of members.
-            return members;
-        }
-
-        /// <summary>
-        /// Create the public instance methods.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The syntax for creating the public instance methods.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicMethods(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // This will create the public instance properties.
-            List<SyntaxElement> methods = new List<SyntaxElement>
+            // The public properties.
+            List<SyntaxElement> properties = new List<SyntaxElement>
             {
-                new EqualsMethod(this.tableElement),
-                new GetHashCodeMethod(this.tableElement),
+                new RowVersionProperty(),
             };
 
-            // Alphabetize and add the methods as members of the class.
-            foreach (var syntaxElement in methods.OrderBy(m => m.Name))
-            {
-                members = members.Add(syntaxElement.Syntax);
-            }
-
-            // Return the new collection of members.
-            return members;
-        }
-
-        /// <summary>
-        /// Create the public instance properties.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The syntax for creating the public instance properties.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicProperties(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // This will create the public instance properties.
-            List<SyntaxElement> properties = new List<SyntaxElement>();
-            properties.Add(new DataActionProperty());
-
-            // Create a property for each column.
-            foreach (ColumnElement columnElement in this.tableElement.Columns)
-            {
-                properties.Add(new PropertyProperty(columnElement));
-            }
-
-            // Alphabetize and add the properties as members of the class.
+            // Alphabetize the properties.
             foreach (var syntaxElement in properties.OrderBy(m => m.Name))
             {
                 members = members.Add(syntaxElement.Syntax);
