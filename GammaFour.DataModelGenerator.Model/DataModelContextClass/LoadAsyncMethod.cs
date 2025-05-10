@@ -69,58 +69,16 @@ namespace GammaFour.DataModelGenerator.Model.DataModelContextClass
         {
             get
             {
-                // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
-                {
-                    //        /// <summary>
-                    //        /// Loads the <see cref="DataModel"/>.
-                    //        /// </summary>
-                    SyntaxFactory.Trivia(
-                        SyntaxFactory.DocumentationCommentTrivia(
-                            SyntaxKind.SingleLineDocumentationCommentTrivia,
-                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                SyntaxFactory.XmlText()
-                                .WithTextTokens(
-                                    SyntaxFactory.TokenList(
-                                        new[]
-                                        {
-                                            SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " <summary>",
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                            SyntaxFactory.XmlTextNewLine(
-                                                SyntaxFactory.TriviaList(),
-                                                Environment.NewLine,
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                            SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Loads the <see cref=\"{this.xmlSchemaDocument.Name}\"/>.",
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                            SyntaxFactory.XmlTextNewLine(
-                                                SyntaxFactory.TriviaList(),
-                                                Environment.NewLine,
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                            SyntaxFactory.XmlTextLiteral(
-                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " </summary>",
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                            SyntaxFactory.XmlTextNewLine(
-                                                SyntaxFactory.TriviaList(),
-                                                Environment.NewLine,
-                                                string.Empty,
-                                                SyntaxFactory.TriviaList()),
-                                        }))))),
-
-                    //        /// <param name="dataModel">The data model.</param>
-                    SyntaxFactory.Trivia(
-                        SyntaxFactory.DocumentationCommentTrivia(
-                            SyntaxKind.SingleLineDocumentationCommentTrivia,
-                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                return SyntaxFactory.TriviaList(
+                    new List<SyntaxTrivia>
+                    {
+                        //        /// <summary>
+                        //        /// Loads the <see cref="DataModel"/>.
+                        //        /// </summary>
+                        SyntaxFactory.Trivia(
+                            SyntaxFactory.DocumentationCommentTrivia(
+                                SyntaxKind.SingleLineDocumentationCommentTrivia,
+                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
                                     SyntaxFactory.XmlText()
                                     .WithTextTokens(
                                         SyntaxFactory.TokenList(
@@ -128,7 +86,27 @@ namespace GammaFour.DataModelGenerator.Model.DataModelContextClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <param name=\"{this.xmlSchemaDocument.Name.ToCamelCase()}\">The data model.</param>",
+                                                    " <summary>",
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                                SyntaxFactory.XmlTextNewLine(
+                                                    SyntaxFactory.TriviaList(),
+                                                    Environment.NewLine,
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                                SyntaxFactory.XmlTextLiteral(
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                    $" Loads the <see cref=\"{this.xmlSchemaDocument.Name}\"/>.",
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                                SyntaxFactory.XmlTextNewLine(
+                                                    SyntaxFactory.TriviaList(),
+                                                    Environment.NewLine,
+                                                    string.Empty,
+                                                    SyntaxFactory.TriviaList()),
+                                                SyntaxFactory.XmlTextLiteral(
+                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                    " </summary>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -138,31 +116,50 @@ namespace GammaFour.DataModelGenerator.Model.DataModelContextClass
                                                     SyntaxFactory.TriviaList()),
                                             }))))),
 
-                    //        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-                    SyntaxFactory.Trivia(
-                        SyntaxFactory.DocumentationCommentTrivia(
-                            SyntaxKind.SingleLineDocumentationCommentTrivia,
-                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                    SyntaxFactory.XmlText()
-                                    .WithTextTokens(
-                                        SyntaxFactory.TokenList(
-                                            new[]
-                                            {
-                                                SyntaxFactory.XmlTextLiteral(
-                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    " <returns>A <see cref=\"Task\"/> representing the asynchronous operation.</returns>",
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList()),
-                                                SyntaxFactory.XmlTextNewLine(
-                                                    SyntaxFactory.TriviaList(),
-                                                    Environment.NewLine,
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList()),
-                                            }))))),
-                };
+                        //        /// <param name="dataModel">The data model.</param>
+                        SyntaxFactory.Trivia(
+                            SyntaxFactory.DocumentationCommentTrivia(
+                                SyntaxKind.SingleLineDocumentationCommentTrivia,
+                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                        SyntaxFactory.XmlText()
+                                        .WithTextTokens(
+                                            SyntaxFactory.TokenList(
+                                                new[]
+                                                {
+                                                    SyntaxFactory.XmlTextLiteral(
+                                                        SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                        $" <param name=\"{this.xmlSchemaDocument.Name.ToCamelCase()}\">The data model.</param>",
+                                                        string.Empty,
+                                                        SyntaxFactory.TriviaList()),
+                                                    SyntaxFactory.XmlTextNewLine(
+                                                        SyntaxFactory.TriviaList(),
+                                                        Environment.NewLine,
+                                                        string.Empty,
+                                                        SyntaxFactory.TriviaList()),
+                                                }))))),
 
-                // This is the complete document comment.
-                return SyntaxFactory.TriviaList(comments);
+                        //        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+                        SyntaxFactory.Trivia(
+                            SyntaxFactory.DocumentationCommentTrivia(
+                                SyntaxKind.SingleLineDocumentationCommentTrivia,
+                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                        SyntaxFactory.XmlText()
+                                        .WithTextTokens(
+                                            SyntaxFactory.TokenList(
+                                                new[]
+                                                {
+                                                    SyntaxFactory.XmlTextLiteral(
+                                                        SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                        " <returns>A <see cref=\"Task\"/> representing the asynchronous operation.</returns>",
+                                                        string.Empty,
+                                                        SyntaxFactory.TriviaList()),
+                                                    SyntaxFactory.XmlTextNewLine(
+                                                        SyntaxFactory.TriviaList(),
+                                                        Environment.NewLine,
+                                                        string.Empty,
+                                                        SyntaxFactory.TriviaList()),
+                                                }))))),
+                    });
             }
         }
 

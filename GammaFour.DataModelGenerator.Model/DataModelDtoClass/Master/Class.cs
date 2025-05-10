@@ -1,46 +1,45 @@
-// <copyright file="Constructor.cs" company="Gamma Four, Inc.">
+// <copyright file="Class.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.DataModelClass
+namespace GammaFour.DataModelGenerator.Model.DataModelDtoClass.Master
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a constructor.
+    /// Creates a row.
     /// </summary>
-    public class Constructor : SyntaxElement
+    public class Class : SyntaxElement
     {
         /// <summary>
-        /// The table schema.
+        /// The unique constraint schema.
         /// </summary>
         private readonly XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Constructor"/> class.
+        /// Initializes a new instance of the <see cref="Class"/> class.
         /// </summary>
-        /// <param name="xmlSchemaDocument">The table schema.</param>
-        public Constructor(XmlSchemaDocument xmlSchemaDocument)
+        /// <param name="xmlSchemaDocument">A description of a unique constraint.</param>
+        public Class(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
             this.xmlSchemaDocument = xmlSchemaDocument;
-            this.Name = this.xmlSchemaDocument.Name;
+            this.Name = $"{xmlSchemaDocument.Name}Dto";
 
-            //        /// <summary>
-            //        /// Initializes a new instance of the <see cref="Ledger"/> class.
-            //        /// </summary>
-            //        /// <param name="logger">The log device.</param>
-            //        public Ledger(ILogger<Ledger> logger)
-            //        {
-            //            <Body>
-            //        }
-            this.Syntax = SyntaxFactory.ConstructorDeclaration(
-                SyntaxFactory.Identifier(this.Name))
+            //    /// <summary>
+            //    /// The <see cref="Ledger"/> data transfer object.
+            //    /// </summary>
+            //    public class LedgerDto(Master.Ledger ledger)
+            //    {
+            //        <Members>
+            //    }
+            this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
@@ -48,66 +47,13 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                 SyntaxFactory.ParameterList(
                     SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
                         SyntaxFactory.Parameter(
-                            SyntaxFactory.Identifier("logger"))
+                            SyntaxFactory.Identifier(this.xmlSchemaDocument.Name.ToVariableName()))
                         .WithType(
-                            SyntaxFactory.GenericName(
-                                SyntaxFactory.Identifier("ILogger"))
-                            .WithTypeArgumentList(
-                                SyntaxFactory.TypeArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                        SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name))))))))
-            .WithBody(this.Body)
+                            SyntaxFactory.QualifiedName(
+                                SyntaxFactory.IdentifierName("Master"),
+                                SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name))))))
+            .WithMembers(this.Members)
             .WithLeadingTrivia(this.LeadingTrivia);
-        }
-
-        /// <summary>
-        /// Gets the body.
-        /// </summary>
-        private BlockSyntax Body
-        {
-            get
-            {
-                // Collect the statements here.
-                var statements = new List<StatementSyntax>
-                {
-                    //            this.Logger = logger;
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AssignmentExpression(
-                            SyntaxKind.SimpleAssignmentExpression,
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.ThisExpression(),
-                                SyntaxFactory.IdentifierName("Logger")),
-                            SyntaxFactory.IdentifierName("logger"))),
-                };
-
-                // Initialize each of the row sets.
-                foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
-                {
-                    //            this.Things = new Things(this);
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.AssignmentExpression(
-                                SyntaxKind.SimpleAssignmentExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                                SyntaxFactory.ObjectCreationExpression(
-                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural()))
-                                .WithArgumentList(
-                                    SyntaxFactory.ArgumentList(
-                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
-                                            new SyntaxNodeOrToken[]
-                                            {
-                                                SyntaxFactory.Argument(
-                                                    SyntaxFactory.ThisExpression()),
-                                            }))))));
-                }
-
-                // This is the syntax for the body of the constructor.
-                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
-            }
         }
 
         /// <summary>
@@ -117,12 +63,11 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         {
             get
             {
-                // The document comment trivia is collected in this list.
                 return SyntaxFactory.TriviaList(
                     new List<SyntaxTrivia>
                     {
                         //        /// <summary>
-                        //        /// Initializes a new instance of the <see cref="Ledger"/> class.
+                        //        /// Loads the <see cref="DataModel"/>.
                         //        /// </summary>
                         SyntaxFactory.Trivia(
                             SyntaxFactory.DocumentationCommentTrivia(
@@ -145,7 +90,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" Initializes a new instance of the <see cref=\"{this.xmlSchemaDocument.Name}\"/> class.",
+                                                    $" The <see cref=\"{this.xmlSchemaDocument.Name}\"/> data transfer object.",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -165,7 +110,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                                     SyntaxFactory.TriviaList()),
                                             }))))),
 
-                        //        /// <param name="logger">The log device.</param>
+                        //        /// <param name="dataModel">The data model.</param>
                         SyntaxFactory.Trivia(
                             SyntaxFactory.DocumentationCommentTrivia(
                                 SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -177,7 +122,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                             {
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    " <param name=\"logger\">The log device.</param>",
+                                                    $" <param name=\"{this.xmlSchemaDocument.Name.ToCamelCase()}\">The data model.</param>",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -188,6 +133,95 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                             }))))),
                     });
             }
+        }
+
+        /// <summary>
+        /// Gets the members syntax.
+        /// </summary>
+        private SyntaxList<MemberDeclarationSyntax> Members
+        {
+            get
+            {
+                // Create the members.
+                SyntaxList<MemberDeclarationSyntax> members = default;
+                members = this.CreatePrivateReadonlyFields(members);
+                members = this.CreatePublicProperties(members);
+                members = this.CreatePublicMethods(members);
+                return members;
+            }
+        }
+
+        /// <summary>
+        /// Create the private instance fields.
+        /// </summary>
+        /// <param name="members">The structure members.</param>
+        /// <returns>The syntax for creating the internal instance properties.</returns>
+        private SyntaxList<MemberDeclarationSyntax> CreatePrivateReadonlyFields(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            // This will create the private instance fields.
+            List<SyntaxElement> fields = new List<SyntaxElement>
+            {
+                new DataModelField(this.xmlSchemaDocument),
+            };
+
+            // Alphabetize and add the fields as members of the class.
+            foreach (var syntaxElement in fields.OrderBy(m => m.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
+            }
+
+            // Return the new collection of members.
+            return members;
+        }
+
+        /// <summary>
+        /// Create the public instance methods.
+        /// </summary>
+        /// <param name="members">The structure members.</param>
+        /// <returns>The structure members with the methods added.</returns>
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicMethods(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            // This will create the public methods.
+            List<SyntaxElement> methods = new List<SyntaxElement>();
+            foreach (var tableElement in this.xmlSchemaDocument.Tables)
+            {
+                methods.Add(new LoadTableMethod(tableElement));
+            }
+
+            // Alphabetize and add the methods as members of the class.
+            foreach (var syntaxElement in methods.OrderBy(m => m.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
+            }
+
+            // Return the new collection of members.
+            return members;
+        }
+
+        /// <summary>
+        /// Create the public instance properties.
+        /// </summary>
+        /// <param name="members">The structure members.</param>
+        /// <returns>The syntax for creating the public instance properties.</returns>
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicProperties(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            // This will create the public instance properties.
+            List<SyntaxElement> properties = new List<SyntaxElement>();
+
+            // Create a property for each table.
+            foreach (var tableElement in this.xmlSchemaDocument.Tables)
+            {
+                properties.Add(new TableProperty(tableElement));
+            }
+
+            // Alphabetize and add the properties as members of the class.
+            foreach (var syntaxElement in properties.OrderBy(m => m.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
+            }
+
+            // Return the new collection of members.
+            return members;
         }
     }
 }

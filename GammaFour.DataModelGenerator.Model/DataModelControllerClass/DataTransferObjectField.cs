@@ -1,67 +1,78 @@
-// <copyright file="Class.cs" company="Gamma Four, Inc.">
+// <copyright file="DataTransferObjectField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.MvcCoreMvcBuilderExtensionsClass
+namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a row.
+    /// Creates a field to hold a buffer for creating transaction log items.
     /// </summary>
-    public class Class : SyntaxElement
+    public class DataTransferObjectField : SyntaxElement
     {
         /// <summary>
-        /// The XML Schema document.
+        /// The data model schema.
         /// </summary>
         private readonly XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Class"/> class.
+        /// Initializes a new instance of the <see cref="DataTransferObjectField"/> class.
         /// </summary>
-        /// <param name="xmlSchemaDocument">The XML schema document.</param>
-        public Class(XmlSchemaDocument xmlSchemaDocument)
+        /// <param name="xmlSchemaDocument">The XML Schema document.</param>
+        public DataTransferObjectField(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
             this.xmlSchemaDocument = xmlSchemaDocument;
-            this.Name = "MvcCoreMvcBuilderExtensions";
+            this.Name = this.xmlSchemaDocument.Name.ToVariableName();
 
-            //    /// <summary>
-            //    /// Used to configure the MVC environment.
-            //    /// </summary>
-            //    public static class MvcCoreMvcBuilderExtensions
-            //    {
-            //        <Members>
-            //    }
-            this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
+            //        /// <summary>
+            //        /// The data transfer object.
+            //        /// </summary>
+            //        private readonly LedgerDto ledgerDto = new LedgerDto(ledger);
+            this.Syntax = SyntaxFactory.FieldDeclaration(
+                SyntaxFactory.VariableDeclaration(
+                    SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name}Dto"))
+                .WithVariables(
+                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                        SyntaxFactory.VariableDeclarator(
+                            SyntaxFactory.Identifier($"{this.xmlSchemaDocument.Name.ToCamelCase()}Dto"))
+                        .WithInitializer(
+                            SyntaxFactory.EqualsValueClause(
+                                SyntaxFactory.ObjectCreationExpression(
+                                    SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name}Dto"))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToVariableName()))))))))))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     new[]
                     {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                        SyntaxFactory.Token(SyntaxKind.StaticKeyword),
+                        SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                        SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
                     }))
-            .WithMembers(this.Members)
-            .WithLeadingTrivia(this.LeadingTrivia);
+            .WithLeadingTrivia(DataTransferObjectField.LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private IEnumerable<SyntaxTrivia> LeadingTrivia
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {
-                //    /// <summary>
-                //    /// Used to configure the MVC environment.
-                //    /// </summary>
-                return SyntaxFactory.TriviaList(
+                return new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// The log device.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -83,7 +94,7 @@ namespace GammaFour.DataModelGenerator.Model.MvcCoreMvcBuilderExtensionsClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " Used to configure the MVC environment.",
+                                                $" The data transfer object.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -101,45 +112,9 @@ namespace GammaFour.DataModelGenerator.Model.MvcCoreMvcBuilderExtensionsClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
             }
-        }
-
-        /// <summary>
-        /// Gets the members syntax.
-        /// </summary>
-        private SyntaxList<MemberDeclarationSyntax> Members
-        {
-            get
-            {
-                // Create the members.
-                SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = this.CreatePublicStaticMethods(members);
-                return members;
-            }
-        }
-
-        /// <summary>
-        /// Create the public instance properties.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The syntax for creating the public instance properties.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicStaticMethods(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // This will create the public instance properties.
-            List<SyntaxElement> properties = new List<SyntaxElement>
-            {
-                new AddControllersMethod(this.xmlSchemaDocument),
-            };
-
-            // Alphabetize and add the properties as members of the class.
-            foreach (var syntaxElement in properties.OrderBy(m => m.Name))
-            {
-                members = members.Add(syntaxElement.Syntax);
-            }
-
-            // Return the new collection of members.
-            return members;
         }
     }
 }

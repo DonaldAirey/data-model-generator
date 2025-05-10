@@ -316,6 +316,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             {
                 new AddOneMethod(this.tableElement),
                 new AddManyMethod(this.tableElement),
+                new ClearMethod(),
                 new CommitMethod(),
                 new EnterReadLockAsyncMethod(),
                 new EnterWriteLockAsyncMethod(),

@@ -2,7 +2,7 @@
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.RestClass
+namespace GammaFour.DataModelGenerator.Common
 {
     using System.Collections.Generic;
     using Microsoft.CodeAnalysis;
@@ -17,7 +17,49 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
         /// <summary>
         /// Gets a block of code.
         /// </summary>
-        internal static SyntaxList<CatchClauseSyntax> CommonCatchClauses
+        public static SyntaxList<CatchClauseSyntax> CommonReadCatchClauses
+        {
+            get
+            {
+                // The catch clauses are collected in this list.
+                List<CatchClauseSyntax> clauses = new List<CatchClauseSyntax>
+                {
+                    //            catch (OperationCanceledException operationCanceledException)
+                    //            {
+                    //                <HandleOperationCancelledException>
+                    //            }
+                    SyntaxFactory.CatchClause()
+                        .WithDeclaration(
+                            SyntaxFactory.CatchDeclaration(
+                                SyntaxFactory.IdentifierName("OperationCanceledException"))
+                            .WithIdentifier(
+                                SyntaxFactory.Identifier("operationCanceledException")))
+                        .WithBlock(
+                            SyntaxFactory.Block(CommonStatements.HandleOperationCanceledException)),
+
+                    //            catch (Exception exception)
+                    //            {
+                    //                <HandleException>
+                    //            }
+                    SyntaxFactory.CatchClause()
+                    .WithDeclaration(
+                        SyntaxFactory.CatchDeclaration(
+                            SyntaxFactory.IdentifierName("Exception"))
+                        .WithIdentifier(
+                            SyntaxFactory.Identifier("exception")))
+                    .WithBlock(
+                        SyntaxFactory.Block(CommonStatements.HandleException)),
+                };
+
+                // This is the collection of catch clauses.
+                return SyntaxFactory.List<CatchClauseSyntax>(clauses);
+            }
+        }
+
+        /// <summary>
+        /// Gets a block of code.
+        /// </summary>
+        public static SyntaxList<CatchClauseSyntax> CommonWriteCatchClauses
         {
             get
             {

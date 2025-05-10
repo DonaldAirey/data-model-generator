@@ -1,11 +1,12 @@
-// <copyright file="GetOneMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="GetMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.RestClass
+namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using GammaFour.DataModelGenerator.Model.RestClass;
     using Microsoft.CodeAnalysis;
@@ -15,42 +16,54 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
     /// <summary>
     /// A method to create a row.
     /// </summary>
-    public class GetOneMethod : SyntaxElement
+    public class GetMethod : SyntaxElement
     {
         /// <summary>
-        /// The table element.
+        /// The data model schema.
         /// </summary>
-        private readonly TableElement tableElement;
+        private readonly XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GetOneMethod"/> class.
+        /// Initializes a new instance of the <see cref="GetMethod"/> class.
         /// </summary>
-        /// <param name="tableElement">The table element.</param>
-        public GetOneMethod(TableElement tableElement)
+        /// <param name="xmlSchemaDocument">The schema document.</param>
+        public GetMethod(XmlSchemaDocument xmlSchemaDocument)
         {
-            // Initialize the object.  Note that we decorate the name of every method that's not the primary key to prevent ambiguous signatures.
-            this.tableElement = tableElement;
-            this.Name = $"Get{this.tableElement.Name}";
+            // Initialize the object.
+            this.xmlSchemaDocument = xmlSchemaDocument;
+            this.Name = $"Get{this.xmlSchemaDocument.Name}Async";
 
             //        /// <summary>
-            //        /// Gets a <see cref="Account"/> row.
+            //        /// Gets the <see cref="Ledger "/>.
             //        /// </summary>
-            //        /// <param name="accountId">The AccountId key.</param>
-            //        /// <returns>The row matching the key or NotFound.</returns>
-            //        [HttpGet("{accountId}")]
-            //        public async Task<IActionResult> GetAccount([FromRoute] System.Guid accountId)
+            //        /// <param name="rowVersion">The row version.</param>
+            //        /// <returns>A JSON structure containing all the most recent records in the Portfolio Ledger model.</returns>
+            //        [HttpGet("{rowVersion}")]
+            //        public async Task<IActionResult> GetLedgerAsync(long rowVersion)
             //        {
             //            <Body>
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
                 SyntaxFactory.GenericName(
                     SyntaxFactory.Identifier("Task"))
-                .WithTypeArgumentList(
-                    SyntaxFactory.TypeArgumentList(
-                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                            SyntaxFactory.IdentifierName("IActionResult")))),
+            .WithTypeArgumentList(
+                SyntaxFactory.TypeArgumentList(
+                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                        SyntaxFactory.IdentifierName("IActionResult")))),
                 SyntaxFactory.Identifier(this.Name))
-            .WithAttributeLists(this.tableElement.PrimaryIndex.GetKeyAsHttpAttributes("HttpGet"))
+            .WithAttributeLists(
+                SyntaxFactory.SingletonList<AttributeListSyntax>(
+                    SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                SyntaxFactory.IdentifierName("HttpGet"))
+                            .WithArgumentList(
+                                SyntaxFactory.AttributeArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
+                                        SyntaxFactory.AttributeArgument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                SyntaxFactory.Literal("{rowVersion}"))))))))))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     new[]
@@ -60,7 +73,12 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                     }))
             .WithParameterList(
                 SyntaxFactory.ParameterList(
-                    SyntaxFactory.SeparatedList<ParameterSyntax>(this.tableElement.PrimaryIndex.GetKeyAsHttpArguments())))
+                    SyntaxFactory.SingletonSeparatedList<ParameterSyntax>(
+                        SyntaxFactory.Parameter(
+                            SyntaxFactory.Identifier("rowVersion"))
+                        .WithType(
+                            SyntaxFactory.PredefinedType(
+                                SyntaxFactory.Token(SyntaxKind.LongKeyword))))))
             .WithBody(this.Body)
             .WithLeadingTrivia(this.LeadingTrivia);
         }
@@ -94,7 +112,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                 };
 
                 // This is the syntax for the body of the method.
-                return SyntaxFactory.Block(statements);
+                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
             }
         }
 
@@ -109,7 +127,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Gets a <see cref="Account"/> row.
+                    //        /// Gets the <see cref="Ledger "/>.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -132,7 +150,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Gets a specific <see cref=\"{this.tableElement.Name}\"/> row.",
+                                                $" Gets the <see cref=\"{this.xmlSchemaDocument.Name} \"/>.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -151,37 +169,8 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                         }))))),
-                };
 
-                //        /// <param name="accountId">The AccountId key.</param>
-                foreach (var columnReferenceElement in this.tableElement.PrimaryIndex.Columns)
-                {
-                    var columnElement = columnReferenceElement.Column;
-                    comments.Add(
-                        SyntaxFactory.Trivia(
-                            SyntaxFactory.DocumentationCommentTrivia(
-                                SyntaxKind.SingleLineDocumentationCommentTrivia,
-                                SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                                    SyntaxFactory.XmlText()
-                                    .WithTextTokens(
-                                        SyntaxFactory.TokenList(
-                                            new[]
-                                            {
-                                                SyntaxFactory.XmlTextLiteral(
-                                                    SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    $" <param name=\"{columnElement.Name.ToCamelCase()}\">The {columnElement.Name} key.</param>",
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList()),
-                                                SyntaxFactory.XmlTextNewLine(
-                                                    SyntaxFactory.TriviaList(),
-                                                    Environment.NewLine,
-                                                    string.Empty,
-                                                    SyntaxFactory.TriviaList()),
-                                            }))))));
-                }
-
-                //        /// <returns>The row matching the key or NotFound.</returns>
-                comments.Add(
+                    //        /// <param name="rowVersion">The row version.</param>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -193,7 +182,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                                         {
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " <returns>The row matching the key or NotFound.</returns>",
+                                                " <param name=\"rowVersion\">The row version.</param>",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -201,7 +190,30 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+
+                    //        /// <returns>The most recent records in the data model.</returns>
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                SyntaxFactory.XmlText()
+                                .WithTextTokens(
+                                    SyntaxFactory.TokenList(
+                                        new[]
+                                        {
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                $" <returns>The most recent records in the data model.</returns>",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                        }))))),
+                };
 
                 // This is the complete document comment.
                 return SyntaxFactory.TriviaList(comments);
@@ -240,48 +252,18 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                                             SyntaxFactory.ArgumentList()))))))
                     .WithUsingKeyword(
                         SyntaxFactory.Token(SyntaxKind.UsingKeyword)),
+                };
 
-                    //                await this.dataModel.Allocations.EnterReadLockAsync().ConfigureAwait(false);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AwaitExpression(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.ThisExpression(),
-                                                    SyntaxFactory.IdentifierName(this.tableElement.Document.Name.ToCamelCase())),
-                                                SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                            SyntaxFactory.IdentifierName("EnterReadLockAsync"))),
-                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.FalseLiteralExpression))))))),
-
-                    //                var existingRow = this.dataModel.Accounts.Find(accountId);
-                    SyntaxFactory.LocalDeclarationStatement(
-                        SyntaxFactory.VariableDeclaration(
-                            SyntaxFactory.IdentifierName(
-                                SyntaxFactory.Identifier(
-                                    SyntaxFactory.TriviaList(),
-                                    SyntaxKind.VarKeyword,
-                                    "var",
-                                    "var",
-                                    SyntaxFactory.TriviaList())))
-                        .WithVariables(
-                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                SyntaxFactory.VariableDeclarator(
-                                    SyntaxFactory.Identifier("existingRow"))
-                                .WithInitializer(
-                                    SyntaxFactory.EqualsValueClause(
+                // Lock all the tables.
+                foreach (var tableElement in this.xmlSchemaDocument.Tables.OrderBy(te => te.Name))
+                {
+                    //                await this.ledger.Accounts.EnterReadLockAsync().ConfigureAwait(false);
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AwaitExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.InvocationExpression(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -290,53 +272,41 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                                                     SyntaxFactory.MemberAccessExpression(
                                                         SyntaxKind.SimpleMemberAccessExpression,
                                                         SyntaxFactory.ThisExpression(),
-                                                        SyntaxFactory.IdentifierName(
-                                                            this.tableElement.Document.Name.ToVariableName())),
-                                                    SyntaxFactory.IdentifierName(this.tableElement.Name.ToPlural())),
-                                                SyntaxFactory.IdentifierName("Find")))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                this.tableElement.PrimaryIndex.GetKeyAsFindArguments()))))))),
+                                                        SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToVariableName())),
+                                                    SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
+                                                SyntaxFactory.IdentifierName("EnterReadLockAsync"))),
+                                        SyntaxFactory.IdentifierName("ConfigureAwait")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.LiteralExpression(
+                                                    SyntaxKind.FalseLiteralExpression))))))));
+                }
 
-                    //                if (existingRow == null)
-                    //                {
-                    //                    return this.NotFound();
-                    //                }
-                    SyntaxFactory.IfStatement(
-                        SyntaxFactory.BinaryExpression(
-                            SyntaxKind.EqualsExpression,
-                            SyntaxFactory.IdentifierName("existingRow"),
-                            SyntaxFactory.LiteralExpression(
-                                SyntaxKind.NullLiteralExpression)),
-                        SyntaxFactory.Block(
-                            SyntaxFactory.SingletonList<StatementSyntax>(
-                                SyntaxFactory.ReturnStatement(
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("NotFound"))))))),
-
-                    //                await existingRow.EnterReadLockAsync().ConfigureAwait(false);
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.AwaitExpression(
+                // Load the data transfer objects.
+                foreach (var tableElement in this.xmlSchemaDocument.Tables.OrderBy(te => te.Name))
+                {
+                    //                this.ledgerDto.LoadAccounts(rowVersion);
+                    statements.Add(
+                        SyntaxFactory.ExpressionStatement(
                             SyntaxFactory.InvocationExpression(
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.InvocationExpression(
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.IdentifierName("existingRow"),
-                                            SyntaxFactory.IdentifierName("EnterReadLockAsync"))),
-                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("ledgerDto")),
+                                    SyntaxFactory.IdentifierName($"Load{tableElement.Name.ToPlural()}")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
                                     SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                         SyntaxFactory.Argument(
-                                            SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.FalseLiteralExpression))))))),
+                                            SyntaxFactory.IdentifierName("rowVersion")))))));
+                }
 
-                    //                return this.Ok(new Account(existingRow));
+                //                return this.Ok(this.ledgerDto);
+                statements.Add(
                     SyntaxFactory.ReturnStatement(
                         SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -347,14 +317,10 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                             SyntaxFactory.ArgumentList(
                                 SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
                                     SyntaxFactory.Argument(
-                                        SyntaxFactory.ObjectCreationExpression(
-                                            SyntaxFactory.IdentifierName(this.tableElement.Name))
-                                        .WithArgumentList(
-                                            SyntaxFactory.ArgumentList(
-                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                    SyntaxFactory.Argument(
-                                                        SyntaxFactory.IdentifierName("existingRow")))))))))),
-                };
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName("ledgerDto"))))))));
 
                 // This is the complete block.
                 return statements;

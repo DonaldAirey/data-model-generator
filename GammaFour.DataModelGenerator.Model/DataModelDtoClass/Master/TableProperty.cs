@@ -2,7 +2,7 @@
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.DataModelClass
+namespace GammaFour.DataModelGenerator.Model.DataModelDtoClass.Master
 {
     using System;
     using System.Collections.Generic;
@@ -12,82 +12,82 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a collection of readers (transactions) waiting for a read lock.
+    /// Creates a field that holds the column.
     /// </summary>
     public class TableProperty : SyntaxElement
     {
         /// <summary>
-        /// The table schema.
+        /// The unique constraint schema.
         /// </summary>
         private readonly TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TableProperty"/> class.
         /// </summary>
-        /// <param name="tableElement">The table schema.</param>
+        /// <param name="tableElement">The column schema.</param>
         public TableProperty(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;
-            this.Name = this.tableElement.Name.ToPlural();
+            this.Name = this.tableElement.Name;
 
             //        /// <summary>
-            //        /// Gets the <see cref="Fungibles"/> table.
+            //        /// Gets or sets the <see cref=\"Accounts\"/>.
             //        /// </summary>
-            //        public BuyerSet Buyers { get; }
+            //        [JsonPropertyName("accounts")]
+            //        public IEnumerable<DataTransferObjects.Account> Accounts { get; set; } = Enumerable.Empty<DataTransferObjects.Account>();
             this.Syntax = SyntaxFactory.PropertyDeclaration(
-                    SyntaxFactory.IdentifierName($"{tableElement.Name.ToPlural()}"),
-                    SyntaxFactory.Identifier(this.Name))
-                .WithAccessorList(TableProperty.AccessorList)
-                .WithModifiers(TableProperty.Modifiers)
-                .WithLeadingTrivia(this.LeadingTrivia);
-        }
-
-        /// <summary>
-        /// Gets the list of accessors.
-        /// </summary>
-        private static AccessorListSyntax AccessorList
-        {
-            get
-            {
-                return SyntaxFactory.AccessorList(
-                    SyntaxFactory.List(
+                SyntaxFactory.GenericName(
+                    SyntaxFactory.Identifier("List"))
+                .WithTypeArgumentList(
+                    SyntaxFactory.TypeArgumentList(
+                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                            SyntaxFactory.QualifiedName(
+                                SyntaxFactory.IdentifierName("DataTransferObjects"),
+                                SyntaxFactory.IdentifierName(this.tableElement.Name))))),
+                SyntaxFactory.Identifier(this.tableElement.Name.ToPlural()))
+            .WithAttributeLists(
+                SyntaxFactory.SingletonList<AttributeListSyntax>(
+                    SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                            SyntaxFactory.Attribute(
+                                SyntaxFactory.IdentifierName("JsonPropertyName"))
+                            .WithArgumentList(
+                                SyntaxFactory.AttributeArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
+                                        SyntaxFactory.AttributeArgument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                SyntaxFactory.Literal(this.tableElement.Name.ToPlural().ToCamelCase()))))))))))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithAccessorList(
+                SyntaxFactory.AccessorList(
+                    SyntaxFactory.List<AccessorDeclarationSyntax>(
                         new AccessorDeclarationSyntax[]
                         {
-                            TableProperty.GetAccessor,
-                        }));
-            }
-        }
-
-        /// <summary>
-        /// Gets the 'Get' accessor.
-        /// </summary>
-        private static AccessorDeclarationSyntax GetAccessor
-        {
-            get
-            {
-                // get;
-                return SyntaxFactory.AccessorDeclaration(
-                        SyntaxKind.GetAccessorDeclaration)
-                    .WithSemicolonToken(
-                        SyntaxFactory.Token(SyntaxKind.SemicolonToken));
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // public
-                return SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                    });
-            }
+                            SyntaxFactory.AccessorDeclaration(
+                                SyntaxKind.GetAccessorDeclaration)
+                            .WithSemicolonToken(
+                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                        })))
+            .WithInitializer(
+                SyntaxFactory.EqualsValueClause(
+                    SyntaxFactory.ObjectCreationExpression(
+                        SyntaxFactory.GenericName(
+                            SyntaxFactory.Identifier("List"))
+                        .WithTypeArgumentList(
+                            SyntaxFactory.TypeArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                    SyntaxFactory.QualifiedName(
+                                        SyntaxFactory.IdentifierName("DataTransferObjects"),
+                                        SyntaxFactory.IdentifierName(this.tableElement.Name))))))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList())))
+            .WithSemicolonToken(
+                SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+            .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
@@ -97,12 +97,10 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         {
             get
             {
-                // The document comment trivia is collected in this list.
-                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
-                {
-                    //        /// <summary>
-                    //        /// Gets the <see cref="Fungibles"/> table.
-                    //        /// </summary>
+                //    /// <summary>
+                //    /// Gets or sets the <see cref=\"Accounts\"/>.
+                //    /// </summary>
+                return SyntaxFactory.TriviaList(
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -124,7 +122,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Gets the <see cref=\"{this.tableElement.Name.ToPlural()}\"/> table.",
+                                                $" Gets the <see cref=\"{this.tableElement.Name.ToPlural()}\"/>.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -142,11 +140,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))),
-                };
-
-                // This is the complete document comment.
-                return SyntaxFactory.TriviaList(comments);
+                                        }))))));
             }
         }
     }

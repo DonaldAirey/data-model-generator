@@ -115,11 +115,12 @@ namespace GammaFour.DataModelGenerator.Model
         /// <returns>The collection of members augmented with the classes.</returns>
         private SyntaxList<MemberDeclarationSyntax> CreatePublicClasses(SyntaxList<MemberDeclarationSyntax> members)
         {
-            List<SyntaxElement> syntaxElements = new List<SyntaxElement>();
-
-            // The data model class.
-            syntaxElements.Add(new DataModelClass.Class(this.xmlSchemaDocument));
-            syntaxElements.Add(new DataModelAdapterClass.Class(this.xmlSchemaDocument));
+            List<SyntaxElement> syntaxElements = new List<SyntaxElement>
+            {
+                new DataModelAdapterClass.Class(this.xmlSchemaDocument),
+                new DataModelClass.Class(this.xmlSchemaDocument),
+                new DataModelDtoClass.Slave.Class(this.xmlSchemaDocument),
+            };
 
             // Create the row classes.
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)

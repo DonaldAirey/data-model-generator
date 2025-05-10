@@ -154,7 +154,10 @@ namespace GammaFour.DataModelGenerator.Model.DataModelAdapterClass
         private SyntaxList<MemberDeclarationSyntax> CreatePublicMethods(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
-            List<SyntaxElement> methods = new List<SyntaxElement>();
+            List<SyntaxElement> methods = new List<SyntaxElement>
+            {
+                new GetDataModelAsyncMethod(this.xmlSchemaDocument),
+            };
 
             // Add a set of REST operations for each table.
             foreach (var tableElement in this.xmlSchemaDocument.Tables)

@@ -5,6 +5,7 @@
 namespace GammaFour.DataModelGenerator.Model.RestClass
 {
     using System;
+    using System.Collections.Generic;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -24,31 +25,83 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
             // Initialize the object.
             this.Name = $"{xmlSchemaDocument.Name.ToCamelCase()}Context";
 
-            //        private DataModelContext dataModelContext;
+            //        /// <summary>
+            //        /// The data model database context.
+            //        /// </summary>
+            //        private readonly LedgerContext ledgerContext = ledgerContext;
             this.Syntax = SyntaxFactory.FieldDeclaration(
-                    SyntaxFactory.VariableDeclaration(
-                        SyntaxFactory.IdentifierName($"{xmlSchemaDocument.Name}Context"))
-                    .WithVariables(
-                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                            SyntaxFactory.VariableDeclarator(
-                                SyntaxFactory.Identifier(this.Name)))))
-                .WithModifiers(DbContextField.Modifiers);
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                // internal
-                return SyntaxFactory.TokenList(
+                SyntaxFactory.VariableDeclaration(
+                    SyntaxFactory.IdentifierName($"{xmlSchemaDocument.Name}Context"))
+                .WithVariables(
+                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                        SyntaxFactory.VariableDeclarator(
+                            SyntaxFactory.Identifier(this.Name))
+                        .WithInitializer(
+                            SyntaxFactory.EqualsValueClause(
+                                SyntaxFactory.IdentifierName($"{xmlSchemaDocument.Name.ToCamelCase()}Context"))))))
+            .WithModifiers(
+                SyntaxFactory.TokenList(
                     new[]
                     {
                         SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
                         SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
-                    });
+                    }))
+            .WithLeadingTrivia(DbContextField.LeadingTrivia);
+        }
+
+        /// <summary>
+        /// Gets the documentation comment.
+        /// </summary>
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
+        {
+            get
+            {
+                return new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// The database context.
+                    //        /// </summary>
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                SyntaxFactory.XmlText()
+                                .WithTextTokens(
+                                    SyntaxFactory.TokenList(
+                                        new[]
+                                        {
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                " <summary>",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                " The database context.",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                " </summary>",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                        }))))),
+                };
             }
         }
     }

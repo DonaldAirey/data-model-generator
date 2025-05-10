@@ -19,7 +19,7 @@ namespace GammaFour.DataModelGenerator.Model.MvcCoreMvcBuilderExtensionsClass
         /// <summary>
         /// The XML Schema document.
         /// </summary>
-        private XmlSchemaDocument xmlSchemaDocument;
+        private readonly XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AddControllersMethod"/> class.

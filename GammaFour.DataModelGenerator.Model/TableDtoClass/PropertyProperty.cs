@@ -2,7 +2,7 @@
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.DtoClass
+namespace GammaFour.DataModelGenerator.Model.TableDtoClass
 {
     using System;
     using System.Collections.Generic;
@@ -53,14 +53,14 @@ namespace GammaFour.DataModelGenerator.Model.DtoClass
             //        public string Name { get; set; } = string.Empty;
             this.Syntax = propertyDeclaration
             .WithAttributeLists(
-                SyntaxFactory.SingletonList<AttributeListSyntax>(
+                SyntaxFactory.SingletonList(
                     SyntaxFactory.AttributeList(
-                        SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
+                        SyntaxFactory.SingletonSeparatedList(
                             SyntaxFactory.Attribute(
                                 SyntaxFactory.IdentifierName("JsonPropertyName"))
                             .WithArgumentList(
                                 SyntaxFactory.AttributeArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<AttributeArgumentSyntax>(
+                                    SyntaxFactory.SingletonSeparatedList(
                                         SyntaxFactory.AttributeArgument(
                                             SyntaxFactory.LiteralExpression(
                                                 SyntaxKind.StringLiteralExpression,
@@ -70,7 +70,7 @@ namespace GammaFour.DataModelGenerator.Model.DtoClass
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
             .WithAccessorList(
                 SyntaxFactory.AccessorList(
-                    SyntaxFactory.List<AccessorDeclarationSyntax>(
+                    SyntaxFactory.List(
                         new AccessorDeclarationSyntax[]
                         {
                             SyntaxFactory.AccessorDeclaration(

@@ -2,7 +2,7 @@
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.DtoClass
+namespace GammaFour.DataModelGenerator.Model.TableDtoClass
 {
     using System;
     using System.Collections.Generic;

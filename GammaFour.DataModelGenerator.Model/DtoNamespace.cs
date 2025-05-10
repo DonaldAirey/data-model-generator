@@ -66,6 +66,8 @@ namespace GammaFour.DataModelGenerator.Model
                 // Add the system namespace references.
                 List<UsingDirectiveSyntax> systemUsingStatements = new List<UsingDirectiveSyntax>
                 {
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Collections.Generic")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json.Serialization")),
                 };
 
@@ -132,7 +134,7 @@ namespace GammaFour.DataModelGenerator.Model
             // Create the row classes.
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {
-                syntaxElements.Add(new DtoClass.Class(tableElement));
+                syntaxElements.Add(new TableDtoClass.Class(tableElement));
             }
 
             // Alphabetize the list of classes and add them to the structure.

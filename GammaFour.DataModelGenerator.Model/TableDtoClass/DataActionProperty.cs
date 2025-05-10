@@ -1,8 +1,8 @@
-// <copyright file="Constructor.cs" company="Gamma Four, Inc.">
+// <copyright file="DataActionProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.DtoClass
+namespace GammaFour.DataModelGenerator.Model.TableDtoClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,45 +12,62 @@ namespace GammaFour.DataModelGenerator.Model.DtoClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a constructor.
+    /// Creates a field that holds the name.
     /// </summary>
-    public class Constructor : SyntaxElement
+    public class DataActionProperty : SyntaxElement
     {
         /// <summary>
-        /// The table schema.
+        /// Initializes a new instance of the <see cref="DataActionProperty"/> class.
         /// </summary>
-        private readonly TableElement tableElement;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Constructor"/> class.
-        /// </summary>
-        /// <param name="tableElement">The table schema.</param>
-        public Constructor(TableElement tableElement)
+        public DataActionProperty()
         {
             // Initialize the object.
-            this.tableElement = tableElement;
-            this.Name = this.tableElement.Name;
+            this.Name = "DataAction";
 
             //        /// <summary>
-            //        /// Initializes a new instance of the <see cref="Buyer"/> class.
+            //        /// Gets the data action.
             //        /// </summary>
-            //        public Buyer()
-            //        {
-            //        }
-            this.Syntax = SyntaxFactory.ConstructorDeclaration(
-                SyntaxFactory.Identifier(this.Name))
+            //        public DataAction DataAction { get; set; }
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
+                SyntaxFactory.IdentifierName("DataAction"),
+                SyntaxFactory.Identifier("DataAction"))
+            .WithAttributeLists(
+                SyntaxFactory.SingletonList(
+                    SyntaxFactory.AttributeList(
+                        SyntaxFactory.SingletonSeparatedList(
+                            SyntaxFactory.Attribute(
+                                SyntaxFactory.IdentifierName("JsonPropertyName"))
+                            .WithArgumentList(
+                                SyntaxFactory.AttributeArgumentList(
+                                    SyntaxFactory.SingletonSeparatedList(
+                                        SyntaxFactory.AttributeArgument(
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                SyntaxFactory.Literal("dataAction"))))))))))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithBody(
-                SyntaxFactory.Block())
-            .WithLeadingTrivia(this.LeadingTrivia);
+            .WithAccessorList(
+                SyntaxFactory.AccessorList(
+                    SyntaxFactory.List(
+                        new AccessorDeclarationSyntax[]
+                        {
+                            SyntaxFactory.AccessorDeclaration(
+                                SyntaxKind.GetAccessorDeclaration)
+                            .WithSemicolonToken(
+                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                            SyntaxFactory.AccessorDeclaration(
+                                SyntaxKind.SetAccessorDeclaration)
+                            .WithSemicolonToken(
+                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)),
+                        })))
+            .WithLeadingTrivia(LeadingTrivia);
         }
 
         /// <summary>
         /// Gets the documentation comment.
         /// </summary>
-        private IEnumerable<SyntaxTrivia> LeadingTrivia
+        private static IEnumerable<SyntaxTrivia> LeadingTrivia
         {
             get
             {
@@ -58,7 +75,7 @@ namespace GammaFour.DataModelGenerator.Model.DtoClass
                 List<SyntaxTrivia> comments = new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Initializes a new instance of the <see cref="Configuration"/> class.
+                    //        /// Gets the Name.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -81,7 +98,7 @@ namespace GammaFour.DataModelGenerator.Model.DtoClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                $" Initializes a new instance of the <see cref=\"{this.tableElement.Name}\"/> class.",
+                                                " Gets the Name.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(

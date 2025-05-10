@@ -2,7 +2,7 @@
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.DtoClass
+namespace GammaFour.DataModelGenerator.Model.TableDtoClass
 {
     using System;
     using System.Collections.Generic;
@@ -49,7 +49,7 @@ namespace GammaFour.DataModelGenerator.Model.DtoClass
                         SyntaxFactory.Token(SyntaxKind.OverrideKeyword),
                     }))
             .WithBody(this.Body)
-            .WithLeadingTrivia(GetHashCodeMethod.LeadingTrivia);
+            .WithLeadingTrivia(LeadingTrivia);
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace GammaFour.DataModelGenerator.Model.DtoClass
                 statements.Add(SyntaxFactory.ReturnStatement(previousExpressions));
 
                 // This is the syntax for the body of the method.
-                return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
+                return SyntaxFactory.Block(SyntaxFactory.List(statements));
             }
         }
     }

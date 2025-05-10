@@ -2,7 +2,7 @@
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.MvcCoreMvcBuilderExtensionsClass
+namespace GammaFour.DataModelGenerator.Model.TableDtoClass
 {
     using System;
     using System.Collections.Generic;
@@ -18,35 +18,36 @@ namespace GammaFour.DataModelGenerator.Model.MvcCoreMvcBuilderExtensionsClass
     public class Class : SyntaxElement
     {
         /// <summary>
-        /// The XML Schema document.
+        /// The unique constraint schema.
         /// </summary>
-        private readonly XmlSchemaDocument xmlSchemaDocument;
+        private readonly TableElement tableElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Class"/> class.
         /// </summary>
-        /// <param name="xmlSchemaDocument">The XML schema document.</param>
-        public Class(XmlSchemaDocument xmlSchemaDocument)
+        /// <param name="tableElement">A description of a unique constraint.</param>
+        public Class(TableElement tableElement)
         {
             // Initialize the object.
-            this.xmlSchemaDocument = xmlSchemaDocument;
-            this.Name = "MvcCoreMvcBuilderExtensions";
+            this.tableElement = tableElement;
+            this.Name = tableElement.Name;
 
             //    /// <summary>
-            //    /// Used to configure the MVC environment.
+            //    /// A row of data in the Configuration table.
             //    /// </summary>
-            //    public static class MvcCoreMvcBuilderExtensions
+            //    public class Account
             //    {
             //        <Members>
             //    }
-            this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
+            this.Syntax = SyntaxFactory.ClassDeclaration(this.tableElement.Name)
             .WithModifiers(
                 SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                        SyntaxFactory.Token(SyntaxKind.StaticKeyword),
-                    }))
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithBaseList(
+                SyntaxFactory.BaseList(
+                    SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(
+                        SyntaxFactory.SimpleBaseType(
+                            SyntaxFactory.IdentifierName("IRowVersioned")))))
             .WithMembers(this.Members)
             .WithLeadingTrivia(this.LeadingTrivia);
         }
@@ -59,7 +60,7 @@ namespace GammaFour.DataModelGenerator.Model.MvcCoreMvcBuilderExtensionsClass
             get
             {
                 //    /// <summary>
-                //    /// Used to configure the MVC environment.
+                //    /// A key for finding objects in the Configuration table.
                 //    /// </summary>
                 return SyntaxFactory.TriviaList(
                     SyntaxFactory.Trivia(
@@ -83,7 +84,7 @@ namespace GammaFour.DataModelGenerator.Model.MvcCoreMvcBuilderExtensionsClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " Used to configure the MVC environment.",
+                                                $" A {this.tableElement.Name} row.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -113,10 +114,52 @@ namespace GammaFour.DataModelGenerator.Model.MvcCoreMvcBuilderExtensionsClass
             get
             {
                 // Create the members.
-                SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = this.CreatePublicStaticMethods(members);
+                SyntaxList<MemberDeclarationSyntax> members = default;
+                members = this.CreateConstructors(members);
+                members = this.CreatePublicProperties(members);
+                members = this.CreatePublicMethods(members);
                 return members;
             }
+        }
+
+        /// <summary>
+        /// Create the constructors.
+        /// </summary>
+        /// <param name="members">The structure members.</param>
+        /// <returns>The syntax for creating the constructors.</returns>
+        private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            // Add the constructors.
+            members = members.Add(new Constructor(this.tableElement).Syntax);
+            members = members.Add(new ConstructorMaster(this.tableElement).Syntax);
+            members = members.Add(new ConstructorSlave(this.tableElement).Syntax);
+
+            // Return the new collection of members.
+            return members;
+        }
+
+        /// <summary>
+        /// Create the public instance methods.
+        /// </summary>
+        /// <param name="members">The structure members.</param>
+        /// <returns>The syntax for creating the public instance methods.</returns>
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicMethods(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            // This will create the public instance properties.
+            List<SyntaxElement> methods = new List<SyntaxElement>
+            {
+                new EqualsMethod(this.tableElement),
+                new GetHashCodeMethod(this.tableElement),
+            };
+
+            // Alphabetize and add the methods as members of the class.
+            foreach (var syntaxElement in methods.OrderBy(m => m.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
+            }
+
+            // Return the new collection of members.
+            return members;
         }
 
         /// <summary>
@@ -124,13 +167,17 @@ namespace GammaFour.DataModelGenerator.Model.MvcCoreMvcBuilderExtensionsClass
         /// </summary>
         /// <param name="members">The structure members.</param>
         /// <returns>The syntax for creating the public instance properties.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicStaticMethods(SyntaxList<MemberDeclarationSyntax> members)
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicProperties(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
-            List<SyntaxElement> properties = new List<SyntaxElement>
+            List<SyntaxElement> properties = new List<SyntaxElement>();
+            properties.Add(new DataActionProperty());
+
+            // Create a property for each column.
+            foreach (ColumnElement columnElement in this.tableElement.Columns)
             {
-                new AddControllersMethod(this.xmlSchemaDocument),
-            };
+                properties.Add(new PropertyProperty(columnElement));
+            }
 
             // Alphabetize and add the properties as members of the class.
             foreach (var syntaxElement in properties.OrderBy(m => m.Name))

@@ -73,6 +73,7 @@ namespace GammaFour.DataModelGenerator.Model
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Linq")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Reflection")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Text.Json.Serialization")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Threading.Tasks")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.IdentifierName("System.Transactions")),
                 };
@@ -124,6 +125,8 @@ namespace GammaFour.DataModelGenerator.Model
             {
                 new DataModelClass.Class(this.xmlSchemaDocument),
                 new DataModelContextClass.Class(this.xmlSchemaDocument),
+                new DataModelControllerClass.Class(this.xmlSchemaDocument),
+                new DataModelDtoClass.Master.Class(this.xmlSchemaDocument),
                 new MvcCoreMvcBuilderExtensionsClass.Class(this.xmlSchemaDocument),
             };
 

@@ -44,45 +44,46 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
             //        <Members>
             //    }
             this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
-                .WithModifiers(Class.Modifiers)
-                .WithBaseList(Class.BaseList)
-                .WithAttributeLists(this.Attributes)
-                .WithMembers(this.Members)
-                .WithLeadingTrivia(this.LeadingTrivia);
-        }
-
-        /// <summary>
-        /// Gets the base class syntax.
-        /// </summary>
-        private static BaseListSyntax BaseList
-        {
-            get
-            {
-                // This is the list of base classes.
-                return SyntaxFactory.BaseList(
-                        SyntaxFactory.SeparatedList<BaseTypeSyntax>(
-                            new SyntaxNodeOrToken[]
-                            {
-                                SyntaxFactory.SimpleBaseType(
-                                    SyntaxFactory.IdentifierName("ControllerBase")),
-                            }));
-            }
-        }
-
-        /// <summary>
-        /// Gets the modifiers.
-        /// </summary>
-        private static SyntaxTokenList Modifiers
-        {
-            get
-            {
-                return SyntaxFactory.TokenList(
+            .WithAttributeLists(this.Attributes)
+            .WithModifiers(
+                SyntaxFactory.TokenList(
                     new[]
                     {
                         SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                         SyntaxFactory.Token(SyntaxKind.PartialKeyword),
-                    });
-            }
+                    }))
+            .WithParameterList(
+                SyntaxFactory.ParameterList(
+                    SyntaxFactory.SeparatedList<ParameterSyntax>(
+                        new SyntaxNodeOrToken[]
+                        {
+                            SyntaxFactory.Parameter(
+                                SyntaxFactory.Identifier(this.tableElement.Document.Name.ToVariableName()))
+                            .WithType(
+                                SyntaxFactory.IdentifierName(this.tableElement.Document.Name)),
+                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                            SyntaxFactory.Parameter(
+                                SyntaxFactory.Identifier($"{this.tableElement.Document.Name.ToCamelCase()}Context"))
+                            .WithType(
+                                SyntaxFactory.IdentifierName($"{this.tableElement.Document.Name}Context")),
+                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                            SyntaxFactory.Parameter(
+                                SyntaxFactory.Identifier("logger"))
+                            .WithType(
+                                SyntaxFactory.GenericName(
+                                    SyntaxFactory.Identifier("ILogger"))
+                                .WithTypeArgumentList(
+                                    SyntaxFactory.TypeArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                            SyntaxFactory.IdentifierName(this.Name))))),
+                        })))
+            .WithBaseList(
+                SyntaxFactory.BaseList(
+                    SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(
+                        SyntaxFactory.SimpleBaseType(
+                            SyntaxFactory.IdentifierName("ControllerBase")))))
+            .WithMembers(this.Members)
+            .WithLeadingTrivia(this.LeadingTrivia);
         }
 
         /// <summary>
@@ -95,7 +96,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                 // This collects all the attributes.
                 List<AttributeListSyntax> attributes = new List<AttributeListSyntax>
                 {
-                    //        [Route("api/[controller]")]
+                    //        [Route("ledger/[controller]")]
                     SyntaxFactory.AttributeList(
                         SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(
                             SyntaxFactory.Attribute(
@@ -134,10 +135,11 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
         {
             get
             {
-                //    /// <summary>
-                //    /// Controller for <see cref="AccountGroup"/> rows.
-                //    /// </summary>
-                return SyntaxFactory.TriviaList(
+                return new List<SyntaxTrivia>
+                {
+                    //    /// <summary>
+                    //    /// Controller for <see cref="AccountGroup"/> rows.
+                    //    /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -177,7 +179,74 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+
+                    //        /// <param name="dataModel">The data model.</param>
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                SyntaxFactory.XmlText()
+                                .WithTextTokens(
+                                    SyntaxFactory.TokenList(
+                                        new[]
+                                        {
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                $" <param name=\"{this.tableElement.Document.Name.ToVariableName()}\">The data model.</param>",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                        }))))),
+
+                    //        /// <param name="dataModelContext">The database context.</param>
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                SyntaxFactory.XmlText()
+                                .WithTextTokens(
+                                    SyntaxFactory.TokenList(
+                                        new[]
+                                        {
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                $" <param name=\"{this.tableElement.Document.Name.ToVariableName()}Context\">The database context.</param>",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                        }))))),
+
+                    //        /// <param name="dataModelContext">The DbContext for the dataModel.</param>
+                    SyntaxFactory.Trivia(
+                        SyntaxFactory.DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            SyntaxFactory.SingletonList<XmlNodeSyntax>(
+                                SyntaxFactory.XmlText()
+                                .WithTextTokens(
+                                    SyntaxFactory.TokenList(
+                                        new[]
+                                        {
+                                            SyntaxFactory.XmlTextLiteral(
+                                                SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
+                                                $" <param name=\"logger\">The log device.</param>",
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                            SyntaxFactory.XmlTextNewLine(
+                                                SyntaxFactory.TriviaList(),
+                                                Environment.NewLine,
+                                                string.Empty,
+                                                SyntaxFactory.TriviaList()),
+                                        }))))),
+                };
             }
         }
 
@@ -191,7 +260,6 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                 // Create the members.
                 SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
                 members = this.CreatePrivateReadonlyFields(members);
-                members = this.CreateConstructors(members);
                 members = this.CreatePublicMethods(members);
                 return members;
             }
@@ -217,20 +285,6 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
             {
                 members = members.Add(syntaxElement.Syntax);
             }
-
-            // Return the new collection of members.
-            return members;
-        }
-
-        /// <summary>
-        /// Create the private instance fields.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The structure members with the fields added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // Add the constructors.
-            members = members.Add(new Constructor(this.tableElement).Syntax);
 
             // Return the new collection of members.
             return members;

@@ -1,53 +1,49 @@
-// <copyright file="Class.cs" company="Gamma Four, Inc.">
+// <copyright file="Constructor.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.MvcCoreMvcBuilderExtensionsClass
+namespace GammaFour.DataModelGenerator.Model.TableDtoClass
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using GammaFour.DataModelGenerator.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a row.
+    /// Creates a constructor.
     /// </summary>
-    public class Class : SyntaxElement
+    public class Constructor : SyntaxElement
     {
         /// <summary>
-        /// The XML Schema document.
+        /// The table schema.
         /// </summary>
-        private readonly XmlSchemaDocument xmlSchemaDocument;
+        private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Class"/> class.
+        /// Initializes a new instance of the <see cref="Constructor"/> class.
         /// </summary>
-        /// <param name="xmlSchemaDocument">The XML schema document.</param>
-        public Class(XmlSchemaDocument xmlSchemaDocument)
+        /// <param name="tableElement">The table schema.</param>
+        public Constructor(TableElement tableElement)
         {
             // Initialize the object.
-            this.xmlSchemaDocument = xmlSchemaDocument;
-            this.Name = "MvcCoreMvcBuilderExtensions";
+            this.tableElement = tableElement;
+            this.Name = this.tableElement.Name;
 
-            //    /// <summary>
-            //    /// Used to configure the MVC environment.
-            //    /// </summary>
-            //    public static class MvcCoreMvcBuilderExtensions
-            //    {
-            //        <Members>
-            //    }
-            this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
+            //        /// <summary>
+            //        /// Initializes a new instance of the <see cref="Buyer"/> class.
+            //        /// </summary>
+            //        public Buyer()
+            //        {
+            //        }
+            this.Syntax = SyntaxFactory.ConstructorDeclaration(
+                SyntaxFactory.Identifier(this.Name))
             .WithModifiers(
                 SyntaxFactory.TokenList(
-                    new[]
-                    {
-                        SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                        SyntaxFactory.Token(SyntaxKind.StaticKeyword),
-                    }))
-            .WithMembers(this.Members)
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
+            .WithBody(
+                SyntaxFactory.Block())
             .WithLeadingTrivia(this.LeadingTrivia);
         }
 
@@ -58,10 +54,12 @@ namespace GammaFour.DataModelGenerator.Model.MvcCoreMvcBuilderExtensionsClass
         {
             get
             {
-                //    /// <summary>
-                //    /// Used to configure the MVC environment.
-                //    /// </summary>
-                return SyntaxFactory.TriviaList(
+                // The document comment trivia is collected in this list.
+                List<SyntaxTrivia> comments = new List<SyntaxTrivia>
+                {
+                    //        /// <summary>
+                    //        /// Initializes a new instance of the <see cref="Configuration"/> class.
+                    //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -83,7 +81,7 @@ namespace GammaFour.DataModelGenerator.Model.MvcCoreMvcBuilderExtensionsClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " Used to configure the MVC environment.",
+                                                $" Initializes a new instance of the <see cref=\"{this.tableElement.Name}\"/> class.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
@@ -101,45 +99,12 @@ namespace GammaFour.DataModelGenerator.Model.MvcCoreMvcBuilderExtensionsClass
                                                 Environment.NewLine,
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
-                                        }))))));
+                                        }))))),
+                };
+
+                // This is the complete document comment.
+                return SyntaxFactory.TriviaList(comments);
             }
-        }
-
-        /// <summary>
-        /// Gets the members syntax.
-        /// </summary>
-        private SyntaxList<MemberDeclarationSyntax> Members
-        {
-            get
-            {
-                // Create the members.
-                SyntaxList<MemberDeclarationSyntax> members = default(SyntaxList<MemberDeclarationSyntax>);
-                members = this.CreatePublicStaticMethods(members);
-                return members;
-            }
-        }
-
-        /// <summary>
-        /// Create the public instance properties.
-        /// </summary>
-        /// <param name="members">The structure members.</param>
-        /// <returns>The syntax for creating the public instance properties.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicStaticMethods(SyntaxList<MemberDeclarationSyntax> members)
-        {
-            // This will create the public instance properties.
-            List<SyntaxElement> properties = new List<SyntaxElement>
-            {
-                new AddControllersMethod(this.xmlSchemaDocument),
-            };
-
-            // Alphabetize and add the properties as members of the class.
-            foreach (var syntaxElement in properties.OrderBy(m => m.Name))
-            {
-                members = members.Add(syntaxElement.Syntax);
-            }
-
-            // Return the new collection of members.
-            return members;
         }
     }
 }

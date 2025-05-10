@@ -89,7 +89,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                     //            {
                     //                <CommonCatchClauses>
                     //            }
-                    SyntaxFactory.TryStatement(CommonStatements.CommonCatchClauses)
+                    SyntaxFactory.TryStatement(CommonStatements.CommonWriteCatchClauses)
                     .WithBlock(SyntaxFactory.Block(this.TryBlock)),
                 };
 

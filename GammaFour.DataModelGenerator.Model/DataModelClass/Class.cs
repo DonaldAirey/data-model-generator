@@ -20,7 +20,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         /// <summary>
         /// The unique constraint schema.
         /// </summary>
-        private XmlSchemaDocument xmlSchemaDocument;
+        private readonly XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Class"/> class.
@@ -113,6 +113,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                 members = this.CreatePrivateFields(members);
                 members = this.CreateConstructors(members);
                 members = this.CreatePublicProperties(members);
+                members = this.CreatePublicEvents(members);
                 members = this.CreatePublicMethods(members);
                 members = this.CreatePrivateMethods(members);
                 return members;
@@ -120,23 +121,14 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         }
 
         /// <summary>
-        /// Create the public instance methods.
+        /// Create the private instance fields.
         /// </summary>
         /// <param name="members">The structure members.</param>
-        /// <returns>The structure members with the methods added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreatePublicMethods(SyntaxList<MemberDeclarationSyntax> members)
+        /// <returns>The structure members with the fields added.</returns>
+        private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
         {
-            // This will create the public instance properties.
-            List<SyntaxElement> methods = new List<SyntaxElement>
-            {
-                new IncrementRowVersionMethod(),
-            };
-
-            // Alphabetize and add the methods as members of the class.
-            foreach (var syntaxElement in methods.OrderBy(m => m.Name))
-            {
-                members = members.Add(syntaxElement.Syntax);
-            }
+            // The constructors.
+            members = members.Add(new Constructor(this.xmlSchemaDocument).Syntax);
 
             // Return the new collection of members.
             return members;
@@ -186,14 +178,47 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         }
 
         /// <summary>
-        /// Create the private instance fields.
+        /// Create the public events.
         /// </summary>
         /// <param name="members">The structure members.</param>
-        /// <returns>The structure members with the fields added.</returns>
-        private SyntaxList<MemberDeclarationSyntax> CreateConstructors(SyntaxList<MemberDeclarationSyntax> members)
+        /// <returns>The structure members with the methods added.</returns>
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicEvents(SyntaxList<MemberDeclarationSyntax> members)
         {
-            // The constructors.
-            members = members.Add(new Constructor(this.xmlSchemaDocument).Syntax);
+            // This will create the public instance properties.
+            List<SyntaxElement> events = new List<SyntaxElement>
+            {
+                new ClearedEvent(),
+            };
+
+            // Alphabetize and add the events as members of the class.
+            foreach (var syntaxElement in events.OrderBy(m => m.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
+            }
+
+            // Return the new collection of members.
+            return members;
+        }
+
+        /// <summary>
+        /// Create the public instance methods.
+        /// </summary>
+        /// <param name="members">The structure members.</param>
+        /// <returns>The structure members with the methods added.</returns>
+        private SyntaxList<MemberDeclarationSyntax> CreatePublicMethods(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            // This will create the public instance properties.
+            List<SyntaxElement> methods = new List<SyntaxElement>
+            {
+                new ClearAsyncMethod(this.xmlSchemaDocument),
+                new IncrementRowVersionMethod(),
+            };
+
+            // Alphabetize and add the methods as members of the class.
+            foreach (var syntaxElement in methods.OrderBy(m => m.Name))
+            {
+                members = members.Add(syntaxElement.Syntax);
+            }
 
             // Return the new collection of members.
             return members;

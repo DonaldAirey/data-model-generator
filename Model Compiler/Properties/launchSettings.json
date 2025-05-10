@@ -1,36 +1,12 @@
 {
   "profiles": {
-    "Desktop": {
-      "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop.Data\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-desktop\\ThetaRex.OpenBook.Desktop.Data\\Ledger.Designer.cs\" -ns \"ThetaRex.OpenBook\""
-    },
     "EOD History": {
       "commandName": "Project",
       "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\ThetaRex.EodHd\\ThetaRex.EodHd\\History.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\ThetaRex.EodHd\\ThetaRex.EodHd\\History.Designer.cs\" -ns \"ThetaRex.EodHd\""
     },
-    "Loader Ledger": {
-      "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-loader\\Loader\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-loader\\Loader\\Ledger.Designer.cs\" -ns \"ThetaRex.OpenBook\""
-    },
-    "Loader Market": {
-      "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-loader\\Loader\\Market.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-loader\\Loader\\Market.Designer.cs\" -ns \"ThetaRex.Market.Data\""
-    },
     "Index Simulation": {
       "commandName": "Project",
       "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\index-simulation\\Index Simulation\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\index-simulation\\Index Simulation\\Ledger.Designer.cs\" -ns \"IndexSimulation\""
-    },
-    "Ledger": {
-      "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-ledger\\ThetaRex.OpenBook.Data\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-ledger\\ThetaRex.OpenBook.Data\\Ledger.Designer.cs\" -ns \"ThetaRex.OpenBook\""
-    },
-    "Market Ledger": {
-      "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-market\\ThetaRex.Market.Data\\Ledger.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-market\\ThetaRex.Market.Data\\Ledger.Designer.cs\" -ns \"ThetaRex.OpenBook\""
-    },
-    "Market Market": {
-      "commandName": "Project",
-      "commandLineArgs": "-i \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-market\\ThetaRex.Market.Data\\Market.xsd\" -out \"..\\..\\..\\..\\..\\..\\Theta-Rex\\openbook-market\\ThetaRex.Market.Data\\Market.Designer.cs\" -ns \"ThetaRex.Market.Data\""
     },
     "OpenBook Ledger": {
       "commandName": "Project",
