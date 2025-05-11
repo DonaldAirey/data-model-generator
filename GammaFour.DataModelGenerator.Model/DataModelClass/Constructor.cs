@@ -105,6 +105,41 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                             }))))));
                 }
 
+                // Initialize the row vector which handles the merging of rows.
+                if (!this.xmlSchemaDocument.IsMaster)
+                {
+                    foreach (var tableElement in this.xmlSchemaDocument.Tables)
+                    {
+                        statements.Add(
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.ThisExpression(),
+                                            SyntaxFactory.IdentifierName("rowVector")),
+                                        SyntaxFactory.IdentifierName("Add")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SeparatedList<ArgumentSyntax>(
+                                            new SyntaxNodeOrToken[]
+                                            {
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.TypeOfExpression(
+                                                    SyntaxFactory.QualifiedName(
+                                                        SyntaxFactory.IdentifierName("DataTransferObjects"),
+                                                        SyntaxFactory.IdentifierName(tableElement.Name)))),
+                                            SyntaxFactory.Token(SyntaxKind.CommaToken),
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName($"Apply{tableElement.Name}"))),
+                                            })))));
+                    }
+                }
+
                 // This is the syntax for the body of the constructor.
                 return SyntaxFactory.Block(SyntaxFactory.List<StatementSyntax>(statements));
             }

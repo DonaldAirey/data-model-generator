@@ -40,7 +40,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
             //        }
             this.Syntax = SyntaxFactory.MethodDeclaration(
                 SyntaxFactory.IdentifierName("Task"),
-                SyntaxFactory.Identifier("ClearAsync"))
+                SyntaxFactory.Identifier(this.Name))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     new[]

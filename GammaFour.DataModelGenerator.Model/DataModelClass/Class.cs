@@ -147,6 +147,12 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                 new RowVersionField(),
             };
 
+            // Add a vector to handle merging of rows for the slave.
+            if (!this.xmlSchemaDocument.IsMaster)
+            {
+                fields.Add(new RowVectorField(this.xmlSchemaDocument));
+            }
+
             // Alphabetize and add the fields as members of the class.
             foreach (var syntaxElement in fields.OrderBy(f => f.Name))
             {
@@ -166,6 +172,15 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         {
             // This will create the public instance properties.
             List<SyntaxElement> methods = new List<SyntaxElement>();
+
+            // The slave gets methods for applying DTOs.
+            if (!this.xmlSchemaDocument.IsMaster)
+            {
+                foreach (var tableElement in this.xmlSchemaDocument.Tables.OrderBy(te => te.Name))
+                {
+                    methods.Add(new ApplyTableMethod(tableElement));
+                }
+            }
 
             // Alphabetize and add the methods as members of the class.
             foreach (var syntaxElement in methods.OrderBy(m => m.Name))
@@ -213,6 +228,12 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                 new ClearAsyncMethod(this.xmlSchemaDocument),
                 new IncrementRowVersionMethod(),
             };
+
+            // The slave can merge DTOs.
+            if (!this.xmlSchemaDocument.IsMaster)
+            {
+                methods.Add(new MergeAsyncMethod(this.xmlSchemaDocument));
+            }
 
             // Alphabetize and add the methods as members of the class.
             foreach (var syntaxElement in methods.OrderBy(m => m.Name))
