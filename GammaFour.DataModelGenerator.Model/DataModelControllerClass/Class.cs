@@ -43,7 +43,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
             //    {
             //        <Members>
             //    }
-            this.Syntax = SyntaxFactory.ClassDeclaration($"{this.xmlSchemaDocument.Name}Controller")
+            this.Syntax = SyntaxFactory.ClassDeclaration(this.Name)
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     new[]

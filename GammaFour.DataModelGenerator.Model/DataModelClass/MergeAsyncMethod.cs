@@ -460,7 +460,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                         SyntaxFactory.Argument(
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("ledgerDto"),
+                                                SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToCamelCase()}Dto"),
                                                 SyntaxFactory.IdentifierName(tableElement.Name.ToPlural()))))))));
                 }
 

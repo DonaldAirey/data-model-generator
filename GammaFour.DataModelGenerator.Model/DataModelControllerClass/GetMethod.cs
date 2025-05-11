@@ -296,7 +296,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName("ledgerDto")),
+                                        SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToCamelCase()}Dto")),
                                     SyntaxFactory.IdentifierName($"Load{tableElement.Name.ToPlural()}")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
@@ -320,7 +320,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName("ledgerDto"))))))));
+                                            SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToCamelCase()}Dto"))))))));
 
                 // This is the complete block.
                 return statements;
