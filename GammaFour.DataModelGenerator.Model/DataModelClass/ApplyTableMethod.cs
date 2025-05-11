@@ -114,7 +114,8 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                 SyntaxFactory.IdentifierName("DataAction")))
                         .WithSections(
                             SyntaxFactory.List<SwitchSectionSyntax>(
-                                new SwitchSectionSyntax[]{
+                                new SwitchSectionSyntax[]
+                                {
                                     SyntaxFactory.SwitchSection()
                                     .WithLabels(
                                         SyntaxFactory.SingletonList<SwitchLabelSyntax>(

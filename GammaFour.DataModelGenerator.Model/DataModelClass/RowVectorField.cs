@@ -51,7 +51,8 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                     .WithTypeArgumentList(
                                         SyntaxFactory.TypeArgumentList(
                                             SyntaxFactory.SeparatedList<TypeSyntax>(
-                                                new SyntaxNodeOrToken[]{
+                                                new SyntaxNodeOrToken[]
+                                                {
                                                     SyntaxFactory.PredefinedType(
                                                         SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
                                                     SyntaxFactory.Token(SyntaxKind.CommaToken),
