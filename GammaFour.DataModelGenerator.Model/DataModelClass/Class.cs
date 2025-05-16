@@ -259,6 +259,12 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                 new RowVersionProperty(),
             };
 
+            // The master has a unique identifier.
+            if (this.xmlSchemaDocument.IsMaster)
+            {
+                properties.Add(new DataModelIdProperty(this.xmlSchemaDocument));
+            }
+
             // Create a property for each of the tables.
             foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
             {

@@ -2,7 +2,7 @@
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.TableClass
+namespace GammaFour.DataModelGenerator.Model.UniqueIndexClass
 {
     using System;
     using System.Collections.Generic;
@@ -17,18 +17,11 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     public class ClearMethod : SyntaxElement
     {
         /// <summary>
-        /// The table schema.
-        /// </summary>
-        private readonly TableElement tableElement;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="ClearMethod"/> class.
         /// </summary>
-        /// <param name="tableElement">The unique constraint schema.</param>
-        public ClearMethod(TableElement tableElement)
+        public ClearMethod()
         {
             // Initialize the object.
-            this.tableElement = tableElement;
             this.Name = "Clear";
 
             //        /// <summary>
@@ -45,8 +38,32 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithBody(this.Body)
+            .WithBody(ClearMethod.Body)
             .WithLeadingTrivia(ClearMethod.LeadingTrivia);
+        }
+
+        /// <summary>
+        /// Gets the body.
+        /// </summary>
+        private static BlockSyntax Body
+        {
+            get
+            {
+                return SyntaxFactory.Block(
+                    new List<StatementSyntax>
+                    {
+                        //            this.dictionary.Clear();
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ThisExpression(),
+                                        SyntaxFactory.IdentifierName("dictionary")),
+                                    SyntaxFactory.IdentifierName("Clear")))),
+                    });
+            }
         }
 
         /// <summary>
@@ -104,50 +121,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                     SyntaxFactory.TriviaList()),
                                             }))))),
                     });
-            }
-        }
-
-        /// <summary>
-        /// Gets the body.
-        /// </summary>
-        private BlockSyntax Body
-        {
-            get
-            {
-                var statements = new List<StatementSyntax>
-                {
-                    //            this.dictionary.Clear();
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("dictionary")),
-                                SyntaxFactory.IdentifierName("Clear")))),
-                };
-
-                // Clear each of the non-primary indices.
-                foreach (var uniqueIndex in this.tableElement.UniqueIndexes)
-                {
-                    if (!uniqueIndex.IsPrimaryIndex)
-                    {
-                        //            this.ListSymbolIndex.Clear();
-                        statements.Add(
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(uniqueIndex.Name)),
-                                        SyntaxFactory.IdentifierName("Clear")))));
-                    }
-                }
-
-                return SyntaxFactory.Block(statements);
             }
         }
     }

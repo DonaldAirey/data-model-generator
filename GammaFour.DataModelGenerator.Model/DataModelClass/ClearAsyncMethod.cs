@@ -241,6 +241,19 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                                     SyntaxFactory.IdentifierName("Clear")))));
                 }
 
+                //                this.rowVersion = 0L;
+                statements.Add(
+                    SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.AssignmentExpression(
+                            SyntaxKind.SimpleAssignmentExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.ThisExpression(),
+                                SyntaxFactory.IdentifierName("rowVersion")),
+                            SyntaxFactory.LiteralExpression(
+                                SyntaxKind.NumericLiteralExpression,
+                                SyntaxFactory.Literal(0L)))));
+
                 return statements;
             }
         }

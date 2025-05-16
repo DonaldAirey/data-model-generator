@@ -156,6 +156,7 @@ namespace GammaFour.DataModelGenerator.Model.UniqueIndexClass
             List<SyntaxElement> syntaxElements = new List<SyntaxElement>
             {
                 new AddMethod(this.uniqueIndexElement),
+                new ClearMethod(),
                 new FindMethod(this.uniqueIndexElement),
                 new RemoveMethod(this.uniqueIndexElement),
             };

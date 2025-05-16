@@ -123,7 +123,10 @@ namespace GammaFour.DataModelGenerator.Model.DataModelDtoClass.Slave
         private SyntaxList<MemberDeclarationSyntax> CreatePublicProperties(SyntaxList<MemberDeclarationSyntax> members)
         {
             // This will create the public instance properties.
-            List<SyntaxElement> properties = new List<SyntaxElement>();
+            List<SyntaxElement> properties = new List<SyntaxElement>
+            {
+                new DataModelIdProperty(this.xmlSchemaDocument),
+            };
 
             // Create a property for each table.
             foreach (var tableElement in this.xmlSchemaDocument.Tables)

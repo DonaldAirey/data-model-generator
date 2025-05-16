@@ -1,8 +1,8 @@
-// <copyright file="ClearMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="DataModelIdProperty.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.DataModelGenerator.Model.TableClass
+namespace GammaFour.DataModelGenerator.Model.DataModelClass
 {
     using System;
     using System.Collections.Generic;
@@ -12,41 +12,52 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Creates a method to find a row in the index.
+    /// Creates a collection of readers (transactions) waiting for a read lock.
     /// </summary>
-    public class ClearMethod : SyntaxElement
+    public class DataModelIdProperty : SyntaxElement
     {
         /// <summary>
-        /// The table schema.
+        /// The unique constraint schema.
         /// </summary>
-        private readonly TableElement tableElement;
+        private readonly XmlSchemaDocument xmlSchemaDocument;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ClearMethod"/> class.
+        /// Initializes a new instance of the <see cref="DataModelIdProperty"/> class.
         /// </summary>
-        /// <param name="tableElement">The unique constraint schema.</param>
-        public ClearMethod(TableElement tableElement)
+        /// <param name="xmlSchemaDocument">A description of a unique constraint.</param>
+        public DataModelIdProperty(XmlSchemaDocument xmlSchemaDocument)
         {
             // Initialize the object.
-            this.tableElement = tableElement;
-            this.Name = "Clear";
+            this.xmlSchemaDocument = xmlSchemaDocument;
+            this.Name = $"{this.xmlSchemaDocument.Name}Id";
 
             //        /// <summary>
-            //        /// Removes all values from the table.
+            //        /// Gets the unique identifier.
             //        /// </summary>
-            //        public void Clear()
-            //        {
-            //            <Body>
-            //        }
-            this.Syntax = SyntaxFactory.MethodDeclaration(
-                SyntaxFactory.PredefinedType(
-                    SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
+            //        public Guid LedgerId { get; } = Guid.NewGuid();
+            this.Syntax = SyntaxFactory.PropertyDeclaration(
+                SyntaxFactory.IdentifierName("Guid"),
                 SyntaxFactory.Identifier(this.Name))
             .WithModifiers(
                 SyntaxFactory.TokenList(
                     SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-            .WithBody(this.Body)
-            .WithLeadingTrivia(ClearMethod.LeadingTrivia);
+            .WithAccessorList(
+                SyntaxFactory.AccessorList(
+                    SyntaxFactory.SingletonList<AccessorDeclarationSyntax>(
+                        SyntaxFactory.AccessorDeclaration(
+                            SyntaxKind.GetAccessorDeclaration)
+                        .WithSemicolonToken(
+                            SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
+            .WithInitializer(
+                SyntaxFactory.EqualsValueClause(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName("Guid"),
+                            SyntaxFactory.IdentifierName("NewGuid")))))
+            .WithSemicolonToken(
+                SyntaxFactory.Token(SyntaxKind.SemicolonToken))
+            .WithLeadingTrivia(DataModelIdProperty.LeadingTrivia);
         }
 
         /// <summary>
@@ -61,7 +72,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                     new List<SyntaxTrivia>
                     {
                         //        /// <summary>
-                        //        /// Removes all values from the table.
+                        //        /// Gets the unique identifier.
                         //        /// </summary>
                         SyntaxFactory.Trivia(
                             SyntaxFactory.DocumentationCommentTrivia(
@@ -84,7 +95,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextLiteral(
                                                     SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                    " Removes all values from the table.",
+                                                    " Gets the unique identifier.",
                                                     string.Empty,
                                                     SyntaxFactory.TriviaList()),
                                                 SyntaxFactory.XmlTextNewLine(
@@ -104,50 +115,6 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                                     SyntaxFactory.TriviaList()),
                                             }))))),
                     });
-            }
-        }
-
-        /// <summary>
-        /// Gets the body.
-        /// </summary>
-        private BlockSyntax Body
-        {
-            get
-            {
-                var statements = new List<StatementSyntax>
-                {
-                    //            this.dictionary.Clear();
-                    SyntaxFactory.ExpressionStatement(
-                        SyntaxFactory.InvocationExpression(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
-                                    SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("dictionary")),
-                                SyntaxFactory.IdentifierName("Clear")))),
-                };
-
-                // Clear each of the non-primary indices.
-                foreach (var uniqueIndex in this.tableElement.UniqueIndexes)
-                {
-                    if (!uniqueIndex.IsPrimaryIndex)
-                    {
-                        //            this.ListSymbolIndex.Clear();
-                        statements.Add(
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(uniqueIndex.Name)),
-                                        SyntaxFactory.IdentifierName("Clear")))));
-                    }
-                }
-
-                return SyntaxFactory.Block(statements);
             }
         }
     }
