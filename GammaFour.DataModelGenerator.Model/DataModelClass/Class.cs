@@ -178,7 +178,8 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
             {
                 foreach (var tableElement in this.xmlSchemaDocument.Tables.OrderBy(te => te.Name))
                 {
-                    methods.Add(new ApplyTableMethod(tableElement));
+                    methods.Add(new ApplyOneMethod(tableElement));
+                    methods.Add(new ApplyManyMethod(tableElement));
                 }
             }
 

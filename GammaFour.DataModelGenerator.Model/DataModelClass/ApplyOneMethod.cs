@@ -1,4 +1,4 @@
-// <copyright file="ApplyTableMethod.cs" company="Gamma Four, Inc.">
+// <copyright file="ApplyOneMethod.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,7 +14,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
     /// <summary>
     /// Creates a method to acquire a reader lock.
     /// </summary>
-    public class ApplyTableMethod : SyntaxElement
+    public class ApplyOneMethod : SyntaxElement
     {
         /// <summary>
         /// The table schema.
@@ -22,10 +22,10 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
         private readonly TableElement tableElement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ApplyTableMethod"/> class.
+        /// Initializes a new instance of the <see cref="ApplyOneMethod"/> class.
         /// </summary>
         /// <param name="tableElement">The table schema.</param>
-        public ApplyTableMethod(TableElement tableElement)
+        public ApplyOneMethod(TableElement tableElement)
         {
             // Initialize the object.
             this.tableElement = tableElement;

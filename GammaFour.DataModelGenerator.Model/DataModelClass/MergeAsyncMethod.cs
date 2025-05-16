@@ -88,7 +88,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                     {
                         //            using (var asyncTransaction = new AsyncTransaction(cancellationToken))
                         //            {
-                        //                 <ClearTables>
+                        //                 <MergeTables>
                         //            }
                         SyntaxFactory.UsingStatement(
                             SyntaxFactory.Block(this.MergeTables))
@@ -283,48 +283,33 @@ namespace GammaFour.DataModelGenerator.Model.DataModelClass
                 // Apply each of the tables in dependency order.
                 foreach (TableElement tableElement in orderedTables)
                 {
-                    //                    foreach (var dataTransferObject in ledgerDto.Lists)
-                    //                    {
-                    //                        await this.ApplyList(dataTransferObject).ConfigureAwait(false);
-                    //                    }
+                    //                    await this.ApplyAllocationOrders(ledgerDto.AllocationOrders).ConfigureAwait(false);
                     statements.Add(
-                        SyntaxFactory.ForEachStatement(
-                            SyntaxFactory.IdentifierName(
-                                SyntaxFactory.Identifier(
-                                    SyntaxFactory.TriviaList(),
-                                    SyntaxKind.VarKeyword,
-                                    "var",
-                                    "var",
-                                    SyntaxFactory.TriviaList())),
-                            SyntaxFactory.Identifier("dataTransferObject"),
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToCamelCase()}Dto"),
-                                SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
-                            SyntaxFactory.Block(
-                                SyntaxFactory.SingletonList<StatementSyntax>(
-                                    SyntaxFactory.ExpressionStatement(
-                                        SyntaxFactory.AwaitExpression(
-                                            SyntaxFactory.InvocationExpression(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.ExpressionStatement(
+                            SyntaxFactory.AwaitExpression(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName($"Apply{tableElement.Name.ToPlural()}")))
+                                        .WithArgumentList(
+                                            SyntaxFactory.ArgumentList(
+                                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                    SyntaxFactory.Argument(
                                                         SyntaxFactory.MemberAccessExpression(
                                                             SyntaxKind.SimpleMemberAccessExpression,
-                                                            SyntaxFactory.ThisExpression(),
-                                                            SyntaxFactory.IdentifierName($"Apply{tableElement.Name}")))
-                                                    .WithArgumentList(
-                                                        SyntaxFactory.ArgumentList(
-                                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                                SyntaxFactory.Argument(
-                                                                    SyntaxFactory.IdentifierName("dataTransferObject"))))),
-                                                    SyntaxFactory.IdentifierName("ConfigureAwait")))
-                                            .WithArgumentList(
-                                                SyntaxFactory.ArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                                        SyntaxFactory.Argument(
-                                                            SyntaxFactory.LiteralExpression(
-                                                                SyntaxKind.FalseLiteralExpression)))))))))));
+                                                            SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToCamelCase()}Dto"),
+                                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())))))),
+                                        SyntaxFactory.IdentifierName("ConfigureAwait")))
+                                .WithArgumentList(
+                                    SyntaxFactory.ArgumentList(
+                                        SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                            SyntaxFactory.Argument(
+                                                SyntaxFactory.LiteralExpression(
+                                                    SyntaxKind.FalseLiteralExpression))))))));
                 }
 
                 return statements;
