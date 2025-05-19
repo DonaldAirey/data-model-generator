@@ -202,13 +202,13 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
             }
 
             // Create a property for each parent row.
-            foreach (var foreignIndexElement in this.tableElement.ParentIndices)
+            foreach (var foreignIndexElement in this.tableElement.ParentIndexes)
             {
                 properties.Add(new ParentRowProperty(foreignIndexElement));
             }
 
             // Create a property for each foriegn index.
-            foreach (var foreignIndexElement in this.tableElement.ForeignIndices)
+            foreach (var foreignIndexElement in this.tableElement.ForeignIndexes)
             {
                 properties.Add(new ForeignKeyProperty(foreignIndexElement));
             }

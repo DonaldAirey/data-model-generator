@@ -95,7 +95,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                 //            this.Alerts.UnionWith(account.Alerts);
                 //            this.Allocations.Clear();
                 //            this.Allocations.UnionWith(account.Allocations);
-                foreach (var foreignIndexElement in this.tableElement.ForeignIndices)
+                foreach (var foreignIndexElement in this.tableElement.ForeignIndexes)
                 {
                     statementList.Add((
                         foreignIndexElement.Table.Name,
@@ -135,7 +135,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
 
                 //            this.Asset = account.Asset;
                 //            this.Model = account.Model;
-                foreach (var foreignIndexElement in this.tableElement.ParentIndices)
+                foreach (var foreignIndexElement in this.tableElement.ParentIndexes)
                 {
                     statementList.Add((
                         foreignIndexElement.UniqueParentName,

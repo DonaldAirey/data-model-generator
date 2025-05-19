@@ -26,7 +26,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             var statements = new List<StatementSyntax>();
 
             // Check the constraints and update foreign keys.
-            foreach (var foreignIndexElement in tableElement.ParentIndices)
+            foreach (var foreignIndexElement in tableElement.ParentIndexes)
             {
                 //            var thing = this.ledger.Things.Find(order.ThingCode);
                 var uniqueIndexElement = foreignIndexElement.UniqueIndex;
@@ -190,7 +190,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             }
 
             // Make sure there are no children.
-            foreach (ForeignIndexElement foreignIndexElement in tableElement.ChildIndices)
+            foreach (ForeignIndexElement foreignIndexElement in tableElement.ChildIndexes)
             {
                 //                ConstraintException.ThrowIfTrue(foundRow.Positions, "AssetPositionIndex");
                 statements.Add(
@@ -227,7 +227,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             }
 
             // Lock each of the parent rows.
-            foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentIndices)
+            foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentIndexes)
             {
                 // If any of the index elements are nullable, we'll want a test to see if values are provided for all elements of the key.
                 if (foreignIndexElement.Columns.Where(cre => cre.Column.ColumnType.IsNullable).Any())
@@ -402,7 +402,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             }
 
             // Remove from the parent.
-            foreach (var foreignIndexElement in tableElement.ParentIndices)
+            foreach (var foreignIndexElement in tableElement.ParentIndexes)
             {
                 //            var thing = this.ledger.Things.Find(order.ThingCode);
                 var uniqueIndexElement = foreignIndexElement.UniqueIndex;
@@ -425,7 +425,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             }
 
             // Check the constraints and update foreign keys.
-            foreach (var foreignIndexElement in tableElement.ParentIndices)
+            foreach (var foreignIndexElement in tableElement.ParentIndexes)
             {
                 //            var thing = this.ledger.Things.Find(order.ThingCode);
                 var uniqueIndexElement = foreignIndexElement.UniqueIndex;
@@ -539,7 +539,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             var expressionList = new List<(string, ExpressionStatementSyntax)>();
 
             // Copy each of the parent values.
-            foreach (var foreignIndexElement in tableElement.ParentIndices)
+            foreach (var foreignIndexElement in tableElement.ParentIndexes)
             {
                 expressionList.Add((
                     foreignIndexElement.UniqueParentName,
@@ -585,7 +585,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             }
 
             // Add this row to each of the parent rows.
-            foreach (var foreignIndexElement in tableElement.ParentIndices)
+            foreach (var foreignIndexElement in tableElement.ParentIndexes)
             {
                 // We need to check for a null parent before updating nullable parents.
                 if (foreignIndexElement.Columns.Where(ce => ce.Column.ColumnType.IsNullable).Any())
@@ -639,8 +639,8 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 }
             }
 
-            // Add the row to each of the unique key indices on this set.
-            foreach (var uniqueKeyElement in tableElement.UniqueIndexes.Where(ui => !ui.IsPrimaryIndex))
+            // Add the row to each of the unique key indexes on this set.
+            foreach (var uniqueIndexElement in tableElement.UniqueIndexes.Where(ui => !ui.IsPrimaryIndex))
             {
                 //            this.AccountNameIndex.Add(account);
                 statements.Add(
@@ -651,7 +651,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
+                                    SyntaxFactory.IdentifierName(uniqueIndexElement.Name)),
                                 SyntaxFactory.IdentifierName("Add")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -711,7 +711,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             };
 
             // Add this row to each of the parent rows.
-            foreach (var foreignIndexElement in tableElement.ParentIndices)
+            foreach (var foreignIndexElement in tableElement.ParentIndexes)
             {
                 // We need to check for a null parent before updating nullable parents.
                 if (foreignIndexElement.Columns.Where(ce => ce.Column.ColumnType.IsNullable).Any())
@@ -765,8 +765,8 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 }
             }
 
-            // Remove the row to each of the unique key indices on this set.
-            foreach (var uniqueKeyElement in tableElement.UniqueIndexes.Where(ui => !ui.IsPrimaryIndex))
+            // Remove the row to each of the unique key indexes on this set.
+            foreach (var uniqueIndexElement in tableElement.UniqueIndexes.Where(ui => !ui.IsPrimaryIndex))
             {
                 //            this.AccountNameIndex.Remove(account);
                 statements.Add(
@@ -777,7 +777,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
+                                    SyntaxFactory.IdentifierName(uniqueIndexElement.Name)),
                                 SyntaxFactory.IdentifierName("Remove")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -857,7 +857,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             var expressionList = new List<(string, ExpressionStatementSyntax)>();
 
             // Clear each of the parent values.
-            foreach (var foreignIndexElement in tableElement.ParentIndices)
+            foreach (var foreignIndexElement in tableElement.ParentIndexes)
             {
                 //                        foundRow.Account = null;
                 expressionList.Add((
@@ -922,7 +922,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             }
 
             // Remove this row from each of the parent rows.
-            foreach (var foreignIndexElement in tableElement.ParentIndices)
+            foreach (var foreignIndexElement in tableElement.ParentIndexes)
             {
                 // We need to check for a null parent before updating nullable parents.
                 if (foreignIndexElement.Columns.Where(ce => ce.Column.ColumnType.IsNullable).Any())
@@ -976,8 +976,8 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 }
             }
 
-            // Remove the row to each of the unique key indices on this set.
-            foreach (var uniqueKeyElement in tableElement.UniqueIndexes.Where(ui => !ui.IsPrimaryIndex))
+            // Remove the row to each of the unique key indexes on this set.
+            foreach (var uniqueIndexElement in tableElement.UniqueIndexes.Where(ui => !ui.IsPrimaryIndex))
             {
                 //            this.AccountNameIndex.Remove(account);
                 statements.Add(
@@ -988,7 +988,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
+                                    SyntaxFactory.IdentifierName(uniqueIndexElement.Name)),
                                 SyntaxFactory.IdentifierName("Remove")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -1043,7 +1043,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             };
 
             // Add this row back to each of the parent rows.
-            foreach (var foreignIndexElement in tableElement.ParentIndices)
+            foreach (var foreignIndexElement in tableElement.ParentIndexes)
             {
                 // We need to check for a null parent before updating nullable parents.
                 if (foreignIndexElement.Columns.Where(ce => ce.Column.ColumnType.IsNullable).Any())
@@ -1097,8 +1097,8 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 }
             }
 
-            // Add the row back to each of the unique key indices on this set.
-            foreach (var uniqueKeyElement in tableElement.UniqueIndexes.Where(ui => !ui.IsPrimaryIndex))
+            // Add the row back to each of the unique key indexes on this set.
+            foreach (var uniqueIndexElement in tableElement.UniqueIndexes.Where(ui => !ui.IsPrimaryIndex))
             {
                 //            this.AccountNameIndex.Add(foundRow);
                 statements.Add(
@@ -1109,7 +1109,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
+                                    SyntaxFactory.IdentifierName(uniqueIndexElement.Name)),
                                 SyntaxFactory.IdentifierName("Add")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -1191,7 +1191,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             var expressionList = new List<(string, ExpressionStatementSyntax)>();
 
             // Copy each of the parent values.
-            foreach (var foreignIndexElement in tableElement.ParentIndices)
+            foreach (var foreignIndexElement in tableElement.ParentIndexes)
             {
                 //                        foundRow.Account = addedAccount;
                 expressionList.Add((
@@ -1274,7 +1274,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             }
 
             // Remove this row from each of the parent rows.
-            foreach (var foreignIndexElement in tableElement.ParentIndices)
+            foreach (var foreignIndexElement in tableElement.ParentIndexes)
             {
                 // We need to check for a null parent before updating nullable parents.
                 if (foreignIndexElement.Columns.Where(ce => ce.Column.ColumnType.IsNullable).Any())
@@ -1329,7 +1329,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             }
 
             // Add this row to each of the parent rows.
-            foreach (var foreignIndexElement in tableElement.ParentIndices)
+            foreach (var foreignIndexElement in tableElement.ParentIndexes)
             {
                 // We need to check for a null parent before updating nullable parents.
                 if (foreignIndexElement.Columns.Where(ce => ce.Column.ColumnType.IsNullable).Any())
@@ -1383,12 +1383,12 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 }
             }
 
-            // Remove the row to each of the unique key indices on this set.
-            foreach (var uniqueKeyElement in tableElement.UniqueIndexes.Where(ui => !ui.IsPrimaryIndex))
+            // Remove the row to each of the unique key indexes on this set.
+            foreach (var uniqueIndexElement in tableElement.UniqueIndexes.Where(ui => !ui.IsPrimaryIndex))
             {
                 statements.Add(
                     SyntaxFactory.IfStatement(
-                        uniqueKeyElement.GetKeyAsInequalityConditional("originalRow", "foundRow"),
+                        uniqueIndexElement.GetKeyAsInequalityConditional("originalRow", "foundRow"),
                         SyntaxFactory.Block(
                             SyntaxFactory.ExpressionStatement(
                                 SyntaxFactory.InvocationExpression(
@@ -1397,7 +1397,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
+                                            SyntaxFactory.IdentifierName(uniqueIndexElement.Name)),
                                         SyntaxFactory.IdentifierName("Remove")))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
@@ -1411,7 +1411,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
+                                            SyntaxFactory.IdentifierName(uniqueIndexElement.Name)),
                                         SyntaxFactory.IdentifierName("Add")))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
@@ -1447,7 +1447,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             };
 
             // Add this row back to each of the parent rows.
-            foreach (var foreignIndexElement in tableElement.ParentIndices)
+            foreach (var foreignIndexElement in tableElement.ParentIndexes)
             {
                 // We need to check for a null parent before updating nullable parents.
                 if (foreignIndexElement.Columns.Where(ce => ce.Column.ColumnType.IsNullable).Any())
@@ -1502,7 +1502,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
             }
 
             // Remove this row from each of the parent rows.
-            foreach (var foreignIndexElement in tableElement.ParentIndices)
+            foreach (var foreignIndexElement in tableElement.ParentIndexes)
             {
                 // We need to check for a null parent before updating nullable parents.
                 if (foreignIndexElement.Columns.Where(ce => ce.Column.ColumnType.IsNullable).Any())
@@ -1556,12 +1556,12 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 }
             }
 
-            // Remove the row to each of the unique key indices on this set.
-            foreach (var uniqueKeyElement in tableElement.UniqueIndexes.Where(ui => !ui.IsPrimaryIndex))
+            // Remove the row to each of the unique key indexes on this set.
+            foreach (var uniqueIndexElement in tableElement.UniqueIndexes.Where(ui => !ui.IsPrimaryIndex))
             {
                 statements.Add(
                     SyntaxFactory.IfStatement(
-                        uniqueKeyElement.GetKeyAsInequalityConditional("originalRow", "foundRow"),
+                        uniqueIndexElement.GetKeyAsInequalityConditional("originalRow", "foundRow"),
                         SyntaxFactory.Block(
                             SyntaxFactory.ExpressionStatement(
                                 SyntaxFactory.InvocationExpression(
@@ -1570,7 +1570,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
+                                            SyntaxFactory.IdentifierName(uniqueIndexElement.Name)),
                                         SyntaxFactory.IdentifierName("Add")))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(
@@ -1584,7 +1584,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.MemberAccessExpression(
                                             SyntaxKind.SimpleMemberAccessExpression,
                                             SyntaxFactory.ThisExpression(),
-                                            SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
+                                            SyntaxFactory.IdentifierName(uniqueIndexElement.Name)),
                                         SyntaxFactory.IdentifierName("Remove")))
                                 .WithArgumentList(
                                     SyntaxFactory.ArgumentList(

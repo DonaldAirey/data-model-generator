@@ -48,7 +48,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// The unique key elements.
         /// </summary>
-        private List<UniqueIndexElement> uniqueKeyElements;
+        private List<UniqueIndexElement> uniqueIndexElements;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TableElement"/> class.
@@ -102,7 +102,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the ForeignKey constraints.
         /// </summary>
-        public List<ForeignIndexElement> ForeignIndices
+        public List<ForeignIndexElement> ForeignIndexes
         {
             get
             {
@@ -141,7 +141,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the foreign keys which are children of this table.
         /// </summary>
-        public List<ForeignIndexElement> ChildIndices
+        public List<ForeignIndexElement> ChildIndexes
         {
             get
             {
@@ -160,7 +160,7 @@ namespace GammaFour.DataModelGenerator.Common
         /// <summary>
         /// Gets the foreign keys which are the parents of this table.
         /// </summary>
-        public List<ForeignIndexElement> ParentIndices
+        public List<ForeignIndexElement> ParentIndexes
         {
             get
             {
@@ -201,15 +201,15 @@ namespace GammaFour.DataModelGenerator.Common
         {
             get
             {
-                if (this.uniqueKeyElements == null)
+                if (this.uniqueIndexElements == null)
                 {
-                    this.uniqueKeyElements = (from uke in this.Document.UniqueKeys
+                    this.uniqueIndexElements = (from uke in this.Document.UniqueKeys
                                               where uke.Table == this
                                               orderby uke.Name
                                               select uke).ToList();
                 }
 
-                return this.uniqueKeyElements;
+                return this.uniqueIndexElements;
             }
         }
 

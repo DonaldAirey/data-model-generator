@@ -265,10 +265,10 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 properties.Add(new HistoryProperty(this.tableElement));
             }
 
-            // Add a property for each of the non-primary unique indices.
-            foreach (UniqueIndexElement uniqueKeyElement in this.tableElement.UniqueIndexes.Where(uq => !uq.IsPrimaryIndex))
+            // Add a property for each of the non-primary unique indexes.
+            foreach (UniqueIndexElement uniqueIndexElement in this.tableElement.UniqueIndexes.Where(uq => !uq.IsPrimaryIndex))
             {
-                properties.Add(new UniqueIndexProperty(uniqueKeyElement));
+                properties.Add(new UniqueIndexProperty(uniqueIndexElement));
             }
 
             // Alphabetize and add the properties as members of the class.

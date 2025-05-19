@@ -134,7 +134,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelContextClass
                 // This is used to collect the statements.
                 List<StatementSyntax> statements = new List<StatementSyntax>();
 
-                // This will configure each of the tables and their indices.
+                // This will configure each of the tables and their indexes.
                 foreach (TableElement tableElement in this.xmlSchemaDocument.Tables)
                 {
                     //            modelBuilder.Entity<Account>().ToTable("Account");
@@ -271,7 +271,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelContextClass
 
                     // Add an Ignore invocation for each of the owner (row set) navigation properties.
                     // .Ignore(b => b.Country)
-                    foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentIndices)
+                    foreach (ForeignIndexElement foreignIndexElement in tableElement.ParentIndexes)
                     {
                         ignoredProperties = SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(
@@ -293,7 +293,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelContextClass
 
                     // Add an Ignore invocation for each of the child set navigation properties.
                     // .Ignore(b => b.Subscriptions)
-                    foreach (ForeignIndexElement foreignIndexElement in tableElement.ChildIndices)
+                    foreach (ForeignIndexElement foreignIndexElement in tableElement.ChildIndexes)
                     {
                         ignoredProperties = SyntaxFactory.InvocationExpression(
                             SyntaxFactory.MemberAccessExpression(

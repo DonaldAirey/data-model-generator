@@ -34,7 +34,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
         public AddManyMethod(TableElement tableElement)
         {
             // Initialize the object.
-            this.isAsync = tableElement.ParentIndices.Any();
+            this.isAsync = tableElement.ParentIndexes.Any();
             this.tableElement = tableElement;
             this.Name = "AddAsync";
 

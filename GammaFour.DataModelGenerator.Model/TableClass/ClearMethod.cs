@@ -128,7 +128,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                 SyntaxFactory.IdentifierName("Clear")))),
                 };
 
-                // Clear each of the non-primary indices.
+                // Clear each of the non-primary indexes.
                 foreach (var uniqueIndex in this.tableElement.UniqueIndexes)
                 {
                     if (!uniqueIndex.IsPrimaryIndex)

@@ -187,7 +187,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                 var statements = new List<StatementSyntax>();
 
                 // For each parent table, include a check to make sure the parent exists before adding the row.
-                foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ParentIndices)
+                foreach (ForeignIndexElement foreignIndexElement in this.tableElement.ParentIndexes)
                 {
                     var conditional = foreignIndexElement.GetKeyAsEqualityConditional(this.tableElement.Name.ToVariableName());
                     if (conditional == null)
@@ -244,8 +244,8 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                         SyntaxFactory.Argument(SyntaxFactory.IdentifierName(this.tableElement.Name.ToVariableName())),
                                     })))));
 
-                // Add the row to each of the unique key indices on this set.
-                foreach (var uniqueKeyElement in this.tableElement.UniqueIndexes.Where(ui => !ui.IsPrimaryIndex))
+                // Add the row to each of the unique key indexes on this set.
+                foreach (var uniqueIndexElement in this.tableElement.UniqueIndexes.Where(ui => !ui.IsPrimaryIndex))
                 {
                     //            this.AccountNameIndex.Add(account);
                     statements.Add(
@@ -256,7 +256,7 @@ namespace GammaFour.DataModelGenerator.Model.TableClass
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
                                         SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName(uniqueKeyElement.Name)),
+                                        SyntaxFactory.IdentifierName(uniqueIndexElement.Name)),
                                     SyntaxFactory.IdentifierName("Add")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(

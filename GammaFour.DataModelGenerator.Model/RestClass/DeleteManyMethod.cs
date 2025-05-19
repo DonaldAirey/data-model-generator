@@ -478,7 +478,7 @@ namespace GammaFour.DataModelGenerator.Model.RestClass
                 //                await this.ledger.BrokerFeeds.EnterReadLockAsync().ConfigureAwait(false);
                 //                await this.ledger.Models.EnterReadLockAsync().ConfigureAwait(false);
                 //                await this.ledger.Things.EnterReadLockAsync().ConfigureAwait(false);
-                var parentTables = from parentIndex in this.tableElement.ParentIndices
+                var parentTables = from parentIndex in this.tableElement.ParentIndexes
                                    where !parentIndex.Columns.Where(cre => cre.Column.IsPrimaryKey).Any()
                                    group parentIndex by parentIndex.UniqueIndex.Table into grouping
                                    orderby grouping.Key

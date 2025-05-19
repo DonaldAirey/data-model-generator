@@ -85,7 +85,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                 }
 
                 // Perform a deep copy of the child rows.
-                foreach (var foreignIndexElement in this.tableElement.ForeignIndices)
+                foreach (var foreignIndexElement in this.tableElement.ForeignIndexes)
                 {
                     expressionList.Add((
                         foreignIndexElement.Table.Name,
@@ -109,7 +109,7 @@ namespace GammaFour.DataModelGenerator.Model.RowClass
                 }
 
                 // Copy each of the parent values.
-                foreach (var foreignIndexElement in this.tableElement.ParentIndices)
+                foreach (var foreignIndexElement in this.tableElement.ParentIndexes)
                 {
                     expressionList.Add((
                         foreignIndexElement.UniqueParentName,

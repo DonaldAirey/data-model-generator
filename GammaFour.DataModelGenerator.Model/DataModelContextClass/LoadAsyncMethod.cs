@@ -182,7 +182,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelContextClass
                     foreach (var tableElement in unresolvedTables.OrderBy(te => te.Name))
                     {
                         var isDependent = false;
-                        foreach (var foreignIndexElement in tableElement.ParentIndices)
+                        foreach (var foreignIndexElement in tableElement.ParentIndexes)
                         {
                             var parentTable = foreignIndexElement.UniqueIndex.Table;
                             if (!resolvedTables.Contains(parentTable))
