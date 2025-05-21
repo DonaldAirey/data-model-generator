@@ -367,7 +367,11 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                 }
 
                 // Load the data transfer objects.
-                foreach (var tableElement in this.xmlSchemaDocument.Tables.Where(te => te.Name != "User").OrderBy(te => te.Name))
+                var tables = from tableElement in this.xmlSchemaDocument.Tables
+                             where tableElement.Name != "User" && tableElement.Name != "SiloUser"
+                             orderby tableElement.Name
+                             select tableElement;
+                foreach (var tableElement in tables)
                 {
                     statements.AddRange(
                         new StatementSyntax[]
