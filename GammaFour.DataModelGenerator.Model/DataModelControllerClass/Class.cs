@@ -251,6 +251,12 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                 new LoggerField(),
             };
 
+            // Add a silos field if the model contains silos.
+            if (this.xmlSchemaDocument.Tables.Where(te => te.Name == "Silo").Any())
+            {
+                fields.Add(new SilosField());
+            }
+
             // Alphabetize and add the fields as members of the class.
             foreach (var syntaxElement in fields.OrderBy(m => m.Name))
             {

@@ -99,6 +99,31 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                     //            }
                     CheckStateExpression.Syntax,
 
+                    //            var userId = this.User.GetUserId();
+                    SyntaxFactory.LocalDeclarationStatement(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.IdentifierName(
+                                SyntaxFactory.Identifier(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.VarKeyword,
+                                    "var",
+                                    "var",
+                                    SyntaxFactory.TriviaList())))
+                        .WithVariables(
+                            SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                SyntaxFactory.VariableDeclarator(
+                                    SyntaxFactory.Identifier("userId"))
+                                .WithInitializer(
+                                    SyntaxFactory.EqualsValueClause(
+                                        SyntaxFactory.InvocationExpression(
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.ThisExpression(),
+                                                    SyntaxFactory.IdentifierName("User")),
+                                                SyntaxFactory.IdentifierName("GetUserId")))))))),
+
                     //            try
                     //            {
                     //                <TryBlock>
@@ -284,25 +309,138 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                                                     SyntaxKind.FalseLiteralExpression))))))));
                 }
 
+                // If the data model contains a mapping between silos and users, then create a filter.
+                if (this.xmlSchemaDocument.Tables.Where(te => te.Name == "SiloUser").Any())
+                {
+                    //                foreach (var siloUser in this.ledger.SiloUsers)
+                    //                {
+                    //                    if (userId == siloUser.UserId)
+                    //                    {
+                    //                        this.silos.Add(siloUser.SiloId);
+                    //                    }
+                    //                }
+                    statements.Add(
+                        SyntaxFactory.ForEachStatement(
+                            SyntaxFactory.IdentifierName(
+                                SyntaxFactory.Identifier(
+                                    SyntaxFactory.TriviaList(),
+                                    SyntaxKind.VarKeyword,
+                                    "var",
+                                    "var",
+                                    SyntaxFactory.TriviaList())),
+                            SyntaxFactory.Identifier("siloUser"),
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToCamelCase())),
+                                SyntaxFactory.IdentifierName("SiloUsers")),
+                            SyntaxFactory.Block(
+                                SyntaxFactory.SingletonList<StatementSyntax>(
+                                    SyntaxFactory.IfStatement(
+                                        SyntaxFactory.BinaryExpression(
+                                            SyntaxKind.EqualsExpression,
+                                            SyntaxFactory.IdentifierName("userId"),
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName("siloUser"),
+                                                SyntaxFactory.IdentifierName("UserId"))),
+                                        SyntaxFactory.Block(
+                                            SyntaxFactory.SingletonList<StatementSyntax>(
+                                                SyntaxFactory.ExpressionStatement(
+                                                    SyntaxFactory.InvocationExpression(
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.ThisExpression(),
+                                                                SyntaxFactory.IdentifierName("silos")),
+                                                            SyntaxFactory.IdentifierName("Add")))
+                                                    .WithArgumentList(
+                                                        SyntaxFactory.ArgumentList(
+                                                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                                                SyntaxFactory.Argument(
+                                                                    SyntaxFactory.MemberAccessExpression(
+                                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                                        SyntaxFactory.IdentifierName("siloUser"),
+                                                                        SyntaxFactory.IdentifierName("SiloId"))))))))))))));
+                }
+
                 // Load the data transfer objects.
                 foreach (var tableElement in this.xmlSchemaDocument.Tables.OrderBy(te => te.Name))
                 {
-                    //                this.ledgerDto.LoadAccounts(rowVersion);
-                    statements.Add(
-                        SyntaxFactory.ExpressionStatement(
-                            SyntaxFactory.InvocationExpression(
-                                SyntaxFactory.MemberAccessExpression(
-                                    SyntaxKind.SimpleMemberAccessExpression,
+                    statements.AddRange(
+                        new StatementSyntax[]
+                        {
+                            //            var provinces = this.Ledger.Accounts.History.Last;
+                            SyntaxFactory.LocalDeclarationStatement(
+                                SyntaxFactory.VariableDeclaration(
+                                    SyntaxFactory.IdentifierName(
+                                        SyntaxFactory.Identifier(
+                                            SyntaxFactory.TriviaList(),
+                                            SyntaxKind.VarKeyword,
+                                            "var",
+                                            "var",
+                                            SyntaxFactory.TriviaList())))
+                                .WithVariables(
+                                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                        SyntaxFactory.VariableDeclarator(
+                                            SyntaxFactory.Identifier(tableElement.Name.ToVariableName()))
+                                        .WithInitializer(
+                                            SyntaxFactory.EqualsValueClause(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            SyntaxFactory.MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                SyntaxFactory.ThisExpression(),
+                                                                SyntaxFactory.IdentifierName(tableElement.Document.Name.ToCamelCase())),
+                                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
+                                                        SyntaxFactory.IdentifierName("History")),
+                                                    SyntaxFactory.IdentifierName("Last"))))))),
+
+                            //            while (currentRow != null && currentRow.Value.RowVersion > rowVersion)
+                            //            {
+                            //                <WhileNewRow>
+                            //            }
+                            SyntaxFactory.WhileStatement(
+                                SyntaxFactory.BinaryExpression(
+                                    SyntaxKind.LogicalAndExpression,
+                                    SyntaxFactory.BinaryExpression(
+                                        SyntaxKind.NotEqualsExpression,
+                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                        SyntaxFactory.LiteralExpression(
+                                            SyntaxKind.NullLiteralExpression)),
+                                    SyntaxFactory.BinaryExpression(
+                                        SyntaxKind.GreaterThanExpression,
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                                SyntaxFactory.IdentifierName("Value")),
+                                            SyntaxFactory.IdentifierName("RowVersion")),
+                                        SyntaxFactory.IdentifierName("rowVersion"))),
+                                SyntaxFactory.Block(this.WhileNewRow(tableElement))),
+
+                            //                this.ledgerDto.Provinces.Reverse();
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.InvocationExpression(
                                     SyntaxFactory.MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ThisExpression(),
-                                        SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToCamelCase()}Dto")),
-                                    SyntaxFactory.IdentifierName($"Load{tableElement.Name.ToPlural()}")))
-                            .WithArgumentList(
-                                SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
-                                        SyntaxFactory.Argument(
-                                            SyntaxFactory.IdentifierName("rowVersion")))))));
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.ThisExpression(),
+                                                SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToCamelCase()}Dto")),
+                                            SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
+                                        SyntaxFactory.IdentifierName("Reverse")))),
+                        });
                 }
 
                 //                return this.Ok(this.ledgerDto);
@@ -325,6 +463,92 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                 // This is the complete block.
                 return statements;
             }
+        }
+
+        /// <summary>
+        /// Gets the code to add a row to the DTO.
+        /// </summary>
+        private IEnumerable<StatementSyntax> AddToDto(TableElement tableElement)
+        {
+            return new StatementSyntax[]
+            {
+                //                        this.ledgerDto.Provinces.Add(province.Value);
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName($"{this.xmlSchemaDocument.Name.ToCamelCase()}Dto")),
+                                SyntaxFactory.IdentifierName(tableElement.Name.ToPlural())),
+                            SyntaxFactory.IdentifierName("Add")))
+                    .WithArgumentList(
+                        SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                SyntaxFactory.Argument(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                        SyntaxFactory.IdentifierName("Value"))))))),
+            };
+        }
+
+        /// <summary>
+        /// Gets the new rows.
+        /// </summary>
+        private IEnumerable<StatementSyntax> WhileNewRow(TableElement tableElement)
+        {
+            var statements = new List<StatementSyntax>();
+            if (this.xmlSchemaDocument.Tables.Where(te => te.Name == "SiloUser").Any())
+            {
+                //                    if (this.silos.Contains(quote.Value.SiloId))
+                //                    {
+                //                         <AddToDto>
+                //                    }
+                statements.Add(
+                    SyntaxFactory.IfStatement(
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    SyntaxFactory.ThisExpression(),
+                                    SyntaxFactory.IdentifierName("silos")),
+                                SyntaxFactory.IdentifierName("Contains")))
+                        .WithArgumentList(
+                            SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                                                SyntaxFactory.IdentifierName("Value")),
+                                            SyntaxFactory.IdentifierName("SiloId")))))),
+                        SyntaxFactory.Block(this.AddToDto(tableElement))));
+            }
+            else
+            {
+                //                        this.ledgerDto.Provinces.Add(province.Value);
+                statements.AddRange(this.AddToDto(tableElement));
+            }
+
+            //                currentRow = currentRow.Previous;
+            statements.Add(
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.AssignmentExpression(
+                        SyntaxKind.SimpleAssignmentExpression,
+                        SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
+                            SyntaxFactory.IdentifierName("Previous")))));
+
+            return statements;
         }
     }
 }
