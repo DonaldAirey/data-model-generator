@@ -8,7 +8,6 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
     using System.Collections.Generic;
     using System.Linq;
     using GammaFour.DataModelGenerator.Common;
-    using GammaFour.DataModelGenerator.Model.RestClass;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -328,7 +327,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                                     "var",
                                     "var",
                                     SyntaxFactory.TriviaList())),
-                            SyntaxFactory.Identifier("siloUser"),
+                            SyntaxFactory.Identifier("siloUserMapping"),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.MemberAccessExpression(
@@ -344,7 +343,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                                             SyntaxFactory.IdentifierName("userId"),
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("siloUser"),
+                                                SyntaxFactory.IdentifierName("siloUserMapping"),
                                                 SyntaxFactory.IdentifierName("UserId"))),
                                         SyntaxFactory.Block(
                                             SyntaxFactory.SingletonList<StatementSyntax>(
@@ -363,12 +362,12 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                                                                 SyntaxFactory.Argument(
                                                                     SyntaxFactory.MemberAccessExpression(
                                                                         SyntaxKind.SimpleMemberAccessExpression,
-                                                                        SyntaxFactory.IdentifierName("siloUser"),
+                                                                        SyntaxFactory.IdentifierName("siloUserMapping"),
                                                                         SyntaxFactory.IdentifierName("SiloId"))))))))))))));
                 }
 
                 // Load the data transfer objects.
-                foreach (var tableElement in this.xmlSchemaDocument.Tables.OrderBy(te => te.Name))
+                foreach (var tableElement in this.xmlSchemaDocument.Tables.Where(te => te.Name != "User").OrderBy(te => te.Name))
                 {
                     statements.AddRange(
                         new StatementSyntax[]
