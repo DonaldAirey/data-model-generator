@@ -366,9 +366,12 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                                                                         SyntaxFactory.IdentifierName("SiloId"))))))))))))));
                 }
 
-                // Load the data transfer objects.
+                // Load the non-administrative data transfer objects.
                 var tables = from tableElement in this.xmlSchemaDocument.Tables
-                             where tableElement.Name != "User" && tableElement.Name != "SiloUser"
+                             where
+                                tableElement.Name != "Silo" &&
+                                tableElement.Name != "SiloUser" &&
+                                tableElement.Name != "User"
                              orderby tableElement.Name
                              select tableElement;
                 foreach (var tableElement in tables)
