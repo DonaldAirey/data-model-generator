@@ -251,10 +251,10 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                 new LoggerField(),
             };
 
-            // Add a silos field if the model contains silos.
-            if (this.xmlSchemaDocument.Tables.Where(te => te.Name == "Silo").Any())
+            // Add a tenants field if the model contains tenants.
+            if (this.xmlSchemaDocument.Tables.Where(te => te.Name == "Tenant").Any())
             {
-                fields.Add(new SilosField());
+                fields.Add(new TenantsField());
             }
 
             // Alphabetize and add the fields as members of the class.

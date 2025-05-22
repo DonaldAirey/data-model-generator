@@ -308,14 +308,14 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                                                     SyntaxKind.FalseLiteralExpression))))))));
                 }
 
-                // If the data model contains a mapping between silos and users, then create a filter.
-                if (this.xmlSchemaDocument.Tables.Where(te => te.Name == "SiloUser").Any())
+                // If the data model contains a mapping between tenants and users, then create a filter.
+                if (this.xmlSchemaDocument.Tables.Where(te => te.Name == "TenantUser").Any())
                 {
-                    //                foreach (var siloUser in this.ledger.SiloUsers)
+                    //                foreach (var tenantUser in this.ledger.TenantUsers)
                     //                {
-                    //                    if (userId == siloUser.UserId)
+                    //                    if (userId == tenantUser.UserId)
                     //                    {
-                    //                        this.silos.Add(siloUser.SiloId);
+                    //                        this.tenants.Add(tenantUser.TenantId);
                     //                    }
                     //                }
                     statements.Add(
@@ -327,14 +327,14 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                                     "var",
                                     "var",
                                     SyntaxFactory.TriviaList())),
-                            SyntaxFactory.Identifier("siloUserMapping"),
+                            SyntaxFactory.Identifier("tenantUserMapping"),
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
                                     SyntaxFactory.IdentifierName(this.xmlSchemaDocument.Name.ToCamelCase())),
-                                SyntaxFactory.IdentifierName("SiloUsers")),
+                                SyntaxFactory.IdentifierName("TenantUsers")),
                             SyntaxFactory.Block(
                                 SyntaxFactory.SingletonList<StatementSyntax>(
                                     SyntaxFactory.IfStatement(
@@ -343,7 +343,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                                             SyntaxFactory.IdentifierName("userId"),
                                             SyntaxFactory.MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                SyntaxFactory.IdentifierName("siloUserMapping"),
+                                                SyntaxFactory.IdentifierName("tenantUserMapping"),
                                                 SyntaxFactory.IdentifierName("UserId"))),
                                         SyntaxFactory.Block(
                                             SyntaxFactory.SingletonList<StatementSyntax>(
@@ -354,7 +354,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                                                             SyntaxFactory.MemberAccessExpression(
                                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                                 SyntaxFactory.ThisExpression(),
-                                                                SyntaxFactory.IdentifierName("silos")),
+                                                                SyntaxFactory.IdentifierName("tenants")),
                                                             SyntaxFactory.IdentifierName("Add")))
                                                     .WithArgumentList(
                                                         SyntaxFactory.ArgumentList(
@@ -362,15 +362,14 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                                                                 SyntaxFactory.Argument(
                                                                     SyntaxFactory.MemberAccessExpression(
                                                                         SyntaxKind.SimpleMemberAccessExpression,
-                                                                        SyntaxFactory.IdentifierName("siloUserMapping"),
-                                                                        SyntaxFactory.IdentifierName("SiloId"))))))))))))));
+                                                                        SyntaxFactory.IdentifierName("tenantUserMapping"),
+                                                                        SyntaxFactory.IdentifierName("TenantId"))))))))))))));
                 }
 
                 // Load the non-administrative data transfer objects.
                 var tables = from tableElement in this.xmlSchemaDocument.Tables
                              where
-                                tableElement.Name != "Silo" &&
-                                tableElement.Name != "SiloUser" &&
+                                tableElement.Name != "TenantUser" &&
                                 tableElement.Name != "User"
                              orderby tableElement.Name
                              select tableElement;
@@ -508,9 +507,9 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
         private IEnumerable<StatementSyntax> WhileNewRow(TableElement tableElement)
         {
             var statements = new List<StatementSyntax>();
-            if (this.xmlSchemaDocument.Tables.Where(te => te.Name == "SiloUser").Any())
+            if (this.xmlSchemaDocument.Tables.Where(te => te.Name == "TenantUser").Any())
             {
-                //                    if (this.silos.Contains(quote.Value.SiloId))
+                //                    if (this.tenants.Contains(quote.Value.TenantId))
                 //                    {
                 //                         <AddToDto>
                 //                    }
@@ -522,7 +521,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                                 SyntaxFactory.MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
                                     SyntaxFactory.ThisExpression(),
-                                    SyntaxFactory.IdentifierName("silos")),
+                                    SyntaxFactory.IdentifierName("tenants")),
                                 SyntaxFactory.IdentifierName("Contains")))
                         .WithArgumentList(
                             SyntaxFactory.ArgumentList(
@@ -534,7 +533,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 SyntaxFactory.IdentifierName(tableElement.Name.ToVariableName()),
                                                 SyntaxFactory.IdentifierName("Value")),
-                                            SyntaxFactory.IdentifierName("SiloId")))))),
+                                            SyntaxFactory.IdentifierName("TenantId")))))),
                         SyntaxFactory.Block(this.AddToDto(tableElement))));
             }
             else

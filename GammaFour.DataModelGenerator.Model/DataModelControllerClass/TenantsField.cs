@@ -1,4 +1,4 @@
-// <copyright file="SilosField.cs" company="Gamma Four, Inc.">
+// <copyright file="TenantsField.cs" company="Gamma Four, Inc.">
 //    Copyright © 2025 - Gamma Four, Inc.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
@@ -14,20 +14,20 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
     /// <summary>
     /// Creates a field to hold a buffer for creating transaction log items.
     /// </summary>
-    public class SilosField : SyntaxElement
+    public class TenantsField : SyntaxElement
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SilosField"/> class.
+        /// Initializes a new instance of the <see cref="TenantsField"/> class.
         /// </summary>
-        public SilosField()
+        public TenantsField()
         {
             // Initialize the object.
-            this.Name = "silos";
+            this.Name = "tenants";
 
             //        /// <summary>
-            //        /// Used to filter the silos for the user.
+            //        /// Used to filter the tenants for the user.
             //        /// </summary>
-            //        private readonly HashSet<Guid> silos = new HashSet<Guid>();
+            //        private readonly HashSet<Guid> tenants = new HashSet<Guid>();
             this.Syntax = SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(
                     SyntaxFactory.GenericName(
@@ -58,7 +58,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                         SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
                         SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword),
                     }))
-            .WithLeadingTrivia(SilosField.LeadingTrivia);
+            .WithLeadingTrivia(TenantsField.LeadingTrivia);
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                 return new List<SyntaxTrivia>
                 {
                     //        /// <summary>
-                    //        /// Used to filter the silos for the user.
+                    //        /// Used to filter the tenants for the user.
                     //        /// </summary>
                     SyntaxFactory.Trivia(
                         SyntaxFactory.DocumentationCommentTrivia(
@@ -94,7 +94,7 @@ namespace GammaFour.DataModelGenerator.Model.DataModelControllerClass
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextLiteral(
                                                 SyntaxFactory.TriviaList(SyntaxFactory.DocumentationCommentExterior(Strings.CommentExterior)),
-                                                " Used to filter the silos for the user.",
+                                                " Used to filter the tenants for the user.",
                                                 string.Empty,
                                                 SyntaxFactory.TriviaList()),
                                             SyntaxFactory.XmlTextNewLine(
